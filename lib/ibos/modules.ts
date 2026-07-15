@@ -1,0 +1,114 @@
+import { IBOS_STAGES, type IBOSStage } from "./stages";
+
+export const IBOS_MODULES = {
+  ENTREPRENEUR_PORTAL: "entrepreneur_portal",
+  BUSINESS_PROFILE: "business_profile",
+  QUALIFICATION_STATUS: "qualification_status",
+  ANNUAL_MEETING: "annual_meeting",
+  FUNDING_QUEUE: "funding_queue",
+  FUNDING_STATUS: "funding_status",
+  FUNDING_ALLOCATION: "funding_allocation",
+  BUSINESS_OPENING: "business_opening",
+  DAILY_TRANSACTIONS: "daily_transactions",
+  BUSINESS_UPDATES: "business_updates",
+  QUARTERLY_REPORTING: "quarterly_reporting",
+  BUSINESS_INTELLIGENCE: "business_intelligence",
+  AUTOMATION_MONITORING: "automation_monitoring",
+  MESSAGES: "messages",
+  REPORTS: "reports",
+} as const;
+
+export type IBOSModule =
+  (typeof IBOS_MODULES)[keyof typeof IBOS_MODULES];
+
+export const IBOS_MODULE_LABELS: Record<IBOSModule, string> = {
+  [IBOS_MODULES.ENTREPRENEUR_PORTAL]: "Entrepreneur Portal",
+  [IBOS_MODULES.BUSINESS_PROFILE]: "Business Profile",
+  [IBOS_MODULES.QUALIFICATION_STATUS]: "Qualification Status",
+  [IBOS_MODULES.ANNUAL_MEETING]: "Annual Meeting",
+  [IBOS_MODULES.FUNDING_QUEUE]: "Funding Queue",
+  [IBOS_MODULES.FUNDING_STATUS]: "Funding Status",
+  [IBOS_MODULES.FUNDING_ALLOCATION]: "Funding Allocation",
+  [IBOS_MODULES.BUSINESS_OPENING]: "Business Opening",
+  [IBOS_MODULES.DAILY_TRANSACTIONS]: "Daily Transactions",
+  [IBOS_MODULES.BUSINESS_UPDATES]: "Business Updates",
+  [IBOS_MODULES.QUARTERLY_REPORTING]: "Quarterly Reporting",
+  [IBOS_MODULES.BUSINESS_INTELLIGENCE]: "Business Intelligence",
+  [IBOS_MODULES.AUTOMATION_MONITORING]: "Automation Monitoring",
+  [IBOS_MODULES.MESSAGES]: "Messages",
+  [IBOS_MODULES.REPORTS]: "Reports",
+};
+
+export const MODULE_STATUS = {
+  LOCKED: "Locked",
+  ACTIVE: "Active",
+} as const;
+
+export type ModuleStatus =
+  (typeof MODULE_STATUS)[keyof typeof MODULE_STATUS];
+
+export function getModulesForStage(stage: IBOSStage): IBOSModule[] {
+  switch (stage) {
+    case IBOS_STAGES.APPROVED:
+      return [
+        IBOS_MODULES.ENTREPRENEUR_PORTAL,
+        IBOS_MODULES.BUSINESS_PROFILE,
+        IBOS_MODULES.QUALIFICATION_STATUS,
+        IBOS_MODULES.ANNUAL_MEETING,
+        IBOS_MODULES.MESSAGES,
+      ];
+
+    case IBOS_STAGES.ANNUAL_MEETING_COMPLETED:
+      return [
+        IBOS_MODULES.ENTREPRENEUR_PORTAL,
+        IBOS_MODULES.BUSINESS_PROFILE,
+        IBOS_MODULES.QUALIFICATION_STATUS,
+        IBOS_MODULES.ANNUAL_MEETING,
+        IBOS_MODULES.FUNDING_QUEUE,
+        IBOS_MODULES.FUNDING_STATUS,
+        IBOS_MODULES.MESSAGES,
+      ];
+
+    case IBOS_STAGES.FUNDING_APPROVED:
+    case IBOS_STAGES.BUSINESS_PREPARATION:
+    case IBOS_STAGES.BUSINESS_OPENING:
+      return [
+        IBOS_MODULES.ENTREPRENEUR_PORTAL,
+        IBOS_MODULES.BUSINESS_PROFILE,
+        IBOS_MODULES.QUALIFICATION_STATUS,
+        IBOS_MODULES.ANNUAL_MEETING,
+        IBOS_MODULES.FUNDING_QUEUE,
+        IBOS_MODULES.FUNDING_STATUS,
+        IBOS_MODULES.FUNDING_ALLOCATION,
+        IBOS_MODULES.BUSINESS_OPENING,
+        IBOS_MODULES.MESSAGES,
+      ];
+
+    case IBOS_STAGES.BUSINESS_OPENED:
+    case IBOS_STAGES.ACTIVE_BUSINESS:
+    case IBOS_STAGES.QUARTERLY_REPORTING:
+      return [
+        IBOS_MODULES.ENTREPRENEUR_PORTAL,
+        IBOS_MODULES.BUSINESS_PROFILE,
+        IBOS_MODULES.QUALIFICATION_STATUS,
+        IBOS_MODULES.ANNUAL_MEETING,
+        IBOS_MODULES.FUNDING_QUEUE,
+        IBOS_MODULES.FUNDING_STATUS,
+        IBOS_MODULES.FUNDING_ALLOCATION,
+        IBOS_MODULES.BUSINESS_OPENING,
+        IBOS_MODULES.DAILY_TRANSACTIONS,
+        IBOS_MODULES.BUSINESS_UPDATES,
+        IBOS_MODULES.QUARTERLY_REPORTING,
+        IBOS_MODULES.BUSINESS_INTELLIGENCE,
+        IBOS_MODULES.AUTOMATION_MONITORING,
+        IBOS_MODULES.MESSAGES,
+        IBOS_MODULES.REPORTS,
+      ];
+
+    default:
+      return [
+        IBOS_MODULES.ENTREPRENEUR_PORTAL,
+        IBOS_MODULES.QUALIFICATION_STATUS,
+      ];
+  }
+}
