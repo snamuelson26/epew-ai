@@ -1,9 +1,15 @@
 "use client";
 
+const LAUNCH_DATE = new Date("2026-07-29T00:00:00-04:00");
+
+const launchOpen = new Date() >= LAUNCH_DATE;
+
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
+
+
 
 interface EntrepreneurFormData {
   full_name: string;
@@ -91,6 +97,35 @@ const RACE_ETHNICITY_OPTIONS = [
 ];
 
 export default function EntrepreneurEnrollPage() {
+  if (!launchOpen) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-slate-100">
+        <div className="max-w-3xl rounded-3xl bg-white shadow-2xl p-12 text-center">
+          <h1 className="text-5xl font-black text-[#06245c]">
+            Entrepreneur Enrollment Opens July 29, 2026
+          </h1>
+
+          <p className="mt-6 text-xl text-slate-700">
+            Thank you for your interest in joining the EPEW Founding Entrepreneur
+            Cohort.
+          </p>
+
+          <p className="mt-4 text-lg text-slate-600">
+            Public enrollment is not yet open.
+            Please return on July 29, 2026.
+          </p>
+
+         <Link
+            href="/"
+            className="mt-10 inline-block rounded-xl bg-green-700 px-8 py-4 text-xl font-bold text-white hover:bg-[#06245c]"
+            >
+            Return to Homepage
+            </Link>
+        </div>
+      </main>
+    );
+  }
+
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
