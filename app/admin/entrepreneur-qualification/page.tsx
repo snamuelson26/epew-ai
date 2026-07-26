@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/lib/supabase";
-import { advanceIBOSStage } from "@/lib/ibos/engine";
+import { supabase } from "@/lib/supabase/client";
 import { IBOS_STAGES } from "@/lib/ibos/stages";
 
 type Application = {
@@ -300,127 +299,145 @@ export default function ProfessionalQualificationActivationCenter() {
   const score = calculateScore(form);
 
   if (progress.percent < 100) {
-    setMessage("Complete the qualification checklist before activation.");
+    setMessage(
+      "Complete the qualification checklist before activation."
+    );
     return;
   }
 
   setSavingId(app.id);
   setMessage("");
 
-  const entrepreneurCode = generateEntrepreneurCode();
-  const businessCode = generateBusinessCode();
+  try {
+    // =====================================================
+// Secure approval and activation workflow
+// =====================================================
 
-  const { data: existing } = await supabase
-    .from("entrepreneurs")
-    .select("id")
-    .eq("email", app.email || "")
-    .maybeSingle();
+const response = await fetch(
+  "/api/admin/entrepreneurs/approve-and-activate",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      applicationId: app.id,
 
-  if (existing) {
-    const engineResult = await advanceIBOSStage({
-      entrepreneurId: existing.id,
-      requestedStage: IBOS_STAGES.APPROVED,
-      requestedBy: "Professional Qualification Center",
-      notes: form?.qualification_notes || "Professional qualification approved.",
-    });
+      fullName: applicantName(app),
+      businessName: businessName(app),
 
-    setMessage(engineResult.message);
-    await loadApplications();
-    setSavingId(null);
-    return;
-  }
-
-  const { data: newEntrepreneur, error: insertError } = await supabase
-    .from("entrepreneurs")
-    .insert({
-      entrepreneur_code: entrepreneurCode,
-      business_code: businessCode,
-      full_name: applicantName(app),
-      business_name: businessName(app),
       email: app.email || null,
       phone: app.phone || null,
-      business_category: businessCategory(app),
+
+      businessCategory:
+        businessCategory(app),
+
+      businessDescription:
+        app.business_description || null,
+
       city: app.city || null,
       state: app.state || null,
       country: app.country || null,
-      business_description: app.business_description || null,
-      funding_goal: fundingGoal(app),
-      units_supported: 0,
-      units_required: Number(app.units_required || app.weekly_unit_goal || 20),
-      coach_status: "Approved",
-      current_stage: IBOS_STAGES.APPROVED,
-      previous_stage: IBOS_STAGES.QUALIFIED,
-      next_stage: IBOS_STAGES.ANNUAL_MEETING_PENDING,
-      ibos_status: "Limited Portal",
-      funding_queue_active: false,
-      daily_transactions_active: false,
-      quarterly_reporting_active: false,
-      automation_active: false,
-      business_intelligence_active: false,
-      interview_date: form.orientation_date || null,
-      interview_time: form.orientation_time || null,
-      interview_status: "Completed",
-      interview_type: "Zoom",
-      meeting_link: ZOOM_LINK,
-      meeting_id: ZOOM_ID,
-      meeting_passcode: ZOOM_PASSCODE,
-      qualification_score: score,
-      qualification_notes: form.qualification_notes || "",
-      funding_status: "Annual Meeting Required",
-      marketplace_status: "Hidden",
-      video_status: "Pending",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
-    .select("id")
-    .single();
 
-  if (insertError || !newEntrepreneur) {
-    setMessage(insertError?.message || "Unable to create entrepreneur.");
-    setSavingId(null);
-    return;
+      fundingGoal:
+        fundingGoal(app),
+
+      unitsRequired:
+        Number(
+          app.units_required ||
+            app.weekly_unit_goal ||
+            20
+        ),
+
+      orientationDate:
+        form.orientation_date || null,
+
+      orientationTime:
+        form.orientation_time || null,
+
+      qualificationScore:
+        score,
+
+      qualificationNotes:
+        form.qualification_notes || "",
+
+      meetingLink:
+        ZOOM_LINK,
+
+      meetingId:
+        ZOOM_ID,
+
+      meetingPasscode:
+        ZOOM_PASSCODE,
+
+      requestedBy:
+        "Professional Qualification Center",
+    }),
   }
+);
 
-  const engineResult = await advanceIBOSStage({
-    entrepreneurId: newEntrepreneur.id,
-    requestedStage: IBOS_STAGES.APPROVED,
-    requestedBy: "Professional Qualification Center",
-    notes: form?.qualification_notes || "Professional qualification approved.",
-  });
+const result = await response.json();
 
-  if (!engineResult.success) {
-    setMessage(engineResult.message);
-    setSavingId(null);
-    return;
-  }
-
-  const { error: updateError } = await supabase
-    .from("entrepreneur_applications")
-    .update({
-      review_status: "Approved",
-      orientation_status: "Completed",
-      qualification_score: score,
-      qualification_notes: form.qualification_notes || "",
-      checklist: form.checklist || {},
-      application_decision: "Approved",
-      activated_at: new Date().toISOString(),
-    })
-    .eq("id", app.id);
-
-  if (updateError) {
-    setMessage(updateError.message);
-    setSavingId(null);
-    return;
-  }
-
-  setMessage(
-    `Business approved successfully. Entrepreneur ID: ${entrepreneurCode} | Business ID: ${businessCode}`
+if (!response.ok || !result.success) {
+  throw new Error(
+    result.message ||
+      "Unable to approve and activate the entrepreneur."
   );
-
-  await loadApplications();
-  setSavingId(null);
 }
 
+const entrepreneurId =
+  result.entrepreneur.id;
+
+const finalEntrepreneurCode =
+  result.entrepreneur.entrepreneurCode;
+
+const finalBusinessCode =
+  result.entrepreneur.businessCode;
+
+const engineResult =
+  result.qualification;
+
+    // =====================================================
+    // Step 6 — Display final result
+    // =====================================================
+
+    const newTimeline =
+  engineResult;
+
+const coachAssigned =
+  Boolean(
+    result.coachAssigned ||
+      result.qualification?.coachAssignment?.assigned
+  );
+
+const coachFullName =
+  result.coach?.fullName ||
+  result.qualification?.coachAssignment?.coach?.fullName ||
+  "";
+
+const coachMessage =
+  coachAssigned
+    ? coachFullName
+      ? ` Assigned Coach: ${coachFullName}.`
+      : " Coach assigned successfully."
+    : " Coach assignment is pending.";
+
+    setMessage(
+      `Business approved successfully. Entrepreneur ID: ${finalEntrepreneurCode} | Business ID: ${finalBusinessCode}.${coachMessage}`
+    );
+
+    await loadApplications();
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Unable to approve and activate the entrepreneur.";
+
+    setMessage(errorMessage);
+  } finally {
+    setSavingId(null);
+  }
+}
 
   async function rejectApplication(app: Application) {
     const form = formById[String(app.id)];

@@ -5,7 +5,7 @@ export default function AIAdminBackupCenterPage() {
         <h1 className="text-6xl font-extrabold mb-5">
           AI Admin Backup Center
         </h1>
-
+   
         <p className="text-2xl text-gray-700 leading-relaxed">
             The AI Admin continuously monitors platform operations, supports
             administrative efficiency, reviews entrepreneur readiness, assists

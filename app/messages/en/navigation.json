@@ -1,0 +1,46 @@
+{
+  "home": "Home",
+
+  "about": "About",
+  "aboutEPEW": "About EPEW",
+  "professionalSupportCenter": "Professional Support Center",
+  "howEPEWWorks": "How EPEW Works",
+  "how": "How",
+
+  "epewTeam": "EPEW Team",
+  "entrepreneurs": "Entrepreneurs",
+  "supporters": "Supporters",
+  "coaches": "Coaches",
+  "partners": "Partners",
+
+  "videos": "Videos",
+  "blogs": "Blogs",
+
+  "login": "Login",
+  "entrepreneurLogin": "Entrepreneur Login",
+  "supporterLogin": "Supporter Login",
+  "coachLogin": "Coach Login",
+  "partnerLogin": "Partner Login",
+  "adminLogin": "Admin Login",
+
+  "register": "Register",
+
+  "language": "Language",
+  "selectLanguage": "Select Language",
+
+  "menu": "Menu",
+  "closeMenu": "Close Menu",
+
+  "search": "Search",
+
+  "contact": "Contact",
+  "resources": "Resources",
+
+  "privacy": "Privacy Policy",
+  "terms": "Terms of Use",
+
+  "dashboard": "Dashboard",
+  "profile": "Profile",
+
+  "logout": "Logout"
+}

@@ -44,16 +44,30 @@ function getCountdown(): Countdown {
 }
 
 export default function HomePage() {
-  const [countdown, setCountdown] = useState<Countdown>(
-    getCountdown(),
-  );
+   const [countdown, setCountdown] =
+    useState<Countdown>({
+      days: 0,
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+      isOpen: false,
+    });
 
   useEffect(() => {
-    const interval = window.setInterval(() => {
+    function updateCountdown(): void {
       setCountdown(getCountdown());
-    }, 1000);
+    }
 
-    return () => window.clearInterval(interval);
+    updateCountdown();
+
+    const interval = window.setInterval(
+      updateCountdown,
+      1000,
+    );
+
+    return () => {
+      window.clearInterval(interval);
+    };
   }, []);
 
   const openingDateLabel = useMemo(
