@@ -232,11 +232,6 @@ const namespaceRegistry: Record<
   },
 
   ht: {
-    about: async () => {
-  const module = await import("../../../messages/ht/about.json");
-  return module.default as TranslationDictionary;
-},
-
     navigation: async () => {
       const module = await import("../../../messages/ht/navigation.json");
       return module.default as TranslationDictionary;
