@@ -1,0 +1,122 @@
+{
+  "organization": {
+    "epew": "Alianza de Emprendedores para el Empoderamiento y la Prosperidad",
+    "ede": "Ecosistema de Desarrollo Empresarial",
+    "ibos": "Soy Mi Propio Jefe",
+    "mission": "Construyendo Comunidades. Construyendo Empresas. Construyendo Prosperidad."
+  },
+
+  "roles": {
+    "entrepreneur": "Emprendedor",
+    "supporter": "Miembro de Apoyo",
+    "coach": "Coach",
+    "partner": "Socio",
+    "administrator": "Administrador",
+    "committee": "Comité de Financiamiento",
+    "community": "Miembro de la Comunidad"
+  },
+
+  "business": {
+    "business": "Empresa",
+    "businessIdea": "Idea de Negocio",
+    "businessPlan": "Plan de Negocio",
+    "businessLaunch": "Lanzamiento del Negocio",
+    "businessOpening": "Apertura del Negocio",
+    "grandOpening": "Gran Apertura",
+    "businessProfile": "Perfil del Negocio",
+    "businessStatus": "Estado del Negocio",
+    "businessCategory": "Categoría del Negocio"
+  },
+
+  "qualification": {
+    "qualified": "Calificado",
+    "notQualified": "No Calificado",
+    "qualification": "Calificación",
+    "qualificationReview": "Revisión de Calificación",
+    "qualificationStatus": "Estado de Calificación",
+    "eligibility": "Elegibilidad",
+    "interview": "Entrevista",
+    "readiness": "Preparación del Negocio",
+    "motivationScore": "Puntuación de Motivación",
+    "coachAssessment": "Evaluación del Coach"
+  },
+
+  "funding": {
+    "funding": "Financiamiento",
+    "fundingQueue": "Cola de Financiamiento",
+    "fundingApproved": "Financiamiento Aprobado",
+    "fundingPending": "Financiamiento Pendiente",
+    "communitySupport": "Apoyo Comunitario",
+    "communitySupportUnits": "Unidades de Apoyo Comunitario",
+    "weeklyContribution": "Contribución Semanal",
+    "foundingSupporter": "Miembro Fundador",
+    "participationBenefit": "Beneficio de Participación"
+  },
+
+  "workflow": {
+    "application": "Solicitud",
+    "review": "Revisión de Solicitud",
+    "coachAssignment": "Asignación de Coach",
+    "development": "Desarrollo del Negocio",
+    "approval": "Aprobación del Financiamiento",
+    "launchPreparation": "Preparación para el Lanzamiento",
+    "launch": "Lanzamiento",
+    "compliance": "Cumplimiento",
+    "growth": "Crecimiento del Negocio"
+  },
+
+  "events": {
+    "annualMeeting": "Reunión Anual",
+    "businessLaunchCeremony": "Ceremonia de Lanzamiento",
+    "coachCertification": "Certificación de Coaches",
+    "partnerCertification": "Certificación de Socios",
+    "communityRecognition": "Reconocimiento Comunitario",
+    "internationalSummit": "Cumbre Internacional"
+  },
+
+  "certificates": {
+    "certificate": "Certificado",
+    "certificateNumber": "Número de Certificado",
+    "authenticationId": "ID de Autenticación",
+    "verification": "Verificación",
+    "verified": "Verificado",
+    "revoked": "Revocado",
+    "archived": "Archivado"
+  },
+
+  "compliance": {
+    "compliant": "En Cumplimiento",
+    "actionRequired": "Acción Requerida",
+    "nonCompliant": "Fuera de Cumplimiento",
+    "quarterlyReport": "Informe Trimestral",
+    "license": "Licencia Comercial",
+    "insurance": "Seguro",
+    "coachMeeting": "Reunión con el Coach"
+  },
+
+  "reports": {
+    "dashboard": "Panel de Control",
+    "weeklyReport": "Informe Semanal",
+    "monthlyReport": "Informe Mensual",
+    "annualReport": "Informe Anual",
+    "analytics": "Análisis",
+    "statistics": "Estadísticas"
+  },
+
+  "communication": {
+    "announcement": "Anuncio",
+    "notification": "Notificación",
+    "campaign": "Campaña",
+    "sms": "SMS",
+    "email": "Correo Electrónico",
+    "whatsapp": "WhatsApp"
+  },
+
+  "recognition": {
+    "achievement": "Logro",
+    "recognition": "Reconocimiento",
+    "graduation": "Graduación",
+    "award": "Premio",
+    "lifetimeAchievement": "Logro de Toda una Vida"
+  }
+}

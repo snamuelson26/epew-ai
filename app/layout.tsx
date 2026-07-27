@@ -15,9 +15,40 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EPEW",
+  title: {
+    default: "EPEW",
+    template: "%s | EPEW",
+  },
+
   description:
     "Entrepreneur Development Ecosystem — Build Your Community. Build Your Business. Build Your Wealth.",
+
+  applicationName: "EPEW",
+
+  keywords: [
+    "Entrepreneur",
+    "Business Funding",
+    "Community",
+    "EPEW",
+    "EDE",
+    "IBOS",
+    "Business Launch",
+  ],
+
+  authors: [
+    {
+      name: "EPEW",
+    },
+  ],
+
+  creator: "EPEW",
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+
+  metadataBase: new URL("https://epew.us"),
 };
 
 export default function RootLayout({
@@ -31,13 +62,14 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-screen flex flex-col bg-white text-black">
         <LanguageProvider
           initialLocale="en"
           namespaces={[
             "common",
             "navigation",
             "homepage",
+            "about",
           ]}
           detectBrowserLanguage
           useStoredPreference

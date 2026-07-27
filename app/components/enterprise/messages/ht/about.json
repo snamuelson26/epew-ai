@@ -1,0 +1,78 @@
+{
+  "hero": {
+    "badge": "Konsènan EPEW",
+    "title": "Bati Kominote Atravè Antreprenarya",
+    "subtitle": "Platfòm Entrepreneur Partnership Empowerment Wealth (EPEW) la bay antreprenè yo fòmasyon, sipò kominotè, opòtinite finansman biznis, ak devlopman alontèm."
+  },
+
+  "mission": {
+    "title": "Misyon Nou",
+    "description": "Bay antreprenè yo zouti pou reyisi atravè edikasyon, gidans, patisipasyon kominotè, ak aksè a opòtinite finansman ki ranfòse ekonomi lokal yo."
+  },
+
+  "vision": {
+    "title": "Vizyon Nou",
+    "description": "Bati yon mond kote chak antreprenè ki motive gen opòtinite pou lanse, devlope, epi kenbe yon biznis ki reyisi gras ak kolaborasyon kominotè."
+  },
+
+  "whoWeAre": {
+    "title": "Ki Moun Nou Ye",
+    "description1": "EPEW se plis pase yon platfòm biznis. Li se yon Ekosistèm Devlopman Antreprenarya ki fèt pou gide antreprenè depi nan lide biznis yo rive nan yon biznis ki reyisi.",
+    "description2": "Atravè fòmasyon estriktire, gidans pèsonèl, patisipasyon kominotè, ak sipò kontinyèl, antreprenè yo resevwa resous yo bezwen pou bati biznis ki kreye djòb epi ranfòse kominote yo."
+  },
+
+  "ecosystem": {
+    "title": "Ekosistèm EPEW la",
+    "entrepreneurs": {
+      "title": "Antreprenè",
+      "description": "Moun k ap devlope lide biznis epi lanse antrepriz ki reyisi."
+    },
+    "supporters": {
+      "title": "Sipòtè",
+      "description": "Manm kominote a ki patisipe pou ranfòse antreprenè yo ak kwasans ekonomik lokal la."
+    },
+    "coaches": {
+      "title": "Antrenè Pèsonèl",
+      "description": "Gid ki ede antreprenè yo prepare, òganize, epi lanse biznis yo avèk siksè."
+    },
+    "partners": {
+      "title": "Patnè",
+      "description": "Òganizasyon ak pwofesyonèl ki bay sèvis, ekspètiz, ak sipò estratejik."
+    }
+  },
+
+  "values": {
+    "title": "Valè Fondamantal Nou",
+    "community": {
+      "title": "Kominote Anvan Tout Bagay",
+      "description": "Kominote ki solid bati biznis ki solid."
+    },
+    "integrity": {
+      "title": "Entegrite",
+      "description": "Onètete, transparans, ak responsablite gide tout desizyon nou pran."
+    },
+    "innovation": {
+      "title": "Inovasyon",
+      "description": "Kreyativite kreye solisyon ki dire lontan."
+    },
+    "empowerment": {
+      "title": "Otonomizasyon",
+      "description": "Chak antreprenè merite yon vrè opòtinite pou reyisi."
+    }
+  },
+
+  "statistics": {
+    "title": "Objektif Alontèm Nou",
+    "entrepreneurs": "Antreprenè Kalifye",
+    "businesses": "Biznis Lanse",
+    "jobs": "Djòb Kreye",
+    "communities": "Kominote Sèvi"
+  },
+
+  "callToAction": {
+    "title": "Vin Fè Pati Mouvman an",
+    "description": "Kit ou se antreprenè, sipòtè, antrenè oswa patnè, ou kapab ede bati biznis ki pi solid ak kominote ki pi fò.",
+    "primaryButton": "Antre nan EPEW",
+    "secondaryButton": "Aprann Plis"
+  }
+}

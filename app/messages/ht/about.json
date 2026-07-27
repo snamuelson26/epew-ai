@@ -1,0 +1,64 @@
+{
+  "hero": {
+    "badge": "Konsènan EPEW",
+    "title": "Bati Kominote Gras ak Antreprenarya",
+    "subtitle": "Platfòm Entrepreneur Partnership Empower Wealth (EPEW) ede antreprenè yo atravè edikasyon, antrenman, patisipasyon kominotè, ak opòtinite finansman."
+  },
+  "mission": {
+    "title": "Misyon Nou",
+    "description": "Bay antreprenè yo fòs atravè edikasyon, mentorat, patisipasyon kominotè, ak aksè ak finansman pou yo kapab bati biznis dirab epi ranfòse kominote yo."
+  },
+  "vision": {
+    "title": "Vizyon Nou",
+    "description": "Bati yon mond kote chak antreprenè ki motive gen opòtinite pou lanse, devlope, epi kenbe yon biznis ki reyisi pandan l ap kreye richès dirab pou kominote li."
+  },
+  "whoWeAre": {
+    "title": "Ki Moun Nou Ye",
+    "description1": "EPEW se plis pase yon platfòm biznis. Li se yon Ekosistèm Devlopman Antreprenè konplè ki fèt pou gide antreprenè yo depi nan lide rive nan pwopriyetè yon biznis ki reyisi.",
+    "description2": "Atravè edikasyon estriktire, antrenman, patisipasyon kominotè, preparasyon pou finansman, ak sipò alontèm, EPEW ede moun kreye biznis ki ranfòse fanmi ak kominote yo."
+  },
+  "ecosystem": {
+    "title": "Ekosistèm EPEW",
+    "entrepreneurs": {
+      "title": "Antreprenè",
+      "description": "Moun k ap devlope lide biznis epi lanse antrepriz ki reyisi."
+    },
+    "supporters": {
+      "title": "Sipòtè",
+      "description": "Manm kominote ki patisipe nan ranfòse antreprenè yo ak ekonomi lokal yo."
+    },
+    "coaches": {
+      "title": "Antrenè Pèsonèl",
+      "description": "Gid ki ede antreprenè yo prepare, òganize, epi lanse biznis yo avèk siksè."
+    },
+    "partners": {
+      "title": "Patnè",
+      "description": "Òganizasyon ak pwofesyonèl ki bay sèvis, ekspètiz, ak sipò estratejik."
+    }
+  },
+  "values": {
+    "title": "Valè Fondamantal Nou",
+    "community": {
+      "title": "Kominote Anvan Tout Bagay",
+      "description": "Kominote solid bati biznis solid."
+    },
+    "integrity": {
+      "title": "Entegrite",
+      "description": "Nou travay avèk onètete, transparans, ak responsablite."
+    },
+    "innovation": {
+      "title": "Inovasyon",
+      "description": "Nou ankouraje kreyativite ak amelyorasyon kontinyèl."
+    },
+    "empowerment": {
+      "title": "Bay Moun Fòs",
+      "description": "Ede moun vin endepandan atravè antreprenarya."
+    }
+  },
+  "callToAction": {
+    "title": "Vin Fè Pati Ekosistèm EPEW la",
+    "description": "Kit ou se antreprenè, sipòtè, antrenè, oswa patnè, ou gen plas ou nan bati kominote ki pi solid atravè antreprenarya.",
+    "primaryButton": "Vin yon Antreprenè",
+    "secondaryButton": "Retounen Lakay"
+  }
+}

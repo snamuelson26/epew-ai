@@ -1,0 +1,186 @@
+{
+  "hero": {
+    "badge": "About EPEW",
+    "title": "Building Communities Through Entrepreneurship",
+    "subtitle": "Ekero Partners Empower Wealth connects entrepreneurs, supporters, coaches, partners, and communities through education, preparation, professional support, community participation, and responsible business development.",
+    "imageAlt": "Ekero Partners Empower Wealth"
+  },
+  "overview": {
+    "title": "About Ekero Partners Empower Wealth",
+    "text": "EPEW is more than a business support platform. It is a structured ecosystem created to help entrepreneurs move from vision to action, from ideas to operations, and from individual effort to community-driven growth. Through coaching, business development, strategic partnerships, and community participation, EPEW helps build sustainable businesses that create jobs, strengthen families, and support long-term wealth building.",
+    "imageAlt": "About Ekero Partners Empower Wealth"
+  },
+  "whoWeAre": {
+    "title": "Who We Are",
+    "description": "EPEW is a complete Entrepreneur Development Ecosystem designed to guide aspiring entrepreneurs from business idea to structured, sustainable business ownership.",
+    "description1": "EPEW is more than a business platform. It is a complete Entrepreneur Development Ecosystem designed to guide aspiring entrepreneurs from idea to successful business ownership.",
+    "description2": "Through structured education, coaching, business development, community participation, professional guidance, and long-term support, EPEW helps entrepreneurs build businesses that strengthen families and communities.",
+    "cards": {
+      "education": {
+        "title": "Entrepreneur Education",
+        "text": "Entrepreneurs receive structured learning, preparation tools, and practical information to understand how to build and operate a business."
+      },
+      "coaching": {
+        "title": "Personal Coaching",
+        "text": "Personal Coaches help entrepreneurs remain organized, prepared, accountable, and focused throughout the development process."
+      },
+      "development": {
+        "title": "Business Development",
+        "text": "EPEW helps entrepreneurs transform business ideas into organized plans, registered businesses, and launch-ready operations."
+      },
+      "guidance": {
+        "title": "Professional Guidance",
+        "text": "Entrepreneurs receive access to coordinated professional services, strategic guidance, and operational support."
+      },
+      "community": {
+        "title": "Community Participation",
+        "text": "Entrepreneurs, supporters, coaches, and partners work together to strengthen businesses and local communities."
+      }
+    }
+  },
+  "whatWeDo": {
+    "title": "Every Successful Business Begins with an Idea",
+    "text": "EPEW helps entrepreneurs move beyond the idea stage by providing a structured journey from preparation and qualification to business organization, community participation, funding readiness, launch, and long-term growth.",
+    "imageAlt": "Every successful business begins with an idea",
+    "journey": {
+      "idea": "Business Idea",
+      "structure": "Business Structure",
+      "launch": "Business Launch",
+      "growth": "Business Growth"
+    },
+    "cards": {
+      "entrepreneurs": {
+        "title": "Entrepreneurs",
+        "text": "Entrepreneurs receive a clear development pathway, preparation tools, coaching support, professional services, community participation opportunities, and guidance toward launching a sustainable business."
+      },
+      "coaches": {
+        "title": "Personal Coaches",
+        "text": "Personal Coaches help entrepreneurs remain organized, prepared, accountable, and focused as they move through the EPEW development journey."
+      },
+      "supporters": {
+        "title": "Supporters",
+        "text": "Supporters strengthen entrepreneurship by participating in an organized community support system that helps qualified businesses move toward launch."
+      },
+      "partners": {
+        "title": "Professional Partners",
+        "text": "Professional partners provide essential services, expertise, resources, and operational support throughout the entrepreneur development and launch process."
+      }
+    }
+  },
+  "approach": {
+    "title": "The EPEW Development Model",
+    "text": "The EPEW development model provides entrepreneurs with a structured path connecting qualification, coaching, business preparation, community participation, funding readiness, launch, and continued accountability.",
+    "imageAlt": "The EPEW development model",
+    "steps": {
+      "qualification": {
+        "title": "Qualification",
+        "text": "The entrepreneur completes an application, interview, readiness review, and qualification process."
+      },
+      "coaching": {
+        "title": "Coaching and Preparation",
+        "text": "The entrepreneur receives guidance, follows an organized development plan, and completes required preparation activities."
+      },
+      "structure": {
+        "title": "Business Structure",
+        "text": "The business is organized through planning, registration, documentation, compliance, financial preparation, and professional support."
+      },
+      "campaign": {
+        "title": "Community Participation",
+        "text": "The entrepreneur builds a qualified community and demonstrates commitment through active participation in the ecosystem."
+      },
+      "funding": {
+        "title": "Funding Readiness",
+        "text": "Qualified businesses are reviewed for launch readiness and may advance to the funding approval process."
+      },
+      "launch": {
+        "title": "Business Launch",
+        "text": "Approved businesses receive coordinated launch support, vendor services, readiness verification, and continued post-launch accountability."
+      }
+    }
+  },
+  "model": {
+    "title": "EPEW • EDE • IBOS",
+    "text": "EPEW, EDE, and IBOS work together as one integrated entrepreneurship ecosystem. Each part has a distinct purpose while supporting the same mission of helping entrepreneurs prepare, launch, operate, and grow sustainable businesses.",
+    "imageAlt": "EPEW EDE and IBOS ecosystem structure",
+    "cards": {
+      "participation": {
+        "title": "Community Participation",
+        "text": "EPEW connects entrepreneurs, supporters, coaches, partners, and communities through organized participation and shared economic empowerment."
+      },
+      "sustainability": {
+        "title": "Sustainable Business Development",
+        "text": "The Entrepreneur Development Ecosystem provides the structure, systems, professional support, accountability, and development process that guide each entrepreneur."
+      }
+    },
+    "notice": {
+      "title": "A Community Development Ecosystem",
+      "text": "EPEW is not a bank, investment company, broker-dealer, or guarantee of business financing. Participation does not guarantee approval, funding, profit, or business success. All decisions remain subject to qualification, documented readiness, available resources, program requirements, and applicable agreements."
+    }
+  },
+  "mission": {
+    "imageAlt": "Our mission",
+    "title": "Our Mission",
+    "description": "EPEW’s mission is to empower entrepreneurs through coaching, business structure, strategic guidance, professional support, and community collaboration that help create sustainable businesses, economic opportunities, and long-term wealth for individuals, families, and communities.",
+    "text": "EPEW’s mission is to empower entrepreneurs through coaching, business structure, strategic guidance, professional support, and community collaboration that help create sustainable businesses, economic opportunities, and long-term wealth for individuals, families, and communities."
+  },
+  "vision": {
+    "imageAlt": "Our vision",
+    "title": "Our Vision",
+    "description": "EPEW’s vision is to build a collaborative ecosystem where entrepreneurs, supporters, coaches, partners, and communities work together to create sustainable businesses, stronger communities, and long-term economic opportunities for future generations.",
+    "text": "EPEW’s vision is to build a collaborative ecosystem where entrepreneurs, supporters, coaches, partners, and communities work together to create sustainable businesses, stronger communities, and long-term economic opportunities for future generations."
+  },
+  "values": {
+    "imageAlt": "The core values of EPEW",
+    "title": "Our Core Values",
+    "text": "The EPEW ecosystem is guided by values that protect organizational integrity, strengthen community participation, and support responsible entrepreneurship.",
+    "cards": {
+      "collaboration": {
+        "title": "Collaboration",
+        "text": "We believe sustainable progress is created when entrepreneurs, supporters, coaches, partners, and communities work together."
+      },
+      "accountability": {
+        "title": "Accountability",
+        "text": "Every participant is expected to respect commitments, complete responsibilities, maintain accurate information, and contribute to the integrity of the ecosystem."
+      },
+      "sustainability": {
+        "title": "Sustainability",
+        "text": "We promote businesses and systems designed to remain responsible, compliant, adaptable, and operational over time."
+      },
+      "integrity": {
+        "title": "Integrity",
+        "text": "We value honesty, transparency, fairness, responsible governance, and the protection of every participant."
+      },
+      "empowerment": {
+        "title": "Empowerment",
+        "text": "We help individuals gain the preparation, confidence, organization, support, and opportunity needed to build their own businesses."
+      },
+      "impact": {
+        "title": "Community Impact",
+        "text": "We measure success through businesses launched, jobs created, communities strengthened, knowledge shared, and opportunities expanded."
+      }
+    }
+  },
+  "why": {
+    "imageAlt": "Why EPEW exists",
+    "title": "Why EPEW Exists",
+    "text": "EPEW exists to transform business ideas into real opportunities. Through business development, coaching, professional guidance, and community collaboration, EPEW helps entrepreneurs build sustainable businesses that create jobs, strengthen families, and generate long-term community impact."
+  },
+  "promise": {
+    "title": "The EPEW Promise",
+    "text": "EPEW promises to provide every participant with a fair, organized, transparent, and accountable process. We will protect the integrity of the ecosystem, promote responsible entrepreneurship, respect documented participation, and continuously improve the systems that support business development and community empowerment."
+  },
+  "join": {
+  "imageAlt": "Join the EPEW entrepreneurship ecosystem",
+  "title": "Join the EPEW Ecosystem",
+  "text": "Whether you have a business idea, want to support entrepreneurship, provide professional services, or help strengthen your community, there is a place for you within the EPEW ecosystem.",
+  "buttons": {
+    "entrepreneur": "Become an Entrepreneur",
+    "supporter": "Become a Supporter",
+    "partner": "Become a Partner"
+  }
+},
+"disclosure": {
+  "title": "Important Disclosure",
+  "text": "EPEW is an entrepreneurship development and community participation platform. EPEW is not a bank, lender, investment adviser, broker-dealer, crowdfunding portal, or guarantee of financing or business success. Participation benefits are not guaranteed and may depend on eligibility, completed obligations, available resources, applicable agreements, and the performance and sustainability of the ecosystem."
+}
+}

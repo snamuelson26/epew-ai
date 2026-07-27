@@ -1,1 +1,194 @@
-{}
+{
+  "banner": {
+    "title": "🚀 Aperçu Piblik la Ouvè Kounye a",
+    "description": "Eksplore platfòm nan jodi a. Aplikasyon pou finansman biznis yo ap ouvè 29 jiyè 2026."
+  },
+
+  "launch": {
+    "cohort": "PREMYE GWÒP ANTREPRENÈ FONDATÈ YO",
+    "applicationsOpen": "APLIKASYON YO OUVÈ KOUNYE A",
+    "openDescription": "Kòmanse vwayaj antreprenarya ou jodi a.",
+    "countdownTitle": "Aplikasyon yo Ap Ouvè Nan",
+    "description": "Prepare w depi jodi a. Aprann kijan pwogram nan fonksyone. Eksplore ekosistèm nan. Pare pou lansman an."
+  },
+
+  "countdown": {
+    "days": "Jou",
+    "hours": "Èdtan",
+    "minutes": "Minit",
+    "seconds": "Segonn"
+  },
+
+  "buttons": {
+    "startJourney": "Kòmanse Vwayaj Antreprenarya Ou",
+    "applicationsOpen": "Aplikasyon yo Ouvè 29 Jiyè",
+    "exploreEcosystem": "Eksplore Ekosistèm nan",
+    "learnMore": "Aprann Plis"
+  },
+
+  "hero": {
+    "titleLine1": "Ekosistèm",
+    "titleLine2": "Devlopman",
+    "titleLine3": "Antreprenè",
+    "lead": "Bati Kominote Ou. Bati Biznis Ou. Bati Richès Ou.",
+    "description": "EPEW konekte antreprenè yo ak edikasyon, ankadreman, sipò kominotè, devlopman biznis ak finansman atravè yon sèl ekosistèm entegre.",
+    "imageAlt": "Ekosistèm Devlopman Antreprenè"
+  },
+
+  "preview": {
+    "eyebrow": "APERÇU PIBLIK",
+    "title": "Dekouvri Sa Ki Fè EPEW Diferan",
+    "description": "Eksplore fason ekosistèm devlopman antreprenè nou an prepare moun anvan finansman epi kontinye sipòte yo apre lansman biznis yo.",
+
+    "cards": {
+      "program": {
+        "title": "Aprann Pwogram nan",
+        "text": "Konprann chak etap nan vwayaj antreprenarya a anvan aplikasyon yo kòmanse."
+      },
+
+      "introduction": {
+        "title": "Gade Entwodiksyon an",
+        "text": "Gade kijan ekosistèm nan ede transfòme lide yo an biznis ki reyisi."
+      },
+
+      "idea": {
+        "title": "Pote Lide Ou",
+        "text": "Kèlkeswa kote ou kòmanse, lide biznis ou kapab kòmanse isit la."
+      }
+    }
+  },
+
+  "idea": {
+    "title": "Chak Biznis Kòmanse Ak Yon Lide",
+    "description": "Kit lide ou piti oswa li gen gwo anbisyon, EPEW bay edikasyon, ankadreman, planifikasyon ak sipò kominotè pou ede transfòme li an yon biznis ki reyisi."
+  },
+
+  "model": {
+    "title": "Modèl Devlopman Antreprenè a",
+    "description": "Yon sistèm konplè ki fèt pou gide antreprenè yo depi nan lide biznis la rive nan siksè alontèm.",
+
+    "steps": {
+      "idea": {
+        "title": "Lide Biznis",
+        "text": "Chak biznis ki reyisi kòmanse ak yon lide."
+      },
+
+      "development": {
+        "title": "Devlopman Biznis",
+        "text": "Aprann, prepare, òganize epi vin pare pou lanse."
+      },
+
+      "funding": {
+        "title": "Finansman Kominotè",
+        "text": "Resevwa finansman kominotè apre ou fin kalifye."
+      },
+
+      "ecosystem": {
+        "title": "Kwasans Biznis",
+        "text": "Opere nan yon ekosistèm devlopman alontèm."
+      },
+
+      "ibos": {
+        "title": "IBOS",
+        "text": "Kontinye resevwa sipò atravè Sistèm Entelijan pou Operasyon Biznis la."
+      }
+    }
+  },
+
+  "pillars": {
+    "title": "Twa Sistèm. Yon Sèl Ekosistèm.",
+    "description": "Chak òganizasyon gen yon wòl espesyal pandan yo travay ansanm pou ede antreprenè yo reyisi.",
+
+    "epew": {
+      "subtitle": "Patenarya Antreprenè pou Otonomi ak Richès",
+      "text": "Angajman kominotè, kalifikasyon antreprenè ak finansman."
+    },
+
+    "ede": {
+      "subtitle": "Ekosistèm Devlopman Antreprenè",
+      "text": "Edikasyon, ankadreman, devlopman ak kwasans biznis alontèm."
+    },
+
+    "ibos": {
+      "subtitle": "Sistèm Entelijan pou Operasyon Biznis",
+      "text": "Teknoloji, automatisation, rapò, konfòmite ak jesyon biznis."
+    }
+  },
+
+  "ecosystem": {
+    "title": "Yon Ekosistèm Konplè pou Antreprenè",
+    "description": "Edikasyon, ankadreman, finansman, operasyon, konfòmite ak sipò kontinyèl konekte ansanm.",
+    "imageAlt": "Dyagram Ekosistèm EPEW"
+  },
+
+  "journey": {
+    "title": "Vwayaj Antreprenarya Ou",
+    "description": "Depi nan aplikasyon an rive nan lansman biznis la ak pi lwen toujou, chak antreprenè suiv yon sèl chemen devlopman konplè.",
+    "imageAlt": "Dyagram Vwayaj Antreprenè"
+  },
+
+  "video": {
+    "title": "Gade Entwodiksyon an",
+    "description": "Aprann kijan EPEW-EDE-IBOS fonksyone atravè entwodiksyon ofisyèl nou an.",
+    "frameTitle": "Videyo Entwodiksyon EPEW"
+  },
+
+  "why": {
+    "title": "Poukisa Antreprenè yo Chwazi EPEW",
+
+    "cards": {
+      "development": {
+        "title": "Devlopman Konplè",
+        "text": "Nou prepare antreprenè yo anvan finansman."
+      },
+
+      "support": {
+        "title": "Sipò Kominotè",
+        "text": "Devlope avèk antrenè, sipòtè ak patnè."
+      },
+
+      "funding": {
+        "title": "Opòtinite Finansman",
+        "text": "Antreprenè ki kalifye yo vin elijib pou finansman kominotè."
+      },
+
+      "growth": {
+        "title": "Siksè Alontèm",
+        "text": "Kontinye resevwa gidans apre lansman biznis ou."
+      }
+    }
+  },
+
+  "leadership": {
+    "title": "Se Ou Menm Ki Pwopriyetè Biznis la",
+
+    "owner": "Se ou menm ki posede biznis ou.",
+
+    "decisions": "Se ou menm ki pran desizyon yo.",
+
+    "vision": "Se ou menm ki bati avni ou.",
+
+    "notRun": "EPEW pa dirije biznis ou.",
+
+    "ecosystem": "Nou ede ou bati yon biznis ki pi solid."
+  },
+
+  "global": {
+    "title": "Bati Kominote ki Pi Solid Atravè Antreprenarya",
+    "description": "Misyon nou se ranfòse fanmi, kominote ak ekonomi yo pandan n ap ede antreprenè bati biznis dirab."
+  },
+
+  "promise": {
+    "title": "Pwomès Nou",
+
+    "vision": "Nou kwè chak antreprenè merite yon opòtinite.",
+
+    "develop": "Nou devlope antreprenè yo anvan nou finanse biznis yo.",
+
+    "ecosystem": "Nou rete ansanm ak antreprenè yo apre lansman.",
+
+    "funding": "Ansanm, nou bati biznis, kominote ak richès.",
+
+    "conclusion": "Byenveni nan Ekosistèm Devlopman Antreprenè a."
+  }
+}

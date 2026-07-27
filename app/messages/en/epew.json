@@ -1,0 +1,122 @@
+{
+  "organization": {
+    "epew": "Entrepreneurs Partnership to Empower and Wealth",
+    "ede": "Entrepreneur Development Ecosystem",
+    "ibos": "I Am My Own Boss",
+    "mission": "Building Communities. Building Businesses. Building Wealth."
+  },
+
+  "roles": {
+    "entrepreneur": "Entrepreneur",
+    "supporter": "Supporter",
+    "coach": "Coach",
+    "partner": "Partner",
+    "administrator": "Administrator",
+    "committee": "Funding Committee",
+    "community": "Community Member"
+  },
+
+  "business": {
+    "business": "Business",
+    "businessIdea": "Business Idea",
+    "businessPlan": "Business Plan",
+    "businessLaunch": "Business Launch",
+    "businessOpening": "Business Opening",
+    "grandOpening": "Grand Opening",
+    "businessProfile": "Business Profile",
+    "businessStatus": "Business Status",
+    "businessCategory": "Business Category"
+  },
+
+  "qualification": {
+    "qualified": "Qualified",
+    "notQualified": "Not Qualified",
+    "qualification": "Qualification",
+    "qualificationReview": "Qualification Review",
+    "qualificationStatus": "Qualification Status",
+    "eligibility": "Eligibility",
+    "interview": "Interview",
+    "readiness": "Business Readiness",
+    "motivationScore": "Motivation Score",
+    "coachAssessment": "Coach Assessment"
+  },
+
+  "funding": {
+    "funding": "Funding",
+    "fundingQueue": "Funding Queue",
+    "fundingApproved": "Funding Approved",
+    "fundingPending": "Funding Pending",
+    "communitySupport": "Community Support",
+    "communitySupportUnits": "Community Support Units",
+    "weeklyContribution": "Weekly Contribution",
+    "foundingSupporter": "Founding Supporter",
+    "participationBenefit": "Participation Benefit"
+  },
+
+  "workflow": {
+    "application": "Application",
+    "review": "Application Review",
+    "coachAssignment": "Coach Assignment",
+    "development": "Business Development",
+    "approval": "Funding Approval",
+    "launchPreparation": "Launch Preparation",
+    "launch": "Business Launch",
+    "compliance": "Compliance",
+    "growth": "Business Growth"
+  },
+
+  "events": {
+    "annualMeeting": "Annual Meeting",
+    "businessLaunchCeremony": "Business Launch Ceremony",
+    "coachCertification": "Coach Certification",
+    "partnerCertification": "Partner Certification",
+    "communityRecognition": "Community Recognition",
+    "internationalSummit": "International Summit"
+  },
+
+  "certificates": {
+    "certificate": "Certificate",
+    "certificateNumber": "Certificate Number",
+    "authenticationId": "Authentication ID",
+    "verification": "Verification",
+    "verified": "Verified",
+    "revoked": "Revoked",
+    "archived": "Archived"
+  },
+
+  "compliance": {
+    "compliant": "Compliant",
+    "actionRequired": "Action Required",
+    "nonCompliant": "Non-Compliant",
+    "quarterlyReport": "Quarterly Report",
+    "license": "Business License",
+    "insurance": "Insurance",
+    "coachMeeting": "Coach Meeting"
+  },
+
+  "reports": {
+    "dashboard": "Dashboard",
+    "weeklyReport": "Weekly Report",
+    "monthlyReport": "Monthly Report",
+    "annualReport": "Annual Report",
+    "analytics": "Analytics",
+    "statistics": "Statistics"
+  },
+
+  "communication": {
+    "announcement": "Announcement",
+    "notification": "Notification",
+    "campaign": "Campaign",
+    "sms": "SMS",
+    "email": "Email",
+    "whatsapp": "WhatsApp"
+  },
+
+  "recognition": {
+    "achievement": "Achievement",
+    "recognition": "Recognition",
+    "graduation": "Graduation",
+    "award": "Award",
+    "lifetimeAchievement": "Lifetime Achievement"
+  }
+}

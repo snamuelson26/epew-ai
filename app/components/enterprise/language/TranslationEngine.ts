@@ -160,6 +160,33 @@ const INITIAL_CONFIGURATION: TranslationEngineConfiguration = {
 /* JSON imports are dynamically typed in this file to avoid module
    augmentation issues. Dynamic imports are cast where used. */
 
+async function loadNamespace(
+  locale: SupportedLocale,
+  namespace: string,
+): Promise<TranslationDictionary> {
+  try {
+    const module = await import(
+      `../../../messages/${locale}/${namespace}.json`
+    );
+
+    return module.default as TranslationDictionary;
+  } catch {
+    if (locale === FALLBACK_LOCALE) {
+      return {};
+    }
+
+    try {
+      const fallbackModule = await import(
+        `../../../messages/${FALLBACK_LOCALE}/${namespace}.json`
+      );
+
+      return fallbackModule.default as TranslationDictionary;
+    } catch {
+      return {};
+    }
+  }
+}
+
 /**
  * ============================================================
  * Namespace Registry
@@ -171,8 +198,11 @@ const INITIAL_CONFIGURATION: TranslationEngineConfiguration = {
  * Translation files:
  * app/messages/{locale}/{namespace}.json
  *
- * Correct relative path:
- * ../../../messages/
+* Translation files:
+* app/components/enterprise/messages/{locale}/{namespace}.json
+*
+* Correct relative path:
+* ../messages/
  */
 
 const namespaceRegistry: Record<
@@ -181,109 +211,93 @@ const namespaceRegistry: Record<
 > = {
   en: {
     common: async () => {
-      const module = await import(
-        "../../../messages/en/common.json"
-      );
-
+      const module = await import("../../../messages/en/common.json");
       return module.default as TranslationDictionary;
     },
 
     navigation: async () => {
-      const module = await import(
-        "../../../messages/en/navigation.json"
-      );
-
+      const module = await import("../../../messages/en/navigation.json");
       return module.default as TranslationDictionary;
     },
 
     homepage: async () => {
-      const module = await import(
-        "../../../messages/en/homepage.json"
-      );
-
+      const module = await import("../../../messages/en/homepage.json");
       return module.default as TranslationDictionary;
     },
+
+   about: async () => {
+  const module = await import("../../../messages/en/about.json");
+  return module.default as TranslationDictionary;
+},
   },
 
   ht: {
-    common: async () => {
-      const module = await import(
-        "../../../messages/ht/common.json"
-      );
-
-      return module.default as TranslationDictionary;
-    },
+    about: async () => {
+  const module = await import("../../../messages/ht/about.json");
+  return module.default as TranslationDictionary;
+},
 
     navigation: async () => {
-      const module = await import(
-        "../../../messages/ht/navigation.json"
-      );
-
+      const module = await import("../../../messages/ht/navigation.json");
       return module.default as TranslationDictionary;
     },
 
     homepage: async () => {
-      const module = await import(
-        "../../../messages/ht/homepage.json"
-      );
+      const module = await import("../../../messages/ht/homepage.json");
+      return module.default as TranslationDictionary;
+    },
 
+    about: async () => {
+      const module = await import("../messages/ht/about.json");
       return module.default as TranslationDictionary;
     },
   },
 
   fr: {
     common: async () => {
-      const module = await import(
-        "../../../messages/fr/common.json"
-      );
-
+      const module = await import("../../../messages/fr/common.json");
       return module.default as TranslationDictionary;
     },
 
     navigation: async () => {
-      const module = await import(
-        "../../../messages/fr/navigation.json"
-      );
-
+      const module = await import("../../../messages/fr/navigation.json");
       return module.default as TranslationDictionary;
     },
 
     homepage: async () => {
-      const module = await import(
-        "../../../messages/fr/homepage.json"
-      );
-
+      const module = await import("../../../messages/fr/homepage.json");
       return module.default as TranslationDictionary;
     },
+
+    about: async () => {
+  const module = await import("../../../messages/fr/about.json");
+  return module.default as TranslationDictionary;
+},
   },
 
   es: {
     common: async () => {
-      const module = await import(
-        "../../../messages/es/common.json"
-      );
-
+      const module = await import("../../../messages/es/common.json");
       return module.default as TranslationDictionary;
     },
 
     navigation: async () => {
-      const module = await import(
-        "../../../messages/es/navigation.json"
-      );
-
+      const module = await import("../../../messages/es/navigation.json");
       return module.default as TranslationDictionary;
     },
 
     homepage: async () => {
-      const module = await import(
-        "../../../messages/es/homepage.json"
-      );
-
+      const module = await import("../../../messages/es/homepage.json");
       return module.default as TranslationDictionary;
     },
+
+    about: async () => {
+  const module = await import("../../../messages/es/about.json");
+  return module.default as TranslationDictionary;
+},
   },
 };
- 
+
 /**
  * ============================================================
  * Utility Functions

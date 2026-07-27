@@ -1,0 +1,64 @@
+{
+  "hero": {
+    "badge": "Acerca de EPEW",
+    "title": "Construyendo Comunidades a Través del Emprendimiento",
+    "subtitle": "La plataforma Entrepreneur Partnership Empower Wealth (EPEW) fortalece a los emprendedores mediante educación, mentoría, participación comunitaria y oportunidades de financiamiento."
+  },
+  "mission": {
+    "title": "Nuestra Misión",
+    "description": "Empoderar a los emprendedores brindándoles educación, mentoría, participación comunitaria y acceso a financiamiento para que puedan construir negocios sostenibles y fortalecer sus comunidades."
+  },
+  "vision": {
+    "title": "Nuestra Visión",
+    "description": "Construir un mundo donde cada emprendedor motivado tenga la oportunidad de iniciar, desarrollar y mantener un negocio exitoso mientras genera riqueza duradera para su comunidad."
+  },
+  "whoWeAre": {
+    "title": "Quiénes Somos",
+    "description1": "EPEW es mucho más que una plataforma empresarial. Es un Ecosistema Integral de Desarrollo Empresarial diseñado para guiar a los emprendedores desde la idea hasta la creación de una empresa exitosa.",
+    "description2": "A través de educación estructurada, mentoría, participación comunitaria, preparación para financiamiento y apoyo continuo, EPEW ayuda a las personas a crear negocios que fortalecen a las familias y las comunidades."
+  },
+  "ecosystem": {
+    "title": "El Ecosistema EPEW",
+    "entrepreneurs": {
+      "title": "Emprendedores",
+      "description": "Personas que desarrollan ideas de negocio y crean empresas exitosas."
+    },
+    "supporters": {
+      "title": "Patrocinadores",
+      "description": "Miembros de la comunidad que participan en el fortalecimiento de los emprendedores y las economías locales."
+    },
+    "coaches": {
+      "title": "Coaches Personales",
+      "description": "Guías que ayudan a los emprendedores a prepararse, organizarse y lanzar sus negocios con éxito."
+    },
+    "partners": {
+      "title": "Socios",
+      "description": "Organizaciones y profesionales que ofrecen servicios, experiencia y apoyo estratégico."
+    }
+  },
+  "values": {
+    "title": "Nuestros Valores",
+    "community": {
+      "title": "La Comunidad Primero",
+      "description": "Las comunidades fuertes construyen negocios fuertes."
+    },
+    "integrity": {
+      "title": "Integridad",
+      "description": "Actuamos con honestidad, transparencia y responsabilidad."
+    },
+    "innovation": {
+      "title": "Innovación",
+      "description": "Fomentamos la creatividad y la mejora continua."
+    },
+    "empowerment": {
+      "title": "Empoderamiento",
+      "description": "Ayudar a las personas a alcanzar la independencia mediante el emprendimiento."
+    }
+  },
+  "callToAction": {
+    "title": "Forma Parte del Ecosistema EPEW",
+    "description": "Ya seas emprendedor, patrocinador, coach o socio, tienes un lugar en la construcción de comunidades más fuertes a través del emprendimiento.",
+    "primaryButton": "Conviértete en Emprendedor",
+    "secondaryButton": "Volver al Inicio"
+  }
+}

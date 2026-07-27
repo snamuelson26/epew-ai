@@ -1,0 +1,122 @@
+{
+  "organization": {
+    "epew": "Patenarya Antreprenè pou Otonomizasyon ak Pwosperite",
+    "ede": "Ekosistèm Devlopman Antreprenè",
+    "ibos": "Mwen Se Pwòp Patwon Mwen",
+    "mission": "Bati Kominote. Bati Biznis. Bati Pwosperite."
+  },
+
+  "roles": {
+    "entrepreneur": "Antreprenè",
+    "supporter": "Sipòtè",
+    "coach": "Antrenè",
+    "partner": "Patnè",
+    "administrator": "Administratè",
+    "committee": "Komite Finansman",
+    "community": "Manm Kominote"
+  },
+
+  "business": {
+    "business": "Biznis",
+    "businessIdea": "Lide Biznis",
+    "businessPlan": "Plan Biznis",
+    "businessLaunch": "Lansman Biznis",
+    "businessOpening": "Ouvèti Biznis",
+    "grandOpening": "Gran Ouvèti",
+    "businessProfile": "Pwofil Biznis",
+    "businessStatus": "Estati Biznis",
+    "businessCategory": "Kategori Biznis"
+  },
+
+  "qualification": {
+    "qualified": "Kalifye",
+    "notQualified": "Pa Kalifye",
+    "qualification": "Kalifikasyon",
+    "qualificationReview": "Revizyon Kalifikasyon",
+    "qualificationStatus": "Estati Kalifikasyon",
+    "eligibility": "Elijibilite",
+    "interview": "Entèvyou",
+    "readiness": "Preparasyon Biznis",
+    "motivationScore": "Nòt Motivasyon",
+    "coachAssessment": "Evalyasyon Antrenè"
+  },
+
+  "funding": {
+    "funding": "Finansman",
+    "fundingQueue": "Lis Atant Finansman",
+    "fundingApproved": "Finansman Apwouve",
+    "fundingPending": "Finansman an Atant",
+    "communitySupport": "Sipò Kominotè",
+    "communitySupportUnits": "Inite Sipò Kominotè",
+    "weeklyContribution": "Kontribisyon Chak Semèn",
+    "foundingSupporter": "Sipòtè Fondatè",
+    "participationBenefit": "Benefis Patisipasyon"
+  },
+
+  "workflow": {
+    "application": "Aplikasyon",
+    "review": "Revizyon Aplikasyon",
+    "coachAssignment": "Atribisyon Antrenè",
+    "development": "Devlopman Biznis",
+    "approval": "Apwobasyon Finansman",
+    "launchPreparation": "Preparasyon pou Lansman",
+    "launch": "Lansman Biznis",
+    "compliance": "Konfòmite",
+    "growth": "Kwasans Biznis"
+  },
+
+  "events": {
+    "annualMeeting": "Reyinyon Anyèl",
+    "businessLaunchCeremony": "Seremoni Lansman Biznis",
+    "coachCertification": "Sètifikasyon Antrenè",
+    "partnerCertification": "Sètifikasyon Patnè",
+    "communityRecognition": "Rekonesans Kominotè",
+    "internationalSummit": "Somè Entènasyonal"
+  },
+
+  "certificates": {
+    "certificate": "Sètifika",
+    "certificateNumber": "Nimewo Sètifika",
+    "authenticationId": "ID Otantifikasyon",
+    "verification": "Verifikasyon",
+    "verified": "Verifye",
+    "revoked": "Anile",
+    "archived": "Achive"
+  },
+
+  "compliance": {
+    "compliant": "Konfòm",
+    "actionRequired": "Aksyon Obligatwa",
+    "nonCompliant": "Pa Konfòm",
+    "quarterlyReport": "Rapò Chak Trimès",
+    "license": "Lisans Biznis",
+    "insurance": "Asirans",
+    "coachMeeting": "Reyinyon ak Antrenè"
+  },
+
+  "reports": {
+    "dashboard": "Tablo Kontwòl",
+    "weeklyReport": "Rapò Chak Semèn",
+    "monthlyReport": "Rapò Chak Mwa",
+    "annualReport": "Rapò Anyèl",
+    "analytics": "Analiz",
+    "statistics": "Estatistik"
+  },
+
+  "communication": {
+    "announcement": "Anons",
+    "notification": "Notifikasyon",
+    "campaign": "Kanpay",
+    "sms": "SMS",
+    "email": "Imèl",
+    "whatsapp": "WhatsApp"
+  },
+
+  "recognition": {
+    "achievement": "Reyalizasyon",
+    "recognition": "Rekonesans",
+    "graduation": "Gradyasyon",
+    "award": "Prim",
+    "lifetimeAchievement": "Reyalizasyon pou Tout Lavi"
+  }
+}

@@ -1,1 +1,194 @@
-{}
+{
+  "banner": {
+    "title": "🚀 Public Preview is Now Open",
+    "description": "Explore the platform today. Business funding applications open July 29, 2026."
+  },
+
+  "launch": {
+    "cohort": "FOUNDING ENTREPRENEUR COHORT",
+    "applicationsOpen": "APPLICATIONS ARE NOW OPEN",
+    "openDescription": "Begin your entrepreneur journey today.",
+    "countdownTitle": "Applications Open In",
+    "description": "Prepare today. Learn the program. Explore the ecosystem. Be ready for launch."
+  },
+
+  "countdown": {
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "seconds": "Seconds"
+  },
+
+  "buttons": {
+    "startJourney": "Start Your Entrepreneur Journey",
+    "applicationsOpen": "Applications Open July 29",
+    "exploreEcosystem": "Explore the Ecosystem",
+    "learnMore": "Learn More"
+  },
+
+  "hero": {
+    "titleLine1": "Entrepreneur",
+    "titleLine2": "Development",
+    "titleLine3": "Ecosystem",
+    "lead": "Build Your Community. Build Your Business. Build Your Wealth.",
+    "description": "EPEW connects entrepreneurs with education, coaching, community support, business development, and funding through one integrated ecosystem.",
+    "imageAlt": "Entrepreneur Development Ecosystem"
+  },
+
+  "preview": {
+    "eyebrow": "PUBLIC PREVIEW",
+    "title": "Discover What Makes EPEW Different",
+    "description": "Explore how our entrepreneur development ecosystem prepares individuals before funding and supports them after launch.",
+
+    "cards": {
+      "program": {
+        "title": "Learn the Program",
+        "text": "Understand every step of the entrepreneur journey before applications begin."
+      },
+
+      "introduction": {
+        "title": "Watch the Introduction",
+        "text": "See how the ecosystem helps transform ideas into successful businesses."
+      },
+
+      "idea": {
+        "title": "Bring Your Idea",
+        "text": "No matter where you are starting, your business idea can begin here."
+      }
+    }
+  },
+
+  "idea": {
+    "title": "Every Business Starts With One Idea",
+    "description": "Whether your idea is small or ambitious, EPEW provides education, coaching, planning, and community support to help transform it into a successful business."
+  },
+
+  "model": {
+    "title": "The Entrepreneur Development Model",
+    "description": "A complete system designed to guide entrepreneurs from business idea to long-term success.",
+
+    "steps": {
+      "idea": {
+        "title": "Business Idea",
+        "text": "Every successful business begins with an idea."
+      },
+
+      "development": {
+        "title": "Business Development",
+        "text": "Learn, prepare, organize, and become launch ready."
+      },
+
+      "funding": {
+        "title": "Community Funding",
+        "text": "Receive community-supported funding after qualification."
+      },
+
+      "ecosystem": {
+        "title": "Business Growth",
+        "text": "Operate inside a long-term development ecosystem."
+      },
+
+      "ibos": {
+        "title": "IBOS",
+        "text": "Continue receiving support through the Intelligent Business Operating System."
+      }
+    }
+  },
+
+  "pillars": {
+    "title": "Three Systems. One Ecosystem.",
+    "description": "Each organization plays a unique role while working together to help entrepreneurs succeed.",
+
+    "epew": {
+      "subtitle": "Entrepreneur Partnership for Empowerment and Wealth",
+      "text": "Community engagement, entrepreneur qualification, and funding."
+    },
+
+    "ede": {
+      "subtitle": "Entrepreneur Development Ecosystem",
+      "text": "Education, coaching, development, and long-term business growth."
+    },
+
+    "ibos": {
+      "subtitle": "Intelligent Business Operating System",
+      "text": "Technology, automation, reporting, compliance, and business management."
+    }
+  },
+
+  "ecosystem": {
+    "title": "One Complete Entrepreneur Ecosystem",
+    "description": "Education, coaching, funding, operations, compliance, and continuous support connected together.",
+    "imageAlt": "EPEW Ecosystem Diagram"
+  },
+
+  "journey": {
+    "title": "Your Entrepreneur Journey",
+    "description": "From application to business launch and beyond, every entrepreneur follows one complete development pathway.",
+    "imageAlt": "Entrepreneur Journey Diagram"
+  },
+
+  "video": {
+    "title": "Watch the Introduction",
+    "description": "Learn how EPEW-EDE-IBOS works through our official introduction.",
+    "frameTitle": "EPEW Introduction Video"
+  },
+
+  "why": {
+    "title": "Why Entrepreneurs Choose EPEW",
+
+    "cards": {
+      "development": {
+        "title": "Complete Development",
+        "text": "We prepare entrepreneurs before funding."
+      },
+
+      "support": {
+        "title": "Community Support",
+        "text": "Grow with coaches, supporters, and partners."
+      },
+
+      "funding": {
+        "title": "Funding Opportunity",
+        "text": "Qualified entrepreneurs become eligible for community-supported funding."
+      },
+
+      "growth": {
+        "title": "Long-Term Success",
+        "text": "Receive continuous guidance after your business launches."
+      }
+    }
+  },
+
+  "leadership": {
+    "title": "You Are The Business Owner",
+
+    "owner": "You own your business.",
+
+    "decisions": "You make the decisions.",
+
+    "vision": "You build your future.",
+
+    "notRun": "EPEW does not run your business.",
+
+    "ecosystem": "We help you build a stronger one."
+  },
+
+  "global": {
+    "title": "Building Stronger Communities Through Entrepreneurship",
+    "description": "Our mission is to strengthen families, communities, and economies by helping entrepreneurs build sustainable businesses."
+  },
+
+  "promise": {
+    "title": "Our Promise",
+
+    "vision": "We believe every entrepreneur deserves an opportunity.",
+
+    "develop": "We develop entrepreneurs before funding businesses.",
+
+    "ecosystem": "We remain with entrepreneurs after launch.",
+
+    "funding": "Together we build businesses, communities, and wealth.",
+
+    "conclusion": "Welcome to the Entrepreneur Development Ecosystem."
+  }
+}

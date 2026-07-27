@@ -1,0 +1,78 @@
+{
+  "hero": {
+    "badge": "À propos d’EPEW",
+    "title": "Construire des communautés grâce à l’entrepreneuriat",
+    "subtitle": "La plateforme Entrepreneur Partnership Empowerment Wealth (EPEW) accompagne les futurs entrepreneurs grâce à l’éducation, au soutien communautaire, aux possibilités de financement d’entreprise et au développement à long terme."
+  },
+
+  "mission": {
+    "title": "Notre mission",
+    "description": "Donner aux entrepreneurs les moyens de réussir en leur offrant une formation, un accompagnement, une participation communautaire et un accès à des possibilités de financement qui renforcent les économies locales."
+  },
+
+  "vision": {
+    "title": "Notre vision",
+    "description": "Construire un monde dans lequel chaque entrepreneur motivé a la possibilité de lancer, développer et maintenir une entreprise prospère grâce à la collaboration communautaire."
+  },
+
+  "whoWeAre": {
+    "title": "Qui sommes-nous ?",
+    "description1": "EPEW est bien plus qu’une plateforme commerciale. Il s’agit d’un écosystème complet de développement entrepreneurial conçu pour accompagner les entrepreneurs depuis leur idée jusqu’à la création d’une entreprise prospère.",
+    "description2": "Grâce à une formation structurée, un accompagnement personnalisé, une participation communautaire et un soutien continu, les entrepreneurs reçoivent les ressources nécessaires pour bâtir des entreprises qui créent des emplois et renforcent les communautés."
+  },
+
+  "ecosystem": {
+    "title": "L’écosystème EPEW",
+    "entrepreneurs": {
+      "title": "Entrepreneurs",
+      "description": "Des personnes qui développent des idées d’entreprise et lancent des entreprises prospères."
+    },
+    "supporters": {
+      "title": "Supporteurs",
+      "description": "Des membres de la communauté qui participent au renforcement des entrepreneurs et à la croissance économique locale."
+    },
+    "coaches": {
+      "title": "Coachs personnels",
+      "description": "Des guides qui aident les entrepreneurs à se préparer, à s’organiser et à lancer leur entreprise avec succès."
+    },
+    "partners": {
+      "title": "Partenaires",
+      "description": "Des organisations et des professionnels qui fournissent des services, une expertise et un soutien stratégique."
+    }
+  },
+
+  "values": {
+    "title": "Nos valeurs fondamentales",
+    "community": {
+      "title": "La communauté d’abord",
+      "description": "Des communautés fortes construisent des entreprises fortes."
+    },
+    "integrity": {
+      "title": "Intégrité",
+      "description": "L’honnêteté, la transparence et la responsabilité guident chacune de nos décisions."
+    },
+    "innovation": {
+      "title": "Innovation",
+      "description": "La créativité permet de développer des solutions durables."
+    },
+    "empowerment": {
+      "title": "Autonomisation",
+      "description": "Chaque entrepreneur mérite une véritable possibilité de réussir."
+    }
+  },
+
+  "statistics": {
+    "title": "Nos objectifs à long terme",
+    "entrepreneurs": "Entrepreneurs qualifiés",
+    "businesses": "Entreprises lancées",
+    "jobs": "Emplois créés",
+    "communities": "Communautés desservies"
+  },
+
+  "callToAction": {
+    "title": "Rejoignez le mouvement",
+    "description": "Que vous soyez entrepreneur, supporteur, coach ou partenaire, vous pouvez contribuer à bâtir des entreprises plus fortes et des communautés plus solides.",
+    "primaryButton": "Rejoindre EPEW",
+    "secondaryButton": "En savoir plus"
+  }
+}

@@ -1,1 +1,186 @@
-{}
+{
+  "banner": {
+    "title": "🚀 La Vista Previa Pública Ya Está Disponible",
+    "description": "Explora la plataforma hoy. Las solicitudes de financiamiento para negocios se abren el 29 de julio de 2026."
+  },
+
+  "launch": {
+    "cohort": "COHORTE FUNDADORA DE EMPRENDEDORES",
+    "applicationsOpen": "LAS SOLICITUDES ESTÁN ABIERTAS",
+    "openDescription": "Comienza hoy tu camino como emprendedor.",
+    "countdownTitle": "Las Solicitudes Abren En",
+    "description": "Prepárate desde hoy. Aprende sobre el programa. Explora el ecosistema. Prepárate para el lanzamiento."
+  },
+
+  "countdown": {
+    "days": "Días",
+    "hours": "Horas",
+    "minutes": "Minutos",
+    "seconds": "Segundos"
+  },
+
+  "buttons": {
+    "startJourney": "Comienza Tu Camino Emprendedor",
+    "applicationsOpen": "Solicitudes Abren el 29 de Julio",
+    "exploreEcosystem": "Explorar el Ecosistema",
+    "learnMore": "Más Información"
+  },
+
+  "hero": {
+    "titleLine1": "Ecosistema",
+    "titleLine2": "de Desarrollo",
+    "titleLine3": "Empresarial",
+    "lead": "Construye Tu Comunidad. Construye Tu Negocio. Construye Tu Prosperidad.",
+    "description": "EPEW conecta a los emprendedores con educación, mentoría, apoyo comunitario, desarrollo empresarial y financiamiento a través de un ecosistema integrado.",
+    "imageAlt": "Ecosistema de Desarrollo Empresarial"
+  },
+
+  "preview": {
+    "eyebrow": "VISTA PREVIA PÚBLICA",
+    "title": "Descubre Qué Hace Diferente a EPEW",
+    "description": "Conoce cómo nuestro ecosistema prepara a los emprendedores antes del financiamiento y los acompaña después del lanzamiento de su negocio.",
+
+    "cards": {
+      "program": {
+        "title": "Conoce el Programa",
+        "text": "Comprende cada paso del camino emprendedor antes de que comiencen las solicitudes."
+      },
+
+      "introduction": {
+        "title": "Ver la Introducción",
+        "text": "Descubre cómo el ecosistema transforma ideas en negocios exitosos."
+      },
+
+      "idea": {
+        "title": "Trae Tu Idea",
+        "text": "Sin importar dónde comiences, tu idea de negocio puede empezar aquí."
+      }
+    }
+  },
+
+  "idea": {
+    "title": "Todo Negocio Comienza con una Idea",
+    "description": "Ya sea que tu idea sea pequeña o ambiciosa, EPEW ofrece educación, mentoría, planificación y apoyo comunitario para convertirla en un negocio exitoso."
+  },
+
+  "model": {
+    "title": "El Modelo de Desarrollo Empresarial",
+    "description": "Un sistema completo diseñado para acompañar a los emprendedores desde la idea hasta el éxito a largo plazo.",
+
+    "steps": {
+      "idea": {
+        "title": "Idea de Negocio",
+        "text": "Todo negocio exitoso comienza con una idea."
+      },
+
+      "development": {
+        "title": "Desarrollo Empresarial",
+        "text": "Aprende, prepárate, organízate y alístate para lanzar tu negocio."
+      },
+
+      "funding": {
+        "title": "Financiamiento Comunitario",
+        "text": "Recibe financiamiento respaldado por la comunidad después de calificar."
+      },
+
+      "ecosystem": {
+        "title": "Crecimiento Empresarial",
+        "text": "Desarrolla tu negocio dentro de un ecosistema de crecimiento continuo."
+      },
+
+      "ibos": {
+        "title": "IBOS",
+        "text": "Continúa recibiendo apoyo mediante el Sistema Inteligente de Operaciones Empresariales."
+      }
+    }
+  },
+
+  "pillars": {
+    "title": "Tres Sistemas. Un Solo Ecosistema.",
+    "description": "Cada organización cumple una función única mientras trabaja en conjunto para ayudar a los emprendedores a tener éxito.",
+
+    "epew": {
+      "subtitle": "Alianza de Emprendedores para el Empoderamiento y la Prosperidad",
+      "text": "Participación comunitaria, calificación de emprendedores y financiamiento."
+    },
+
+    "ede": {
+      "subtitle": "Ecosistema de Desarrollo Empresarial",
+      "text": "Educación, mentoría, desarrollo y crecimiento empresarial a largo plazo."
+    },
+
+    "ibos": {
+      "subtitle": "Sistema Inteligente de Operaciones Empresariales",
+      "text": "Tecnología, automatización, cumplimiento, informes y gestión empresarial."
+    }
+  },
+
+  "ecosystem": {
+    "title": "Un Ecosistema Empresarial Completo",
+    "description": "Educación, mentoría, financiamiento, operaciones, cumplimiento y apoyo continuo conectados en un solo ecosistema.",
+    "imageAlt": "Diagrama del Ecosistema EPEW"
+  },
+
+  "journey": {
+    "title": "Tu Camino Emprendedor",
+    "description": "Desde la solicitud hasta el lanzamiento de tu empresa y más allá, cada emprendedor sigue un proceso completo de desarrollo.",
+    "imageAlt": "Diagrama del Camino Emprendedor"
+  },
+
+  "video": {
+    "title": "Mira la Introducción",
+    "description": "Conoce cómo funciona EPEW-EDE-IBOS mediante nuestra presentación oficial.",
+    "frameTitle": "Video de Introducción de EPEW"
+  },
+
+  "why": {
+    "title": "¿Por Qué los Emprendedores Eligen EPEW?",
+
+    "cards": {
+      "development": {
+        "title": "Desarrollo Integral",
+        "text": "Preparamos a los emprendedores antes del financiamiento."
+      },
+
+      "support": {
+        "title": "Apoyo Comunitario",
+        "text": "Crece junto a mentores, aliados y una comunidad comprometida."
+      },
+
+      "funding": {
+        "title": "Oportunidad de Financiamiento",
+        "text": "Los emprendedores calificados pueden acceder al financiamiento comunitario."
+      },
+
+      "growth": {
+        "title": "Éxito a Largo Plazo",
+        "text": "Seguimos apoyándote después del lanzamiento de tu negocio."
+      }
+    }
+  },
+
+  "leadership": {
+    "title": "Tú Eres el Propietario de Tu Negocio",
+
+    "owner": "Tú eres el dueño de tu negocio.",
+    "decisions": "Tú tomas las decisiones.",
+    "vision": "Tú construyes tu futuro.",
+    "notRun": "EPEW no dirige tu negocio.",
+    "ecosystem": "Nosotros te ayudamos a construir un negocio más fuerte."
+  },
+
+  "global": {
+    "title": "Construyendo Comunidades Más Fuertes a Través del Emprendimiento",
+    "description": "Nuestra misión es fortalecer familias, comunidades y economías ayudando a los emprendedores a crear negocios sostenibles."
+  },
+
+  "promise": {
+    "title": "Nuestra Promesa",
+
+    "vision": "Creemos que todo emprendedor merece una oportunidad.",
+    "develop": "Desarrollamos a los emprendedores antes de financiar los negocios.",
+    "ecosystem": "Permanecemos junto a los emprendedores después del lanzamiento.",
+    "funding": "Juntos construimos negocios, comunidades y prosperidad.",
+    "conclusion": "Bienvenido al Ecosistema de Desarrollo Empresarial."
+  }
+}
