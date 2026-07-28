@@ -125,6 +125,14 @@ export default function AdminShell({
           <p className="mt-1 text-sm text-blue-100">
             Admin Control Center
           </p>
+          <form action="/admin/logout" method="post" className="mt-6">
+  <button
+    type="submit"
+    className="w-full rounded-xl border border-blue-300 px-4 py-3 text-left font-bold text-white transition hover:bg-blue-800"
+  >
+    Log Out
+  </button>
+</form>
 
           {administratorEmail ? (
             <div className="mt-5 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
