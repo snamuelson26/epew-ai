@@ -231,22 +231,27 @@ const namespaceRegistry: Record<
 },
   },
 
-  ht: {
-    navigation: async () => {
-      const module = await import("../../../messages/ht/navigation.json");
-      return module.default as TranslationDictionary;
-    },
-
-    homepage: async () => {
-      const module = await import("../../../messages/ht/homepage.json");
-      return module.default as TranslationDictionary;
-    },
-
-    about: async () => {
-      const module = await import("../messages/ht/about.json");
-      return module.default as TranslationDictionary;
-    },
+ ht: {
+  common: async () => {
+    const module = await import("../../../messages/ht/common.json");
+    return module.default as TranslationDictionary;
   },
+
+  navigation: async () => {
+    const module = await import("../../../messages/ht/navigation.json");
+    return module.default as TranslationDictionary;
+  },
+
+  homepage: async () => {
+    const module = await import("../../../messages/ht/homepage.json");
+    return module.default as TranslationDictionary;
+  },
+
+  about: async () => {
+    const module = await import("../../../messages/ht/about.json");
+    return module.default as TranslationDictionary;
+  },
+},
 
   fr: {
     common: async () => {
