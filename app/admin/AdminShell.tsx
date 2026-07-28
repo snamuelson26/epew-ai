@@ -4,11 +4,15 @@ import Link from "next/link";
 import { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
+type AdminShellProps = {
+  children: ReactNode;
+  administratorEmail?: string | null;
+};
+
 export default function AdminShell({
   children,
-}: {
-  children: ReactNode;
-}) {
+  administratorEmail,
+}: AdminShellProps) {
   const pathname = usePathname();
 
   const menuGroups = [
@@ -34,8 +38,14 @@ export default function AdminShell({
         { name: "Funding Queue", href: "/admin/funding-queue" },
         { name: "Funding Calendar", href: "/admin/funding-calendar" },
         { name: "Funding Committee", href: "/admin/funding-committee" },
-        { name: "Funding Allocation Center", href: "/admin/funding-allocation" },
-        { name: "Disbursement Center", href: "/admin/disbursement-center" },
+        {
+          name: "Funding Allocation Center",
+          href: "/admin/funding-allocation",
+        },
+        {
+          name: "Disbursement Center",
+          href: "/admin/disbursement-center",
+        },
         { name: "Finance", href: "/admin/finance" },
         { name: "Transactions", href: "/admin/transactions" },
         { name: "Funded Businesses", href: "/admin/funded-businesses" },
@@ -89,9 +99,15 @@ export default function AdminShell({
       title: "System",
       links: [
         { name: "Settings", href: "/admin/settings" },
-        { name: "Automation Center", href: "/admin/automation-center" },
+        {
+          name: "Automation Center",
+          href: "/admin/automation-center",
+        },
         { name: "AI Admin", href: "/admin/ai-admin" },
-        { name: "Automation Engine", href: "/admin/automation-engine" },
+        {
+          name: "Automation Engine",
+          href: "/admin/automation-engine",
+        },
       ],
     },
   ];
@@ -102,12 +118,25 @@ export default function AdminShell({
 
   return (
     <div className="flex min-h-screen bg-[#f5f7fb]">
-      <aside className="min-h-screen w-80 overflow-y-auto bg-[#06245c] p-6 text-white">
+      <aside className="sticky top-0 h-screen w-80 flex-none overflow-y-auto bg-[#06245c] p-6 text-white">
         <div className="mb-10">
           <h1 className="text-3xl font-extrabold">EPEW</h1>
+
           <p className="mt-1 text-sm text-blue-100">
             Admin Control Center
           </p>
+
+          {administratorEmail ? (
+            <div className="mt-5 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+              <p className="text-xs font-bold uppercase tracking-wider text-blue-200">
+                Signed in as
+              </p>
+
+              <p className="mt-1 break-all text-sm font-semibold text-white">
+                {administratorEmail}
+              </p>
+            </div>
+          ) : null}
         </div>
 
         <nav className="space-y-8">

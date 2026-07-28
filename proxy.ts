@@ -1,51 +1,34 @@
+import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 
 const MAINTENANCE_MODE =
-  process.env.MAINTENANCE_MODE === "true" ||
-  process.env.NEXT_PUBLIC_MAINTENANCE_MODE === "true";
+  process.env.MAINTENANCE_MODE === "true";
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  /*
-   * Routes and files that must remain accessible
-   * so the maintenance page can load correctly.
-   */
   const isMaintenancePage = pathname === "/maintenance";
 
-  const isNextAsset =
+  const isStaticAsset =
     pathname.startsWith("/_next/") ||
-    pathname.startsWith("/favicon") ||
     pathname.startsWith("/images/") ||
     pathname.startsWith("/icons/") ||
-    pathname.startsWith("/fonts/");
-
-  const isPublicFile =
-    pathname.endsWith(".png") ||
-    pathname.endsWith(".jpg") ||
-    pathname.endsWith(".jpeg") ||
-    pathname.endsWith(".svg") ||
-    pathname.endsWith(".webp") ||
-    pathname.endsWith(".ico") ||
-    pathname.endsWith(".css") ||
-    pathname.endsWith(".js") ||
-    pathname.endsWith(".map") ||
-    pathname.endsWith(".txt") ||
-    pathname.endsWith(".xml");
+    pathname.startsWith("/fonts/") ||
+    pathname === "/favicon.ico" ||
+    pathname.match(
+      /\.(png|jpg|jpeg|svg|webp|ico|css|js|map|txt|xml)$/i
+    );
 
   /*
-   * Allow the maintenance page and its required assets.
+   * Maintenance mode has first priority.
    */
-  if (isMaintenancePage || isNextAsset || isPublicFile) {
-    return NextResponse.next();
-  }
-
-  /*
-   * When maintenance mode is active, redirect every other
-   * page—including /admin—to the maintenance page.
-   */
-  if (MAINTENANCE_MODE) {
+  if (
+    MAINTENANCE_MODE &&
+    !isMaintenancePage &&
+    !isStaticAsset
+  ) {
     const maintenanceUrl = request.nextUrl.clone();
+
     maintenanceUrl.pathname = "/maintenance";
     maintenanceUrl.search = "";
 
@@ -53,17 +36,73 @@ export function proxy(request: NextRequest) {
   }
 
   /*
-   * Maintenance mode is off.
+   * Allow the maintenance page and static assets.
    */
-  return NextResponse.next();
+  if (isMaintenancePage || isStaticAsset) {
+    return NextResponse.next();
+  }
+
+  let response = NextResponse.next({
+    request,
+  });
+
+  const supabaseUrl =
+    process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+  const supabaseKey =
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error(
+      "Supabase environment variables are missing."
+    );
+
+    return response;
+  }
+
+  const supabase = createServerClient(
+    supabaseUrl,
+    supabaseKey,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => {
+            request.cookies.set(name, value);
+          });
+
+          response = NextResponse.next({
+            request,
+          });
+
+          cookiesToSet.forEach(
+            ({ name, value, options }) => {
+              response.cookies.set(
+                name,
+                value,
+                options
+              );
+            }
+          );
+        },
+      },
+    }
+  );
+
+  /*
+   * Refresh and validate the authentication token.
+   */
+  await supabase.auth.getUser();
+
+  return response;
 }
 
 export const config = {
   matcher: [
-    /*
-     * Run Proxy on all application routes.
-     * Static Next.js assets are also excluded inside the function.
-     */
-    "/((?!_next/static|_next/image).*)",
+    "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
 };
