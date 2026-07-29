@@ -3,7 +3,6 @@
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 
-import Hero from "@/app/components/about/Hero";
 import AboutSection from "@/app/components/about/AboutSection";
 import WhoWeAre from "@/app/components/about/WhoWeAre";
 import WhatWeDo from "@/app/components/about/WhatWeDo";
@@ -22,13 +21,11 @@ export default function AboutPage() {
       <Navbar />
 
       <main className="min-h-screen bg-white">
-        <Hero />
+  {/* About Ekero Partners Empower Wealth */}
+  <AboutSection />
 
-        {/* About Ekero Partners Empower Wealth */}
-        <AboutSection />
-
-        {/* Who We Are */}
-        <WhoWeAre />
+  {/* Who We Are */}
+  <WhoWeAre />
 
         {/* Every Successful Business Begins with an Idea */}
         <WhatWeDo />
