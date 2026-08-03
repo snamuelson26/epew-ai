@@ -1,10 +1,14 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import Image from "next/image";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function CoachApplyPage() {
+  const { t } = useTranslation();
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -327,7 +331,7 @@ export default function CoachApplyPage() {
 
             <textarea
               rows={5}
-              placeholder="Why do you want to become an EPEW coach?"
+              placeholder={t("form.placeholder.why_do_you_want_to_become_an_epew")}
               value={whyJoin}
               onChange={(e) => setWhyJoin(e.target.value)}
               className="w-full border rounded-2xl p-5 text-xl"
@@ -355,7 +359,7 @@ export default function CoachApplyPage() {
           <div>
             <h3 className="text-3xl font-bold mb-8">Contact Us</h3>
             <p className="text-xl text-gray-300 leading-relaxed">
-              EPEW – Ekero Partners Empower Wealth
+              {t("content.epew_ekero_partners_empower_wealth")}
             </p>
             <p className="text-xl text-gray-300 mt-4">Phone: (866) 720-0014</p>
             <p className="text-xl text-gray-300 mt-4">Email: support@epew.us</p>

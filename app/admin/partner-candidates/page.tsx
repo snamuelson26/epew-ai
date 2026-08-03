@@ -1,9 +1,13 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminPartnerCandidatesPage() {
+  const { t } = useTranslation();
+
   const [candidates, setCandidates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -96,7 +100,7 @@ export default function AdminPartnerCandidatesPage() {
     return (
       <main className="min-h-screen bg-[#f5f7fb] flex items-center justify-center">
         <p className="text-3xl font-bold text-[#06245c]">
-          Loading partner candidates...
+          {t("content.loading_partner_candidates")}
         </p>
       </main>
     );
@@ -119,7 +123,7 @@ export default function AdminPartnerCandidatesPage() {
         {candidates.length === 0 && (
           <div className="bg-white rounded-3xl shadow-xl p-10 text-center">
             <p className="text-2xl font-bold">
-              No partner candidates submitted yet.
+              {t("content.no_partner_candidates_submitted_yet")}
             </p>
           </div>
         )}
@@ -226,7 +230,7 @@ export default function AdminPartnerCandidatesPage() {
 
             <div className="mt-8 bg-[#f5f7fb] rounded-2xl p-6">
               <h3 className="text-2xl font-bold mb-3">
-                Why Join EPEW?
+                {t("headings.why_join_epew")}
               </h3>
 
               <p className="text-xl text-gray-700 whitespace-pre-wrap">
@@ -247,7 +251,7 @@ export default function AdminPartnerCandidatesPage() {
                   })
                 }
                 className="w-full border rounded-2xl p-5 text-xl min-h-[140px]"
-                placeholder="Add admin interview notes..."
+                placeholder={t("form.placeholder.add_admin_interview_notes")}
               />
             </div>
 

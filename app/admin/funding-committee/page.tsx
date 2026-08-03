@@ -1,5 +1,7 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -13,6 +15,8 @@ type FundingCategory = {
 };
 
 export default function FundingProgressionCenterPage() {
+  const { t } = useTranslation();
+
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -229,7 +233,7 @@ if (status === "Request Rejected") {
   if (loading) {
     return (
       <div className="p-10 text-2xl font-bold">
-        Loading Funding Allocation Center...
+        {t("content.loading_funding_allocation_center")}
       </div>
     );
   }
@@ -262,7 +266,7 @@ if (status === "Request Rejected") {
       {applications.length === 0 ? (
         <div className="bg-white rounded-3xl shadow-xl p-8">
           <h2 className="text-3xl font-bold text-[#06245c] text-center">
-            No applications available for funding progression yet.
+            {t("headings.no_applications_available_for_funding_progression_yet")}
           </h2>
         </div>
       ) : (
@@ -518,7 +522,7 @@ if (status === "Request Rejected") {
                       id={`notes-${app.id}`}
                       className="border rounded-xl p-4 w-full min-h-[180px]"
                       defaultValue={app.funding_notes || ""}
-                      placeholder="Committee comments, vendor observations, missing documents, special conditions, working capital remarks..."
+                      placeholder={t("form.placeholder.committee_comments_vendor_observations_missing_documents_special_conditions")}
                     />
 
                     <button
@@ -564,7 +568,7 @@ if (status === "Request Rejected") {
     id={`working-capital-notes-${app.id}`}
     className="border rounded-xl p-4 w-full min-h-[120px] mb-4"
     defaultValue={app.working_capital_notes || ""}
-    placeholder="Working capital notes..."
+    placeholder={t("form.placeholder.working_capital_notes")}
   />
 
   <div className="flex flex-wrap gap-3">
@@ -654,7 +658,7 @@ if (status === "Request Rejected") {
                       }
                       className="bg-blue-600 text-white px-4 py-2 rounded-xl"
                     >
-                      Approve $100,000
+                      {t("buttons.approve_100_000")}
                     </button>
 
                     <button

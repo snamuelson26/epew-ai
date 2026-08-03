@@ -1,29 +1,45 @@
 {
+  "__test": "THIS FILE IS LOADED",
+
+  "openLoginMenu": "Open login menu",
+  "closeLoginMenu": "Close login menu",
+  "portalAccess": "Portal Access",
+  "selectYourLogin": "Select Your Login",
+
   "home": "Home",
 
   "about": "About",
-  "aboutEPEW": "About EPEW",
+  "aboutEpew": "About EPEW",
   "professionalSupportCenter": "Professional Support Center",
-  "howEPEWWorks": "How EPEW Works",
+
   "how": "How",
+  "howEpewWorks": "How EPEW Works",
 
   "epewTeam": "EPEW Team",
+
   "entrepreneurs": "Entrepreneurs",
   "supporters": "Supporters",
   "coaches": "Coaches",
   "partners": "Partners",
+  "vendors": "Vendors",
 
   "videos": "Videos",
   "blogs": "Blogs",
 
   "login": "Login",
+
   "entrepreneurLogin": "Entrepreneur Login",
   "supporterLogin": "Supporter Login",
   "coachLogin": "Coach Login",
   "partnerLogin": "Partner Login",
-  "adminLogin": "Admin Login",
+  "vendorLogin": "Vendor Login",
+  "adminLogin": "Administrator Login",
 
   "register": "Register",
+
+  "dashboard": "Dashboard",
+  "profile": "Profile",
+  "logout": "Logout",
 
   "language": "Language",
   "selectLanguage": "Select Language",
@@ -37,10 +53,5 @@
   "resources": "Resources",
 
   "privacy": "Privacy Policy",
-  "terms": "Terms of Use",
-
-  "dashboard": "Dashboard",
-  "profile": "Profile",
-
-  "logout": "Logout"
+  "terms": "Terms of Use"
 }

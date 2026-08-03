@@ -1,0 +1,14 @@
+{
+  "content": {
+    "loading_support_page": "Loading support page...",
+    "business_not_found": "Business not found.",
+    "funding_goal": "Funding Goal:",
+    "units_supported": "Units Supported:",
+    "potential_participation_benefit_up_to_6_annually": "Potential Participation Benefit: Up to 6% annually*"
+  },
+  "form": {
+    "placeholder": {
+      "minimum_100": "Minimum $100"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "content": {
+    "loading_analytics_center": "Loading Analytics Center...",
+    "applications_waiting_for_review": "Applications waiting for review.",
+    "businesses_approved_for_funding": "Businesses approved for funding.",
+    "categories_verified_by_coaches": "Categories verified by coaches.",
+    "categories_where_funds_were_released": "Categories where funds were released.",
+    "businesses_marked_as_opened": "Businesses marked as opened.",
+    "businesses_in_reporting_phase": "Businesses in reporting phase."
+  }
+}

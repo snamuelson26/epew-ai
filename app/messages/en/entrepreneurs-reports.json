@@ -1,0 +1,12 @@
+{
+  "content": {
+    "loading_reports": "Loading reports...",
+    "no_reports_available_yet": "No reports available yet.",
+    "business_revenue_progress": "✅ Business revenue progress",
+    "expenses_and_use_of_funds": "✅ Expenses and use of funds",
+    "jobs_created_or_maintained": "✅ Jobs created or maintained",
+    "photos_videos_or_proof_of_activity": "✅ Photos, videos, or proof of activity",
+    "challenges_and_improvement_plans": "✅ Challenges and improvement plans",
+    "coach_or_admin_review": "✅ Coach or admin review"
+  }
+}

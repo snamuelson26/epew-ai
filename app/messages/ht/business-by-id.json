@@ -1,0 +1,24 @@
+{
+  "content": {
+    "loading_business_welcome_page": "Loading Business Welcome Page...",
+    "call": "📞 Call",
+    "email": "✉️ Email",
+    "website": "🌐 Website",
+    "take_a_look_at_our_business_our_work": "Take a look at our business, our work, and our journey.",
+    "business_gallery_coming_soon": "Business gallery coming soon.",
+    "customer_testimonials_will_appear_here_as_the_business": "Customer testimonials will appear here as the business grows.",
+    "help_launch_this_business": "✅ Help launch this business.",
+    "become_part_of_our_permanent_history": "✅ Become part of our permanent history.",
+    "attend_the_grand_opening": "✅ Attend the Grand Opening.",
+    "receive_your_digital_founding_supporter_certificate": "✅ Receive your Digital Founding Supporter Certificate.",
+    "6_annually": "6% annually"
+  },
+  "buttons": {
+    "share_business": "📤 Share Business"
+  },
+  "headings": {
+    "products_services": "Products & Services",
+    "why_choose_our_servicess": "Why Choose Our Servicess?",
+    "powered_by_ibos_i_am_my_own_boss": "Powered by IBOS — I Am My Own Boss"
+  }
+}

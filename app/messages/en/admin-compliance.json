@@ -1,0 +1,14 @@
+{
+  "content": {
+    "loading_compliance_center": "Loading Compliance Center...",
+    "contribution_not_investment": "Contribution, Not Investment"
+  },
+  "form": {
+    "placeholder": {
+      "compliance_description_or_rule": "Compliance description or rule..."
+    }
+  },
+  "headings": {
+    "no_compliance_items_added_yet": "No compliance items added yet."
+  }
+}

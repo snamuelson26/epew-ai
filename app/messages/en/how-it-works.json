@@ -1,0 +1,50 @@
+{
+  "content": {
+    "1_the_entrepreneur_brings_the_idea": "1. The Entrepreneur Brings the Idea",
+    "1_description": "Every successful business begins with an idea. The entrepreneur brings the vision, passion, and determination to build something meaningful.",
+
+    "2_epew_develops_the_idea": "2. EPEW Develops the Idea",
+    "2_description": "EPEW develops the idea into a structured business opportunity through education, coaching, planning, professional guidance, and business development.",
+
+    "3_epew_prepares_the_entrepreneur_and_connects_funding": "3. EPEW Prepares the Entrepreneur and Connects Funding",
+    "3_description": "EPEW prepares the entrepreneur for business ownership, funding readiness, and connects them with the funding needed to launch and grow.",
+
+    "4_epew_provides_the_entrepreneur_development_ecosystem": "4. EPEW Provides the Entrepreneur Development Ecosystem",
+    "4_description": "The EDE brings together coaches, professional teams, Founding Supporters, Certified Growth Partners, technology, and coordinated resources into one complete support system.",
+
+    "5_ibos_coordinates_the_journey": "5. IBOS Coordinates the Journey",
+    "5_description": "IBOS coordinates preparation, professional services, business development, milestones, communications, service requests, funding readiness, and long-term business growth.",
+
+    "successful_entrepreneur": "✅ Successful Entrepreneur",
+    "successful_business": "✅ Successful Business",
+    "new_jobs": "✅ New Jobs",
+    "stronger_families": "✅ Stronger Families",
+    "stronger_communities": "✅ Stronger Communities",
+    "lasting_wealth": "✅ Lasting Wealth"
+  },
+
+  "headings": {
+    "epew_ede_ibos": "EPEW • EDE • IBOS",
+    "one_ecosystem_clear_steps_shared_growth": "One Ecosystem. Clear Steps. Shared Growth.",
+    "the_result": "The Result"
+  },
+
+  "images": {
+    "howEpewHelpsAlt": "How EPEW Helps Entrepreneurs Build Real Businesses"
+  },
+
+  "systems": {
+    "epew": {
+      "title": "EPEW",
+      "subtitle": "The Organization"
+    },
+    "ede": {
+      "title": "EDE",
+      "subtitle": "The Ecosystem"
+    },
+    "ibos": {
+      "title": "IBOS",
+      "subtitle": "The Operating System"
+    }
+  }
+}

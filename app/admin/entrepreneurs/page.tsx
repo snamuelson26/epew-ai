@@ -1,9 +1,13 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminEntrepreneursPage() {
+  const { t } = useTranslation();
+
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -207,11 +211,11 @@ export default function AdminEntrepreneursPage() {
 
       {loading ? (
         <div className="bg-white rounded-3xl shadow-xl p-10 text-center">
-          <p className="text-2xl font-bold">Loading entrepreneurs...</p>
+          <p className="text-2xl font-bold">{t("content.loading_entrepreneurs")}</p>
         </div>
       ) : applications.length === 0 ? (
         <div className="bg-white rounded-3xl shadow-xl p-10 text-center">
-          <p className="text-2xl font-bold">No entrepreneurs submitted yet.</p>
+          <p className="text-2xl font-bold">{t("content.no_entrepreneurs_submitted_yet")}</p>
         </div>
       ) : (
         <div className="grid gap-10">
@@ -274,25 +278,25 @@ export default function AdminEntrepreneursPage() {
                         "Not assigned"}
                     </p>
                     <p>
-                      <strong>Annual Meeting:</strong>{" "}
+                      <strong>{t("content.annual_meeting")}</strong>{" "}
                       {app.annual_meeting_status || "Not scheduled"}
                     </p>
                     <p>
-                      <strong>ORGDH Rep:</strong>{" "}
+                      <strong>{t("content.orgdh_rep")}</strong>{" "}
                       {app.orgdh_rep || "Not assigned"}
                     </p>
                     <p>
-                      <strong>Kleernest Rep:</strong>{" "}
+                      <strong>{t("content.kleernest_rep")}</strong>{" "}
                       {app.kleernest_rep || "Not assigned"}
                     </p>
                     <p>
-                      <strong>Requested Funding:</strong>{" "}
+                      <strong>{t("content.requested_funding")}</strong>{" "}
                       {app.requested_funding
                         ? `$${app.requested_funding}`
                         : "Not provided"}
                     </p>
                     <p>
-                      <strong>Disbursement Status:</strong>{" "}
+                      <strong>{t("content.disbursement_status")}</strong>{" "}
                       {app.disbursement_status || "Not started"}
                     </p>
                   </div>

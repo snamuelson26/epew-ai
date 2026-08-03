@@ -1,0 +1,30 @@
+{
+  "headings": {
+    "what_happens_next": "What happens next?"
+  },
+  "attributes": {
+    "description": {
+      "select_the_category_that_best_describes_your_organization": "Select the category that best describes your organization.",
+      "enter_the_organizations_official_contact_and_location_information": "Enter the organization’s official contact and location information.",
+      "this_person_will_serve_as_the_official_contact": "This person will serve as the official contact and community ambassador for the organization.",
+      "select_only_the_channels_through_which_this_representative": "Select only the channels through which this representative has agreed to receive EPEW communications.",
+      "tell_epew_how_your_organization_would_like_to": "Tell EPEW how your organization would like to participate.",
+      "arrange_a_presentation_for_your_organization_or_community": "Arrange a presentation for your organization or community.",
+      "receive_approved_digital_materials_to_share_with_interested": "Receive approved digital materials to share with interested members.",
+      "request_information_about_an_official_partnership_relationship": "Request information about an official partnership relationship.",
+      "add_people_who_have_expressed_interest_in_epew": "Add people who have expressed interest in EPEW. This step may be skipped and completed later through the secure organization link.",
+      "i_confirm_that_i_am_authorized_to_submit": "I confirm that I am authorized to submit this registration on behalf of the organization.",
+      "i_confirm_that_the_individuals_submitted_have_expressed": "I confirm that the individuals submitted have expressed an interest in receiving information about EPEW or authorized this organization to share their contact information for this purpose. I understand that each communication channel remains subject to recorded permission and administrator review."
+    },
+    "label": {
+      "why_is_your_organization_interested_in_epew": "Why is your organization interested in EPEW?"
+    }
+  },
+  "form": {
+    "placeholder": {
+      "briefly_describe_the_organization_its_mission_and_the": "Briefly describe the organization, its mission, and the community it serves.",
+      "pastor_president_director_owner": "Pastor, President, Director, Owner...",
+      "describe_your_organizations_goals_the_needs_of_your": "Describe your organization’s goals, the needs of your community, and the opportunities you would like to explore with EPEW."
+    }
+  }
+}

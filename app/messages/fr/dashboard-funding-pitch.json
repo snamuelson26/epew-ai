@@ -1,0 +1,20 @@
+{
+  "content": {
+    "loading_funding_pitch": "Loading Funding Pitch..."
+  },
+  "form": {
+    "placeholder": {
+      "explain_the_funding_opportunity_business_model_and_why": "Explain the funding opportunity, business model, and why supporters should consider supporting this entrepreneur.",
+      "describe_the_market_demand_customer_need_and_growth": "Describe the market demand, customer need, and growth potential.",
+      "describe_existing_customers_sales_contracts_pilot_activity_or": "Describe existing customers, sales, contracts, pilot activity, or operational history.",
+      "explain_what_makes_this_business_different_or_stronger": "Explain what makes this business different or stronger than competitors.",
+      "explain_why_the_entrepreneur_or_team_is_capable": "Explain why the entrepreneur or team is capable of succeeding.",
+      "summarize_expected_revenue_growth_expenses_and_sustainability": "Summarize expected revenue, growth, expenses, and sustainability.",
+      "explain_how_epew_capital_will_be_used_and": "Explain how EPEW capital will be used and how the business plans to generate results."
+    },
+    "labels": {
+      "proof_of_concept_traction": "Proof of Concept / Traction",
+      "capital_utilization_return_plan": "Capital Utilization / Return Plan"
+    }
+  }
+}

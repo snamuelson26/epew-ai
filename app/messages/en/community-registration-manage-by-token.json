@@ -1,0 +1,12 @@
+{
+  "content": {
+    "loading_organization_portal": "Loading organization portal...",
+    "no_primary_representative_was_found": "No primary representative was found.",
+    "select_only_channels_the_member_has_authorized": "Select only channels the member has authorized."
+  },
+  "attributes": {
+    "title": {
+      "spreadsheet_upload_will_be_added_next": "Spreadsheet upload will be added next."
+    }
+  }
+}

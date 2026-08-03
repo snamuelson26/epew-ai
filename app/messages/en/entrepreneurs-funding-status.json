@@ -1,0 +1,18 @@
+{
+  "content": {
+    "loading_funding_status": "Loading funding status...",
+    "business_name": "Business Name:",
+    "entrepreneur_id": "Entrepreneur ID:",
+    "units_required": "Units Required:",
+    "units_remaining": "Units Remaining:",
+    "number_of_supporters": "Number of Supporters:",
+    "queue_position": "Queue Position:",
+    "coach_assigned": "Coach Assigned:",
+    "qualification_status": "Qualification Status:",
+    "projected_funding_date": "Projected Funding Date:",
+    "continue_preparing_your_business_profile": "✅ Continue preparing your business profile.",
+    "follow_coach_guidance_and_complete_required_steps": "✅ Follow coach guidance and complete required steps.",
+    "build_supporter_participation_toward_your_required_units": "✅ Build supporter participation toward your required units.",
+    "watch_your_queue_position_and_projected_funding_date": "✅ Watch your queue position and projected funding date."
+  }
+}

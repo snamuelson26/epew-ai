@@ -1,9 +1,13 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminAnnualMeetingsPage() {
+  const { t } = useTranslation();
+
   const [records, setRecords] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -115,7 +119,7 @@ export default function AdminAnnualMeetingsPage() {
   if (loading) {
     return (
       <div className="p-10 text-2xl font-bold">
-        Loading Annual Meetings...
+        {t("content.loading_annual_meetings")}
       </div>
     );
   }
@@ -156,11 +160,11 @@ export default function AdminAnnualMeetingsPage() {
             </p>
 
             <h2 className="mt-2 text-4xl font-extrabold text-[#06245c]">
-                🟢 Registration Open
+                {t("headings.registration_open")}
             </h2>
 
             <p className="mt-3 text-lg text-gray-600">
-                Entrepreneurs and guests may register for the Annual Meeting.
+                {t("content.entrepreneurs_and_guests_may_register_for_the_annual")}
             </p>
 
         </div>
@@ -220,7 +224,7 @@ export default function AdminAnnualMeetingsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <input
             className="border rounded-xl p-4"
-            placeholder="Annual Meeting Name (Example: EPEW Annual Meeting 2026)"
+            placeholder={t("form.placeholder.annual_meeting_name_example_epew_annual_meeting_2026")}
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
           />
@@ -241,7 +245,7 @@ export default function AdminAnnualMeetingsPage() {
 
           <input
             className="border rounded-xl p-4"
-           placeholder="Venue / Meeting Location"
+           placeholder={t("form.placeholder.venue_meeting_location")}
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
@@ -281,7 +285,7 @@ export default function AdminAnnualMeetingsPage() {
 
         <textarea
           className="border rounded-xl p-4 w-full min-h-[140px] mb-6"
-          placeholder="Meeting notes..."
+          placeholder={t("form.placeholder.meeting_notes")}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
         />
@@ -302,7 +306,7 @@ export default function AdminAnnualMeetingsPage() {
       </h2>
 
       <p className="mt-2 text-lg text-gray-600">
-        Entrepreneurs approved to participate in the Annual Meeting.
+        {t("content.entrepreneurs_approved_to_participate_in_the_annual_meeting")}
       </p>
     </div>
 
@@ -313,7 +317,7 @@ export default function AdminAnnualMeetingsPage() {
 
   <div className="mb-8 grid gap-4 md:grid-cols-4">
     <input
-      placeholder="Search entrepreneur..."
+      placeholder={t("form.placeholder.search_entrepreneur")}
       className="rounded-xl border p-4"
     />
 

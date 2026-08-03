@@ -1,9 +1,13 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminAutomationCenterPage() {
+  const { t } = useTranslation();
+
   const [automations, setAutomations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -99,7 +103,7 @@ export default function AdminAutomationCenterPage() {
   if (loading) {
     return (
       <div className="p-10 text-2xl font-bold">
-        Loading Automation Center...
+        {t("content.loading_automation_center")}
       </div>
     );
   }
@@ -222,7 +226,7 @@ export default function AdminAutomationCenterPage() {
 
         <textarea
           className="border rounded-xl p-4 w-full min-h-[140px] mb-6"
-          placeholder="Automation notes..."
+          placeholder={t("form.placeholder.automation_notes")}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
         />
@@ -238,7 +242,7 @@ export default function AdminAutomationCenterPage() {
       {automations.length === 0 ? (
         <div className="bg-white rounded-3xl shadow-xl p-8 mb-10">
           <h2 className="text-3xl font-bold text-[#06245c] text-center">
-            No custom automations added yet.
+            {t("headings.no_custom_automations_added_yet")}
           </h2>
         </div>
       ) : (

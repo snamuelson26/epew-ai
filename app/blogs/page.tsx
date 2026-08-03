@@ -1,43 +1,101 @@
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+"use client";
+
+import { useEffect } from "react";
 import Link from "next/link";
 
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+
+import {
+  useLanguage,
+  useTranslation,
+} from "@/app/components/enterprise/language";
+
 export default function BlogsPage() {
+  const { t } = useTranslation();
+  const { loadNamespaces } = useLanguage();
+
+  useEffect(() => {
+    void loadNamespaces(["blogs"]);
+  }, [loadNamespaces]);
+
   const categories = [
     {
-      title: "Entrepreneurship",
-      description:
-        "Business ideas, startup preparation, business structure, and launch readiness.",
+      title: t("categories.entrepreneurship.title", {
+        namespace: "blogs",
+      }),
+      description: t(
+        "categories.entrepreneurship.description",
+        {
+          namespace: "blogs",
+        },
+      ),
       icon: "🚀",
     },
     {
-      title: "Wealth Building",
-      description:
-        "Financial education, budgeting, savings, credit, and long-term planning.",
+      title: t("categories.wealthBuilding.title", {
+        namespace: "blogs",
+      }),
+      description: t(
+        "categories.wealthBuilding.description",
+        {
+          namespace: "blogs",
+        },
+      ),
       icon: "💰",
     },
     {
-      title: "Community Development",
-      description:
-        "How entrepreneurship strengthens families, creates jobs, and supports communities.",
+      title: t(
+        "categories.communityDevelopment.title",
+        {
+          namespace: "blogs",
+        },
+      ),
+      description: t(
+        "categories.communityDevelopment.description",
+        {
+          namespace: "blogs",
+        },
+      ),
       icon: "🌍",
     },
     {
-      title: "EPEW News",
-      description:
-        "Platform updates, events, announcements, and ecosystem progress.",
+      title: t("categories.epewNews.title", {
+        namespace: "blogs",
+      }),
+      description: t(
+        "categories.epewNews.description",
+        {
+          namespace: "blogs",
+        },
+      ),
       icon: "📢",
     },
     {
-      title: "Coach Corner",
-      description:
-        "Training articles, coaching guidance, and entrepreneur preparation resources.",
+      title: t("categories.coachCorner.title", {
+        namespace: "blogs",
+      }),
+      description: t(
+        "categories.coachCorner.description",
+        {
+          namespace: "blogs",
+        },
+      ),
       icon: "🤝",
     },
     {
-      title: "Partner Spotlight",
-      description:
-        "Business services, partner resources, and professional support opportunities.",
+      title: t(
+        "categories.partnerSpotlight.title",
+        {
+          namespace: "blogs",
+        },
+      ),
+      description: t(
+        "categories.partnerSpotlight.description",
+        {
+          namespace: "blogs",
+        },
+      ),
       icon: "⭐",
     },
   ];
@@ -47,31 +105,36 @@ export default function BlogsPage() {
       <Navbar />
 
       <main className="min-h-screen bg-[#f5f7fb] text-[#06245c]">
-        <section className="py-24 px-8 text-center">
-          <h1 className="text-7xl font-extrabold mb-8">
-            EPEW Blogs
+        <section className="px-8 py-24 text-center">
+          <h1 className="mb-8 text-7xl font-extrabold">
+            {t("hero.title", {
+              namespace: "blogs",
+            })}
           </h1>
 
-          <p className="text-3xl text-gray-700 leading-relaxed max-w-5xl mx-auto">
-            Explore articles, resources, updates, and education designed to help
-            entrepreneurs, supporters, coaches, and partners grow together.
+          <p className="mx-auto max-w-5xl text-3xl leading-relaxed text-gray-700">
+            {t("hero.description", {
+              namespace: "blogs",
+            })}
           </p>
         </section>
 
-        <section className="max-w-7xl mx-auto px-8 pb-24">
-          <div className="grid md:grid-cols-3 gap-10">
+        <section className="mx-auto max-w-7xl px-8 pb-24">
+          <div className="grid gap-10 md:grid-cols-3">
             {categories.map((item) => (
               <div
                 key={item.title}
-                className="bg-white rounded-3xl shadow-xl p-10 text-center"
+                className="rounded-3xl bg-white p-10 text-center shadow-xl"
               >
-                <div className="text-7xl mb-8">{item.icon}</div>
+                <div className="mb-8 text-7xl">
+                  {item.icon}
+                </div>
 
-                <h2 className="text-4xl font-bold mb-6">
+                <h2 className="mb-6 text-4xl font-bold">
                   {item.title}
                 </h2>
 
-                <p className="text-2xl text-gray-700 leading-relaxed">
+                <p className="text-2xl leading-relaxed text-gray-700">
                   {item.description}
                 </p>
               </div>
@@ -79,31 +142,43 @@ export default function BlogsPage() {
           </div>
         </section>
 
-        <section className="bg-[#06245c] text-white py-24 px-8">
-          <div className="max-w-6xl mx-auto text-center">
-            <h2 className="text-6xl font-extrabold mb-8">
-              EPEW Knowledge Center
+        <section className="bg-[#06245c] px-8 py-24 text-white">
+          <div className="mx-auto max-w-6xl text-center">
+            <h2 className="mb-8 text-6xl font-extrabold">
+              {t("knowledgeCenter.title", {
+                namespace: "blogs",
+              })}
             </h2>
 
-            <p className="text-3xl text-gray-200 leading-relaxed mb-12">
-              The blog will support education, transparency, financial literacy,
-              entrepreneur readiness, community participation, and ecosystem
-              updates.
+            <p className="mb-12 text-3xl leading-relaxed text-gray-200">
+              {t("knowledgeCenter.description", {
+                namespace: "blogs",
+              })}
             </p>
 
-            <div className="flex flex-col md:flex-row justify-center gap-8">
+            <div className="flex flex-col justify-center gap-8 md:flex-row">
               <Link
                 href="/entrepreneurs"
-                className="bg-green-600 text-white px-12 py-5 rounded-2xl text-2xl font-bold hover:bg-white hover:text-[#06245c] transition"
+                className="rounded-2xl bg-green-600 px-12 py-5 text-2xl font-bold text-white transition hover:bg-white hover:text-[#06245c]"
               >
-                Entrepreneur Resources
+                {t(
+                  "knowledgeCenter.entrepreneurResources",
+                  {
+                    namespace: "blogs",
+                  },
+                )}
               </Link>
 
               <Link
                 href="/supporters"
-                className="bg-white text-[#06245c] px-12 py-5 rounded-2xl text-2xl font-bold hover:bg-green-600 hover:text-white transition"
+                className="rounded-2xl bg-white px-12 py-5 text-2xl font-bold text-[#06245c] transition hover:bg-green-600 hover:text-white"
               >
-                Supporter Resources
+                {t(
+                  "knowledgeCenter.supporterResources",
+                  {
+                    namespace: "blogs",
+                  },
+                )}
               </Link>
             </div>
           </div>

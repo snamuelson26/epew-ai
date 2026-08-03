@@ -1,5 +1,7 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -15,6 +17,8 @@ const categories = [
 ];
 
 export default function AdminFundingAllocationPage() {
+  const { t } = useTranslation();
+
   const [entrepreneurs, setEntrepreneurs] = useState<any[]>([]);
   const [allocations, setAllocations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -131,7 +135,7 @@ export default function AdminFundingAllocationPage() {
     return (
       <main className="min-h-screen bg-[#f5f7fb] flex items-center justify-center">
         <p className="text-3xl font-bold text-[#06245c]">
-          Loading Funding Allocation Center...
+          {t("content.loading_funding_allocation_center")}
         </p>
       </main>
     );
@@ -161,7 +165,7 @@ export default function AdminFundingAllocationPage() {
       <div className="grid gap-10">
         {entrepreneurs.length === 0 ? (
           <div className="bg-white rounded-3xl shadow-xl p-10 text-center">
-            <p className="text-2xl font-bold">No entrepreneurs found.</p>
+            <p className="text-2xl font-bold">{t("content.no_entrepreneurs_found")}</p>
           </div>
         ) : (
           entrepreneurs.map((entrepreneur) => {
@@ -214,7 +218,7 @@ export default function AdminFundingAllocationPage() {
                 {list.length === 0 ? (
                   <div className="bg-yellow-50 border-l-8 border-yellow-500 rounded-2xl p-6">
                     <p className="text-xl font-bold">
-                      Funding categories have not been created yet.
+                      {t("content.funding_categories_have_not_been_created_yet")}
                     </p>
                   </div>
                 ) : (
@@ -291,7 +295,7 @@ export default function AdminFundingAllocationPage() {
                                   })
                                 }
                                 className="border rounded-xl p-3 w-64 min-h-[90px]"
-                                placeholder="Add notes..."
+                                placeholder={t("form.placeholder.add_notes")}
                               />
                             </td>
 

@@ -1,8 +1,12 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import Link from "next/link";
 
 export default function GuestRegistrationPage() {
+  const { t } = useTranslation();
+
   return (
     <main className="min-h-screen bg-[#f5f7fb] p-10 text-[#06245c]">
 
@@ -14,7 +18,7 @@ export default function GuestRegistrationPage() {
           href="/admin/ibos-centers/event-center/sessions/1"
           className="text-lg font-black text-lime-300"
         >
-          ← Back to Event Command Center
+          {t("content.back_to_event_command_center")}
         </Link>
 
         <p className="mt-8 text-xl font-black uppercase tracking-[0.45em] text-lime-300">
@@ -89,7 +93,7 @@ export default function GuestRegistrationPage() {
             </h2>
 
             <p className="mt-2 text-lg text-gray-600">
-              Manage official guests invited by qualified entrepreneurs.
+              {t("content.manage_official_guests_invited_by_qualified_entrepreneurs")}
             </p>
 
           </div>
@@ -103,7 +107,7 @@ export default function GuestRegistrationPage() {
         <div className="mt-8 grid gap-4 md:grid-cols-4">
 
           <input
-            placeholder="Search guest..."
+            placeholder={t("form.placeholder.search_guest")}
             className="rounded-xl border p-4 font-bold"
           />
 

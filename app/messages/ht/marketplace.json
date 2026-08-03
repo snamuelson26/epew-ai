@@ -1,0 +1,15 @@
+{
+  "content": {
+    "loading_marketplace": "Loading Marketplace...",
+    "no_businesses_are_listed_in_the_marketplace_yet": "No businesses are listed in the marketplace yet.",
+    "business_stage": "Business Stage:",
+    "funding_goal": "Funding Goal:",
+    "funding_path": "Funding Path:",
+    "support_category": "Support Category:",
+    "1_unit_100_choose_weekly_monthly_or_yearly": "1 Unit = $100. Choose weekly, monthly, or yearly support.",
+    "weekly_100_unit": "Weekly - $100/unit",
+    "monthly_433_unit": "Monthly - $433/unit",
+    "yearly_5_200_unit": "Yearly - $5,200/unit",
+    "potential_participation_benefit_up_to_6_annually": "Potential participation benefit: Up to 6% annually."
+  }
+}

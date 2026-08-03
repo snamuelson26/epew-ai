@@ -1,8 +1,12 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import Link from "next/link";
 
 export default function EventParticipantsPage() {
+  const { t } = useTranslation();
+
   return (
     <main className="min-h-screen bg-[#f5f7fb] p-10 text-[#06245c]">
       <section className="mb-8 rounded-[2rem] bg-gradient-to-r from-black via-[#06245c] to-green-900 p-10 text-white shadow-2xl">
@@ -10,7 +14,7 @@ export default function EventParticipantsPage() {
           href="/admin/ibos-centers/event-center/sessions/1"
           className="text-lg font-black text-lime-300"
         >
-          ← Back to Event Command Center
+          {t("content.back_to_event_command_center")}
         </Link>
 
         <p className="mt-8 text-xl font-black uppercase tracking-[0.45em] text-lime-300">
@@ -74,7 +78,7 @@ export default function EventParticipantsPage() {
 
             <div className="grid gap-4 md:grid-cols-3">
               <input
-                placeholder="Search entrepreneur..."
+                placeholder={t("form.placeholder.search_entrepreneur")}
                 className="rounded-xl border p-4 font-bold"
               />
 
@@ -220,7 +224,7 @@ export default function EventParticipantsPage() {
             </p>
 
             <p className="mt-1 font-bold text-gray-600">
-              18 / 50 Assigned
+              {t("content.18_50_assigned")}
             </p>
           </section>
         </aside>

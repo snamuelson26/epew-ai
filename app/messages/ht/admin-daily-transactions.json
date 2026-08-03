@@ -1,0 +1,19 @@
+{
+  "headings": {
+    "missing_reports_coach_intervention": "Missing Reports & Coach Intervention",
+    "no_daily_business_records_found": "No daily business records found."
+  },
+  "content": {
+    "all_active_businesses_reported_today": "All active businesses reported today.",
+    "no_business_health_alerts_in_the_selected_records": "No business health alerts in the selected records.",
+    "loading_business_intelligence": "Loading business intelligence...",
+    "selectedtransactions_length_0": ") : selectedTransactions.length === 0 ? (",
+    "records_will_appear_after_funded_businesses_submit_daily": "Records will appear after funded businesses submit daily journals."
+  },
+  "attributes": {
+    "label": {
+      "monthly_profit_loss": "Monthly Profit & Loss",
+      "first_monthly_p_l": "First Monthly P&L"
+    }
+  }
+}

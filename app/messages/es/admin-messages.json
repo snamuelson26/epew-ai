@@ -1,0 +1,13 @@
+{
+  "content": {
+    "loading_messages_center": "Loading Messages Center..."
+  },
+  "form": {
+    "placeholder": {
+      "write_message_here": "Write message here..."
+    }
+  },
+  "headings": {
+    "no_messages_sent_yet": "No messages sent yet."
+  }
+}

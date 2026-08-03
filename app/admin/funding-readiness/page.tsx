@@ -1,9 +1,13 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminFundingReadinessPage() {
+  const { t } = useTranslation();
+
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -149,7 +153,7 @@ export default function AdminFundingReadinessPage() {
   if (loading) {
     return (
       <div className="p-10 text-2xl font-bold">
-        Loading Funding Readiness Center...
+        {t("content.loading_funding_readiness_center")}
       </div>
     );
   }
@@ -190,7 +194,7 @@ export default function AdminFundingReadinessPage() {
       {applications.length === 0 ? (
         <div className="bg-white rounded-3xl shadow-xl p-8">
           <h2 className="text-3xl font-bold text-[#06245c] text-center">
-            No entrepreneurs available for readiness review yet.
+            {t("headings.no_entrepreneurs_available_for_readiness_review_yet")}
           </h2>
         </div>
       ) : (
@@ -317,7 +321,7 @@ export default function AdminFundingReadinessPage() {
                       id={`coach-notes-${app.id}`}
                       className="border rounded-xl p-4 w-full min-h-[120px]"
                       defaultValue={app.coach_readiness_notes || ""}
-                      placeholder="Coach readiness notes..."
+                      placeholder={t("form.placeholder.coach_readiness_notes")}
                     />
 
                     <button
@@ -359,7 +363,7 @@ export default function AdminFundingReadinessPage() {
                       id={`ai-notes-${app.id}`}
                       className="border rounded-xl p-4 w-full min-h-[120px]"
                       defaultValue={app.ai_readiness_notes || ""}
-                      placeholder="AI missing items, readiness notes, or risks..."
+                      placeholder={t("form.placeholder.ai_missing_items_readiness_notes_or_risks")}
                     />
 
                     <button
@@ -387,7 +391,7 @@ export default function AdminFundingReadinessPage() {
                       id={`admin-notes-${app.id}`}
                       className="border rounded-xl p-4 w-full min-h-[120px]"
                       defaultValue={app.funding_readiness_notes || ""}
-                      placeholder="Admin funding readiness notes..."
+                      placeholder={t("form.placeholder.admin_funding_readiness_notes")}
                     />
 
                     <button

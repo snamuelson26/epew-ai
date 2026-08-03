@@ -1,0 +1,13 @@
+{
+  "content": {
+    "loading_automation_center": "Loading Automation Center..."
+  },
+  "form": {
+    "placeholder": {
+      "automation_notes": "Automation notes..."
+    }
+  },
+  "headings": {
+    "no_custom_automations_added_yet": "No custom automations added yet."
+  }
+}

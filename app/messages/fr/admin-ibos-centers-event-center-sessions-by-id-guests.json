@@ -1,0 +1,11 @@
+{
+  "content": {
+    "back_to_event_command_center": "← Back to Event Command Center",
+    "manage_official_guests_invited_by_qualified_entrepreneurs": "Manage official guests invited by qualified entrepreneurs."
+  },
+  "form": {
+    "placeholder": {
+      "search_guest": "Search guest..."
+    }
+  }
+}

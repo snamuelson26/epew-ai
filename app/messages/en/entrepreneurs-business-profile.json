@@ -1,0 +1,10 @@
+{
+  "content": {
+    "loading_business_profile": "Loading business profile...",
+    "business_name": "Business Name:",
+    "business_type": "Business Type:",
+    "entrepreneur_id": "Entrepreneur ID:",
+    "affiliated_with_an_organization": "Affiliated with an organization:",
+    "organization_name_type": "Organization Name / Type:"
+  }
+}

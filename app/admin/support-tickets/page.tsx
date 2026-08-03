@@ -1,9 +1,13 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminSupportTicketsPage() {
+  const { t } = useTranslation();
+
   const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -92,7 +96,7 @@ export default function AdminSupportTicketsPage() {
   if (loading) {
     return (
       <div className="p-10 text-2xl font-bold">
-        Loading Support Tickets...
+        {t("content.loading_support_tickets")}
       </div>
     );
   }
@@ -155,7 +159,7 @@ export default function AdminSupportTicketsPage() {
 
         <textarea
           className="border rounded-xl p-4 w-full min-h-[180px] mb-6"
-          placeholder="Describe the issue or request..."
+          placeholder={t("form.placeholder.describe_the_issue_or_request")}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
@@ -171,7 +175,7 @@ export default function AdminSupportTicketsPage() {
       {tickets.length === 0 ? (
         <div className="bg-white rounded-3xl shadow-xl p-8">
           <h2 className="text-3xl font-bold text-[#06245c] text-center">
-            No support tickets yet.
+            {t("headings.no_support_tickets_yet")}
           </h2>
         </div>
       ) : (

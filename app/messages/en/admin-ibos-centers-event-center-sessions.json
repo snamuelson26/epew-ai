@@ -1,0 +1,17 @@
+{
+  "content": {
+    "back_to_event_center": "← Back to Event Center",
+    "epew_annual_meeting_queens": "EPEW Annual Meeting – Queens",
+    "queens_ny": "Queens, NY",
+    "50_entrepreneurs_50_guests": "50 Entrepreneurs / 50 Guests"
+  },
+  "headings": {
+    "create_manage": "Create & Manage"
+  },
+  "form": {
+    "placeholder": {
+      "example_epew_annual_meeting_queens": "Example: EPEW Annual Meeting – Queens",
+      "city_state_country": "City, State / Country"
+    }
+  }
+}

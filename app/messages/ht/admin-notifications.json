@@ -1,0 +1,13 @@
+{
+  "content": {
+    "loading_notifications_center": "Loading Notifications Center..."
+  },
+  "form": {
+    "placeholder": {
+      "write_notification_message_here": "Write notification message here..."
+    }
+  },
+  "headings": {
+    "no_notifications_created_yet": "No notifications created yet."
+  }
+}

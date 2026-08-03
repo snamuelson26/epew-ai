@@ -1,0 +1,13 @@
+{
+  "content": {
+    "loading_settings": "Loading settings...",
+    "supporter_id": "Supporter ID:",
+    "member_since": "Member Since:",
+    "send_a_password_reset_link_to_your_registered": "Send a password reset link to your registered email address."
+  },
+  "form": {
+    "placeholder": {
+      "state_province": "State / Province"
+    }
+  }
+}

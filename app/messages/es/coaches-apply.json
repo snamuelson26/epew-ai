@@ -1,0 +1,18 @@
+{
+  "content": {
+    "english_en": "English (EN)",
+    "french_fr": "French (FR)",
+    "haitian_creole_ht": "Haitian Creole (HT)",
+    "spanish_es": "Spanish (ES)",
+    "tagalog_tl": "Tagalog (TL)",
+    "epew_ekero_partners_empower_wealth": "EPEW – Ekero Partners Empower Wealth",
+    "phone_866_720_0014": "Phone: (866) 720-0014",
+    "email_support_epew_us": "Email: support@epew.us",
+    "2026_epew_ekero_partners_empower_wealth_all_rights": "© 2026 EPEW – Ekero Partners Empower Wealth. All rights reserved."
+  },
+  "form": {
+    "placeholder": {
+      "why_do_you_want_to_become_an_epew": "Why do you want to become an EPEW coach?"
+    }
+  }
+}

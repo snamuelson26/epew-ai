@@ -1,0 +1,13 @@
+{
+  "content": {
+    "loading_business_categories": "Loading Business Categories..."
+  },
+  "form": {
+    "placeholder": {
+      "category_description": "Category description..."
+    }
+  },
+  "headings": {
+    "no_business_categories_added_yet": "No business categories added yet."
+  }
+}

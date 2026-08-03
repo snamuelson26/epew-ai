@@ -1,0 +1,15 @@
+{
+  "content": {
+    "loading_funding_readiness_center": "Loading Funding Readiness Center..."
+  },
+  "headings": {
+    "no_entrepreneurs_available_for_readiness_review_yet": "No entrepreneurs available for readiness review yet."
+  },
+  "form": {
+    "placeholder": {
+      "coach_readiness_notes": "Coach readiness notes...",
+      "ai_missing_items_readiness_notes_or_risks": "AI missing items, readiness notes, or risks...",
+      "admin_funding_readiness_notes": "Admin funding readiness notes..."
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "content": {
+    "0_currentindex": "= 0 && currentIndex",
+    "loading_entrepreneurs": "Loading entrepreneurs...",
+    "applications_length_0": ") : applications.length === 0 ? (",
+    "no_entrepreneurs_submitted_yet": "No entrepreneurs submitted yet.",
+    "annual_meeting": "Annual Meeting:",
+    "orgdh_rep": "ORGDH Rep:",
+    "kleernest_rep": "Kleernest Rep:",
+    "requested_funding": "Requested Funding:",
+    "disbursement_status": "Disbursement Status:"
+  }
+}

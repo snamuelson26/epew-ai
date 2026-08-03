@@ -1,5 +1,7 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { IBOS_STAGES } from "@/lib/ibos/stages";
@@ -67,6 +69,8 @@ const checklistItems = [
 ];
 
 export default function ProfessionalQualificationActivationCenter() {
+  const { t } = useTranslation();
+
   const [applications, setApplications] = useState<Application[]>([]);
   const [selectedId, setSelectedId] = useState("");
   const [formById, setFormById] = useState<Record<string, any>>({});
@@ -493,7 +497,7 @@ const coachMessage =
       <div className="mx-auto max-w-7xl">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-slate-900">
-            Professional Qualification & Activation Center
+            {t("headings.professional_qualification_activation_center")}
           </h1>
           <p className="mt-2 text-slate-600">
             EPEW IBOS gateway for reviewing applications, completing orientation,
@@ -535,14 +539,14 @@ const coachMessage =
         </section>
 
         {loading ? (
-          <p className="text-slate-500">Loading applications...</p>
+          <p className="text-slate-500">{t("content.loading_applications")}</p>
         ) : !selectedApplication ? (
-          <p className="text-slate-500">No applications found.</p>
+          <p className="text-slate-500">{t("content.no_applications_found")}</p>
         ) : (
           <>
             <section className="mb-6 rounded-2xl bg-white p-6 shadow">
               <h2 className="mb-4 text-xl font-bold text-slate-900">
-                1. Review Panel
+                {t("headings.1_review_panel")}
               </h2>
 
               <div className="grid gap-6 xl:grid-cols-2">
@@ -554,7 +558,7 @@ const coachMessage =
                   <InfoLine label="Email" value={selectedApplication.email || "Not provided"} />
                   <InfoLine label="Phone" value={selectedApplication.phone || "Not provided"} />
                   <InfoLine label="Address" value={selectedApplication.address || "Not provided"} />
-                  <InfoLine label="City / State" value={`${selectedApplication.city || "—"} / ${selectedApplication.state || "—"}`} />
+                  <InfoLine label={t("attributes.label.city_state")} value={`${selectedApplication.city || "—"} / ${selectedApplication.state || "—"}`} />
                   <InfoLine label="Language" value={selectedApplication.language || "Not provided"} />
                 </div>
 
@@ -574,7 +578,7 @@ const coachMessage =
 
             <section className="mb-6 rounded-2xl bg-white p-6 shadow">
               <h2 className="mb-4 text-xl font-bold text-slate-900">
-                2. Operations Panel
+                {t("headings.2_operations_panel")}
               </h2>
 
               <div className="mb-6 grid gap-4 md:grid-cols-3">
@@ -717,7 +721,7 @@ const coachMessage =
                     updateForm(selectedApplication.id, "qualification_notes", e.target.value)
                   }
                   className="min-h-28 w-full rounded-xl border p-3"
-                  placeholder="Professional observations, readiness, risks, recommendations, missing items..."
+                  placeholder={t("form.placeholder.professional_observations_readiness_risks_recommendations_missing_items")}
                 />
               </div>
 
@@ -751,7 +755,7 @@ const coachMessage =
                   disabled={savingId === selectedApplication.id || progress.percent < 100}
                   className="rounded-xl bg-purple-700 px-5 py-3 font-bold text-white hover:bg-purple-800 disabled:opacity-50"
                 >
-                  Approve & Activate Business
+                  {t("content.approve_activate_business")}
                 </button>
 
                 <button
@@ -766,7 +770,7 @@ const coachMessage =
 
             <section className="mb-6 rounded-2xl bg-white p-6 shadow">
               <h2 className="mb-4 text-xl font-bold text-slate-900">
-                3. Intelligence Panel
+                {t("headings.3_intelligence_panel")}
               </h2>
 
               <div className="grid gap-4 md:grid-cols-4">
@@ -779,7 +783,7 @@ const coachMessage =
 
             <section className="rounded-2xl bg-white p-6 shadow">
               <h2 className="mb-4 text-xl font-bold text-slate-900">
-                4. Timeline
+                {t("headings.4_timeline")}
               </h2>
 
               <div className="grid gap-3 md:grid-cols-4">

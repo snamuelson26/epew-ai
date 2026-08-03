@@ -1,0 +1,12 @@
+{
+  "content": {
+    "loading_funding_allocation_center": "Loading Funding Allocation Center...",
+    "no_entrepreneurs_found": "No entrepreneurs found.",
+    "funding_categories_have_not_been_created_yet": "Funding categories have not been created yet."
+  },
+  "form": {
+    "placeholder": {
+      "add_notes": "Add notes..."
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "content": {
+    "back_to_event_command_center": "← Back to Event Command Center",
+    "18_50_assigned": "18 / 50 Assigned"
+  },
+  "form": {
+    "placeholder": {
+      "search_entrepreneur": "Search entrepreneur..."
+    }
+  }
+}

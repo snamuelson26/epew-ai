@@ -1,26 +1,51 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 
+import {
+  useLanguageNamespaces,
+  useTranslation,
+} from "@/app/components/enterprise/language";
+
 export default function Footer() {
+  const { t } = useTranslation();
+
+  const {
+    loadNamespaces,
+  } = useLanguageNamespaces();
+
+  useEffect(() => {
+    void loadNamespaces(["footer"]);
+  }, [loadNamespaces]);
+
   return (
     <footer className="bg-[#04163d] text-white pt-20 pb-10">
-
       <div className="max-w-7xl mx-auto px-8 grid md:grid-cols-4 gap-14">
-
         {/* CONTACT */}
-        <div>
-          <h3 className="text-3xl font-bold mb-8">
-            Contact Us
-          </h3>
+<div>
+  <h3 className="text-3xl font-bold mb-8">
+    {t("contactUs", { namespace: "footer" })}
+  </h3>
 
-          <div className="space-y-4 text-xl text-gray-300">
-            <p>EPEW – Ekero Partners Empower Wealth</p>
-            <p>Phone: (866) 720-0014</p>
-            <p>Email: support@epew.us</p>
-            <p>United States</p>
-          </div>
-        </div>
+  <div className="space-y-4 text-xl text-gray-300">
+    <p>
+      {t("organizationName", { namespace: "footer" })}
+    </p>
+
+    <p>
+      {t("phone", { namespace: "footer" })}: (866) 720-0014
+    </p>
+
+    <p>
+      {t("email", { namespace: "footer" })}: support@epew.us
+    </p>
+
+    <p>
+      {t("country", { namespace: "footer" })}
+    </p>
+  </div>
+</div>
 
         {/* QUICK LINKS */}
         <div>
@@ -29,12 +54,11 @@ export default function Footer() {
           </h3>
 
           <div className="flex flex-col gap-5 text-xl">
-
             <Link
               href="/"
               className="text-gray-300 hover:text-green-400 transition"
             >
-              Home
+              {t("home", { namespace: "footer" })}
             </Link>
 
             <Link
@@ -64,7 +88,6 @@ export default function Footer() {
             >
               Blogs
             </Link>
-
           </div>
         </div>
 
@@ -75,7 +98,6 @@ export default function Footer() {
           </h3>
 
           <div className="flex flex-col gap-5 text-xl">
-
             <Link
               href="/entrepreneurs"
               className="text-gray-300 hover:text-green-400 transition"
@@ -103,68 +125,61 @@ export default function Footer() {
             >
               Partners
             </Link>
-
           </div>
         </div>
 
         {/* LEGAL */}
+        <div>
+          <h3 className="text-3xl font-bold mb-8">
+            Legal
+          </h3>
 
-<div>
-  <h3 className="text-3xl font-bold mb-8">
-    Legal
-  </h3>
+          <div className="flex flex-col gap-5 text-xl">
+            <Link
+              href="/legal"
+              className="text-gray-300 hover:text-green-400 transition"
+            >
+              {t("legalCenter", { namespace: "footer" })}
+            </Link>
 
-  <div className="flex flex-col gap-5 text-xl">
+            <Link
+              href="/legal/privacy-policy"
+              className="text-gray-300 hover:text-green-400 transition"
+            >
+             {t("privacyPolicy", { namespace: "footer" })}
+            </Link>
 
-    <Link
-      href="/legal"
-      className="text-gray-300 hover:text-green-400 transition"
-    >
-      Legal Center
-    </Link>
+            <Link
+              href="/legal/terms-of-use"
+              className="text-gray-300 hover:text-green-400 transition"
+            >
+              {t("termsOfUse", { namespace: "footer" })}
+            </Link>
 
-    <Link
-      href="/legal/privacy-policy"
-      className="text-gray-300 hover:text-green-400 transition"
-    >
-      Privacy Policy
-    </Link>
-
-    <Link
-      href="/legal/terms-of-use"
-      className="text-gray-300 hover:text-green-400 transition"
-    >
-      Terms of Use
-    </Link>
-
-    <Link
-      href="/legal/disclaimer"
-      className="text-gray-300 hover:text-green-400 transition"
-    >
-      Platform Disclaimer
-    </Link>
-
-  </div>
-</div>
+            <Link
+              href="/legal/disclaimer"
+              className="text-gray-300 hover:text-green-400 transition"
+            >
+              {t("platformDisclaimer", { namespace: "footer" })}
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* COPYRIGHT */}
       <div className="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400 text-lg">
+        <p>
+          © 2026 Ekero Partners Empower Wealth (EPEW). All Rights Reserved.
+        </p>
 
-  <p>
-    © 2026 Ekero Partners Empower Wealth (EPEW). All Rights Reserved.
-  </p>
+        <p className="mt-2">
+          Entrepreneur Development Ecosystem (EDE)
+        </p>
 
-  <p className="mt-2">
-    Entrepreneur Development Ecosystem (EDE)
-  </p>
-
-  <p>
-    Powered by the Intelligent Business Operating System (IBOS).
-  </p>
-
-</div>
-
+        <p>
+          Powered by the Intelligent Business Operating System (IBOS).
+        </p>
+      </div>
     </footer>
   );
 }

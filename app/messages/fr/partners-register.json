@@ -1,0 +1,14 @@
+{
+  "content": {
+    "english_en": "English (EN)",
+    "french_fr": "French (FR)",
+    "haitian_creole_ht": "Haitian Creole (HT)",
+    "spanish_es": "Spanish (ES)",
+    "tagalog_tl": "Tagalog (TL)"
+  },
+  "form": {
+    "placeholder": {
+      "why_do_you_want_to_become_an_epew": "Why do you want to become an EPEW partner?"
+    }
+  }
+}

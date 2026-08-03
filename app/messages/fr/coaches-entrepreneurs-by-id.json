@@ -1,0 +1,41 @@
+{
+  "content": {
+    "loading_entrepreneur_file": "Loading entrepreneur file...",
+    "route_id_received": "Route ID received:",
+    "complete_review_of_entrepreneur_preparation_and_readiness": "Complete review of entrepreneur preparation and readiness.",
+    "business_name": "Business Name:",
+    "business_type": "Business Type:",
+    "questionnaire_has_not_been_submitted_yet": "Questionnaire has not been submitted yet.",
+    "interview_date": "Interview Date:",
+    "interview_time": "Interview Time:",
+    "interview_type": "Interview Type:",
+    "interview_language": "Interview Language:",
+    "interview_status": "Interview Status:",
+    "readiness_score": "Readiness Score:",
+    "funding_goal": "Funding Goal:",
+    "units_required": "Units Required:",
+    "units_supported": "Units Supported:",
+    "funding_queue_position": "Funding Queue Position:",
+    "projected_funding_start_date": "Projected Funding Start Date:",
+    "first_quarterly_report_due_date": "First Quarterly Report Due Date:",
+    "second_quarterly_report_due_date": "Second Quarterly Report Due Date:",
+    "third_quarterly_report_due_date": "Third Quarterly Report Due Date:",
+    "fourth_quarterly_report_due_date": "Fourth Quarterly Report Due Date:",
+    "due_date": "Due Date:"
+  },
+  "buttons": {
+    "back_to_entrepreneurs": "← Back to Entrepreneurs"
+  },
+  "form": {
+    "placeholder": {
+      "write_coach_notes_here": "Write coach notes here...",
+      "example_group_1": "Example: Group 1",
+      "example_100000": "Example: 100000",
+      "write_committee_comments_conditions_approval_notes_or_funding": "Write committee comments, conditions, approval notes, or funding instructions...",
+      "restaurant_retail_technology_service": "Restaurant, Retail, Technology, Service..."
+    },
+    "labels": {
+      "zoom_meeting_link": "Zoom / Meeting Link"
+    }
+  }
+}

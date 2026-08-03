@@ -1,9 +1,13 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useState } from "react";
 import Link from "next/link";
 
 export default function EventSessionsPage() {
+  const { t } = useTranslation();
+
   const [eventName, setEventName] = useState("");
   const [eventType, setEventType] = useState("Annual Meeting");
   const [eventDate, setEventDate] = useState("");
@@ -21,7 +25,7 @@ export default function EventSessionsPage() {
           href="/admin/ibos-centers/event-center"
           className="text-lg font-black text-lime-300"
         >
-          ← Back to Event Center
+          {t("content.back_to_event_center")}
         </Link>
 
         <p className="mt-8 text-xl font-black uppercase tracking-[0.45em] text-lime-300">
@@ -29,7 +33,7 @@ export default function EventSessionsPage() {
         </p>
 
         <h1 className="mt-4 text-6xl font-extrabold">
-          Create & Manage
+          {t("headings.create_manage")}
           <br />
           Official Event Sessions
         </h1>
@@ -51,7 +55,7 @@ export default function EventSessionsPage() {
               label="Event Session Name"
               value={eventName}
               onChange={setEventName}
-              placeholder="Example: EPEW Annual Meeting – Queens"
+              placeholder={t("form.placeholder.example_epew_annual_meeting_queens")}
             />
 
             <label className="block">
@@ -98,7 +102,7 @@ export default function EventSessionsPage() {
               label="Location"
               value={location}
               onChange={setLocation}
-              placeholder="City, State / Country"
+              placeholder={t("form.placeholder.city_state_country")}
             />
 
             <div className="grid gap-4 md:grid-cols-2">
@@ -151,11 +155,11 @@ export default function EventSessionsPage() {
 
               <tbody>
                 <tr className="border-b">
-                  <td className="p-4 font-bold">EPEW Annual Meeting – Queens</td>
+                  <td className="p-4 font-bold">{t("content.epew_annual_meeting_queens")}</td>
                   <td className="p-4">Annual Meeting</td>
                   <td className="p-4">Not Set</td>
-                  <td className="p-4">Queens, NY</td>
-                  <td className="p-4">50 Entrepreneurs / 50 Guests</td>
+                  <td className="p-4">{t("content.queens_ny")}</td>
+                  <td className="p-4">{t("content.50_entrepreneurs_50_guests")}</td>
                   <td className="p-4">
                     <span className="rounded-xl bg-green-100 px-4 py-2 font-bold text-green-700">
                       Registration Open

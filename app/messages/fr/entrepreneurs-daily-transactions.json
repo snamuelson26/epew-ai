@@ -1,0 +1,30 @@
+{
+  "content": {
+    "loading_daily_business_journal": "Loading Daily Business Journal...",
+    "you_already_submitted_a_daily_business_record_for": "You already submitted a daily business record for today.",
+    "todays_profit_loss": "Today’s Profit / Loss",
+    "kleernest_llc_support": "Kleernest LLC Support:",
+    "your_submitted_daily_records_will_appear_here": "Your submitted daily records will appear here.",
+    "tax_p_l": "Tax / P&L"
+  },
+  "headings": {
+    "submit_todays_record": "Submit Today’s Record",
+    "no_daily_records_submitted_yet": "No daily records submitted yet."
+  },
+  "form": {
+    "labels": {
+      "was_your_business_open_today": "Was your business open today?",
+      "equipment_problems": "Equipment Problems?",
+      "employee_problems": "Employee Problems?",
+      "did_anything_unusual_happen_today": "Did anything unusual happen today?"
+    },
+    "placeholder": {
+      "write_a_short_explanation": "Write a short explanation..."
+    }
+  },
+  "attributes": {
+    "label": {
+      "monthly_profit_loss": "Monthly Profit & Loss"
+    }
+  }
+}

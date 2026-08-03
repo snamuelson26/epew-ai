@@ -1,0 +1,13 @@
+{
+  "content": {
+    "loading_quarterly_reporting_center": "Loading Quarterly Reporting Center..."
+  },
+  "headings": {
+    "no_businesses_in_quarterly_reporting_yet": "No businesses in quarterly reporting yet."
+  },
+  "form": {
+    "placeholder": {
+      "report_comments_coach_observations_admin_review_notes_risks": "Report comments, coach observations, admin review notes, risks, or clarification requests..."
+    }
+  }
+}

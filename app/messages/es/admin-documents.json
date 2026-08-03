@@ -1,0 +1,13 @@
+{
+  "content": {
+    "loading_documents_center": "Loading Documents Center..."
+  },
+  "form": {
+    "placeholder": {
+      "document_notes": "Document notes..."
+    }
+  },
+  "headings": {
+    "no_documents_added_yet": "No documents added yet."
+  }
+}

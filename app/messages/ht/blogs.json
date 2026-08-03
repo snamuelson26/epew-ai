@@ -1,0 +1,45 @@
+{
+  "hero": {
+    "title": "Blog EPEW",
+    "description": "Eksplore atik, resous, nouvèl, ak materyèl edikatif ki fèt pou ede antreprenè, sipòtè, antrenè, ak patnè grandi ansanm."
+  },
+
+  "categories": {
+    "entrepreneurship": {
+      "title": "Antreprenarya",
+      "description": "Lide biznis, preparasyon pou demaraj, estrikti biznis, ak preparasyon pou lansman."
+    },
+
+    "wealthBuilding": {
+      "title": "Kreyasyon Richès",
+      "description": "Edikasyon finansye, bidjè, ekonomi, kredi, ak planifikasyon alontèm."
+    },
+
+    "communityDevelopment": {
+      "title": "Devlopman Kominotè",
+      "description": "Kijan antreprenarya ranfòse fanmi yo, kreye travay, epi soutni kominote yo."
+    },
+
+    "epewNews": {
+      "title": "Nouvèl EPEW",
+      "description": "Mizajou sou platfòm nan, evènman, anons, ak pwogrè ekosistèm nan."
+    },
+
+    "coachCorner": {
+      "title": "Kwen Antrenè a",
+      "description": "Atik fòmasyon, gid pou antrenè, ak resous preparasyon pou antreprenè."
+    },
+
+    "partnerSpotlight": {
+      "title": "Pwen Limyè sou Patnè yo",
+      "description": "Sèvis biznis, resous patnè, ak opòtinite sipò pwofesyonèl."
+    }
+  },
+
+  "knowledgeCenter": {
+    "title": "Sant Konesans EPEW",
+    "description": "Blog la pral soutni edikasyon, transparans, alfabetizasyon finansye, preparasyon antreprenè, patisipasyon kominotè, ak mizajou sou ekosistèm nan.",
+    "entrepreneurResources": "Resous pou Antreprenè",
+    "supporterResources": "Resous pou Sipòtè"
+  }
+}

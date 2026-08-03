@@ -2,45 +2,52 @@
   "home": "Inicio",
 
   "about": "Acerca de",
-  "aboutEPEW": "Acerca de EPEW",
+  "aboutEpew": "Acerca de EPEW",
   "professionalSupportCenter": "Centro de Apoyo Profesional",
-  "howEPEWWorks": "Cómo Funciona EPEW",
+  "howEpewWorks": "Cómo funciona EPEW",
   "how": "Cómo",
 
   "epewTeam": "Equipo EPEW",
   "entrepreneurs": "Emprendedores",
-  "supporters": "Patrocinadores",
-  "coaches": "Entrenadores",
+  "supporters": "Colaboradores",
+  "coaches": "Coaches",
   "partners": "Socios",
+  "vendors": "Proveedores",
 
   "videos": "Videos",
-  "blogs": "Blog",
+  "blogs": "Blogs",
 
-  "login": "Iniciar Sesión",
-  "entrepreneurLogin": "Inicio de Sesión para Emprendedores",
-  "supporterLogin": "Inicio de Sesión para Patrocinadores",
-  "coachLogin": "Inicio de Sesión para Entrenadores",
-  "partnerLogin": "Inicio de Sesión para Socios",
-  "adminLogin": "Inicio de Sesión de Administrador",
+  "login": "Iniciar sesión",
+  "entrepreneurLogin": "Acceso para Emprendedores",
+  "supporterLogin": "Acceso para Colaboradores",
+  "coachLogin": "Acceso para Coaches",
+  "partnerLogin": "Acceso para Socios",
+  "vendorLogin": "Acceso para Proveedores",
+  "adminLogin": "Acceso Administrativo",
+
+  "portalAccess": "Acceso a los portales",
+  "selectYourLogin": "Seleccione su acceso",
+  "openLoginMenu": "Abrir el menú de acceso",
+  "closeLoginMenu": "Cerrar el menú de acceso",
 
   "register": "Registrarse",
 
   "language": "Idioma",
-  "selectLanguage": "Seleccionar Idioma",
+  "selectLanguage": "Seleccionar un idioma",
 
   "menu": "Menú",
-  "closeMenu": "Cerrar Menú",
+  "closeMenu": "Cerrar el menú",
 
   "search": "Buscar",
 
   "contact": "Contacto",
   "resources": "Recursos",
 
-  "privacy": "Política de Privacidad",
-  "terms": "Términos de Uso",
+  "privacy": "Política de privacidad",
+  "terms": "Términos de uso",
 
-  "dashboard": "Panel de Control",
+  "dashboard": "Panel de control",
   "profile": "Perfil",
 
-  "logout": "Cerrar Sesión"
+  "logout": "Cerrar sesión"
 }

@@ -1,9 +1,13 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminVendorsPage() {
+  const { t } = useTranslation();
+
   const [vendors, setVendors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -97,7 +101,7 @@ export default function AdminVendorsPage() {
   if (loading) {
     return (
       <div className="p-10 text-2xl font-bold">
-        Loading Vendors Center...
+        {t("content.loading_vendors_center")}
       </div>
     );
   }
@@ -157,13 +161,13 @@ export default function AdminVendorsPage() {
 
       <div className="bg-white rounded-3xl shadow-xl p-8 mb-10">
         <h2 className="text-3xl font-bold text-[#06245c] mb-6">
-          Add Vendor / Payee
+          {t("headings.add_vendor_payee")}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <input
             className="border rounded-xl p-4"
-            placeholder="Vendor / Payee Name"
+            placeholder={t("form.placeholder.vendor_payee_name")}
             value={vendorName}
             onChange={(e) => setVendorName(e.target.value)}
           />
@@ -217,7 +221,7 @@ export default function AdminVendorsPage() {
 
         <textarea
           className="border rounded-xl p-4 w-full min-h-[140px] mb-6"
-          placeholder="Vendor notes..."
+          placeholder={t("form.placeholder.vendor_notes")}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
         />
@@ -233,7 +237,7 @@ export default function AdminVendorsPage() {
       {vendors.length === 0 ? (
         <div className="bg-white rounded-3xl shadow-xl p-8">
           <h2 className="text-3xl font-bold text-[#06245c] text-center">
-            No vendors added yet.
+            {t("headings.no_vendors_added_yet")}
           </h2>
         </div>
       ) : (
@@ -241,7 +245,7 @@ export default function AdminVendorsPage() {
           <table className="w-full min-w-[1100px]">
             <thead>
               <tr className="border-b">
-                <th className="text-left p-4">Vendor / Payee</th>
+                <th className="text-left p-4">{t("content.vendor_payee")}</th>
                 <th className="text-left p-4">Type</th>
                 <th className="text-left p-4">Contact</th>
                 <th className="text-left p-4">Email</th>

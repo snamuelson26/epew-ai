@@ -1,0 +1,16 @@
+{
+  "content": {
+    "thank_you_your_support_participation_request_has_been": "Thank you. Your support participation request has been received.",
+    "business_id": "Business ID:",
+    "units_selected": "Units Selected:",
+    "payment_frequency": "Payment Frequency:",
+    "payment_amount": "Payment Amount:",
+    "annual_support_commitment": "Annual Support Commitment:",
+    "your_participation_request_is_recorded": "✅ Your participation request is recorded.",
+    "your_supporter_account_may_be_created_or_verified": "✅ Your supporter account may be created or verified.",
+    "automatic_payment_setup_may_be_verified": "✅ Automatic payment setup may be verified."
+  },
+  "headings": {
+    "what_happens_next": "What Happens Next?"
+  }
+}

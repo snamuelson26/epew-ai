@@ -1,0 +1,13 @@
+{
+  "content": {
+    "loading_messages": "Loading messages...",
+    "contact_epew_administration_coaches_or_entrepreneur_support_teams": "Contact EPEW administration, coaches, or entrepreneur support teams.",
+    "new_messages_will_be_reviewed_by_epew_administration": "New messages will be reviewed by EPEW administration.",
+    "epew_support_will_respond_through_the_portal_or": "EPEW support will respond through the portal or by email."
+  },
+  "form": {
+    "placeholder": {
+      "write_your_message_here": "Write your message here..."
+    }
+  }
+}

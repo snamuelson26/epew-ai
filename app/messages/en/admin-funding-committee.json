@@ -1,0 +1,17 @@
+{
+  "content": {
+    "loading_funding_allocation_center": "Loading Funding Allocation Center..."
+  },
+  "headings": {
+    "no_applications_available_for_funding_progression_yet": "No applications available for funding progression yet."
+  },
+  "form": {
+    "placeholder": {
+      "committee_comments_vendor_observations_missing_documents_special_conditions": "Committee comments, vendor observations, missing documents, special conditions, working capital remarks...",
+      "working_capital_notes": "Working capital notes..."
+    }
+  },
+  "buttons": {
+    "approve_100_000": "Approve $100,000"
+  }
+}

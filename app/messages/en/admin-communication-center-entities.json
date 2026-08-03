@@ -1,0 +1,15 @@
+{
+  "content": {
+    "organizations_churches": "Organizations & Churches",
+    "final_approval_remains_under_administrator_control": "Final approval remains under administrator control.",
+    "loading_organization_registrations": "Loading organization registrations...",
+    "displayedrecords_length_0": ") : displayedRecords.length === 0 ? (",
+    "no_primary_representative_was_found": "No primary representative was found.",
+    "no_members_were_submitted": "No members were submitted."
+  },
+  "form": {
+    "placeholder": {
+      "search_entity_representative_code_email_phone_city_or": "Search entity, representative, code, email, phone, city, or state..."
+    }
+  }
+}

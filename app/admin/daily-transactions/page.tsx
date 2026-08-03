@@ -1,5 +1,7 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -52,6 +54,8 @@ const money = (value: number | null | undefined) =>
   `$${Number(value || 0).toLocaleString()}`;
 
 export default function AdminBusinessIntelligenceCenterPage() {
+  const { t } = useTranslation();
+
   const [entrepreneurs, setEntrepreneurs] = useState<Entrepreneur[]>([]);
   const [transactions, setTransactions] = useState<DailyTransaction[]>([]);
   const [selectedEntrepreneur, setSelectedEntrepreneur] = useState("");
@@ -441,12 +445,12 @@ export default function AdminBusinessIntelligenceCenterPage() {
           <div className="grid gap-6 xl:grid-cols-2">
             <div>
               <h3 className="mb-3 font-bold text-red-700">
-                Missing Reports & Coach Intervention
+                {t("headings.missing_reports_coach_intervention")}
               </h3>
 
               {missingReports.length === 0 ? (
                 <p className="text-slate-500">
-                  All active businesses reported today.
+                  {t("content.all_active_businesses_reported_today")}
                 </p>
               ) : (
                 <div className="space-y-3">
@@ -478,7 +482,7 @@ export default function AdminBusinessIntelligenceCenterPage() {
 
               {attentionRecords.length === 0 ? (
                 <p className="text-slate-500">
-                  No business health alerts in the selected records.
+                  {t("content.no_business_health_alerts_in_the_selected_records")}
                 </p>
               ) : (
                 <div className="space-y-3">
@@ -507,7 +511,7 @@ export default function AdminBusinessIntelligenceCenterPage() {
               Kleernest Financial Center
             </h2>
             <InfoLine label="Bookkeeping" value="Preparing" />
-            <InfoLine label="Monthly Profit & Loss" value="Preparing" />
+            <InfoLine label={t("attributes.label.monthly_profit_loss")} value="Preparing" />
             <InfoLine label="Tax Preparation" value="Preparing" />
             <InfoLine label="Financial Review" value="Not Required" />
             <InfoLine
@@ -572,7 +576,7 @@ export default function AdminBusinessIntelligenceCenterPage() {
             <div className="grid gap-3 md:grid-cols-4">
               <TimelineItem label="Business Opened" done={!!selectedBusiness.business_opening_date} />
               <TimelineItem label="First Daily Report" done={selectedTransactions.length > 0} />
-              <TimelineItem label="First Monthly P&L" done={false} />
+              <TimelineItem label={t("attributes.label.first_monthly_p_l")} done={false} />
               <TimelineItem label="First Quarterly Report" done={false} />
               <TimelineItem label="ORGDH Promotion" done={promotionRecommendations.length > 0} />
               <TimelineItem label="Tax Ready" done={selectedTransactions.some((t) => t.tax_status === "Ready")} />
@@ -588,14 +592,14 @@ export default function AdminBusinessIntelligenceCenterPage() {
           </h2>
 
           {loading ? (
-            <p className="text-slate-500">Loading business intelligence...</p>
+            <p className="text-slate-500">{t("content.loading_business_intelligence")}</p>
           ) : selectedTransactions.length === 0 ? (
             <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center">
               <h3 className="text-lg font-bold text-slate-800">
-                No daily business records found.
+                {t("headings.no_daily_business_records_found")}
               </h3>
               <p className="mt-2 text-slate-500">
-                Records will appear after funded businesses submit daily journals.
+                {t("content.records_will_appear_after_funded_businesses_submit_daily")}
               </p>
             </div>
           ) : (

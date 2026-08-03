@@ -1,0 +1,41 @@
+{
+  "content": {
+    "loading_applications": "Loading applications...",
+    "applications_length_0": ") : applications.length === 0 ? (",
+    "no_entrepreneur_applications_found": "No entrepreneur applications found.",
+    "business_type": "Business Type:",
+    "assigned_coach": "Assigned Coach:",
+    "coach_id_epew_coach_001": "Coach ID: EPEW-COACH-001",
+    "no_interviews_scheduled_yet": "No interviews scheduled yet.",
+    "track_follow_up_actions_by_date_purpose_responsible": "Track follow-up actions by date, purpose, responsible party, and completion status.",
+    "may_30_2026": "May 30, 2026",
+    "confirm_missing_information_before_first_interview": "Confirm missing information before first interview.",
+    "june_1_2026": "June 1, 2026",
+    "provide_entrepreneur_with_next_step_preparation_checklist": "Provide entrepreneur with next-step preparation checklist.",
+    "june_3_2026": "June 3, 2026",
+    "review_pending_questions_and_provide_clarified_answers": "Review pending questions and provide clarified answers.",
+    "no_interviews_scheduled": "No interviews scheduled."
+  },
+  "form": {
+    "placeholder": {
+      "interview_notes": "Interview notes...",
+      "example_4": "Example: 4",
+      "example_round_27": "Example: Round 27",
+      "write_a_coach_reply_or_guidance_message": "Write a coach reply or guidance message...",
+      "entrepreneur_question_or_concern": "Entrepreneur question or concern...",
+      "coach_follow_up_notes_or_response_plan": "Coach follow-up notes or response plan...",
+      "write_entrepreneur_preparation_notes": "Write entrepreneur preparation notes...",
+      "provide_feedback_and_development_guidance": "Provide feedback and development guidance...",
+      "write_recommendations_for_entrepreneur_readiness": "Write recommendations for entrepreneur readiness...",
+      "prepare_discussion_topics_and_next_meeting_objectives": "Prepare discussion topics and next meeting objectives..."
+    }
+  },
+  "buttons": {
+    "funding_approved_100_000": "Funding Approved ($100,000)",
+    "save_concern_follow_up_plan": "Save Concern & Follow-Up Plan"
+  },
+  "headings": {
+    "messages_questions": "Messages & Questions",
+    "entrepreneur_concerns_pending_answers": "Entrepreneur Concerns & Pending Answers"
+  }
+}

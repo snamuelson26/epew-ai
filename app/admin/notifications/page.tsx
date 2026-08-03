@@ -1,9 +1,13 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminNotificationsPage() {
+  const { t } = useTranslation();
+
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -77,7 +81,7 @@ export default function AdminNotificationsPage() {
   if (loading) {
     return (
       <div className="p-10 text-2xl font-bold">
-        Loading Notifications Center...
+        {t("content.loading_notifications_center")}
       </div>
     );
   }
@@ -121,7 +125,7 @@ export default function AdminNotificationsPage() {
 
         <textarea
           className="border rounded-xl p-4 w-full min-h-[160px] mb-6"
-          placeholder="Write notification message here..."
+          placeholder={t("form.placeholder.write_notification_message_here")}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
@@ -137,7 +141,7 @@ export default function AdminNotificationsPage() {
       {notifications.length === 0 ? (
         <div className="bg-white rounded-3xl shadow-xl p-8">
           <h2 className="text-3xl font-bold text-[#06245c] text-center">
-            No notifications created yet.
+            {t("headings.no_notifications_created_yet")}
           </h2>
         </div>
       ) : (

@@ -1,0 +1,12 @@
+{
+  "content": {
+    "retrieving_the_official_epew_coach_directory": "Retrieving the official EPEW coach directory.",
+    "epew_ede_ibos": "EPEW – EDE – IBOS",
+    "no_coach_matches_the_current_search_or_status": "No coach matches the current search or status filter."
+  },
+  "form": {
+    "placeholder": {
+      "search_coach": "Search coach..."
+    }
+  }
+}

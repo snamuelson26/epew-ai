@@ -1,9 +1,13 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminMessagesPage() {
+  const { t } = useTranslation();
+
   const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -63,7 +67,7 @@ export default function AdminMessagesPage() {
   if (loading) {
     return (
       <div className="p-10 text-2xl font-bold">
-        Loading Messages Center...
+        {t("content.loading_messages_center")}
       </div>
     );
   }
@@ -108,7 +112,7 @@ export default function AdminMessagesPage() {
 
         <textarea
           className="border rounded-xl p-4 w-full min-h-[180px] mb-6"
-          placeholder="Write message here..."
+          placeholder={t("form.placeholder.write_message_here")}
           value={messageBody}
           onChange={(e) => setMessageBody(e.target.value)}
         />
@@ -124,7 +128,7 @@ export default function AdminMessagesPage() {
       {messages.length === 0 ? (
         <div className="bg-white rounded-3xl shadow-xl p-8">
           <h2 className="text-3xl font-bold text-[#06245c] text-center">
-            No messages sent yet.
+            {t("headings.no_messages_sent_yet")}
           </h2>
         </div>
       ) : (

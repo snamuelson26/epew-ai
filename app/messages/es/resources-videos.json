@@ -1,0 +1,19 @@
+{
+  "hero": {
+    "title": "Videos de EPEW",
+    "description": "Vea las presentaciones oficiales, las explicaciones de los programas, la orientación para emprendedores, los momentos destacados de los eventos y las actualizaciones comunitarias del Ecosistema de Desarrollo Empresarial de EPEW."
+  },
+
+  "video": {
+    "title": "Video de Presentación de EPEW"
+  },
+
+  "comingSoon": {
+    "title": "Próximamente habrá más videos",
+    "description": "Los próximos videos explicarán el recorrido del emprendedor, la participación de los patrocinadores, la orientación del Personal Coach, la preparación para el lanzamiento de negocios y el impacto comunitario."
+  },
+
+  "buttons": {
+    "returnResources": "Volver a los Recursos de EPEW"
+  }
+}

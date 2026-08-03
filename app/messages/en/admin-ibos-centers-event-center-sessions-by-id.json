@@ -1,0 +1,18 @@
+{
+  "content": {
+    "back_to_sessions": "← Back to Sessions"
+  },
+  "attributes": {
+    "description": {
+      "assign_qualified_entrepreneurs_to_this_session": "Assign qualified entrepreneurs to this session.",
+      "manage_one_official_guest_per_entrepreneur": "Manage one official guest per entrepreneur.",
+      "check_in_entrepreneurs_and_guests": "Check in entrepreneurs and guests.",
+      "generate_certificates_qr_codes_and_registry_entries": "Generate certificates, QR codes, and registry entries.",
+      "run_the_official_raffle_for_eligible_participants": "Run the official raffle for eligible participants.",
+      "create_queue_positions_from_priority_and_raffle_results": "Create queue positions from priority and raffle results.",
+      "control_ceremony_order_and_the_45_second_presentation": "Control ceremony order and the 45-second presentation timer.",
+      "review_live_event_performance_and_completion_status": "Review live event performance and completion status.",
+      "finalize_the_event_and_preserve_the_official_record": "Finalize the event and preserve the official record."
+    }
+  }
+}

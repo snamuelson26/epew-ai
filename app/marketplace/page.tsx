@@ -1,9 +1,13 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function MarketplacePage() {
+  const { t } = useTranslation();
+
   const [businesses, setBusinesses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -110,7 +114,7 @@ export default function MarketplacePage() {
   if (loading) {
     return (
       <main className="min-h-screen p-10 bg-[#f5f7fb] text-[#06245c]">
-        <p className="text-2xl font-bold">Loading Marketplace...</p>
+        <p className="text-2xl font-bold">{t("content.loading_marketplace")}</p>
       </main>
     );
   }
@@ -131,7 +135,7 @@ export default function MarketplacePage() {
       {businesses.length === 0 ? (
         <div className="bg-white rounded-3xl shadow-xl p-10">
           <p className="text-2xl font-bold">
-            No businesses are listed in the marketplace yet.
+            {t("content.no_businesses_are_listed_in_the_marketplace_yet")}
           </p>
         </div>
       ) : (
@@ -179,22 +183,22 @@ export default function MarketplacePage() {
 
                 <div className="grid md:grid-cols-2 gap-4 mb-6 text-lg">
                   <p>
-                    <strong>Business Stage:</strong>{" "}
+                    <strong>{t("content.business_stage")}</strong>{" "}
                     {app.business_stage || "Not Assigned"}
                   </p>
 
                   <p>
-                    <strong>Funding Goal:</strong>{" "}
+                    <strong>{t("content.funding_goal")}</strong>{" "}
                     {app.funding_request ? `$${app.funding_request}` : "$100,000"}
                   </p>
 
                   <p>
-                    <strong>Funding Path:</strong>{" "}
+                    <strong>{t("content.funding_path")}</strong>{" "}
                     {app.funding_path || "Queue Funding"}
                   </p>
 
                   <p>
-                    <strong>Support Category:</strong>{" "}
+                    <strong>{t("content.support_category")}</strong>{" "}
                     {app.support_category || "Not Assigned"}
                   </p>
                 </div>
@@ -280,7 +284,7 @@ export default function MarketplacePage() {
             </h2>
 
             <p className="text-lg text-gray-700 mb-6">
-              1 Unit = $100. Choose weekly, monthly, or yearly support.
+              {t("content.1_unit_100_choose_weekly_monthly_or_yearly")}
             </p>
 
             <div className="grid md:grid-cols-2 gap-4 mb-5">
@@ -305,9 +309,9 @@ export default function MarketplacePage() {
                 onChange={(e) => setSupportType(e.target.value)}
                 className="border rounded-xl p-4"
               >
-                <option value="Weekly">Weekly - $100/unit</option>
-                <option value="Monthly">Monthly - $433/unit</option>
-                <option value="Yearly">Yearly - $5,200/unit</option>
+                <option value="Weekly">{t("content.weekly_100_unit")}</option>
+                <option value="Monthly">{t("content.monthly_433_unit")}</option>
+                <option value="Yearly">{t("content.yearly_5_200_unit")}</option>
               </select>
 
               <select
@@ -328,7 +332,7 @@ export default function MarketplacePage() {
               </p>
 
               <p className="text-lg mt-2">
-                Potential participation benefit: Up to 6% annually.
+                {t("content.potential_participation_benefit_up_to_6_annually")}
               </p>
 
               <p className="text-sm text-gray-600 mt-2">

@@ -1,0 +1,16 @@
+{
+  "hero": {
+    "title": "EPEW Videos",
+    "description": "Watch official presentations, program explanations, entrepreneur guidance, event highlights, and community updates from the Entrepreneur Development Ecosystem."
+  },
+  "video": {
+    "title": "EPEW Presentation Video"
+  },
+  "comingSoon": {
+    "title": "More Videos Are Coming Soon",
+    "description": "Additional videos will explain the entrepreneur journey, supporter participation, Personal Coach guidance, business launch preparation, and community impact."
+  },
+  "buttons": {
+    "returnResources": "Return to EPEW Resources"
+  }
+}

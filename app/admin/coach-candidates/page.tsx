@@ -1,9 +1,13 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminCoachCandidatesPage() {
+  const { t } = useTranslation();
+
   const [candidates, setCandidates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -94,7 +98,7 @@ export default function AdminCoachCandidatesPage() {
     return (
       <main className="min-h-screen bg-[#f5f7fb] flex items-center justify-center">
         <p className="text-3xl font-bold text-[#06245c]">
-          Loading coach candidates...
+          {t("content.loading_coach_candidates")}
         </p>
       </main>
     );
@@ -117,7 +121,7 @@ export default function AdminCoachCandidatesPage() {
         {candidates.length === 0 && (
           <div className="bg-white rounded-3xl shadow-xl p-10 text-center">
             <p className="text-2xl font-bold">
-              No coach candidates submitted yet.
+              {t("content.no_coach_candidates_submitted_yet")}
             </p>
           </div>
         )}
@@ -216,7 +220,7 @@ export default function AdminCoachCandidatesPage() {
             </div>
 
             <div className="mt-8 bg-[#f5f7fb] rounded-2xl p-6">
-              <h3 className="text-2xl font-bold mb-3">Why Join EPEW?</h3>
+              <h3 className="text-2xl font-bold mb-3">{t("headings.why_join_epew")}</h3>
               <p className="text-xl text-gray-700 whitespace-pre-wrap">
                 {candidate.why_join || "Not provided"}
               </p>
@@ -235,7 +239,7 @@ export default function AdminCoachCandidatesPage() {
                   })
                 }
                 className="w-full border rounded-2xl p-5 text-xl min-h-[140px]"
-                placeholder="Add admin interview notes..."
+                placeholder={t("form.placeholder.add_admin_interview_notes")}
               />
             </div>
 

@@ -211,90 +211,170 @@ const namespaceRegistry: Record<
 > = {
   en: {
     common: async () => {
-      const module = await import("../../../messages/en/common.json");
+      const module = await import(
+        "../../../messages/en/common.json"
+      );
+
       return module.default as TranslationDictionary;
     },
 
     navigation: async () => {
-      const module = await import("../../../messages/en/navigation.json");
-      return module.default as TranslationDictionary;
-    },
+  const module = await import(
+    "../../../messages/en/navigation.json"
+  );
 
-    homepage: async () => {
-      const module = await import("../../../messages/en/homepage.json");
-      return module.default as TranslationDictionary;
-    },
-
-   about: async () => {
-  const module = await import("../../../messages/en/about.json");
   return module.default as TranslationDictionary;
 },
-  },
 
- ht: {
-  common: async () => {
-    const module = await import("../../../messages/ht/common.json");
-    return module.default as TranslationDictionary;
-  },
+footer: async () => {
+  const module = await import(
+    "../../../messages/en/footer.json"
+  );
 
-  navigation: async () => {
-    const module = await import("../../../messages/ht/navigation.json");
-    return module.default as TranslationDictionary;
-  },
-
-  homepage: async () => {
-    const module = await import("../../../messages/ht/homepage.json");
-    return module.default as TranslationDictionary;
-  },
-
-  about: async () => {
-    const module = await import("../../../messages/ht/about.json");
-    return module.default as TranslationDictionary;
-  },
+  return module.default as TranslationDictionary;
 },
 
-  fr: {
-    common: async () => {
-      const module = await import("../../../messages/fr/common.json");
-      return module.default as TranslationDictionary;
-    },
+homepage: async () => {
+      const module = await import(
+        "../../../messages/en/homepage.json"
+      );
 
-    navigation: async () => {
-      const module = await import("../../../messages/fr/navigation.json");
-      return module.default as TranslationDictionary;
-    },
-
-    homepage: async () => {
-      const module = await import("../../../messages/fr/homepage.json");
       return module.default as TranslationDictionary;
     },
 
     about: async () => {
-  const module = await import("../../../messages/fr/about.json");
+      const module = await import(
+        "../../../messages/en/about.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+  },
+
+  ht: {
+    common: async () => {
+      const module = await import(
+        "../../../messages/ht/common.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+
+    navigation: async () => {
+  const module = await import(
+  "../../../messages/ht/navigation.json"
+  );
+
   return module.default as TranslationDictionary;
 },
+
+footer: async () => {
+  const module = await import(
+  "../../../messages/ht/footer.json"
+  );
+
+  return module.default as TranslationDictionary;
+},
+
+homepage: async () => {
+      const module = await import(
+        "../../../messages/ht/homepage.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+
+    about: async () => {
+      const module = await import(
+        "../../../messages/ht/about.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+  },
+
+  fr: {
+    common: async () => {
+      const module = await import(
+        "../../../messages/fr/common.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+
+    navigation: async () => {
+  const module = await import(
+   "../../../messages/fr/navigation.json"
+  );
+
+  return module.default as TranslationDictionary;
+},
+
+footer: async () => {
+  const module = await import(
+    "../../../messages/fr/footer.json"
+  );
+
+  return module.default as TranslationDictionary;
+},
+
+homepage: async () => {
+      const module = await import(
+        "../../../messages/fr/homepage.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+
+    about: async () => {
+      const module = await import(
+        "../../../messages/fr/about.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
   },
 
   es: {
     common: async () => {
-      const module = await import("../../../messages/es/common.json");
+      const module = await import(
+        "../../../messages/es/common.json"
+      );
+
       return module.default as TranslationDictionary;
     },
 
     navigation: async () => {
-      const module = await import("../../../messages/es/navigation.json");
-      return module.default as TranslationDictionary;
-    },
+  const module = await import(
+    "../../../messages/es/navigation.json"
+  );
 
-    homepage: async () => {
-      const module = await import("../../../messages/es/homepage.json");
+  return module.default as TranslationDictionary;
+},
+
+footer: async () => {
+  const module = await import(
+    "../../../messages/es/footer.json"
+  );
+
+  return module.default as TranslationDictionary;
+},
+
+homepage: async () => {
+      const module = await import(
+        "../../../messages/es/homepage.json"
+      );
+
       return module.default as TranslationDictionary;
     },
 
     about: async () => {
-  const module = await import("../../../messages/es/about.json");
-  return module.default as TranslationDictionary;
-},
+      const module = await import(
+        "../../../messages/es/about.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
   },
 };
 
@@ -643,6 +723,11 @@ export class TranslationEngine {
 
     try {
       const translations = await loader();
+      console.log("=== TRANSLATION LOAD ===");
+      console.log("Locale:", locale);
+      console.log("Namespace:", namespace);
+      console.log("Translations:", translations);
+      console.log("Keys:", Object.keys(translations));
       const loadedAt = Date.now();
 
       statistics.loadCount += 1;

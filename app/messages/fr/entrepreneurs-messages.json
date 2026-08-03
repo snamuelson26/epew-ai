@@ -1,0 +1,16 @@
+{
+  "content": {
+    "loading_messages": "Loading messages...",
+    "coach_name": "Coach Name:",
+    "coach_email": "Coach Email:",
+    "coach_phone": "Coach Phone:",
+    "no_messages_yet": "No messages yet.",
+    "your_coach_reviews_your_questionnaire": "✅ Your coach reviews your questionnaire.",
+    "your_coach_introduces_himself_or_herself_within_24": "✅ Your coach introduces himself or herself within 24 hours.",
+    "your_interview_date_and_time_will_be_scheduled": "✅ Your interview date and time will be scheduled.",
+    "you_begin_the_entrepreneur_preparation_and_vetting_process": "✅ You begin the entrepreneur preparation and vetting process."
+  },
+  "headings": {
+    "what_happens_next": "What Happens Next?"
+  }
+}

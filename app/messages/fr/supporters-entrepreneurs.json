@@ -1,0 +1,13 @@
+{
+  "content": {
+    "loading_available_entrepreneurs": "Loading available entrepreneurs...",
+    "no_available_entrepreneurs_found": "No available entrepreneurs found.",
+    "projected_start": "Projected Start:"
+  },
+  "form": {
+    "placeholder": {
+      "search_business_entrepreneur_or_project": "Search business, entrepreneur, or project...",
+      "search_city_state_country": "Search city, state, country..."
+    }
+  }
+}

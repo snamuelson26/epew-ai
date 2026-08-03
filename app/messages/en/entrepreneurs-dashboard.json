@@ -1,0 +1,22 @@
+{
+  "content": {
+    "loading_entrepreneur_dashboard": "Loading entrepreneur dashboard...",
+    "community": "Community →",
+    "through_the_ekero_partners_empower_wealth_program": "through the Ekero Partners Empower Wealth Program.",
+    "share_your_campaign": "📣 Share your campaign.",
+    "invite_founding_supporters": "👥 Invite Founding Supporters.",
+    "move_toward_your_community_leadership_goal": "🎯 Move toward your Community Leadership Goal.",
+    "view_my_campaign": "🌐 View My Campaign",
+    "founding_supporters": "👥 Founding Supporters"
+  },
+  "headings": {
+    "congratulations": "🎉 CONGRATULATIONS!",
+    "begin_building_your_community": "BEGIN BUILDING YOUR COMMUNITY!",
+    "you_achieved_your_community_leadership_goal": "🎉 You achieved your Community Leadership Goal!",
+    "next_action": "🎯 Next Action"
+  },
+  "buttons": {
+    "copy_campaign_link": "🔗 Copy Campaign Link",
+    "share_my_vision": "📤 Share My Vision"
+  }
+}

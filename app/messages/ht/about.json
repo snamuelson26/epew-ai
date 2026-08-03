@@ -1,64 +1,199 @@
 {
   "hero": {
     "badge": "Konsènan EPEW",
-    "title": "Bati Kominote Gras ak Antreprenarya",
-    "subtitle": "Platfòm Entrepreneur Partnership Empower Wealth (EPEW) ede antreprenè yo atravè edikasyon, antrenman, patisipasyon kominotè, ak opòtinite finansman."
+    "title": "Bati Kominote Atravè Antreprenarya",
+    "subtitle": "Ekero Partners Empower Wealth ede antreprenè yo atravè edikasyon, antrenman, patisipasyon kominotè, sipò pwofesyonèl, ak opòtinite devlopman biznis responsab.",
+    "imageAlt": "Ekero Partners Empower Wealth"
   },
-  "mission": {
-    "title": "Misyon Nou",
-    "description": "Bay antreprenè yo fòs atravè edikasyon, mentorat, patisipasyon kominotè, ak aksè ak finansman pou yo kapab bati biznis dirab epi ranfòse kominote yo."
+
+  "overview": {
+    "title": "Konsènan Ekero Partners Empower Wealth",
+    "text": "Ekero Partners Empower Wealth, ke yo rele EPEW, se yon ekosistèm antreprenarya ki santre sou kominote a. Li fèt pou ede moun transfòme lide biznis yo an biznis estriktire, dirab, epi ki an fonksyonman.",
+    "description": "Ekero Partners Empower Wealth, ke yo rele EPEW, se yon ekosistèm antreprenarya ki santre sou kominote a. Li fèt pou ede moun transfòme lide biznis yo an biznis estriktire, dirab, epi ki an fonksyonman.",
+    "imageAlt": "Konsènan Ekero Partners Empower Wealth"
   },
-  "vision": {
-    "title": "Vizyon Nou",
-    "description": "Bati yon mond kote chak antreprenè ki motive gen opòtinite pou lanse, devlope, epi kenbe yon biznis ki reyisi pandan l ap kreye richès dirab pou kominote li."
-  },
+
   "whoWeAre": {
     "title": "Ki Moun Nou Ye",
+    "description": "EPEW se plis pase yon platfòm biznis. Li se yon Ekosistèm Devlopman Antreprenè konplè ki fèt pou gide antreprenè yo depi nan lide rive nan pwopriyetè yon biznis ki reyisi. Atravè edikasyon estriktire, antrenman, patisipasyon kominotè, preparasyon pou finansman, sipò pwofesyonèl, ak responsablite alontèm, EPEW ede moun kreye biznis ki ranfòse fanmi ak kominote yo.",
     "description1": "EPEW se plis pase yon platfòm biznis. Li se yon Ekosistèm Devlopman Antreprenè konplè ki fèt pou gide antreprenè yo depi nan lide rive nan pwopriyetè yon biznis ki reyisi.",
-    "description2": "Atravè edikasyon estriktire, antrenman, patisipasyon kominotè, preparasyon pou finansman, ak sipò alontèm, EPEW ede moun kreye biznis ki ranfòse fanmi ak kominote yo."
+    "description2": "Atravè edikasyon estriktire, antrenman, patisipasyon kominotè, preparasyon pou finansman, sipò pwofesyonèl, ak responsablite alontèm, EPEW ede moun kreye biznis ki ranfòse fanmi ak kominote yo."
   },
-  "ecosystem": {
-    "title": "Ekosistèm EPEW",
-    "entrepreneurs": {
-      "title": "Antreprenè",
-      "description": "Moun k ap devlope lide biznis epi lanse antrepriz ki reyisi."
+
+  "whatWeDo": {
+    "title": "Sa Nou Fè",
+    "text": "EPEW bay yon chemen estriktire pou ede antreprenè yo grandi depi nan yon lide biznis rive nan yon biznis ki estab epi ki an fonksyonman. Chak etap fèt pou devlope konesans, preparasyon, ak siksè alontèm.",
+
+    "journey": {
+      "title": "Vwayaj Antreprenè a",
+      "idea": "Lide Biznis",
+      "qualification": "Kalifikasyon",
+      "orientation": "Oryantasyon",
+      "training": "Fòmasyon",
+      "businessPlan": "Plan Biznis",
+      "communitySupport": "Sipò Kominotè",
+      "funding": "Finansman",
+      "launch": "Lansman Biznis",
+      "growth": "Kwasans Biznis"
     },
-    "supporters": {
-      "title": "Sipòtè",
-      "description": "Manm kominote ki patisipe nan ranfòse antreprenè yo ak ekonomi lokal yo."
-    },
-    "coaches": {
-      "title": "Antrenè Pèsonèl",
-      "description": "Gid ki ede antreprenè yo prepare, òganize, epi lanse biznis yo avèk siksè."
-    },
-    "partners": {
-      "title": "Patnè",
-      "description": "Òganizasyon ak pwofesyonèl ki bay sèvis, ekspètiz, ak sipò estratejik."
+
+    "cards": {
+      "entrepreneurs": {
+        "title": "Pou Antreprenè",
+        "text": "Aprann, prepare, epi lanse yon biznis avèk sipò yon ekosistèm devwe pou ede ou reyisi."
+      },
+      "supporters": {
+        "title": "Pou Sipòtè",
+        "text": "Patisipe nan devlopman kominote w pandan w ede antreprenè yo reyalize objektif biznis yo."
+      },
+      "partners": {
+        "title": "Pou Patnè",
+        "text": "Kolabore avèk EPEW pou bay sèvis, resous, ak opòtinite ki ede biznis yo grandi."
+      },
+      "communities": {
+        "title": "Pou Kominote yo",
+        "text": "Kreye plis djòb, ranfòse ekonomi lokal la, epi ankouraje yon devlopman dirab atravè antreprenarya."
+      }
     }
   },
+
+    "approach": {
+    "title": "Apwòch Nou",
+    "text": "Apwòch EPEW la baze sou yon pwosesis estriktire ki prepare antreprenè yo pou konstwi biznis dirab, jwenn sipò kominotè, epi grandi avèk responsablite ak entegrite.",
+
+    "steps": {
+      "education": {
+        "title": "Edikasyon",
+        "text": "Bay antreprenè yo konesans fondamantal sou biznis, lidèchip, ak planifikasyon."
+      },
+      "training": {
+        "title": "Fòmasyon",
+        "text": "Devlope konpetans pratik pou prepare antreprenè yo pou operasyon reyèl yo."
+      },
+      "coaching": {
+        "title": "Sipò ak Akonpayman",
+        "text": "Bay konsèy ak sipò kontinyèl pandan tout pwosesis devlopman biznis la."
+      },
+      "community": {
+        "title": "Angajman Kominotè",
+        "text": "Ankouraje antreprenè yo bati relasyon solid ak kominote yo epi devlope yon rezo sipò."
+      },
+      "funding": {
+        "title": "Preparasyon pou Finansman",
+        "text": "Asire antreprenè yo pare pou resevwa finansman atravè planifikasyon, konfòmite, ak responsablite."
+      },
+      "launch": {
+        "title": "Lansman Biznis",
+        "text": "Sipòte ouvèti ofisyèl biznis la epi ede antreprenè a kòmanse operasyon avèk siksè."
+      },
+      "growth": {
+        "title": "Kwasans Alontèm",
+        "text": "Kontinye bay sipò, siveyans, ak resous pou ede biznis la grandi epi rete dirab."
+      }
+    }
+  },
+
+    "model": {
+    "title": "Modèl Ekosistèm EPEW",
+    "text": "Modèl EPEW la konekte antreprenè, sipòtè, patnè, antrenè, ak kominote yo nan yon sèl ekosistèm kolaboratif. Chak patisipan gen yon wòl enpòtan pou ankouraje devlopman biznis, kwasans ekonomik, ak pwosperite kominotè.",
+
+    "cards": {
+      "entrepreneurs": {
+        "title": "Antreprenè",
+        "text": "Moun ki devlope lide biznis yo epi travay pou bati biznis dirab atravè pwogram EPEW la."
+      },
+      "supporters": {
+        "title": "Sipòtè",
+        "text": "Manm kominote a ki bay sipò pou ede antreprenè yo reyisi epi ranfòse devlopman ekonomik lokal."
+      },
+      "partners": {
+        "title": "Patnè",
+        "text": "Òganizasyon ak pwofesyonèl ki bay sèvis, ekspètiz, ak resous pou sipòte ekosistèm nan."
+      },
+      "coaches": {
+        "title": "Antrenè",
+        "text": "Moun ki gide antreprenè yo atravè konsèy, sipèvizyon, ak ankourajman pandan tout pwosesis la."
+      }
+    },
+
+    "ibos": {
+      "title": "IBOS — I Am My Own Boss",
+      "text": "IBOS se metodoloji devlopman antreprenè EPEW la. Li gide chak antreprenè atravè yon chemen estriktire depi nan premye lide biznis la rive nan lansman, kwasans, ak jesyon yon biznis ki reyisi."
+    },
+
+    "notice": {
+      "title": "Yon Modèl Santre sou Kominote a",
+      "text": "Siksè EPEW depann sou kolaborasyon ant antreprenè, sipòtè, patnè, antrenè, ak kominote yo. Ansanm, yo bati opòtinite, kreye djòb, epi ankouraje yon avni ekonomik ki pi solid."
+    }
+  },
+
+    "mission": {
+    "title": "Misyon Nou",
+    "text": "Misyon EPEW se bay moun ak kominote yo pouvwa atravè antreprenarya lè nou ofri edikasyon, fòmasyon, sipò pwofesyonèl, ak opòtinite pou devlope biznis ki kreye travay, ranfòse fanmi yo, epi ankouraje devlopman ekonomik dirab."
+  },
+
+  "vision": {
+    "title": "Vizyon Nou",
+    "text": "Vizyon nou se bati yon ekosistèm antreprenarya mondyal kote chak moun ki gen detèminasyon ak angajman gen opòtinite pou kreye, devlope, epi kenbe yon biznis ki reyisi pandan y ap kontribye nan pwosperite kominote yo."
+  },
+
   "values": {
-    "title": "Valè Fondamantal Nou",
-    "community": {
-      "title": "Kominote Anvan Tout Bagay",
-      "description": "Kominote solid bati biznis solid."
-    },
-    "integrity": {
-      "title": "Entegrite",
-      "description": "Nou travay avèk onètete, transparans, ak responsablite."
-    },
-    "innovation": {
-      "title": "Inovasyon",
-      "description": "Nou ankouraje kreyativite ak amelyorasyon kontinyèl."
-    },
-    "empowerment": {
-      "title": "Bay Moun Fòs",
-      "description": "Ede moun vin endepandan atravè antreprenarya."
+    "title": "Valè Nou yo",
+    "text": "Valè sa yo gide chak desizyon, chak pwogram, ak chak sèvis EPEW bay.",
+
+    "cards": {
+      "integrity": {
+        "title": "Entegrite",
+        "text": "Nou aji avèk onètete, transparans, ak responsablite nan tout sa nou fè."
+      },
+      "empowerment": {
+        "title": "Otonomizasyon",
+        "text": "Nou ede moun devlope konesans, konpetans, ak konfyans pou yo bati pwòp avni yo."
+      },
+      "collaboration": {
+        "title": "Kolaborasyon",
+        "text": "Nou kwè pi gwo rezilta yo rive lè antreprenè, sipòtè, patnè, ak kominote yo travay ansanm."
+      },
+      "innovation": {
+        "title": "Inovasyon",
+        "text": "Nou ankouraje nouvo lide ak solisyon pratik pou rezoud defi ekonomik ak sosyal yo."
+      },
+      "accountability": {
+        "title": "Responsablite",
+        "text": "Nou ankouraje disiplin, angajman, ak bon jesyon nan tout etap devlopman biznis la."
+      },
+      "community": {
+        "title": "Devlopman Kominotè",
+        "text": "Nou kwè siksè yon biznis dwe kontribye nan amelyorasyon fanmi yo ak kominote kote li opere a."
+      }
     }
   },
-  "callToAction": {
-    "title": "Vin Fè Pati Ekosistèm EPEW la",
-    "description": "Kit ou se antreprenè, sipòtè, antrenè, oswa patnè, ou gen plas ou nan bati kominote ki pi solid atravè antreprenarya.",
-    "primaryButton": "Vin yon Antreprenè",
-    "secondaryButton": "Retounen Lakay"
+
+    "why": {
+    "title": "Poukisa EPEW Egziste",
+    "text": "EPEW te kreye pou retire kèk nan pi gwo baryè ki anpeche moun vin antreprenè. Nou kwè ke avèk bon preparasyon, bon sipò, ak yon kominote ki angaje, plis moun kapab bati biznis ki reyisi epi amelyore lavi yo."
+  },
+
+  "promise": {
+    "title": "Angajman Nou",
+    "text": "Nou pran angajman pou bay chak antreprenè yon eksperyans pwofesyonèl, estriktire, ak jis. Objektif nou se ede moun prepare pou siksè alontèm olye pou n chèche rezilta rapid sèlman."
+  },
+
+  "join": {
+    "title": "Vin Fè Pati Ekosistèm nan",
+    "text": "Kit ou se yon antreprenè, yon sipòtè, yon patnè, oswa yon pwofesyonèl ki vle sèvi kominote a, EPEW envite ou vin patisipe nan yon mouvman k ap bati biznis, kreye opòtinite, epi ranfòse kominote yo.",
+
+    "buttons": {
+      "entrepreneur": "Vin Antreprenè",
+      "supporter": "Vin Sipòtè",
+      "partner": "Vin Patnè",
+      "coach": "Vin Antrenè",
+      "learnMore": "Aprann Plis"
+    }
+  },
+
+  "disclosure": {
+    "title": "Enfòmasyon Enpòtan",
+    "text": "EPEW se yon ekosistèm devlopman antreprenarya. Kalifikasyon, patisipasyon, ak elijiblite pou pwogram yo depann de règ ak politik ofisyèl EPEW. Nenpòt referans sou finansman, sipò, oswa benefis yo sijè a kondisyon pwogram ki aplikab yo."
   }
 }

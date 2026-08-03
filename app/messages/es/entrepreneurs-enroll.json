@@ -1,0 +1,34 @@
+{
+  "headings": {
+    "entrepreneur_enrollment_opens_july_29_2026": "Entrepreneur Enrollment Opens July 29, 2026",
+    "bring_your_business_idea": "Bring Your Business Idea.",
+    "1_submit_your_application": "1. Submit Your Application",
+    "2_application_review": "2. Application Review",
+    "3_coach_and_qualification": "3. Coach and Qualification",
+    "what_happens_next": "What Happens Next?",
+    "1_purpose_of_the_program": "1. Purpose of the Program",
+    "2_role_of_epew": "2. Role of EPEW",
+    "3_coach_assignment": "3. Coach Assignment",
+    "4_business_entity_requirement": "4. Business Entity Requirement",
+    "5_risk_acknowledgment": "5. Risk Acknowledgment",
+    "6_epew_disclaimer": "6. EPEW Disclaimer"
+  },
+  "content": {
+    "our_team_will_review_your_application": "✅ Our team will review your application.",
+    "your_coach_will_schedule_your_first_interview": "✅ Your coach will schedule your first interview.",
+    "welcome_to_the_epew_ede_iboss_program": "Welcome to the EPEW-EDE-IBOSS Program.",
+    "race_or_ethnicity_optional": "Race or Ethnicity — Optional",
+    "already_applied_or_registered": "Already applied or registered?"
+  },
+  "form": {
+    "placeholder": {
+      "create_password_minimum_8_characters": "Create Password — Minimum 8 Characters",
+      "state_province": "State / Province",
+      "zip_postal_code": "ZIP / Postal Code",
+      "please_describe_optional": "Please describe — Optional",
+      "business_category_optional": "Business Category — Optional",
+      "describe_your_business_idea_in_a_few_sentences": "Describe your business idea in a few sentences.",
+      "organization_name_and_type_nonprofit_political_religious_professional": "Organization name and type — nonprofit, political, religious, professional, community, or other"
+    }
+  }
+}

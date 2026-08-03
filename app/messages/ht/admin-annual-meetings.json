@@ -1,0 +1,18 @@
+{
+  "content": {
+    "loading_annual_meetings": "Loading Annual Meetings...",
+    "entrepreneurs_and_guests_may_register_for_the_annual": "Entrepreneurs and guests may register for the Annual Meeting.",
+    "entrepreneurs_approved_to_participate_in_the_annual_meeting": "Entrepreneurs approved to participate in the Annual Meeting."
+  },
+  "headings": {
+    "registration_open": "🟢 Registration Open"
+  },
+  "form": {
+    "placeholder": {
+      "annual_meeting_name_example_epew_annual_meeting_2026": "Annual Meeting Name (Example: EPEW Annual Meeting 2026)",
+      "venue_meeting_location": "Venue / Meeting Location",
+      "meeting_notes": "Meeting notes...",
+      "search_entrepreneur": "Search entrepreneur..."
+    }
+  }
+}

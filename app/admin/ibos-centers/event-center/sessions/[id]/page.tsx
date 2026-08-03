@@ -1,8 +1,12 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import Link from "next/link";
 
 export default function EventSessionDetailsPage() {
+  const { t } = useTranslation();
+
   return (
     <main className="min-h-screen bg-[#f5f7fb] p-10 text-[#06245c]">
       <section className="mb-8 rounded-[2rem] bg-gradient-to-r from-black via-[#06245c] to-green-900 p-10 text-white shadow-2xl">
@@ -10,7 +14,7 @@ export default function EventSessionDetailsPage() {
           href="/admin/ibos-centers/event-center/sessions"
           className="text-lg font-black text-lime-300"
         >
-          ← Back to Sessions
+          {t("content.back_to_sessions")}
         </Link>
 
         <p className="mt-8 text-xl font-black uppercase tracking-[0.45em] text-lime-300">
@@ -37,15 +41,15 @@ export default function EventSessionDetailsPage() {
       </section>
 
       <section className="mt-8 grid gap-6 xl:grid-cols-3">
-        <ModuleCard title="Participants" description="Assign qualified entrepreneurs to this session." />
-        <ModuleCard title="Guest Registration" description="Manage one official guest per entrepreneur." />
-        <ModuleCard title="Attendance" description="Check in entrepreneurs and guests." />
-        <ModuleCard title="Certificates" description="Generate certificates, QR codes, and registry entries." />
-        <ModuleCard title="ORGDH Gives Back" description="Run the official raffle for eligible participants." />
-        <ModuleCard title="Funding Queue" description="Create queue positions from priority and raffle results." />
-        <ModuleCard title="Stage Manager" description="Control ceremony order and the 45-second presentation timer." />
-        <ModuleCard title="Statistics" description="Review live event performance and completion status." />
-        <ModuleCard title="Archive" description="Finalize the event and preserve the official record." />
+        <ModuleCard title="Participants" description={t("attributes.description.assign_qualified_entrepreneurs_to_this_session")} />
+        <ModuleCard title="Guest Registration" description={t("attributes.description.manage_one_official_guest_per_entrepreneur")} />
+        <ModuleCard title="Attendance" description={t("attributes.description.check_in_entrepreneurs_and_guests")} />
+        <ModuleCard title="Certificates" description={t("attributes.description.generate_certificates_qr_codes_and_registry_entries")} />
+        <ModuleCard title="ORGDH Gives Back" description={t("attributes.description.run_the_official_raffle_for_eligible_participants")} />
+        <ModuleCard title="Funding Queue" description={t("attributes.description.create_queue_positions_from_priority_and_raffle_results")} />
+        <ModuleCard title="Stage Manager" description={t("attributes.description.control_ceremony_order_and_the_45_second_presentation")} />
+        <ModuleCard title="Statistics" description={t("attributes.description.review_live_event_performance_and_completion_status")} />
+        <ModuleCard title="Archive" description={t("attributes.description.finalize_the_event_and_preserve_the_official_record")} />
       </section>
     </main>
   );

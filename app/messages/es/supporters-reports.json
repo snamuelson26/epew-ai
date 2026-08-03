@@ -1,0 +1,11 @@
+{
+  "content": {
+    "loading_reports": "Loading reports...",
+    "supporter_id": "Supporter ID:",
+    "reporting_year": "Reporting Year:",
+    "total_contributions": "Total Contributions:",
+    "total_units": "Total Units:",
+    "active_commitments": "Active Commitments:",
+    "no_contribution_history_found": "No contribution history found."
+  }
+}

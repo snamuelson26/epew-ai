@@ -1,0 +1,16 @@
+{
+  "content": {
+    "sevendaysago_createddate": "= sevenDaysAgo && createdDate"
+  },
+  "headings": {
+    "loading_marketplace": "Loading Marketplace...",
+    "support_entrepreneurs_strengthen_communities": "Support Entrepreneurs. Strengthen Communities.",
+    "this_week_apos_s_marketplace_activity": "This Week&apos;s Marketplace Activity",
+    "no_businesses_match_your_current_search": "No businesses match your current search."
+  },
+  "form": {
+    "placeholder": {
+      "search_by_business_entrepreneur_category_city_or_state": "Search by business, entrepreneur, category, city, or state..."
+    }
+  }
+}

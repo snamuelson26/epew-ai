@@ -1,0 +1,12 @@
+{
+  "content": {
+    "loading_participation_agreement": "Loading participation agreement...",
+    "edit_this_number_to_support_more_than_one": "Edit this number to support more than one unit.",
+    "open_this_menu_to_choose_weekly_monthly_or": "Open this menu to choose weekly, monthly, or annual support.",
+    "price_per_unit": "Price Per Unit:",
+    "100_per_week": "$100 per week"
+  },
+  "headings": {
+    "supporter_entrepreneur_participation_agreement": "Supporter–Entrepreneur Participation Agreement"
+  }
+}

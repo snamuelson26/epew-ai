@@ -1,0 +1,19 @@
+{
+  "content": {
+    "loading_supporter_registration": "Loading supporter registration...",
+    "thank_you_for_your_interest_in_becoming_an": "Thank you for your interest in becoming an EPEW Founding Supporter.",
+    "optional_for_testing_please_upload_a_clear_photo": "Optional for testing. Please upload a clear photo of yourself only.",
+    "uploading_photo": "Uploading photo..."
+  },
+  "headings": {
+    "supporter_registration_opens_july_29_2026": "Supporter Registration Opens July 29, 2026"
+  },
+  "form": {
+    "placeholder": {
+      "state_province_department_of_origin": "State / Province / Department of Origin",
+      "community_city_of_origin": "Community / City of Origin",
+      "state_province": "State / Province",
+      "zip_postal_code": "ZIP / Postal Code"
+    }
+  }
+}

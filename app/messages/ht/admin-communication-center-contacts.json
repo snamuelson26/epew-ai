@@ -1,0 +1,16 @@
+{
+  "form": {
+    "placeholder": {
+      "search_by_name_organization_phone_email_city_state": "Search by name, organization, phone, email, city, state, or tag..."
+    }
+  },
+  "content": {
+    "loading_official_contacts": "Loading official contacts...",
+    "displayedcontacts_length_0": ") : displayedContacts.length === 0 ? ("
+  },
+  "attributes": {
+    "description": {
+      "leave_blank_to_use_the_first_and_last": "Leave blank to use the first and last name."
+    }
+  }
+}

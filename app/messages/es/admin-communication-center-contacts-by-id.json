@@ -1,0 +1,13 @@
+{
+  "content": {
+    "loading_contact_profile": "Loading contact profile...",
+    "no_tags_assigned": "No tags assigned.",
+    "this_contact_is_not_assigned_to_a_group": "This contact is not assigned to a group.",
+    "no_administrator_notes_have_been_added": "No administrator notes have been added."
+  },
+  "form": {
+    "placeholder": {
+      "add_private_information_follow_up_instructions_or_contact": "Add private information, follow-up instructions, or contact context..."
+    }
+  }
+}

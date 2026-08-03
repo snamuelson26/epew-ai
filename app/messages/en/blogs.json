@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "title": "EPEW Blogs",
+    "description": "Explore articles, resources, updates, and education designed to help entrepreneurs, supporters, coaches, and partners grow together."
+  },
+
+  "categories": {
+    "entrepreneurship": {
+      "title": "Entrepreneurship",
+      "description": "Business ideas, startup preparation, business structure, and launch readiness."
+    },
+    "wealthBuilding": {
+      "title": "Wealth Building",
+      "description": "Financial education, budgeting, savings, credit, and long-term planning."
+    },
+    "communityDevelopment": {
+      "title": "Community Development",
+      "description": "How entrepreneurship strengthens families, creates jobs, and supports communities."
+    },
+    "epewNews": {
+      "title": "EPEW News",
+      "description": "Platform updates, events, announcements, and ecosystem progress."
+    },
+    "coachCorner": {
+      "title": "Coach Corner",
+      "description": "Training articles, coaching guidance, and entrepreneur preparation resources."
+    },
+    "partnerSpotlight": {
+      "title": "Partner Spotlight",
+      "description": "Business services, partner resources, and professional support opportunities."
+    }
+  },
+
+  "knowledgeCenter": {
+    "title": "EPEW Knowledge Center",
+    "description": "The blog will support education, transparency, financial literacy, entrepreneur readiness, community participation, and ecosystem updates.",
+    "entrepreneurResources": "Entrepreneur Resources",
+    "supporterResources": "Supporter Resources"
+  }
+}

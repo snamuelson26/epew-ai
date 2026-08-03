@@ -2,9 +2,9 @@
   "home": "Accueil",
 
   "about": "À propos",
-  "aboutEPEW": "À propos d'EPEW",
+  "aboutEpew": "À propos d'EPEW",
   "professionalSupportCenter": "Centre de soutien professionnel",
-  "howEPEWWorks": "Comment fonctionne EPEW",
+  "howEpewWorks": "Comment fonctionne EPEW",
   "how": "Comment",
 
   "epewTeam": "Équipe EPEW",
@@ -12,6 +12,7 @@
   "supporters": "Supporteurs",
   "coaches": "Coachs",
   "partners": "Partenaires",
+  "vendors": "Fournisseurs",
 
   "videos": "Vidéos",
   "blogs": "Blogues",
@@ -21,7 +22,13 @@
   "supporterLogin": "Connexion Supporteur",
   "coachLogin": "Connexion Coach",
   "partnerLogin": "Connexion Partenaire",
+  "vendorLogin": "Connexion Fournisseur",
   "adminLogin": "Connexion Administrateur",
+
+  "portalAccess": "Accès aux portails",
+  "selectYourLogin": "Sélectionnez votre connexion",
+  "openLoginMenu": "Ouvrir le menu de connexion",
+  "closeLoginMenu": "Fermer le menu de connexion",
 
   "register": "S'inscrire",
 

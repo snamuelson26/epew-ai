@@ -1,9 +1,13 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminBusinessCategoriesPage() {
+  const { t } = useTranslation();
+
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -84,7 +88,7 @@ export default function AdminBusinessCategoriesPage() {
   if (loading) {
     return (
       <div className="p-10 text-2xl font-bold">
-        Loading Business Categories...
+        {t("content.loading_business_categories")}
       </div>
     );
   }
@@ -127,7 +131,7 @@ export default function AdminBusinessCategoriesPage() {
 
         <textarea
           className="border rounded-xl p-4 w-full min-h-[160px] mb-6"
-          placeholder="Category description..."
+          placeholder={t("form.placeholder.category_description")}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
@@ -143,7 +147,7 @@ export default function AdminBusinessCategoriesPage() {
       {categories.length === 0 ? (
         <div className="bg-white rounded-3xl shadow-xl p-8">
           <h2 className="text-3xl font-bold text-[#06245c] text-center">
-            No business categories added yet.
+            {t("headings.no_business_categories_added_yet")}
           </h2>
         </div>
       ) : (

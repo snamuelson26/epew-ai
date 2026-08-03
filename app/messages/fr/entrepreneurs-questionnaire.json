@@ -1,0 +1,11 @@
+{
+  "content": {
+    "loading_questionnaire": "Loading questionnaire...",
+    "coach_notes": "Coach Notes:"
+  },
+  "form": {
+    "placeholder": {
+      "write_your_answer_here": "Write your answer here..."
+    }
+  }
+}

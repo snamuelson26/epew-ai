@@ -1,11 +1,15 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 
 export default function HowItWorksPage() {
+  const { t } = useTranslation();
+
   const steps = [
     [
       "1",
@@ -43,7 +47,7 @@ export default function HowItWorksPage() {
           <div className="mx-auto max-w-7xl">
             <Image
               src="/images/epew-process.png"
-              alt="How EPEW Helps Entrepreneurs Build Real Businesses"
+              alt={t("images.howEpewHelpsAlt", { namespace: "how-it-works" })}
               width={1600}
               height={1000}
               className="mx-auto mb-16 rounded-3xl shadow-2xl"
@@ -61,7 +65,7 @@ export default function HowItWorksPage() {
 
               <ul className="space-y-8 text-3xl leading-relaxed text-gray-700">
                 <li>
-                  <strong>1. The Entrepreneur Brings the Idea</strong>
+                  <strong>{t("content.1_the_entrepreneur_brings_the_idea")}</strong>
                   <br />
                   Every successful business begins with an idea. The entrepreneur
                   brings the vision, passion, and determination to build
@@ -69,7 +73,10 @@ export default function HowItWorksPage() {
                 </li>
 
                 <li>
-                  <strong>2. EPEW Develops the Idea</strong>
+                  {t(
+                 "content.2_description",
+                { namespace: "how-it-works" },
+               )}
                   <br />
                   EPEW develops the idea into a structured business opportunity
                   through education, coaching, planning, professional guidance,
@@ -78,46 +85,46 @@ export default function HowItWorksPage() {
 
                 <li>
                   <strong>
-                    3. EPEW Prepares the Entrepreneur and Connects Funding
+                    {t("content.3_epew_prepares_the_entrepreneur_and_connects_funding")}
                   </strong>
                   <br />
-                  EPEW prepares the entrepreneur for business ownership, funding
-                  readiness, and connects them with the funding needed to launch
-                  and grow.
+                  {t(
+                  "content.3_description",
+                  { namespace: "how-it-works" },
+                 )}
                 </li>
 
-                <li>
-                  <strong>
-                    4. EPEW Provides the Entrepreneur Development Ecosystem
-                    (EDE)
-                  </strong>
-                  <br />
-                  The EDE brings together coaches, professional teams, Founding
-                  Supporters, Certified Growth Partners, technology, and
-                  coordinated resources into one complete support system.
-                </li>
+               <li>
+               <strong>
+                {t(
+                "content.4_epew_provides_the_entrepreneur_development_ecosystem",
+                { namespace: "how-it-works" },
+                 )}
+                </strong>
 
-                <li>
-                  <strong>5. IBOS Coordinates the Journey</strong>
-                  <br />
-                  IBOS coordinates preparation, professional services, business
-                  development, milestones, communications, service requests,
-                  funding readiness, and long-term business growth.
-                </li>
+               <br />
+
+               {t(
+               "content.4_description",
+               { namespace: "how-it-works" },
+           )}
+             </li>
               </ul>
 
               <div className="mt-16 rounded-3xl border-l-8 border-green-600 bg-green-50 p-10">
                 <h3 className="mb-6 text-4xl font-extrabold text-green-800">
-                  The Result
+                  {t("headings.the_result", {
+                 namespace: "how-it-works",
+             })}
                 </h3>
 
                 <ul className="space-y-4 text-2xl font-semibold text-gray-700">
-                  <li>✅ Successful Entrepreneur</li>
-                  <li>✅ Successful Business</li>
-                  <li>✅ New Jobs</li>
-                  <li>✅ Stronger Families</li>
-                  <li>✅ Stronger Communities</li>
-                  <li>✅ Lasting Wealth</li>
+                  <li>{t("content.successful_entrepreneur")}</li>
+                  <li>{t("content.successful_business")}</li>
+                  <li>{t("content.new_jobs")}</li>
+                  <li>{t("content.stronger_families")}</li>
+                  <li>{t("content.stronger_communities")}</li>
+                  <li>{t("content.lasting_wealth")}</li>
                 </ul>
               </div>
             </div>
@@ -155,29 +162,29 @@ export default function HowItWorksPage() {
         <section className="bg-white px-8 py-24">
           <div className="mx-auto max-w-7xl text-center">
             <h2 className="mb-10 text-6xl font-extrabold">
-              EPEW • EDE • IBOS
+              {t("headings.epew_ede_ibos")}
             </h2>
 
             <div className="grid gap-10 md:grid-cols-3">
               <Card
                 icon="🏛️"
-                title="EPEW"
-                subtitle="The Organization"
-                text="EPEW develops the programs, partnerships, standards, and opportunities that support entrepreneurs."
+               title={t("systems.epew.title", { namespace: "how-it-works" })}
+               subtitle={t("systems.epew.subtitle", { namespace: "how-it-works" })}
+                text={t("systems.epew.text", { namespace: "how-it-works" })}
               />
 
               <Card
                 icon="🌍"
-                title="EDE"
-                subtitle="The Ecosystem"
-                text="The Entrepreneur Development Ecosystem brings coaching, professional support, partners, and community together."
+                title={t("systems.ede.title", { namespace: "how-it-works" })}
+                subtitle={t("systems.ede.subtitle", { namespace: "how-it-works" })}
+                text={t("systems.ede.text", { namespace: "how-it-works" })}
               />
 
               <Card
                 icon="🤖"
-                title="IBOS"
-                subtitle="The Operating System"
-                text="IBOS coordinates the journey, tracks progress, manages workflows, and supports funding readiness."
+                title={t("systems.ibos.title", { namespace: "how-it-works" })}
+                subtitle={t("systems.ibos.subtitle", { namespace: "how-it-works" })}
+                text={t("systems.ibos.text", { namespace: "how-it-works" })}
               />
             </div>
           </div>

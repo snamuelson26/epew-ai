@@ -1,0 +1,45 @@
+{
+  "hero": {
+    "title": "Blogs EPEW",
+    "description": "Découvrez des articles, des ressources, des mises à jour et des contenus éducatifs conçus pour aider les entrepreneurs, les supporteurs, les coachs et les partenaires à progresser ensemble."
+  },
+
+  "categories": {
+    "entrepreneurship": {
+      "title": "Entrepreneuriat",
+      "description": "Idées d’entreprise, préparation au démarrage, structure d’entreprise et préparation au lancement."
+    },
+
+    "wealthBuilding": {
+      "title": "Création de Richesse",
+      "description": "Éducation financière, budgétisation, épargne, crédit et planification à long terme."
+    },
+
+    "communityDevelopment": {
+      "title": "Développement Communautaire",
+      "description": "Comment l’entrepreneuriat renforce les familles, crée des emplois et soutient les communautés."
+    },
+
+    "epewNews": {
+      "title": "Actualités EPEW",
+      "description": "Mises à jour de la plateforme, événements, annonces et progrès de l’écosystème."
+    },
+
+    "coachCorner": {
+      "title": "Coin des Coachs",
+      "description": "Articles de formation, conseils de coaching et ressources de préparation pour les entrepreneurs."
+    },
+
+    "partnerSpotlight": {
+      "title": "Partenaire à l’Honneur",
+      "description": "Services aux entreprises, ressources pour les partenaires et possibilités de soutien professionnel."
+    }
+  },
+
+  "knowledgeCenter": {
+    "title": "Centre de Connaissances EPEW",
+    "description": "Le blog soutiendra l’éducation, la transparence, la littératie financière, la préparation des entrepreneurs, la participation communautaire et les mises à jour de l’écosystème.",
+    "entrepreneurResources": "Ressources pour Entrepreneurs",
+    "supporterResources": "Ressources pour Supporteurs"
+  }
+}

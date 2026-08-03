@@ -1,6 +1,21 @@
+"use client";
+
+import { useEffect } from "react";
 import Link from "next/link";
 
+import {
+  useLanguage,
+  useTranslation,
+} from "@/app/components/enterprise/language";
+
 export default function VideosPage() {
+  const { t } = useTranslation();
+  const { loadNamespaces } = useLanguage();
+
+  useEffect(() => {
+    void loadNamespaces(["resources-videos"]);
+  }, [loadNamespaces]);
+
   return (
     <main className="min-h-screen bg-white text-[#06245c]">
       <section className="bg-[#f5f7fb] py-24">
@@ -23,7 +38,9 @@ export default function VideosPage() {
             <iframe
               className="aspect-video w-full"
               src="https://www.youtube.com/embed/ZR_L6Vx0p-U"
-              title="EPEW Presentation Video"
+              title={t("video.title", {
+               namespace: "resources-videos",
+            })}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />

@@ -1,0 +1,14 @@
+{
+  "content": {
+    "loading_partner_candidates": "Loading partner candidates...",
+    "no_partner_candidates_submitted_yet": "No partner candidates submitted yet."
+  },
+  "headings": {
+    "why_join_epew": "Why Join EPEW?"
+  },
+  "form": {
+    "placeholder": {
+      "add_admin_interview_notes": "Add admin interview notes..."
+    }
+  }
+}

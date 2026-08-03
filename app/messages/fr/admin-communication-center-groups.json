@@ -1,0 +1,20 @@
+{
+  "attributes": {
+    "description": {
+      "create_organize_automate_and_manage_official_communication_groups": "Create, organize, automate, and manage official communication groups across the EPEW Enterprise ecosystem.",
+      "current_communication_capacity_audience_readiness_and_system_operations": "Current communication capacity, audience readiness, and system operations across the EPEW ecosystem."
+    }
+  },
+  "form": {
+    "placeholder": {
+      "search_group_name_description_or_slug": "Search group name, description, or slug..."
+    }
+  },
+  "content": {
+    "name_a_z": "Name A–Z",
+    "name_z_a": "Name Z–A",
+    "groups_length_0": ") : groups.length === 0 ? (",
+    "viewmode_table": ") : viewMode === \"table\" ? (",
+    "preparing_audiences_statistics_and_campaign_readiness": "Preparing audiences, statistics, and campaign readiness."
+  }
+}

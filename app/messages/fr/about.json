@@ -1,64 +1,199 @@
 {
   "hero": {
-    "badge": "À propos d’EPEW",
-    "title": "Bâtir des communautés grâce à l’entrepreneuriat",
-    "subtitle": "La plateforme Entrepreneur Partnership Empower Wealth (EPEW) accompagne les entrepreneurs grâce à l’éducation, au coaching, à la participation communautaire et aux possibilités de financement."
+    "badge": "À propos d'EPEW",
+    "title": "Construire les communautés grâce à l'entrepreneuriat",
+    "subtitle": "Ekero Partners Empower Wealth accompagne les entrepreneurs grâce à l'éducation, la formation, l'engagement communautaire, le soutien professionnel et les opportunités de développement d'entreprises durables.",
+    "imageAlt": "Ekero Partners Empower Wealth"
   },
-  "mission": {
+
+  "overview": {
+    "title": "À propos d'Ekero Partners Empower Wealth",
+    "text": "Ekero Partners Empower Wealth, connu sous le nom d'EPEW, est un écosystème entrepreneurial centré sur la communauté. Il a été conçu pour aider les personnes à transformer leurs idées d'entreprise en entreprises structurées, durables et prospères.",
+    "description": "Ekero Partners Empower Wealth, connu sous le nom d'EPEW, est un écosystème entrepreneurial centré sur la communauté. Il a été conçu pour aider les personnes à transformer leurs idées d'entreprise en entreprises structurées, durables et prospères.",
+    "imageAlt": "À propos d'Ekero Partners Empower Wealth"
+  },
+
+  "whoWeAre": {
+    "title": "Qui sommes-nous ?",
+    "description": "EPEW est bien plus qu'une plateforme d'affaires. C'est un écosystème complet de développement entrepreneurial conçu pour accompagner les entrepreneurs depuis l'idée d'entreprise jusqu'à la création d'une entreprise prospère. Grâce à une éducation structurée, à la formation, à l'engagement communautaire, à la préparation au financement, au soutien professionnel et à un accompagnement à long terme, EPEW aide les personnes à créer des entreprises qui renforcent les familles et les communautés.",
+    "description1": "EPEW est bien plus qu'une plateforme d'affaires. C'est un écosystème complet de développement entrepreneurial conçu pour accompagner les entrepreneurs depuis l'idée d'entreprise jusqu'à la création d'une entreprise prospère.",
+    "description2": "Grâce à une éducation structurée, à la formation, à l'engagement communautaire, à la préparation au financement, au soutien professionnel et à un accompagnement à long terme, EPEW aide les personnes à créer des entreprises qui renforcent les familles et les communautés."
+  },
+
+    "whatWeDo": {
+    "title": "Ce que nous faisons",
+    "text": "EPEW offre un parcours structuré permettant aux entrepreneurs d'évoluer d'une simple idée d'entreprise vers une entreprise stable et prospère. Chaque étape est conçue pour développer les connaissances, la préparation et la réussite à long terme.",
+
+    "journey": {
+      "title": "Le parcours de l'entrepreneur",
+      "idea": "Idée d'entreprise",
+      "qualification": "Qualification",
+      "orientation": "Orientation",
+      "training": "Formation",
+      "businessPlan": "Plan d'affaires",
+      "communitySupport": "Soutien communautaire",
+      "funding": "Financement",
+      "launch": "Lancement de l'entreprise",
+      "growth": "Croissance de l'entreprise"
+    },
+
+    "cards": {
+      "entrepreneurs": {
+        "title": "Pour les entrepreneurs",
+        "text": "Apprenez, préparez-vous et lancez votre entreprise grâce au soutien d'un écosystème dédié à votre réussite."
+      },
+      "supporters": {
+        "title": "Pour les partenaires de soutien",
+        "text": "Contribuez au développement de votre communauté tout en aidant les entrepreneurs à atteindre leurs objectifs d'affaires."
+      },
+      "partners": {
+        "title": "Pour les partenaires",
+        "text": "Collaborez avec EPEW pour offrir des services, des ressources et des opportunités favorisant la croissance des entreprises."
+      },
+      "communities": {
+        "title": "Pour les communautés",
+        "text": "Créer davantage d'emplois, renforcer l'économie locale et promouvoir un développement durable grâce à l'entrepreneuriat."
+      }
+    }
+  },
+
+    "approach": {
+    "title": "Notre approche",
+    "text": "L'approche d'EPEW repose sur un processus structuré qui prépare les entrepreneurs à créer des entreprises durables, à obtenir le soutien de leur communauté et à se développer avec responsabilité, intégrité et vision à long terme.",
+
+    "steps": {
+      "education": {
+        "title": "Éducation",
+        "text": "Fournir aux entrepreneurs les connaissances essentielles en affaires, en leadership et en planification stratégique."
+      },
+      "training": {
+        "title": "Formation",
+        "text": "Développer les compétences pratiques nécessaires pour préparer les entrepreneurs aux réalités de la gestion d'une entreprise."
+      },
+      "coaching": {
+        "title": "Accompagnement",
+        "text": "Offrir un encadrement professionnel, des conseils et un soutien continu tout au long du parcours entrepreneurial."
+      },
+      "community": {
+        "title": "Engagement communautaire",
+        "text": "Encourager les entrepreneurs à bâtir des relations solides avec leur communauté et à développer un réseau de soutien durable."
+      },
+      "funding": {
+        "title": "Préparation au financement",
+        "text": "Veiller à ce que les entrepreneurs soient prêts à recevoir un financement grâce à une planification rigoureuse, au respect des exigences et à une gestion responsable."
+      },
+      "launch": {
+        "title": "Lancement de l'entreprise",
+        "text": "Accompagner l'ouverture officielle de l'entreprise afin d'assurer un démarrage solide et bien organisé."
+      },
+      "growth": {
+        "title": "Croissance à long terme",
+        "text": "Fournir un accompagnement continu, un suivi régulier et des ressources favorisant une croissance durable de l'entreprise."
+      }
+    }
+  },
+
+    "model": {
+    "title": "Le modèle de l'écosystème EPEW",
+    "text": "Le modèle EPEW réunit les entrepreneurs, les partenaires de soutien, les partenaires, les coachs et les communautés au sein d'un même écosystème collaboratif. Chaque participant joue un rôle essentiel dans le développement des entreprises, la croissance économique et la prospérité des communautés.",
+
+    "cards": {
+      "entrepreneurs": {
+        "title": "Entrepreneurs",
+        "text": "Les personnes qui développent leurs idées d'entreprise et construisent des entreprises durables grâce au programme EPEW."
+      },
+      "supporters": {
+        "title": "Partenaires de soutien",
+        "text": "Les membres de la communauté qui apportent leur soutien afin d'aider les entrepreneurs à réussir et de favoriser le développement économique local."
+      },
+      "partners": {
+        "title": "Partenaires",
+        "text": "Les organisations et les professionnels qui fournissent des services, de l'expertise et des ressources pour renforcer l'écosystème."
+      },
+      "coaches": {
+        "title": "Coachs",
+        "text": "Les personnes qui accompagnent les entrepreneurs grâce à des conseils, un encadrement et un soutien tout au long de leur parcours."
+      }
+    },
+
+    "ibos": {
+      "title": "IBOS — I Am My Own Boss",
+      "text": "IBOS est la méthodologie de développement entrepreneurial d'EPEW. Elle guide chaque entrepreneur à travers un parcours structuré, depuis l'idée initiale jusqu'au lancement, à la croissance et à la gestion d'une entreprise prospère."
+    },
+
+    "notice": {
+      "title": "Un modèle centré sur la communauté",
+      "text": "La réussite d'EPEW repose sur la collaboration entre les entrepreneurs, les partenaires de soutien, les partenaires, les coachs et les communautés. Ensemble, ils créent des opportunités, génèrent des emplois et contribuent à une prospérité économique durable."
+    }
+  },
+
+    "mission": {
     "title": "Notre mission",
-    "description": "Donner aux entrepreneurs les moyens de réussir grâce à l’éducation, au mentorat, à la participation communautaire et à l’accès au financement afin qu’ils puissent créer des entreprises durables et renforcer leurs communautés."
+    "text": "La mission d'EPEW est de donner aux individus et aux communautés les moyens de réussir grâce à l'entrepreneuriat, en offrant une éducation de qualité, une formation pratique, un accompagnement professionnel et des opportunités de créer des entreprises qui génèrent des emplois, renforcent les familles et favorisent un développement économique durable."
   },
+
   "vision": {
     "title": "Notre vision",
-    "description": "Construire un monde où chaque entrepreneur motivé a la possibilité de lancer, développer et maintenir une entreprise prospère tout en créant une richesse durable pour sa communauté."
+    "text": "Notre vision est de bâtir un écosystème entrepreneurial mondial où chaque personne motivée et engagée dispose des ressources, des connaissances et du soutien nécessaires pour créer, développer et maintenir une entreprise prospère tout en contribuant au bien-être de sa communauté."
   },
-  "whoWeAre": {
-    "title": "Qui sommes-nous",
-    "description1": "EPEW est bien plus qu’une plateforme d’affaires. Il s’agit d’un écosystème complet de développement entrepreneurial conçu pour guider les entrepreneurs, de l’idée jusqu’à la propriété d’une entreprise prospère.",
-    "description2": "Grâce à une éducation structurée, au coaching, à la participation communautaire, à la préparation au financement et à un accompagnement à long terme, EPEW aide les personnes à créer des entreprises qui renforcent les familles et les communautés."
-  },
-  "ecosystem": {
-    "title": "L’écosystème EPEW",
-    "entrepreneurs": {
-      "title": "Entrepreneurs",
-      "description": "Des personnes qui développent des idées d’affaires et lancent des entreprises prospères."
-    },
-    "supporters": {
-      "title": "Supporteurs",
-      "description": "Des membres de la communauté qui participent au renforcement des entrepreneurs et des économies locales."
-    },
-    "coaches": {
-      "title": "Coachs personnels",
-      "description": "Des guides qui aident les entrepreneurs à se préparer, à s’organiser et à lancer leurs entreprises avec succès."
-    },
-    "partners": {
-      "title": "Partenaires",
-      "description": "Des organisations et des professionnels qui fournissent des services, une expertise et un soutien stratégique."
-    }
-  },
+
   "values": {
-    "title": "Nos valeurs fondamentales",
-    "community": {
-      "title": "La communauté d’abord",
-      "description": "Des communautés fortes bâtissent des entreprises fortes."
-    },
-    "integrity": {
-      "title": "Intégrité",
-      "description": "Nous agissons avec honnêteté, transparence et responsabilité."
-    },
-    "innovation": {
-      "title": "Innovation",
-      "description": "Nous encourageons la créativité et l’amélioration continue."
-    },
-    "empowerment": {
-      "title": "Autonomisation",
-      "description": "Aider les personnes à devenir indépendantes grâce à l’entrepreneuriat."
+    "title": "Nos valeurs",
+    "text": "Ces valeurs guident chacune des décisions, des initiatives et des services offerts par EPEW.",
+
+    "cards": {
+      "integrity": {
+        "title": "Intégrité",
+        "text": "Nous agissons avec honnêteté, transparence et responsabilité dans toutes nos actions."
+      },
+      "empowerment": {
+        "title": "Autonomisation",
+        "text": "Nous donnons aux personnes les connaissances, les compétences et la confiance nécessaires pour construire leur propre avenir."
+      },
+      "collaboration": {
+        "title": "Collaboration",
+        "text": "Nous croyons que les meilleurs résultats sont obtenus lorsque les entrepreneurs, les partenaires de soutien, les partenaires et les communautés travaillent ensemble."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "text": "Nous encourageons les idées novatrices et les solutions pratiques pour répondre aux défis économiques et sociaux."
+      },
+      "accountability": {
+        "title": "Responsabilité",
+        "text": "Nous promouvons la discipline, l'engagement et une gestion responsable à chaque étape du développement de l'entreprise."
+      },
+      "community": {
+        "title": "Développement communautaire",
+        "text": "Nous croyons que la réussite d'une entreprise doit contribuer à l'amélioration des familles et des communautés qu'elle sert."
+      }
     }
   },
-  "callToAction": {
-    "title": "Faites partie de l’écosystème EPEW",
-    "description": "Que vous soyez entrepreneur, supporteur, coach ou partenaire, vous avez une place dans la construction de communautés plus fortes grâce à l’entrepreneuriat.",
-    "primaryButton": "Devenir entrepreneur",
-    "secondaryButton": "Retour à l’accueil"
+
+    "why": {
+    "title": "Pourquoi EPEW existe",
+    "text": "EPEW a été créé pour éliminer certains des principaux obstacles qui empêchent les personnes de devenir entrepreneurs. Nous croyons qu'avec une préparation adéquate, un accompagnement de qualité et une communauté engagée, chacun peut bâtir une entreprise prospère et améliorer durablement sa qualité de vie."
+  },
+
+  "promise": {
+    "title": "Notre engagement",
+    "text": "Nous nous engageons à offrir à chaque entrepreneur une expérience professionnelle, structurée, équitable et transparente. Notre objectif est de préparer les entrepreneurs à une réussite durable plutôt que de rechercher des résultats à court terme."
+  },
+
+  "join": {
+    "title": "Rejoignez l'écosystème",
+    "text": "Que vous soyez entrepreneur, partenaire de soutien, partenaire ou professionnel souhaitant contribuer au développement de votre communauté, EPEW vous invite à rejoindre un mouvement qui crée des entreprises, génère des opportunités et renforce les communautés.",
+
+    "buttons": {
+      "entrepreneur": "Devenir entrepreneur",
+      "supporter": "Devenir partenaire de soutien",
+      "partner": "Devenir partenaire",
+      "coach": "Devenir coach",
+      "learnMore": "En savoir plus"
+    }
+  },
+
+  "disclosure": {
+    "title": "Informations importantes",
+    "text": "EPEW est un écosystème de développement entrepreneurial. La qualification, la participation et l'admissibilité aux différents programmes sont régies par les politiques et règlements officiels d'EPEW. Toute référence au financement, au soutien ou aux avantages est soumise aux conditions applicables de chaque programme."
   }
 }

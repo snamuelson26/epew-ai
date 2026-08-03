@@ -1,0 +1,78 @@
+{
+  "hero": {
+    "imageAlt": "EPEW Video Library",
+    "title": "Learn. Prepare. Grow.",
+    "description": "The EPEW Video Library provides practical education, expert guidance, entrepreneur stories, and step-by-step training to help you build a successful business.",
+    "watchFeatured": "Watch Featured Videos",
+    "becomeEntrepreneur": "Become an Entrepreneur"
+  },
+
+  "why": {
+    "title": "Why the Video Library?",
+    "description": "At EPEW, education comes before funding. Our video library helps entrepreneurs, supporters, coaches, and partners understand the ecosystem, prepare responsibly, and grow with confidence."
+  },
+
+  "categories": {
+    "title": "Video Categories",
+    "entrepreneurFundamentals": "Entrepreneur Fundamentals",
+    "businessDevelopment": "Business Development",
+    "coachingMentorship": "Coaching & Mentorship",
+    "fundingReadiness": "Funding Readiness",
+    "marketingPromotion": "Marketing & Promotion",
+    "businessOperations": "Business Operations",
+    "financialManagement": "Financial Management",
+    "successStories": "Success Stories"
+  },
+
+  "featured": {
+    "title": "Featured Videos",
+    "comingSoon": "🚧 Coming Soon",
+    "comingSoonDescription": "Our first EPEW training and introduction videos are currently in production and will be available soon.",
+
+    "welcome": {
+      "title": "Welcome to EPEW",
+      "description": "An introduction to the EPEW mission, ecosystem, and entrepreneur journey."
+    },
+
+    "ideaToBusiness": {
+      "title": "From Idea to Business",
+      "description": "Learn how EPEW helps entrepreneurs develop ideas into business opportunities."
+    },
+
+    "supporters": {
+      "title": "How Supporters Help",
+      "description": "Understand how supporters become the foundation and engine of the ecosystem."
+    },
+
+    "coaching": {
+      "title": "Coach-Guided Development",
+      "description": "See how EPEW coaches guide entrepreneurs through preparation and growth."
+    },
+
+    "funding": {
+      "title": "Funding Readiness",
+      "description": "Learn why preparation comes before funding inside the EPEW model."
+    },
+
+    "launch": {
+      "title": "Business Launch & Growth",
+      "description": "Explore how entrepreneurs launch, report, and strengthen their businesses."
+    },
+
+    "duration": "Coming Soon"
+  },
+
+  "journey": {
+    "title": "The EPEW Learning Journey",
+    "startHere": "Start Here",
+    "learnEcosystem": "Learn the Ecosystem",
+    "developBusiness": "Develop Your Business",
+    "prepareGrowth": "Prepare for Growth"
+  },
+
+  "cta": {
+    "title": "Start Learning Today",
+    "description": "Knowledge is the foundation of every successful entrepreneur. Keep learning. Keep preparing. Keep building your future.",
+    "button": "Begin Your Entrepreneur Journey"
+  }
+}

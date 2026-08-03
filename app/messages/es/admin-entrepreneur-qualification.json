@@ -1,0 +1,25 @@
+{
+  "headings": {
+    "professional_qualification_activation_center": "Professional Qualification & Activation Center",
+    "1_review_panel": "1. Review Panel",
+    "2_operations_panel": "2. Operations Panel",
+    "3_intelligence_panel": "3. Intelligence Panel",
+    "4_timeline": "4. Timeline"
+  },
+  "content": {
+    "loading_applications": "Loading applications...",
+    "selectedapplication": ") : !selectedApplication ? (",
+    "no_applications_found": "No applications found.",
+    "approve_activate_business": "Approve & Activate Business"
+  },
+  "attributes": {
+    "label": {
+      "city_state": "City / State"
+    }
+  },
+  "form": {
+    "placeholder": {
+      "professional_observations_readiness_risks_recommendations_missing_items": "Professional observations, readiness, risks, recommendations, missing items..."
+    }
+  }
+}

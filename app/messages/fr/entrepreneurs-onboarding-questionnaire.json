@@ -1,0 +1,40 @@
+{
+  "content": {
+    "required_fields_must_be_completed_before_submission": "* Required fields must be completed before submission.",
+    "restaurant_food": "Restaurant / Food",
+    "health_beauty": "Health / Beauty",
+    "i_am_willing_to_participate_in_entrepreneur_preparation": "I am willing to participate in entrepreneur preparation and training activities.",
+    "i_understand_and_agree_to_participate_in_the": "I understand and agree to participate in the EPEW community participation model."
+  },
+  "headings": {
+    "section_1_personal_information": "Section 1 — Personal Information",
+    "section_2_business_idea_information": "Section 2 — Business Idea Information",
+    "section_3_funding_preparation": "Section 3 — Funding Preparation",
+    "section_4_experience_background": "Section 4 — Experience & Background",
+    "section_5_training_commitment": "Section 5 — Training Commitment",
+    "section_6_community_participation": "Section 6 — Community Participation",
+    "section_7_optional_supporting_documents": "Section 7 — Optional Supporting Documents"
+  },
+  "form": {
+    "labels": {
+      "state_province": "State / Province",
+      "do_you_currently_have_a_business": "Do you currently have a business?",
+      "year_established_if_existing": "Year Established, if existing",
+      "business_website_if_any": "Business Website, if any",
+      "what_problem_will_your_product_or_service_solve": "What problem will your product or service solve?",
+      "who_are_your_customers": "Who are your customers?",
+      "how_much_support_do_you_think_you_may": "How much support do you think you may need?",
+      "how_would_the_support_be_used": "How would the support be used?",
+      "do_you_have_experience_in_this_industry": "Do you have experience in this industry?",
+      "if_yes_explain_briefly_if_no_write_no": "If yes, explain briefly. If no, write “No experience yet.”",
+      "have_you_ever_owned_a_business_before": "Have you ever owned a business before?",
+      "business_plan_optional": "Business Plan, optional",
+      "resume_optional": "Resume, optional",
+      "financial_projections_optional": "Financial Projections, optional",
+      "business_photos_optional": "Business Photos, optional"
+    },
+    "placeholder": {
+      "examples_equipment_inventory_marketing_business_location_technology_employees": "Examples: equipment, inventory, marketing, business location, technology, employees"
+    }
+  }
+}

@@ -1,9 +1,13 @@
 "use client";
 
+
+import { useTranslation } from "@/app/components/enterprise/language";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminDocumentsPage() {
+  const { t } = useTranslation();
+
   const [documents, setDocuments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -95,7 +99,7 @@ export default function AdminDocumentsPage() {
   }
 
   if (loading) {
-    return <div className="p-10 text-2xl font-bold">Loading Documents Center...</div>;
+    return <div className="p-10 text-2xl font-bold">{t("content.loading_documents_center")}</div>;
   }
 
   return (
@@ -173,7 +177,7 @@ export default function AdminDocumentsPage() {
 
         <textarea
           className="border rounded-xl p-4 w-full min-h-[140px] mb-6"
-          placeholder="Document notes..."
+          placeholder={t("form.placeholder.document_notes")}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
         />
@@ -189,7 +193,7 @@ export default function AdminDocumentsPage() {
       {documents.length === 0 ? (
         <div className="bg-white rounded-3xl shadow-xl p-8">
           <h2 className="text-3xl font-bold text-[#06245c] text-center">
-            No documents added yet.
+            {t("headings.no_documents_added_yet")}
           </h2>
         </div>
       ) : (

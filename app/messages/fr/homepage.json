@@ -5,10 +5,10 @@
   },
 
   "launch": {
-    "cohort": "COHORTE DES ENTREPRENEURS FONDATEURS",
-    "applicationsOpen": "LES CANDIDATURES SONT OUVERTES",
-    "openDescription": "Commencez votre parcours entrepreneurial dès aujourd'hui.",
-    "countdownTitle": "Ouverture des Candidatures Dans",
+    "cohort": "COHORTE FONDATRICE DES ENTREPRENEURS",
+    "applicationsOpen": "LES CANDIDATURES SONT MAINTENANT OUVERTES",
+    "openDescription": "Commencez votre parcours d'entrepreneur dès aujourd'hui.",
+    "countdownTitle": "Ouverture des candidatures dans",
     "description": "Préparez-vous dès aujourd'hui. Découvrez le programme. Explorez l'écosystème. Soyez prêt pour le lancement."
   },
 
@@ -20,8 +20,8 @@
   },
 
   "buttons": {
-    "startJourney": "Commencer Mon Parcours Entrepreneurial",
-    "applicationsOpen": "Ouverture le 29 Juillet",
+    "startJourney": "Commencer Votre Parcours Entrepreneurial",
+    "applicationsOpen": "Candidatures Ouvertes le 29 Juillet",
     "exploreEcosystem": "Explorer l'Écosystème",
     "learnMore": "En Savoir Plus"
   },
@@ -30,15 +30,15 @@
     "titleLine1": "Écosystème",
     "titleLine2": "de Développement",
     "titleLine3": "Entrepreneurial",
-    "lead": "Construisez Votre Communauté. Construisez Votre Entreprise. Construisez Votre Richesse.",
-    "description": "EPEW relie les entrepreneurs à la formation, au coaching, au soutien communautaire, au développement d'entreprise et au financement grâce à un écosystème intégré.",
+    "lead": "Construisez votre communauté. Construisez votre entreprise. Construisez votre richesse.",
+    "description": "EPEW relie les entrepreneurs à l'éducation, à l'accompagnement, au soutien communautaire, au développement des entreprises et au financement grâce à un écosystème intégré.",
     "imageAlt": "Écosystème de Développement Entrepreneurial"
   },
 
   "preview": {
     "eyebrow": "APERÇU PUBLIC",
     "title": "Découvrez Ce Qui Rend EPEW Unique",
-    "description": "Découvrez comment notre écosystème prépare les entrepreneurs avant le financement et les accompagne après le lancement de leur entreprise.",
+    "description": "Découvrez comment notre écosystème de développement entrepreneurial prépare les entrepreneurs avant le financement et les accompagne après le lancement.",
 
     "cards": {
       "program": {
@@ -47,25 +47,25 @@
       },
 
       "introduction": {
-        "title": "Regarder la Présentation",
-        "text": "Découvrez comment l'écosystème transforme les idées en entreprises prospères."
+        "title": "Regarder l'Introduction",
+        "text": "Découvrez comment notre écosystème transforme les idées en entreprises prospères."
       },
 
       "idea": {
         "title": "Apportez Votre Idée",
-        "text": "Quelle que soit votre situation, votre projet d'entreprise peut commencer ici."
+        "text": "Peu importe votre point de départ, votre idée d'entreprise peut commencer ici."
       }
     }
   },
 
   "idea": {
-    "title": "Chaque Entreprise Commence Par Une Idée",
-    "description": "Que votre idée soit simple ou ambitieuse, EPEW fournit la formation, le coaching, la planification et le soutien communautaire nécessaires pour la transformer en entreprise prospère."
+    "title": "Toute Entreprise Commence par une Idée",
+    "description": "Qu'elle soit modeste ou ambitieuse, EPEW offre l'éducation, l'accompagnement, la planification et le soutien communautaire pour transformer votre idée en entreprise prospère."
   },
 
   "model": {
     "title": "Le Modèle de Développement Entrepreneurial",
-    "description": "Un système complet conçu pour accompagner les entrepreneurs de leur idée jusqu'à une réussite durable.",
+    "description": "Un système complet conçu pour guider les entrepreneurs de l'idée d'entreprise jusqu'au succès à long terme.",
 
     "steps": {
       "idea": {
@@ -75,62 +75,62 @@
 
       "development": {
         "title": "Développement de l'Entreprise",
-        "text": "Apprenez, préparez-vous, organisez-vous et devenez prêt au lancement."
+        "text": "Apprenez, préparez-vous, organisez-vous et soyez prêt pour le lancement."
       },
 
       "funding": {
         "title": "Financement Communautaire",
-        "text": "Recevez un financement communautaire après votre qualification."
+        "text": "Recevez un financement soutenu par la communauté après votre qualification."
       },
 
       "ecosystem": {
         "title": "Croissance de l'Entreprise",
-        "text": "Développez votre entreprise dans un écosystème durable."
+        "text": "Évoluez au sein d'un écosystème de développement à long terme."
       },
 
       "ibos": {
         "title": "IBOS",
-        "text": "Continuez à bénéficier du Système Intelligent de Gestion des Entreprises."
+        "text": "Continuez à recevoir un soutien grâce au Système Intelligent d'Exploitation des Entreprises."
       }
     }
   },
 
   "pillars": {
     "title": "Trois Systèmes. Un Seul Écosystème.",
-    "description": "Chaque organisation joue un rôle unique afin d'aider les entrepreneurs à réussir.",
+    "description": "Chaque organisation joue un rôle unique tout en travaillant ensemble pour aider les entrepreneurs à réussir.",
 
     "epew": {
-      "subtitle": "Partenariat Entrepreneurial pour l'Autonomisation et la Richesse",
-      "text": "Engagement communautaire, qualification des entrepreneurs et financement."
+      "subtitle": "Partenariat Entrepreneurial pour l'Autonomisation et la Prospérité",
+      "text": "Participation communautaire, qualification des entrepreneurs et financement."
     },
 
     "ede": {
       "subtitle": "Écosystème de Développement Entrepreneurial",
-      "text": "Formation, coaching, développement et croissance à long terme."
+      "text": "Éducation, accompagnement, développement et croissance durable des entreprises."
     },
 
     "ibos": {
-      "subtitle": "Système Intelligent de Gestion des Entreprises",
-      "text": "Technologie, automatisation, conformité, rapports et gestion."
+      "subtitle": "Système Intelligent d'Exploitation des Entreprises",
+      "text": "Technologie, automatisation, rapports, conformité et gestion des entreprises."
     }
   },
 
   "ecosystem": {
     "title": "Un Écosystème Entrepreneurial Complet",
-    "description": "Formation, coaching, financement, opérations, conformité et accompagnement réunis dans une seule plateforme.",
+    "description": "Éducation, accompagnement, financement, opérations, conformité et soutien continu réunis dans un seul système.",
     "imageAlt": "Schéma de l'Écosystème EPEW"
   },
 
   "journey": {
     "title": "Votre Parcours Entrepreneurial",
-    "description": "De votre candidature jusqu'au lancement de votre entreprise, chaque entrepreneur suit un parcours complet.",
+    "description": "De la candidature au lancement de votre entreprise et au-delà, chaque entrepreneur suit un parcours complet de développement.",
     "imageAlt": "Schéma du Parcours Entrepreneurial"
   },
 
   "video": {
-    "title": "Regarder la Présentation",
+    "title": "Regarder l'Introduction",
     "description": "Découvrez le fonctionnement d'EPEW-EDE-IBOS grâce à notre présentation officielle.",
-    "frameTitle": "Présentation EPEW"
+    "frameTitle": "Vidéo de Présentation EPEW"
   },
 
   "why": {
@@ -144,17 +144,17 @@
 
       "support": {
         "title": "Soutien Communautaire",
-        "text": "Progressez avec des coachs, des partenaires et une communauté engagée."
+        "text": "Progressez avec des coachs personnels, des partenaires et des soutiens."
       },
 
       "funding": {
-        "title": "Possibilités de Financement",
-        "text": "Les entrepreneurs qualifiés peuvent accéder au financement communautaire."
+        "title": "Opportunité de Financement",
+        "text": "Les entrepreneurs qualifiés peuvent devenir admissibles à un financement soutenu par la communauté."
       },
 
       "growth": {
-        "title": "Réussite Durable",
-        "text": "Nous continuons à vous accompagner après le lancement."
+        "title": "Réussite à Long Terme",
+        "text": "Continuez à bénéficier d'un accompagnement après le lancement de votre entreprise."
       }
     }
   },
@@ -170,7 +170,7 @@
 
     "notRun": "EPEW ne dirige pas votre entreprise.",
 
-    "ecosystem": "Nous vous aidons à bâtir une entreprise plus forte."
+    "ecosystem": "Nous vous aidons à construire une entreprise plus solide."
   },
 
   "global": {
@@ -179,7 +179,7 @@
   },
 
   "promise": {
-    "title": "Notre Engagement",
+    "title": "Notre Promesse",
 
     "vision": "Nous croyons que chaque entrepreneur mérite une opportunité.",
 
@@ -187,7 +187,7 @@
 
     "ecosystem": "Nous restons aux côtés des entrepreneurs après le lancement.",
 
-    "funding": "Ensemble, nous bâtissons des entreprises, des communautés et de la richesse.",
+    "funding": "Ensemble, nous construisons des entreprises, des communautés et de la prospérité.",
 
     "conclusion": "Bienvenue dans l'Écosystème de Développement Entrepreneurial."
   }

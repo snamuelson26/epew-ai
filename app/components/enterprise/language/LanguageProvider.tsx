@@ -18,6 +18,7 @@
  * ✓ Provide locale-aware formatting
  * ✓ Prevent stale asynchronous language changes
  * ✓ Avoid language-event recursion
+ * ✓ Force translation consumers to refresh after cache updates
  */
 
 import {
@@ -84,7 +85,7 @@ function normalizeNamespaces(
           DEFAULT_TRANSLATION_NAMESPACE,
           "navigation",
           "homepage",
-          "home",
+          "about",
         ];
 
   const normalized = source
@@ -101,7 +102,9 @@ function normalizeNamespaces(
     );
   }
 
-  return Array.from(new Set(normalized));
+  return Array.from(
+    new Set(normalized),
+  );
 }
 
 function parseTranslationArguments(
@@ -126,7 +129,8 @@ function parseTranslationArguments(
   }
 
   return {
-    variables: value as TranslationVariables,
+    variables:
+      value as TranslationVariables,
   };
 }
 
@@ -144,7 +148,7 @@ function parseTranslationArguments(
  *
  * homepage.hero.title
  *
- * becomes:
+ * into:
  *
  * namespace: homepage
  * key: hero.title
@@ -153,7 +157,8 @@ function resolveTranslationKey(
   fullKey: string,
   explicitNamespace?: string,
 ): ResolvedTranslationKey {
-  const trimmedKey = fullKey.trim();
+  const trimmedKey =
+    fullKey.trim();
 
   if (explicitNamespace?.trim()) {
     const namespace =
@@ -186,22 +191,29 @@ function resolveTranslationKey(
   }
 
   const possibleNamespace =
-    trimmedKey.slice(0, firstDotIndex);
+    trimmedKey.slice(
+      0,
+      firstDotIndex,
+    );
 
   const remainingKey =
-    trimmedKey.slice(firstDotIndex + 1);
+    trimmedKey.slice(
+      firstDotIndex + 1,
+    );
 
   const namespaceExistsForAnyLocale =
     translationEngine
       .getSupportedLocales()
-      .some((locale) =>
+      .some((supportedLocale) =>
         translationEngine.hasRegisteredNamespace(
-          locale,
+          supportedLocale,
           possibleNamespace,
         ),
       );
 
-  if (!namespaceExistsForAnyLocale) {
+  if (
+    !namespaceExistsForAnyLocale
+  ) {
     return {
       namespace:
         DEFAULT_TRANSLATION_NAMESPACE,
@@ -210,8 +222,10 @@ function resolveTranslationKey(
   }
 
   return {
-    namespace: possibleNamespace,
-    key: remainingKey,
+    namespace:
+      possibleNamespace,
+    key:
+      remainingKey,
   };
 }
 
@@ -274,21 +288,23 @@ function getStorageSource(
 function updateDocumentLanguage(
   locale: SupportedLocale,
 ): void {
-  if (typeof document === "undefined") {
+  if (
+    typeof document === "undefined"
+  ) {
     return;
   }
 
-  document.documentElement.lang =
-    locale;
+  const language =
+    getLanguageDefinition(locale);
 
-  /**
-   * All currently enabled EPEW languages are written
-   * left-to-right.
-   *
-   * This can later be expanded when RTL languages are added.
-   */
+  document.documentElement.lang =
+    language.browserLocale;
+
   document.documentElement.dir =
-    "ltr";
+    language.direction;
+
+  document.documentElement.dataset.locale =
+    locale;
 }
 
 /**
@@ -306,7 +322,7 @@ export function LanguageProvider({
   useStoredPreference = true,
   persistPreference = true,
   loadingFallback,
-}: LanguageProviderProps) {
+}: LanguageProviderProps): ReactNode {
   const initialNamespaces =
     useMemo(
       () =>
@@ -328,18 +344,26 @@ export function LanguageProvider({
     initialNamespaces,
   );
 
-  const [isLoading, setIsLoading] =
-    useState(true);
+  const [
+    isLoading,
+    setIsLoading,
+  ] = useState<boolean>(true);
 
-  const [isReady, setIsReady] =
-    useState(false);
+  const [
+    isReady,
+    setIsReady,
+  ] = useState<boolean>(false);
 
   /**
-   * Revision forces consumers to re-render after a namespace
-   * has been refreshed without changing the active locale.
+   * This revision is intentionally read by the translation
+   * callback. Whenever translations are added to or refreshed
+   * inside the engine cache, the revision changes and forces
+   * React translation consumers to render again.
    */
-  const [, setRevision] =
-    useState(0);
+  const [
+    translationRevision,
+    setTranslationRevision,
+  ] = useState<number>(0);
 
   const localeRef =
     useRef<SupportedLocale>(
@@ -352,17 +376,19 @@ export function LanguageProvider({
     );
 
   const mountedRef =
-    useRef(false);
-
-  const initializedRef =
-    useRef(false);
+    useRef<boolean>(false);
 
   /**
-   * Used to prevent an older asynchronous language request
-   * from overwriting a newer selection.
+   * Prevent an older asynchronous language request from
+   * overwriting a newer language selection.
    */
   const changeRequestRef =
-    useRef(0);
+    useRef<number>(0);
+
+  useEffect(() => {
+    localeRef.current =
+      locale;
+  }, [locale]);
 
   useEffect(() => {
     namespacesRef.current =
@@ -378,8 +404,10 @@ export function LanguageProvider({
   const changeLocale =
     useCallback(
       async (
-        requestedLocale: SupportedLocale,
-        options: SetLocaleOptions = {},
+        requestedLocale:
+          SupportedLocale,
+        options:
+          SetLocaleOptions = {},
       ): Promise<void> => {
         const nextLocale =
           normalizeLocale(
@@ -405,16 +433,32 @@ export function LanguageProvider({
         }
 
         try {
+          /**
+           * English remains the enterprise fallback language.
+           */
+          if (
+            reloadTranslations &&
+            nextLocale !==
+              DEFAULT_LOCALE
+          ) {
+            await translationEngine
+              .preloadNamespaces(
+                DEFAULT_LOCALE,
+                namespacesRef.current,
+              );
+          }
+
           if (reloadTranslations) {
-            await translationEngine.preloadNamespaces(
-              nextLocale,
-              namespacesRef.current,
-            );
+            await translationEngine
+              .preloadNamespaces(
+                nextLocale,
+                namespacesRef.current,
+              );
           }
 
           /**
-           * Ignore this result when another language request
-           * was started after it.
+           * Ignore the result when a newer language request
+           * started while this one was loading.
            */
           if (
             requestId !==
@@ -426,20 +470,20 @@ export function LanguageProvider({
           localeRef.current =
             nextLocale;
 
+          updateDocumentLanguage(
+            nextLocale,
+          );
+
           if (mountedRef.current) {
             setLocaleState(
               nextLocale,
             );
 
-            setRevision(
-              (current) =>
-                current + 1,
+            setTranslationRevision(
+              (currentRevision) =>
+                currentRevision + 1,
             );
           }
-
-          updateDocumentLanguage(
-            nextLocale,
-          );
 
           if (persist) {
             LanguageStorage.save(
@@ -462,6 +506,16 @@ export function LanguageProvider({
               previousLocale,
               nextLocale,
               getEventSource(source),
+            );
+          }
+        } catch (error) {
+          if (
+            process.env.NODE_ENV ===
+            "development"
+          ) {
+            console.error(
+              "[EPEW Language Engine] Failed to change language.",
+              error,
             );
           }
         } finally {
@@ -487,14 +541,6 @@ export function LanguageProvider({
   useEffect(() => {
     mountedRef.current = true;
 
-    if (initializedRef.current) {
-      return () => {
-        mountedRef.current = false;
-      };
-    }
-
-    initializedRef.current = true;
-
     async function initializeLanguage():
       Promise<void> {
       const detected =
@@ -507,10 +553,8 @@ export function LanguageProvider({
         });
 
       /**
-       * LanguageDetector returns the platform default when no
-       * stored, profile, or browser preference is available.
-       *
-       * In that case, respect initialLocale.
+       * Respect initialLocale when no stored, browser, or
+       * profile preference exists.
        */
       const resolvedLocale =
         detected.source === "default"
@@ -540,6 +584,13 @@ export function LanguageProvider({
 
     return () => {
       mountedRef.current = false;
+
+      /**
+       * Invalidate any request still running during cleanup.
+       * This also makes the provider safe under React Strict
+       * Mode's development mount/unmount checks.
+       */
+      changeRequestRef.current += 1;
     };
   }, [
     changeLocale,
@@ -550,21 +601,34 @@ export function LanguageProvider({
   ]);
 
   /**
-   * Load namespaces added through provider props after the
-   * initial mount.
+   * ==========================================================
+   * Synchronize Namespaces Received Through Provider Props
+   * ==========================================================
    */
-  useEffect(() => {
-    if (!initializedRef.current) {
-      return;
-    }
 
+  useEffect(() => {
     const missingNamespaces =
-      initialNamespaces.filter(
-        (namespace) =>
-          !namespacesRef.current.includes(
-            namespace,
-          ),
+  initialNamespaces.filter(
+    (namespace) => {
+      const currentLocaleLoaded =
+        translationEngine.isNamespaceLoaded(
+          localeRef.current,
+          namespace,
+        );
+
+      const fallbackLocaleLoaded =
+        localeRef.current === DEFAULT_LOCALE ||
+        translationEngine.isNamespaceLoaded(
+          DEFAULT_LOCALE,
+          namespace,
+        );
+
+      return (
+        !currentLocaleLoaded ||
+        !fallbackLocaleLoaded
       );
+    },
+  );
 
     if (
       missingNamespaces.length === 0
@@ -572,35 +636,105 @@ export function LanguageProvider({
       return;
     }
 
+    let cancelled = false;
+
     async function loadPropNamespaces():
       Promise<void> {
-      await translationEngine.preloadNamespaces(
-        localeRef.current,
-        missingNamespaces,
-      );
+      try {
+        if (
+          localeRef.current !==
+          DEFAULT_LOCALE
+        ) {
+          await translationEngine
+            .preloadNamespaces(
+              DEFAULT_LOCALE,
+              missingNamespaces,
+            );
+        }
 
-      if (!mountedRef.current) {
-        return;
-      }
+        await translationEngine
+          .preloadNamespaces(
+            localeRef.current,
+            missingNamespaces,
+          );
 
-      setActiveNamespaces(
-        (current) =>
+        if (
+          cancelled ||
+          !mountedRef.current
+        ) {
+          return;
+        }
+
+        const updatedNamespaces =
           Array.from(
             new Set([
-              ...current,
+              ...namespacesRef.current,
               ...missingNamespaces,
             ]),
-          ),
-      );
+          );
 
-      setRevision(
-        (current) =>
-          current + 1,
-      );
+        namespacesRef.current =
+          updatedNamespaces;
+
+        setActiveNamespaces(
+          updatedNamespaces,
+        );
+
+        setTranslationRevision(
+          (currentRevision) =>
+            currentRevision + 1,
+        );
+      } catch (error) {
+        if (
+          process.env.NODE_ENV ===
+          "development"
+        ) {
+          console.error(
+            "[EPEW Language Engine] Failed to load provider namespaces.",
+            error,
+          );
+        }
+      }
     }
 
     void loadPropNamespaces();
+
+    return () => {
+      cancelled = true;
+    };
   }, [initialNamespaces]);
+
+  /**
+   * ==========================================================
+   * Listen for Language Events
+   * ==========================================================
+   */
+
+  useEffect(() => {
+    const unsubscribe =
+      LanguageEvents.subscribe(
+        (event) => {
+          if (
+            event.locale ===
+            localeRef.current
+          ) {
+            return;
+          }
+
+          void changeLocale(
+            event.locale,
+            {
+              source: "sync",
+              persist: true,
+              reloadTranslations: true,
+              emitEvent: false,
+            },
+          );
+        },
+      );
+
+    return unsubscribe;
+  }, [changeLocale]);
 
   /**
    * ==========================================================
@@ -611,8 +745,10 @@ export function LanguageProvider({
   const setLocale =
     useCallback(
       async (
-        nextLocale: SupportedLocale,
-        options?: SetLocaleOptions,
+        nextLocale:
+          SupportedLocale,
+        options?:
+          SetLocaleOptions,
       ): Promise<void> => {
         await changeLocale(
           nextLocale,
@@ -634,23 +770,47 @@ export function LanguageProvider({
 
         try {
           /**
-           * Remove current locale namespaces from cache so the
-           * translation files are loaded again.
+           * Remove the active locale namespaces so that their
+           * files are fetched and registered again.
            */
           for (
             const namespace of
             namespacesRef.current
           ) {
-            translationEngine.removeNamespaceFromCache(
-              localeRef.current,
-              namespace,
-            );
+            translationEngine
+              .removeNamespaceFromCache(
+                localeRef.current,
+                namespace,
+              );
           }
 
-          await translationEngine.preloadNamespaces(
-            localeRef.current,
-            namespacesRef.current,
-          );
+          if (
+            localeRef.current !==
+            DEFAULT_LOCALE
+          ) {
+            for (
+              const namespace of
+              namespacesRef.current
+            ) {
+              translationEngine
+                .removeNamespaceFromCache(
+                  DEFAULT_LOCALE,
+                  namespace,
+                );
+            }
+
+            await translationEngine
+              .preloadNamespaces(
+                DEFAULT_LOCALE,
+                namespacesRef.current,
+              );
+          }
+
+          await translationEngine
+            .preloadNamespaces(
+              localeRef.current,
+              namespacesRef.current,
+            );
 
           if (
             requestId !==
@@ -660,10 +820,20 @@ export function LanguageProvider({
             return;
           }
 
-          setRevision(
-            (current) =>
-              current + 1,
+          setTranslationRevision(
+            (currentRevision) =>
+              currentRevision + 1,
           );
+        } catch (error) {
+          if (
+            process.env.NODE_ENV ===
+            "development"
+          ) {
+            console.error(
+              "[EPEW Language Engine] Failed to reload translations.",
+              error,
+            );
+          }
         } finally {
           if (
             requestId ===
@@ -678,91 +848,123 @@ export function LanguageProvider({
       [],
     );
 
-  const loadNamespaces =
-    useCallback(
-      async (
-        requestedNamespaces:
-          readonly string[],
-      ): Promise<void> => {
-        const normalized =
-          normalizeNamespaces(
-            requestedNamespaces,
-          );
-
-        const missingNamespaces =
-          normalized.filter(
-            (namespace) =>
-              !namespacesRef.current.includes(
-                namespace,
-              ),
-          );
-
-        if (
-          missingNamespaces.length === 0
-        ) {
-          return;
-        }
-
-        if (mountedRef.current) {
-          setIsLoading(true);
-        }
-
-        try {
-          await translationEngine.preloadNamespaces(
-            localeRef.current,
-            missingNamespaces,
-          );
-
-          if (!mountedRef.current) {
-            return;
-          }
-
-          const updatedNamespaces =
-            Array.from(
-              new Set([
-                ...namespacesRef.current,
-                ...missingNamespaces,
-              ]),
-            );
-
-          namespacesRef.current =
-            updatedNamespaces;
-
-          setActiveNamespaces(
-            updatedNamespaces,
-          );
-
-          setRevision(
-            (current) =>
-              current + 1,
-          );
-        } finally {
-          if (mountedRef.current) {
-            setIsLoading(false);
-            setIsReady(true);
-          }
-        }
-      },
-      [],
+ const loadNamespaces = useCallback(
+  async (
+    requestedNamespaces: readonly string[],
+  ): Promise<void> => {
+    const normalized = normalizeNamespaces(
+      requestedNamespaces,
     );
 
-  const isNamespaceLoaded =
-    useCallback(
-      (namespace: string): boolean => {
-        const normalizedNamespace =
-          namespace.trim();
+    const missingNamespaces = normalized.filter(
+      (namespace) => {
+        const currentLocaleLoaded =
+          translationEngine.isNamespaceLoaded(
+            localeRef.current,
+            namespace,
+          );
 
-        if (!normalizedNamespace) {
-          return false;
-        }
+        const fallbackLocaleLoaded =
+          localeRef.current === DEFAULT_LOCALE ||
+          translationEngine.isNamespaceLoaded(
+            DEFAULT_LOCALE,
+            namespace,
+          );
 
-        return translationEngine.isNamespaceLoaded(
-          localeRef.current,
-          normalizedNamespace,
+        return (
+          !currentLocaleLoaded ||
+          !fallbackLocaleLoaded
         );
       },
-      [],
     );
+
+    if (missingNamespaces.length === 0) {
+      return;
+    }
+
+    if (mountedRef.current) {
+      setIsLoading(true);
+    }
+
+    try {
+      if (
+        localeRef.current !==
+        DEFAULT_LOCALE
+      ) {
+        await translationEngine.preloadNamespaces(
+          DEFAULT_LOCALE,
+          missingNamespaces,
+        );
+      }
+
+      await translationEngine.preloadNamespaces(
+        localeRef.current,
+        missingNamespaces,
+      );
+
+      if (!mountedRef.current) {
+        return;
+      }
+
+      const updatedNamespaces = Array.from(
+        new Set([
+          ...namespacesRef.current,
+          ...missingNamespaces,
+        ]),
+      );
+
+      namespacesRef.current =
+        updatedNamespaces;
+
+      setActiveNamespaces(
+        updatedNamespaces,
+      );
+
+      setTranslationRevision(
+        (currentRevision) =>
+          currentRevision + 1,
+      );
+    } catch (error) {
+      if (
+        process.env.NODE_ENV ===
+        "development"
+      ) {
+        console.error(
+          "[EPEW Language Engine] Failed to load namespaces.",
+          error,
+        );
+      }
+    } finally {
+      if (mountedRef.current) {
+        setIsLoading(false);
+        setIsReady(true);
+      }
+    }
+  },
+  [],
+);
+
+const isNamespaceLoaded = useCallback(
+  (
+    namespace: string,
+  ): boolean => {
+    const normalizedNamespace =
+      namespace.trim();
+
+    if (!normalizedNamespace) {
+      return false;
+    }
+
+    return translationEngine.isNamespaceLoaded(
+      localeRef.current,
+      normalizedNamespace,
+    );
+  },
+  [
+    locale,
+    translationRevision,
+  ],
+);
 
   /**
    * ==========================================================
@@ -789,18 +991,30 @@ export function LanguageProvider({
             options.namespace,
           );
 
-        return translationEngine.translateSync(
-          resolved.key,
-          {
-            ...options,
-            locale:
-              localeRef.current,
-            namespace:
-              resolved.namespace,
-          },
-        );
+        return translationEngine
+          .translateSync(
+            resolved.key,
+            {
+              ...options,
+
+              /**
+               * A locale explicitly supplied to t() has
+               * priority. Otherwise, use the provider locale.
+               */
+              locale:
+                options.locale ??
+                locale,
+
+              namespace:
+                resolved.namespace,
+            },
+          );
       },
-      [],
+      [
+        activeNamespaces,
+        locale,
+        translationRevision,
+      ],
     );
 
   /**
@@ -850,15 +1064,22 @@ export function LanguageProvider({
 
         const activeLanguage =
           getLanguageDefinition(
-            localeRef.current,
+            locale,
           );
 
-        return new Intl.DateTimeFormat(
-          activeLanguage.dateLocale,
-          options,
-        ).format(date);
+        try {
+          return new Intl.DateTimeFormat(
+            activeLanguage.dateLocale,
+            options,
+          ).format(date);
+        } catch {
+          return new Intl.DateTimeFormat(
+            "en-US",
+            options,
+          ).format(date);
+        }
       },
-      [],
+      [locale],
     );
 
   const formatNumber =
@@ -868,21 +1089,30 @@ export function LanguageProvider({
         options?:
           Intl.NumberFormatOptions,
       ): string => {
-        if (!Number.isFinite(value)) {
+        if (
+          !Number.isFinite(value)
+        ) {
           return "";
         }
 
         const activeLanguage =
           getLanguageDefinition(
-            localeRef.current,
+            locale,
           );
 
-        return new Intl.NumberFormat(
-          activeLanguage.numberLocale,
-          options,
-        ).format(value);
+        try {
+          return new Intl.NumberFormat(
+            activeLanguage.numberLocale,
+            options,
+          ).format(value);
+        } catch {
+          return new Intl.NumberFormat(
+            "en-US",
+            options,
+          ).format(value);
+        }
       },
-      [],
+      [locale],
     );
 
   const formatCurrency =
@@ -893,27 +1123,42 @@ export function LanguageProvider({
         options?:
           Intl.NumberFormatOptions,
       ): string => {
-        if (!Number.isFinite(value)) {
+        if (
+          !Number.isFinite(value)
+        ) {
           return "";
         }
 
         const activeLanguage =
           getLanguageDefinition(
-            localeRef.current,
+            locale,
           );
 
-        return new Intl.NumberFormat(
-          activeLanguage.currencyLocale,
-          {
-            style: "currency",
-            currency:
-              currency ??
-              activeLanguage.currency,
-            ...options,
-          },
-        ).format(value);
+        try {
+          return new Intl.NumberFormat(
+            activeLanguage.currencyLocale,
+            {
+              style: "currency",
+              currency:
+                currency ??
+                activeLanguage.currency,
+              ...options,
+            },
+          ).format(value);
+        } catch {
+          return new Intl.NumberFormat(
+            "en-US",
+            {
+              style: "currency",
+              currency:
+                currency ??
+                "USD",
+              ...options,
+            },
+          ).format(value);
+        }
       },
-      [],
+      [locale],
     );
 
   /**
@@ -928,8 +1173,10 @@ export function LanguageProvider({
         locale,
         language,
         languages,
+
         namespaces:
           activeNamespaces,
+
         isLoading,
         isReady,
 
@@ -958,19 +1205,34 @@ export function LanguageProvider({
         reloadTranslations,
         setLocale,
         t,
+        translationRevision,
       ],
     );
+
+  if (
+    isLoading &&
+    !isReady &&
+    loadingFallback !== undefined
+  ) {
+    return (
+      <LanguageContext.Provider
+        value={contextValue}
+      >
+        {loadingFallback}
+      </LanguageContext.Provider>
+    );
+  }
 
   return (
     <LanguageContext.Provider
       value={contextValue}
     >
-      {!isReady &&
-      loadingFallback !== undefined
-        ? (loadingFallback as ReactNode)
-        : children}
+      {children}
     </LanguageContext.Provider>
   );
 }
+
+LanguageProvider.displayName =
+  "EPEWLanguageProvider";
 
 export default LanguageProvider;

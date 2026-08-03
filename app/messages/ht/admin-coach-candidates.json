@@ -1,0 +1,14 @@
+{
+  "content": {
+    "loading_coach_candidates": "Loading coach candidates...",
+    "no_coach_candidates_submitted_yet": "No coach candidates submitted yet."
+  },
+  "headings": {
+    "why_join_epew": "Why Join EPEW?"
+  },
+  "form": {
+    "placeholder": {
+      "add_admin_interview_notes": "Add admin interview notes..."
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "content": {
+    "loading_business_openings": "Loading Business Openings...",
+    "business_setup_reviewed": "✅ Business setup reviewed",
+    "promotion_reviewed": "✅ Promotion reviewed",
+    "rent_location_reviewed": "✅ Rent/location reviewed",
+    "equipment_reviewed": "✅ Equipment reviewed",
+    "inventory_reviewed": "✅ Inventory reviewed",
+    "funding_release_reviewed": "✅ Funding release reviewed"
+  },
+  "headings": {
+    "no_businesses_available_for_opening_review_yet": "No businesses available for opening review yet."
+  },
+  "form": {
+    "placeholder": {
+      "opening_notes_pending_requirements_launch_concerns_or_final": "Opening notes, pending requirements, launch concerns, or final observations..."
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "content": {
+    "loading_vendors_center": "Loading Vendors Center...",
+    "vendor_payee": "Vendor / Payee"
+  },
+  "headings": {
+    "add_vendor_payee": "Add Vendor / Payee",
+    "no_vendors_added_yet": "No vendors added yet."
+  },
+  "form": {
+    "placeholder": {
+      "vendor_payee_name": "Vendor / Payee Name",
+      "vendor_notes": "Vendor notes..."
+    }
+  }
+}

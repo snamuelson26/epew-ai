@@ -1,0 +1,13 @@
+{
+  "content": {
+    "loading_support_tickets": "Loading Support Tickets..."
+  },
+  "form": {
+    "placeholder": {
+      "describe_the_issue_or_request": "Describe the issue or request..."
+    }
+  },
+  "headings": {
+    "no_support_tickets_yet": "No support tickets yet."
+  }
+}
