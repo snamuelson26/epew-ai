@@ -7,12 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-
     "translation:scan": "tsx scripts/enterprise-translation/run-translation-center.ts scan",
     "translation:validate": "tsx scripts/enterprise-translation/run-translation-center.ts validate",
     "translation:build": "tsx scripts/enterprise-translation/run-translation-center.ts build",
     "translation:certify": "tsx scripts/enterprise-translation/run-translation-center.ts certify",
-
     "enterprise:translation:scan": "npm run translation:scan",
     "enterprise:translation:validate": "npm run translation:validate",
     "enterprise:translation:build": "npm run translation:build",
