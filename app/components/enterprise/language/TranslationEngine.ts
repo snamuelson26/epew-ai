@@ -257,6 +257,14 @@ const namespaceRegistry: Record<
 
       return module.default as TranslationDictionary;
     },
+
+    legal: async () => {
+      const module = await import(
+        "../../../messages/en/legal.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
   },
 
   ht: {
@@ -303,6 +311,14 @@ const namespaceRegistry: Record<
     "privacy-policy": async () => {
       const module = await import(
         "../../../messages/ht/privacy-policy.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+
+    legal: async () => {
+      const module = await import(
+        "../../../messages/ht/legal.json"
       );
 
       return module.default as TranslationDictionary;
@@ -357,6 +373,14 @@ const namespaceRegistry: Record<
 
       return module.default as TranslationDictionary;
     },
+
+    legal: async () => {
+      const module = await import(
+        "../../../messages/fr/legal.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
   },
 
   es: {
@@ -403,6 +427,14 @@ const namespaceRegistry: Record<
     "privacy-policy": async () => {
       const module = await import(
         "../../../messages/es/privacy-policy.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+
+    legal: async () => {
+      const module = await import(
+        "../../../messages/es/legal.json"
       );
 
       return module.default as TranslationDictionary;
