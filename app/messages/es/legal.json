@@ -1,0 +1,11 @@
+{
+  "hero": {
+    "title": "Centro Legal",
+    "description": "Documentos legales oficiales que rigen el Ecosistema de Desarrollo Empresarial (EDE), coordinado a través del Sistema Inteligente de Operación Empresarial (IBOS)."
+  },
+  "navigation": {
+    "privacyPolicy": "Política de Privacidad",
+    "termsOfUse": "Términos de Uso",
+    "platformDisclaimer": "Aviso Legal de la Plataforma"
+  }
+}

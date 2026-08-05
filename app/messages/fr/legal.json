@@ -1,0 +1,11 @@
+{
+  "hero": {
+    "title": "Centre Juridique",
+    "description": "Documents juridiques officiels régissant l'Écosystème de Développement Entrepreneurial (EDE), coordonné par le Système Intelligent d'Exploitation des Entreprises (IBOS)."
+  },
+  "navigation": {
+    "privacyPolicy": "Politique de Confidentialité",
+    "termsOfUse": "Conditions d'Utilisation",
+    "platformDisclaimer": "Clause de Non-Responsabilité de la Plateforme"
+  }
+}

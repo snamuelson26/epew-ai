@@ -1,0 +1,11 @@
+{
+  "hero": {
+    "title": "Legal Center",
+    "description": "Official legal documents governing the Entrepreneur Development Ecosystem (EDE), coordinated through the Intelligent Business Operating System (IBOS)."
+  },
+  "navigation": {
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "platformDisclaimer": "Platform Disclaimer"
+  }
+}
