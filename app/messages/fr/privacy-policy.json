@@ -1,0 +1,97 @@
+{
+  "page": {
+    "title": "Politique de Confidentialité"
+  },
+  "organization": {
+    "name": "Ekero Partners Empower Wealth (EPEW)"
+  },
+  "dates": {
+    "effectiveDateLabel": "Date d'entrée en vigueur :",
+    "effectiveDate": "2 juillet 2026",
+    "lastUpdatedLabel": "Dernière mise à jour :",
+    "lastUpdated": "2 juillet 2026"
+  },
+  "identity": {
+    "title": "Identité officielle de l'organisation",
+    "description": "Ekero Partners Empower Wealth (EPEW) est une organisation à but non lucratif des États-Unis ayant une vision mondiale visant à autonomiser les entrepreneurs, renforcer les communautés et promouvoir un développement économique durable grâce à l'Entrepreneur Development Ecosystem (EDE), coordonné et mis en œuvre par l'Intelligent Business Operating System (IBOS)."
+  },
+  "sections": {
+    "introduction": {
+      "title": "1. Introduction",
+      "description": "EPEW s'engage à protéger votre vie privée et les informations personnelles que vous partagez avec nous. Cette Politique de Confidentialité explique comment EPEW collecte, utilise, conserve, protège et partage les informations personnelles lorsque vous utilisez le site Web EPEW, la Plateforme Entrepreneur, la Plateforme des Supporters Fondateurs, la Plateforme des Coachs, la Plateforme des Partenaires de Croissance Certifiés, la Plateforme Administrative, les applications mobiles, les événements, les communications et les services associés."
+    },
+    "informationCollected": {
+      "title": "2. Informations que nous collectons",
+      "introduction": "Nous pouvons collecter notamment les informations personnelles suivantes :",
+      "items": {
+        "contact": "Nom complet, adresse électronique, numéro de téléphone et adresse postale",
+        "identification": "Date de naissance ou pièce d'identité lorsque nécessaire",
+        "profile": "Photographie de profil et langue préférée",
+        "entrepreneur": "Informations sur l'entreprise de l'entrepreneur et documents soumis",
+        "supporter": "Historique de participation et de contribution des Supporters Fondateurs",
+        "coach": "Qualifications des coachs, affectations et dossiers de coaching",
+        "partner": "Informations sur les services et l'organisation des Partenaires de Croissance Certifiés",
+        "payment": "Confirmations de paiement et enregistrements des transactions",
+        "technical": "Adresse IP, type de navigateur, données de l'appareil, pages visitées et cookies"
+      }
+    },
+    "informationUse": {
+      "title": "3. Comment nous utilisons vos informations",
+      "description": "EPEW utilise ces informations pour exploiter, améliorer et administrer l'Entrepreneur Development Ecosystem, notamment pour la gestion des comptes, les services aux entrepreneurs, les services aux supporters, les services de coaching, les services des Partenaires de Croissance Certifiés, le traitement des paiements, les communications, l'administration de la plateforme, la sécurité, la conformité légale et les rapports."
+    },
+    "legalBasis": {
+      "title": "4. Base juridique du traitement des informations personnelles",
+      "description": "Selon votre lieu de résidence et les lois applicables, EPEW peut traiter les informations personnelles sur la base du consentement, des obligations contractuelles, des obligations légales, des intérêts légitimes de l'organisation, de la sécurité et de la protection des droits d'EPEW et de ses utilisateurs."
+    },
+    "informationSharing": {
+      "title": "5. Comment nous partageons les informations",
+      "description": "EPEW ne vend pas les informations personnelles. Nous pouvons partager des informations avec le personnel autorisé d'EPEW, les coachs, les Partenaires de Croissance Certifiés, les prestataires de paiement, les fournisseurs de technologies, les autorités compétentes lorsque la loi l'exige, ainsi qu'avec les organisations successeures en cas de restructuration ou de transfert d'actifs."
+    },
+    "dataRetention": {
+      "title": "6. Conservation des données",
+      "description": "EPEW conserve les informations personnelles uniquement pendant la durée raisonnablement nécessaire pour atteindre les objectifs décrits dans cette Politique de Confidentialité, respecter les obligations légales, résoudre les litiges, faire appliquer les accords, protéger la plateforme et soutenir l'Entrepreneur Development Ecosystem."
+    },
+    "cookies": {
+      "title": "7. Cookies et technologies de suivi",
+      "description": "EPEW peut utiliser des cookies et des technologies similaires pour maintenir les sessions de connexion, mémoriser les préférences, améliorer les performances, analyser le trafic, détecter les fraudes et améliorer l'expérience utilisateur. Les utilisateurs peuvent gérer les cookies via les paramètres de leur navigateur, mais leur désactivation peut affecter le fonctionnement de la plateforme."
+    },
+    "dataSecurity": {
+      "title": "8. Sécurité des données",
+      "description": "EPEW met en œuvre des mesures de protection administratives, techniques et physiques raisonnables pour protéger les informations personnelles, notamment des connexions chiffrées, des contrôles d'authentification, une infrastructure cloud sécurisée, des sauvegardes, une surveillance, un contrôle d'accès basé sur les rôles et une authentification multifactorielle lorsque cela est applicable."
+    },
+    "privacyRights": {
+      "title": "9. Vos droits en matière de confidentialité",
+      "description": "Selon votre lieu de résidence et les lois applicables, vous pouvez avoir le droit d'accéder à vos informations personnelles, de les corriger, de les supprimer, d'en limiter le traitement, de vous opposer à leur traitement, de retirer votre consentement ou de demander une copie portable de vos informations personnelles. EPEW répondra aux demandes vérifiées conformément à la législation applicable."
+    },
+    "children": {
+      "title": "10. Confidentialité des enfants",
+      "description": "La plateforme EPEW est destinée aux personnes âgées d'au moins dix-huit (18) ans ou ayant atteint l'âge de la majorité dans leur juridiction. EPEW ne collecte pas sciemment d'informations personnelles auprès d'enfants de moins de treize (13) ans."
+    },
+    "international": {
+      "title": "11. Utilisateurs internationaux",
+      "description": "EPEW est une organisation à but non lucratif des États-Unis ayant une mission mondiale. Si vous accédez à la plateforme depuis un pays autre que les États-Unis, vos informations peuvent être transférées, stockées et traitées aux États-Unis."
+    },
+    "thirdPartyLinks": {
+      "title": "12. Liens vers des sites tiers",
+      "description": "La plateforme peut contenir des liens vers des sites Web ou des services tiers. EPEW n'est pas responsable des pratiques de confidentialité, du contenu ou de la sécurité de ces sites Web ou services tiers."
+    },
+    "changes": {
+      "title": "13. Modifications de cette Politique de Confidentialité",
+      "description": "EPEW peut mettre à jour cette Politique de Confidentialité de temps à autre. Lorsque des modifications importantes sont apportées, nous mettrons à jour la date de dernière mise à jour et pourrons fournir un avis supplémentaire lorsque la loi l'exige."
+    },
+    "contact": {
+      "title": "14. Coordonnées"
+    }
+  },
+  "contact": {
+    "addressLine1": "8 The Green",
+    "addressLine2": "Dover, DE 19901",
+    "country": "États-Unis d'Amérique",
+    "phoneLabel": "Téléphone",
+    "phone": "(866) 720-0014",
+    "emailLabel": "Courriel",
+    "email": "support@epew.us",
+    "websiteLabel": "Site Web",
+    "website": "www.epew.us"
+  }
+}

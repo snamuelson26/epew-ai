@@ -1,0 +1,97 @@
+{
+  "page": {
+    "title": "Règleman sou Konfidansyalite"
+  },
+  "organization": {
+    "name": "Ekero Partners Empower Wealth (EPEW)"
+  },
+  "dates": {
+    "effectiveDateLabel": "Dat Antre an Vigè:",
+    "effectiveDate": "2 Jiyè 2026",
+    "lastUpdatedLabel": "Dènye Mizajou:",
+    "lastUpdated": "2 Jiyè 2026"
+  },
+  "identity": {
+    "title": "Idantite Ofisyèl Òganizasyon an",
+    "description": "Ekero Partners Empower Wealth (EPEW) se yon òganizasyon san bi likratif Ozetazini ki gen yon vizyon mondyal pou bay antreprenè yo plis kapasite, ranfòse kominote yo, epi ankouraje devlopman ekonomik dirab atravè Ekosistèm Devlopman Antreprenè a (EDE), ki kowòdone epi delivre atravè Sistèm Operasyon Entelijan pou Biznis la (IBOS)."
+  },
+  "sections": {
+    "introduction": {
+      "title": "1. Entwodiksyon",
+      "description": "EPEW pran angajman pou pwoteje vi prive ou epi pwoteje enfòmasyon pèsonèl ou pataje avèk nou. Règleman sou Konfidansyalite sa a eksplike kijan EPEW kolekte, itilize, konsève, pwoteje, epi pataje enfòmasyon pèsonèl lè ou itilize sit entènèt EPEW la, Platfòm Antreprenè a, Platfòm Sipòtè Fondatè yo, Platfòm Antrenè yo, Platfòm Patnè Kwasans Sètifye yo, Platfòm Administratif la, aplikasyon mobil yo, evènman yo, kominikasyon yo, ak sèvis ki gen rapò yo."
+    },
+    "informationCollected": {
+      "title": "2. Enfòmasyon Nou Kolekte",
+      "introduction": "Nou ka kolekte enfòmasyon pèsonèl tankou:",
+      "items": {
+        "contact": "Non konplè, imèl, nimewo telefòn, ak adrès postal",
+        "identification": "Dat nesans oswa dokiman idantifikasyon lè sa nesesè",
+        "profile": "Foto pwofil ak lang ou prefere",
+        "entrepreneur": "Enfòmasyon sou biznis antreprenè a ak dokiman li soumèt",
+        "supporter": "Istwa patisipasyon ak kontribisyon Sipòtè Fondatè yo",
+        "coach": "Kalifikasyon antrenè yo, afektasyon yo, ak dosye antrenman yo",
+        "partner": "Enfòmasyon sou sèvis ak òganizasyon Patnè Kwasans Sètifye yo",
+        "payment": "Konfimasyon peman ak dosye tranzaksyon yo",
+        "technical": "Adrès IP, kalite navigatè, done aparèy, paj vizite, ak bonbon"
+      }
+    },
+    "informationUse": {
+      "title": "3. Kijan Nou Itilize Enfòmasyon Ou",
+      "description": "EPEW itilize enfòmasyon pou opere, amelyore, epi administre Ekosistèm Devlopman Antreprenè a, tankou jesyon kont, sèvis pou antreprenè, sèvis pou sipòtè, sèvis pou antrenè, sèvis Patnè Kwasans Sètifye yo, tretman peman, kominikasyon, administrasyon platfòm, sekirite, konfòmite legal, ak rapò."
+    },
+    "legalBasis": {
+      "title": "4. Baz Legal pou Trete Enfòmasyon Pèsonèl",
+      "description": "Selon kote ou ye ak lwa ki aplikab yo, EPEW ka trete enfòmasyon pèsonèl sou baz konsantman, obligasyon kontra, obligasyon legal, enterè lejitim òganizasyon an, sekirite, ak pwoteksyon dwa EPEW ansanm ak dwa itilizatè li yo."
+    },
+    "informationSharing": {
+      "title": "5. Kijan Nou Pataje Enfòmasyon",
+      "description": "EPEW pa vann enfòmasyon pèsonèl. Nou ka pataje enfòmasyon avèk pèsonèl EPEW ki otorize, antrenè yo, Patnè Kwasans Sètifye yo, processeur peman yo, founisè teknoloji yo, otorite legal yo lè lalwa egzije sa, ak òganizasyon ki pran relèv nan ka restriktirasyon oswa transfè byen."
+    },
+    "dataRetention": {
+      "title": "6. Konsèvasyon Done",
+      "description": "EPEW konsève enfòmasyon pèsonèl sèlman pandan tan ki rezonabman nesesè pou akonpli objektif ki dekri nan Règleman sou Konfidansyalite sa a, respekte obligasyon legal, rezoud konfli, fè respekte akò yo, pwoteje Platfòm nan, epi soutni Ekosistèm Devlopman Antreprenè a."
+    },
+    "cookies": {
+      "title": "7. Bonbon ak Teknoloji Swivi",
+      "description": "EPEW ka itilize bonbon ak teknoloji ki sanble pou kenbe sesyon koneksyon yo, sonje preferans yo, amelyore pèfòmans, analize trafik, detekte fwod, epi amelyore eksperyans itilizatè a. Itilizatè yo ka jere bonbon atravè paramèt navigatè yo, men dezaktive bonbon yo ka afekte fonksyònman Platfòm nan."
+    },
+    "dataSecurity": {
+      "title": "8. Sekirite Done",
+      "description": "EPEW kenbe mezi pwoteksyon administratif, teknik, ak fizik ki rezonab pou pwoteje enfòmasyon pèsonèl, tankou koneksyon chifre, kontwòl otantifikasyon, enfrastrikti nwaj ki an sekirite, kopi sovgad, siveyans, aksè ki baze sou wòl, ak otantifikasyon plizyè faktè lè sa aplikab."
+    },
+    "privacyRights": {
+      "title": "9. Dwa Ou sou Konfidansyalite",
+      "description": "Selon kote ou ye ak lwa ki aplikab yo, ou ka gen dwa pou jwenn aksè, korije, efase, limite, opoze ak tretman, retire konsantman ou, oswa mande yon kopi pòtab enfòmasyon pèsonèl ou. EPEW ap reponn demann konfidansyalite ki verifye yo dapre lwa ki aplikab yo."
+    },
+    "children": {
+      "title": "10. Konfidansyalite Timoun",
+      "description": "Platfòm EPEW la fèt pou moun ki gen omwen dizwit (18) an oswa laj majorite nan jiridiksyon yo. EPEW pa kolekte enfòmasyon pèsonèl timoun ki poko gen trèz (13) an avèk konesans."
+    },
+    "international": {
+      "title": "11. Itilizatè Entènasyonal",
+      "description": "EPEW se yon òganizasyon san bi likratif Ozetazini ki gen yon misyon mondyal. Si ou jwenn aksè nan Platfòm nan depi deyò Etazini, enfòmasyon ou yo ka transfere, konsève, epi trete Ozetazini."
+    },
+    "thirdPartyLinks": {
+      "title": "12. Lyen Twazyèm Pati",
+      "description": "Platfòm nan ka genyen lyen ki mennen sou sit entènèt oswa sèvis twazyèm pati. EPEW pa responsab pou pratik konfidansyalite, kontni, oswa sekirite sit entènèt oswa sèvis twazyèm pati yo."
+    },
+    "changes": {
+      "title": "13. Chanjman nan Règleman sou Konfidansyalite sa a",
+      "description": "EPEW ka mete Règleman sou Konfidansyalite sa a ajou detanzantan. Lè gen chanjman enpòtan, nou pral mete dat Dènye Mizajou a ajou epi nou ka bay lòt avi kote lalwa egzije sa."
+    },
+    "contact": {
+      "title": "14. Enfòmasyon pou Kontakte Nou"
+    }
+  },
+  "contact": {
+    "addressLine1": "8 The Green",
+    "addressLine2": "Dover, DE 19901",
+    "country": "Etazini Damerik",
+    "phoneLabel": "Telefòn",
+    "phone": "(866) 720-0014",
+    "emailLabel": "Imèl",
+    "email": "support@epew.us",
+    "websiteLabel": "Sit Entènèt",
+    "website": "www.epew.us"
+  }
+}

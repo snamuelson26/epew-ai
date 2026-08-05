@@ -1,0 +1,97 @@
+{
+  "page": {
+    "title": "Privacy Policy"
+  },
+  "organization": {
+    "name": "Ekero Partners Empower Wealth (EPEW)"
+  },
+  "dates": {
+    "effectiveDateLabel": "Effective Date:",
+    "effectiveDate": "July 2, 2026",
+    "lastUpdatedLabel": "Last Updated:",
+    "lastUpdated": "July 2, 2026"
+  },
+  "identity": {
+    "title": "Official Organizational Identity",
+    "description": "Ekero Partners Empower Wealth (EPEW) is a United States nonprofit organization with a global vision to empower entrepreneurs, strengthen communities, and promote sustainable economic development through the Entrepreneur Development Ecosystem (EDE), coordinated and delivered through the Intelligent Business Operating System (IBOS)."
+  },
+  "sections": {
+    "introduction": {
+      "title": "1. Introduction",
+      "description": "EPEW is committed to protecting your privacy and safeguarding the personal information you share with us. This Privacy Policy explains how EPEW collects, uses, stores, protects, and shares personal information when you use the EPEW website, Entrepreneur Platform, Founding Supporter Platform, Coach Platform, Certified Growth Partner Platform, Administrative Platform, mobile applications, events, communications, and related services."
+    },
+    "informationCollected": {
+      "title": "2. Information We Collect",
+      "introduction": "We may collect personal information including:",
+      "items": {
+        "contact": "Full name, email, phone number, and mailing address",
+        "identification": "Date of birth or identification when required",
+        "profile": "Profile photograph and preferred language",
+        "entrepreneur": "Entrepreneur business information and submitted documents",
+        "supporter": "Founding Supporter participation and contribution history",
+        "coach": "Coach qualifications, assignments, and coaching records",
+        "partner": "Certified Growth Partner service and organization information",
+        "payment": "Payment confirmations and transaction records",
+        "technical": "IP address, browser type, device data, pages visited, and cookies"
+      }
+    },
+    "informationUse": {
+      "title": "3. How We Use Your Information",
+      "description": "EPEW uses information to operate, improve, and administer the Entrepreneur Development Ecosystem, including account management, entrepreneur services, supporter services, coach services, Certified Growth Partner services, payment processing, communications, platform administration, security, legal compliance, and reporting."
+    },
+    "legalBasis": {
+      "title": "4. Legal Basis for Processing Personal Information",
+      "description": "Depending on your location and applicable law, EPEW may process personal information based on consent, contractual obligations, legal obligations, legitimate organizational interests, security, and protection of the rights of EPEW and its users."
+    },
+    "informationSharing": {
+      "title": "5. How We Share Information",
+      "description": "EPEW does not sell personal information. We may share information with authorized EPEW personnel, coaches, Certified Growth Partners, payment processors, technology providers, legal authorities when required, and successor organizations in the event of restructuring or transfer of assets."
+    },
+    "dataRetention": {
+      "title": "6. Data Retention",
+      "description": "EPEW retains personal information only as long as reasonably necessary to fulfill the purposes described in this Privacy Policy, comply with legal obligations, resolve disputes, enforce agreements, protect the Platform, and support the Entrepreneur Development Ecosystem."
+    },
+    "cookies": {
+      "title": "7. Cookies & Tracking Technologies",
+      "description": "EPEW may use cookies and similar technologies to maintain login sessions, remember preferences, improve performance, analyze traffic, detect fraud, and enhance user experience. Users may manage cookies through browser settings, but disabling cookies may affect Platform functionality."
+    },
+    "dataSecurity": {
+      "title": "8. Data Security",
+      "description": "EPEW maintains reasonable administrative, technical, and physical safeguards to protect personal information, including encrypted connections, authentication controls, secure cloud infrastructure, backups, monitoring, role-based access, and multi-factor authentication where applicable."
+    },
+    "privacyRights": {
+      "title": "9. Your Privacy Rights",
+      "description": "Depending on your location and applicable law, you may have rights to access, correct, delete, restrict, object to processing, withdraw consent, or request a portable copy of your personal information. EPEW will respond to verified privacy requests in accordance with applicable law."
+    },
+    "children": {
+      "title": "10. Children's Privacy",
+      "description": "The EPEW Platform is intended for individuals who are at least eighteen (18) years old or the age of majority in their jurisdiction. EPEW does not knowingly collect personal information from children under thirteen (13)."
+    },
+    "international": {
+      "title": "11. International Users",
+      "description": "EPEW is a United States nonprofit organization with a global mission. If you access the Platform from outside the United States, your information may be transferred to, stored, and processed in the United States."
+    },
+    "thirdPartyLinks": {
+      "title": "12. Third-Party Links",
+      "description": "The Platform may contain links to third-party websites or services. EPEW is not responsible for the privacy practices, content, or security of third-party websites or services."
+    },
+    "changes": {
+      "title": "13. Changes to This Privacy Policy",
+      "description": "EPEW may update this Privacy Policy from time to time. When material changes are made, we will update the Last Updated date and may provide additional notice where required by law."
+    },
+    "contact": {
+      "title": "14. Contact Information"
+    }
+  },
+  "contact": {
+    "addressLine1": "8 The Green",
+    "addressLine2": "Dover, DE 19901",
+    "country": "United States of America",
+    "phoneLabel": "Phone",
+    "phone": "(866) 720-0014",
+    "emailLabel": "Email",
+    "email": "support@epew.us",
+    "websiteLabel": "Website",
+    "website": "www.epew.us"
+  }
+}

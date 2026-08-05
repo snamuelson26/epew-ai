@@ -219,22 +219,22 @@ const namespaceRegistry: Record<
     },
 
     navigation: async () => {
-  const module = await import(
-    "../../../messages/en/navigation.json"
-  );
+      const module = await import(
+        "../../../messages/en/navigation.json"
+      );
 
-  return module.default as TranslationDictionary;
-},
+      return module.default as TranslationDictionary;
+    },
 
-footer: async () => {
-  const module = await import(
-    "../../../messages/en/footer.json"
-  );
+    footer: async () => {
+      const module = await import(
+        "../../../messages/en/footer.json"
+      );
 
-  return module.default as TranslationDictionary;
-},
+      return module.default as TranslationDictionary;
+    },
 
-homepage: async () => {
+    homepage: async () => {
       const module = await import(
         "../../../messages/en/homepage.json"
       );
@@ -245,6 +245,14 @@ homepage: async () => {
     about: async () => {
       const module = await import(
         "../../../messages/en/about.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+
+    "privacy-policy": async () => {
+      const module = await import(
+        "../../../messages/en/privacy-policy.json"
       );
 
       return module.default as TranslationDictionary;
@@ -261,22 +269,22 @@ homepage: async () => {
     },
 
     navigation: async () => {
-  const module = await import(
-  "../../../messages/ht/navigation.json"
-  );
+      const module = await import(
+        "../../../messages/ht/navigation.json"
+      );
 
-  return module.default as TranslationDictionary;
-},
+      return module.default as TranslationDictionary;
+    },
 
-footer: async () => {
-  const module = await import(
-  "../../../messages/ht/footer.json"
-  );
+    footer: async () => {
+      const module = await import(
+        "../../../messages/ht/footer.json"
+      );
 
-  return module.default as TranslationDictionary;
-},
+      return module.default as TranslationDictionary;
+    },
 
-homepage: async () => {
+    homepage: async () => {
       const module = await import(
         "../../../messages/ht/homepage.json"
       );
@@ -287,6 +295,14 @@ homepage: async () => {
     about: async () => {
       const module = await import(
         "../../../messages/ht/about.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+
+    "privacy-policy": async () => {
+      const module = await import(
+        "../../../messages/ht/privacy-policy.json"
       );
 
       return module.default as TranslationDictionary;
@@ -303,22 +319,22 @@ homepage: async () => {
     },
 
     navigation: async () => {
-  const module = await import(
-   "../../../messages/fr/navigation.json"
-  );
+      const module = await import(
+        "../../../messages/fr/navigation.json"
+      );
 
-  return module.default as TranslationDictionary;
-},
+      return module.default as TranslationDictionary;
+    },
 
-footer: async () => {
-  const module = await import(
-    "../../../messages/fr/footer.json"
-  );
+    footer: async () => {
+      const module = await import(
+        "../../../messages/fr/footer.json"
+      );
 
-  return module.default as TranslationDictionary;
-},
+      return module.default as TranslationDictionary;
+    },
 
-homepage: async () => {
+    homepage: async () => {
       const module = await import(
         "../../../messages/fr/homepage.json"
       );
@@ -329,6 +345,14 @@ homepage: async () => {
     about: async () => {
       const module = await import(
         "../../../messages/fr/about.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+
+    "privacy-policy": async () => {
+      const module = await import(
+        "../../../messages/fr/privacy-policy.json"
       );
 
       return module.default as TranslationDictionary;
@@ -345,22 +369,22 @@ homepage: async () => {
     },
 
     navigation: async () => {
-  const module = await import(
-    "../../../messages/es/navigation.json"
-  );
+      const module = await import(
+        "../../../messages/es/navigation.json"
+      );
 
-  return module.default as TranslationDictionary;
-},
+      return module.default as TranslationDictionary;
+    },
 
-footer: async () => {
-  const module = await import(
-    "../../../messages/es/footer.json"
-  );
+    footer: async () => {
+      const module = await import(
+        "../../../messages/es/footer.json"
+      );
 
-  return module.default as TranslationDictionary;
-},
+      return module.default as TranslationDictionary;
+    },
 
-homepage: async () => {
+    homepage: async () => {
       const module = await import(
         "../../../messages/es/homepage.json"
       );
@@ -371,6 +395,14 @@ homepage: async () => {
     about: async () => {
       const module = await import(
         "../../../messages/es/about.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+
+    "privacy-policy": async () => {
+      const module = await import(
+        "../../../messages/es/privacy-policy.json"
       );
 
       return module.default as TranslationDictionary;
