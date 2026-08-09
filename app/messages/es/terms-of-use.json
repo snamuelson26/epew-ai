@@ -1,0 +1,141 @@
+{
+  "page": {
+    "title": "Términos de Uso"
+  },
+  "organization": {
+    "name": "Ekero Partners Empower Wealth (EPEW)"
+  },
+  "dates": {
+    "effectiveDateLabel": "Fecha de Vigencia:",
+    "effectiveDate": "2 de julio de 2026",
+    "lastUpdatedLabel": "Última Actualización:",
+    "lastUpdated": "2 de julio de 2026"
+  },
+  "identity": {
+    "title": "Identidad Oficial de la Organización",
+    "description": "Ekero Partners Empower Wealth (EPEW) es una organización sin fines de lucro de los Estados Unidos con una visión global para empoderar a los emprendedores, fortalecer las comunidades y promover el desarrollo económico sostenible mediante el Ecosistema de Desarrollo Empresarial (EDE), coordinado y operado a través del Sistema Inteligente de Operación Empresarial (IBOS)."
+  },
+  "sections": {
+    "acceptance": {
+      "title": "1. Aceptación de los Términos",
+      "description": "Estos Términos de Uso rigen su acceso y uso del sitio web de EPEW, la Plataforma para Emprendedores, la Plataforma de Colaboradores Fundadores, la Plataforma de Coaches, la Plataforma de Socios de Crecimiento Certificados, la Plataforma Administrativa, IBOS y los servicios relacionados. Al utilizar la Plataforma, usted acepta estos Términos, la Política de Privacidad, el Aviso Legal de la Plataforma y las políticas aplicables de EPEW."
+    },
+    "about": {
+      "title": "2. Acerca de EPEW",
+      "description": "EPEW opera el Ecosistema de Desarrollo Empresarial (EDE), un marco coordinado que combina educación, coaching, desarrollo empresarial, apoyo profesional, participación comunitaria, alianzas estratégicas y coordinación inteligente a través de IBOS."
+    },
+    "mission": {
+      "title": "3. Nuestra Misión",
+      "description": "EPEW existe para empoderar a los emprendedores, fortalecer las comunidades y promover el desarrollo económico sostenible ayudando a los emprendedores a preparar, lanzar, desarrollar y fortalecer empresas exitosas."
+    },
+    "eligibility": {
+      "title": "4. Elegibilidad",
+      "description": "Los usuarios deben tener capacidad legal para celebrar acuerdos vinculantes, proporcionar información precisa, cumplir con las leyes aplicables y utilizar la Plataforma únicamente para fines legales. EPEW puede aprobar, rechazar, suspender o finalizar la participación según los requisitos del programa y el cumplimiento."
+    },
+    "userAccounts": {
+      "title": "5. Cuentas de Usuario",
+      "description": "Los usuarios pueden registrarse como emprendedores, Colaboradores Fundadores, coaches, Socios de Crecimiento Certificados, líderes comunitarios o administradores autorizados. Los usuarios son responsables de mantener información precisa de la cuenta, proteger sus credenciales de acceso y de toda actividad realizada bajo sus cuentas."
+    },
+    "platformServices": {
+      "title": "6. Servicios de la Plataforma",
+      "description": "Los servicios de la Plataforma pueden incluir inscripción de emprendedores, coaching, desarrollo empresarial, preparación para financiamiento, Páginas de Bienvenida de Negocios, paneles de colaboradores, actualizaciones de proyectos, servicios de coaching, servicios de Socios de Crecimiento Certificados, coordinación administrativa, informes y control de calidad."
+    },
+    "acceptableUse": {
+      "title": "7. Uso Aceptable",
+      "introduction": "Los usuarios aceptan no:",
+      "items": {
+        "falseInformation": "Proporcionar información falsa o engañosa.",
+        "impersonation": "Hacerse pasar por otra persona.",
+        "accountUse": "Utilizar la cuenta de otra persona sin permiso.",
+        "unauthorizedAccess": "Intentar acceder a sistemas sin autorización.",
+        "harmfulCode": "Cargar código malicioso.",
+        "fraud": "Utilizar la Plataforma para fraude o actividades ilegales.",
+        "harassment": "Acosar, amenazar o abusar de otras personas.",
+        "misrepresentation": "Representar falsamente los programas, servicios o políticas de EPEW."
+      }
+    },
+    "intellectualProperty": {
+      "title": "8. Propiedad Intelectual",
+      "description": "Los nombres “Ekero Partners Empower Wealth (EPEW)”, “Entrepreneur Development Ecosystem (EDE)” e “Intelligent Business Operating System (IBOS)”, junto con sus metodologías, modelos operativos, marcos, flujos de trabajo, procesos empresariales, estructuras de gobernanza, materiales educativos, terminología, marcas, logotipos, gráficos, documentación, contenido de capacitación, software, bases de datos, publicaciones y demás contenido propietario, constituyen propiedad intelectual de EPEW y no pueden ser copiados, adaptados, distribuidos, publicados, licenciados, vendidos, sometidos a ingeniería inversa o utilizados sin autorización previa por escrito.",
+      "entrepreneurOwnership": "Los emprendedores conservan la propiedad de sus propias ideas de negocio, nombres comerciales, logotipos, productos, servicios, marcas, derechos de autor, planes de negocio y demás activos comerciales de propiedad exclusiva. Al participar, los emprendedores otorgan a EPEW un permiso limitado para utilizar nombres comerciales, logotipos, fotografías, videos e historias de éxito aprobados con fines educativos, promocionales, operativos y relacionados con el programa, salvo acuerdo distinto por escrito."
+    },
+    "entrepreneurProjects": {
+      "title": "9. Proyectos de Emprendedores",
+      "description": "La Plataforma EPEW proporciona a los emprendedores educación, coaching, recursos de desarrollo empresarial, servicios profesionales, sistemas inteligentes y oportunidades de participación comunitaria a través de EDE.",
+      "principle": "EPEW desarrolla emprendedores. Los emprendedores desarrollan negocios.",
+      "responsibility": "EPEW prepara y desarrolla a los emprendedores mediante educación, coaching, orientación profesional, apoyo coordinado e IBOS. Los emprendedores siguen siendo los únicos responsables de dirigir, operar, administrar y desarrollar sus negocios."
+    },
+    "foundingSupporter": {
+      "title": "10. Participación de los Colaboradores Fundadores",
+      "description": "Los Colaboradores Fundadores participan voluntariamente en los procesos empresariales de los emprendedores a través de EDE. La participación no constituye la compra de valores, propiedad en los negocios de los emprendedores, sociedad con EPEW ni empleo. Los beneficios de participación, si los hubiera, se rigen por las políticas aplicables del programa y no están garantizados."
+    },
+    "payments": {
+      "title": "11. Pagos, Contribuciones y Tarifas de la Plataforma",
+      "description": "Algunos servicios de la Plataforma pueden incluir contribuciones de colaboradores, tarifas de servicio de la plataforma, tarifas de servicios profesionales, tarifas de programas educativos u otros cargos aprobados. Los pagos se procesan mediante procesadores de pago externos autorizados, incluidos Stripe u otros proveedores aprobados."
+    },
+    "noGuarantees": {
+      "title": "12. Sin Garantías",
+      "introduction": "EPEW no garantiza:",
+      "items": {
+        "acceptance": "La aceptación en ningún programa.",
+        "funding": "La aprobación o disponibilidad de financiamiento.",
+        "businessSuccess": "El éxito empresarial.",
+        "revenue": "La generación de ingresos o rentabilidad.",
+        "participationBenefits": "Los beneficios de participación.",
+        "businessGrowth": "El crecimiento empresarial ni resultados financieros específicos."
+      }
+    },
+    "platformAvailability": {
+      "title": "13. Disponibilidad de la Plataforma",
+      "description": "EPEW se esfuerza por mantener un acceso confiable, pero no garantiza una disponibilidad ininterrumpida ni libre de errores. La Plataforma puede no estar disponible debido a mantenimiento, actualizaciones, mejoras de seguridad, fallas del sistema, interrupciones de Internet o eventos fuera del control razonable de EPEW."
+    },
+    "thirdPartyServices": {
+      "title": "14. Servicios de Terceros",
+      "description": "La Plataforma puede integrarse con servicios de terceros como Stripe, proveedores de correo electrónico, proveedores de alojamiento en la nube, herramientas de videoconferencia, servicios de análisis, proveedores de autenticación, servicios de mapas y herramientas de comunicación. Estos servicios se rigen por sus propios términos y políticas de privacidad."
+    },
+    "suspension": {
+      "title": "15. Suspensión o Terminación",
+      "description": "EPEW puede suspender, restringir o finalizar el acceso si un usuario viola estos Términos, proporciona información falsa, utiliza indebidamente la Plataforma, participa en conductas ilegales o disruptivas, infringe derechos, intenta obtener acceso no autorizado o actúa de manera incompatible con la misión y la integridad de EPEW."
+    },
+    "liability": {
+      "title": "16. Limitación de Responsabilidad",
+      "description": "En la máxima medida permitida por la ley, EPEW y sus representantes no serán responsables por daños derivados del uso de la Plataforma, el desempeño de negocios de emprendedores, decisiones de financiamiento, beneficios de participación, resultados financieros, interrupciones técnicas, servicios de terceros o decisiones de los participantes."
+    },
+    "indemnification": {
+      "title": "17. Indemnización",
+      "description": "Usted acepta defender, indemnizar y mantener indemne a EPEW, sus directores, funcionarios, empleados, voluntarios, coaches, Socios de Crecimiento Certificados, afiliados, contratistas y representantes frente a reclamaciones, responsabilidades, daños, pérdidas, costos, gastos u honorarios legales derivados de su uso de la Plataforma, violación de estos Términos, violación de la ley, infracción de derechos, operaciones comerciales o información que usted proporcione."
+    },
+    "governingLaw": {
+      "title": "18. Ley Aplicable",
+      "description": "Estos Términos se regirán e interpretarán de conformidad con las leyes del Estado de Nueva York, Estados Unidos de América, sin tener en cuenta los principios sobre conflicto de leyes."
+    },
+    "changes": {
+      "title": "19. Cambios a Estos Términos",
+      "description": "EPEW puede revisar estos Términos periódicamente. Los Términos actualizados entrarán en vigor cuando sean publicados. El uso continuado de la Plataforma constituye la aceptación de los Términos revisados."
+    },
+    "contact": {
+      "title": "20. Información de Contacto"
+    }
+  },
+  "contact": {
+    "addressLine1": "8 The Green",
+    "addressLine2": "Dover, DE 19901",
+    "country": "Estados Unidos de América",
+    "phoneLabel": "Teléfono",
+    "phone": "(866) 720-0014",
+    "emailLabel": "Correo Electrónico",
+    "email": "support@epew.us",
+    "websiteLabel": "Sitio Web",
+    "website": "www.epew.us"
+  },
+  "finalAcknowledgment": {
+    "title": "Reconocimiento Final",
+    "description": "Al acceder, registrarse o utilizar cualquier parte de la Plataforma EPEW, usted reconoce que ha leído, comprendido y acepta quedar sujeto a estos Términos de Uso, junto con la Política de Privacidad, el Aviso Legal de la Plataforma y todos los acuerdos y políticas aplicables de EPEW."
+  },
+  "officialDeclaration": {
+    "title": "Declaración Oficial de la Organización",
+    "description1": "EPEW es más que una plataforma tecnológica. Es un Ecosistema de Desarrollo Empresarial coordinado, creado para empoderar a los emprendedores, fortalecer las comunidades y promover el desarrollo económico sostenible.",
+    "description2": "A través de la educación, el coaching, la orientación profesional, las alianzas estratégicas, el liderazgo comunitario e IBOS, EPEW prepara a los emprendedores para transformar sus ideas en negocios exitosos y sostenibles.",
+    "principle": "EPEW desarrolla emprendedores. Los emprendedores desarrollan negocios."
+  }
+}

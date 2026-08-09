@@ -7,5 +7,30 @@
     "privacyPolicy": "Privacy Policy",
     "termsOfUse": "Terms of Use",
     "platformDisclaimer": "Platform Disclaimer"
+  },
+  "landing": {
+    "title": "Legal Center",
+    "description": "Access the official legal documents governing the Entrepreneur Development Ecosystem (EDE), coordinated through the Intelligent Business Operating System (IBOS)."
+  },
+  "cards": {
+    "privacy": {
+      "title": "Privacy Policy",
+      "description": "Learn how EPEW collects, protects, stores, and manages your personal information across our website, platforms, and services.",
+      "button": "Read Privacy Policy"
+    },
+    "terms": {
+      "title": "Terms of Use",
+      "description": "Review the rules, responsibilities, acceptable use, and conditions governing participation in the EPEW Platform.",
+      "button": "Read Terms of Use"
+    },
+    "disclaimer": {
+      "title": "Platform Disclaimer",
+      "description": "Understand the role of EPEW, participant responsibilities, important legal disclosures, and the structure of the Entrepreneur Development Ecosystem.",
+      "button": "Read Platform Disclaimer"
+    }
+  },
+  "support": {
+    "title": "Need Assistance?",
+    "description": "If you have questions regarding our legal documents or policies, please contact our support team."
   }
 }

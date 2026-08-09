@@ -1,5 +1,88 @@
 {
-  "content": {
-    "sign_in_once_and_access_your_available_epew": "Sign in once and access your available EPEW portals."
+  "common": {
+    "email": "Adresse e-mail",
+    "emailShort": "E-mail",
+    "password": "Mot de passe",
+    "enterEmail": "Entrez votre e-mail",
+    "enterPassword": "Entrez votre mot de passe",
+    "signIn": "Se connecter",
+    "signingIn": "Connexion en cours...",
+    "loggingIn": "Connexion en cours...",
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié ?",
+    "forgotPasswordLower": "Mot de passe oublié ?",
+    "show": "Afficher",
+    "hide": "Masquer",
+    "returnToEpew": "Retour à EPEW",
+    "login": "Connexion",
+    "createAccount": "Créer un compte",
+    "accessDenied": "Accès refusé.",
+    "loginFailed": "Échec de la connexion. Veuillez réessayer."
+  },
+  "partner": {
+  "title": "Connexion Partenaire",
+  "description": "Connectez-vous pour accéder à votre Portail Partenaire EPEW et gérer vos activités de partenariat.",
+  "verifyError": "Impossible de vérifier l'accès partenaire.",
+  "accessDenied": "Accès refusé. Ce compte n'est pas enregistré comme partenaire EPEW.",
+  "button": "Accéder au Portail Partenaire",
+  "returnToEpew": "Retour à EPEW"
+},
+  "general": {
+    "title": "Connexion EPEW",
+    "description": "Connectez-vous une seule fois pour accéder à vos portails EPEW disponibles.",
+    "noValidPortal": "Aucun portail valide n'a été trouvé pour ce compte.",
+    "noPortalRole": "Aucun rôle de portail n'est associé à ce compte."
+  },
+  "entrepreneur": {
+    "title": "Connexion Entrepreneur",
+    "description": "Connectez-vous pour accéder à votre tableau de bord Entrepreneur EPEW.",
+    "forgotPassword": "Mot de passe oublié ?"
+  },
+  "supporter": {
+    "title": "Connexion Supporteur",
+    "description": "Connectez-vous pour accéder à votre tableau de bord Supporteur EPEW.",
+    "noAccount": "Aucun compte supporteur n'a été trouvé pour cette adresse e-mail. Veuillez d'abord vous inscrire comme supporteur.",
+    "alreadyRegistered": "Déjà inscrit ?",
+    "signInAccount": "Connectez-vous à votre compte supporteur",
+    "createAccount": "Créer un compte Supporteur"
+  },
+  "coach": {
+    "title": "Connexion Coach",
+    "description": "Les coachs EPEW autorisés peuvent se connecter pour gérer les entrepreneurs qui leur sont attribués, les entretiens, les notes et la préparation au marché.",
+    "verifyError": "Impossible de vérifier le compte du coach.",
+    "accessDenied": "Accès refusé. Cette adresse e-mail n'est pas enregistrée comme coach EPEW.",
+    "button": "Accéder au Tableau de Bord Coach",
+    "notice": "L'accès est réservé aux coachs EPEW autorisés."
+  },
+  "support": {
+    "title": "Connexion Supporteur",
+    "description": "Accédez à votre tableau de bord, suivez les progrès des entrepreneurs, consultez votre activité de participation et gérez votre compte EPEW en toute sécurité.",
+    "formTitle": "Connexion",
+    "rememberMe": "Se souvenir de moi",
+    "secureLogin": "Connexion Sécurisée",
+    "createAccount": "Créer un compte Supporteur",
+    "verify2fa": "Vérifier 2FA",
+    "imageAlt": "Connexion Supporteur",
+    "securityNotice": "EPEW utilise une protection sécurisée des comptes, la vérification d'identité et des systèmes de participation structurés afin de préserver la transparence, la responsabilité et l'intégrité de l'écosystème."
+  },
+  "admin": {
+    "controlCenter": "Centre de Contrôle Administrateur",
+    "title": "Connexion Administrateur",
+    "description": "Entrez vos identifiants d'administrateur autorisé.",
+    "email": "E-mail Administrateur",
+    "emailPlaceholder": "admin@epew.us",
+    "notAuthorized": "Ce compte n'est pas autorisé à accéder au Centre de Contrôle Administrateur.",
+    "unableToSignIn": "Impossible de se connecter.",
+    "unexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+    "verifying": "Vérification de l'accès...",
+    "button": "Se connecter comme Administrateur",
+    "notice": "Accès réservé aux administrateurs autorisés. Toutes les tentatives d'accès peuvent être surveillées et enregistrées."
+  },
+  "vendor": {
+    "title": "Connexion Vendeur",
+    "description": "Connectez-vous pour accéder à votre Portail Vendeur EPEW et gérer votre participation au marché.",
+    "verifyError": "Impossible de vérifier l'accès vendeur.",
+    "accessDenied": "Accès refusé. Ce compte n'est pas enregistré comme vendeur EPEW.",
+    "button": "Accéder au Portail Vendeur"
   }
 }

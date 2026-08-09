@@ -1,0 +1,141 @@
+{
+  "page": {
+    "title": "Tèm Itilizasyon"
+  },
+  "organization": {
+    "name": "Ekero Partners Empower Wealth (EPEW)"
+  },
+  "dates": {
+    "effectiveDateLabel": "Dat Antre an Vigè:",
+    "effectiveDate": "2 Jiyè 2026",
+    "lastUpdatedLabel": "Dènye Mizajou:",
+    "lastUpdated": "2 Jiyè 2026"
+  },
+  "identity": {
+    "title": "Idantite Ofisyèl Òganizasyon an",
+    "description": "Ekero Partners Empower Wealth (EPEW) se yon òganizasyon san bi likratif nan Etazini ki gen yon vizyon mondyal pou bay antreprenè yo plis kapasite, ranfòse kominote yo, epi ankouraje devlopman ekonomik dirab atravè Ekosistèm Devlopman Antreprenè (EDE), ki kowòdone epi delivre atravè Sistèm Operasyon Entelijan pou Biznis la (IBOS)."
+  },
+  "sections": {
+    "acceptance": {
+      "title": "1. Akseptasyon Tèm yo",
+      "description": "Tèm Itilizasyon sa yo gouvène aksè ou ak itilizasyon sit entènèt EPEW la, Platfòm Antreprenè a, Platfòm Sipòtè Fondatè a, Platfòm Antrenè a, Platfòm Patnè Kwasans Sètifye a, Platfòm Administratif la, IBOS, ak sèvis ki gen rapò yo. Lè ou itilize Platfòm nan, ou dakò ak Tèm sa yo, Règleman sou Konfidansyalite a, Avi Limitasyon Platfòm nan, ak règleman EPEW ki aplikab yo."
+    },
+    "about": {
+      "title": "2. Konsènan EPEW",
+      "description": "EPEW opere Ekosistèm Devlopman Antreprenè (EDE), yon kad kowòdone ki konbine edikasyon, antrenman, devlopman biznis, sipò pwofesyonèl, patisipasyon kominotè, patenarya estratejik, ak kowòdinasyon entelijan atravè IBOS."
+    },
+    "mission": {
+      "title": "3. Misyon Nou",
+      "description": "EPEW egziste pou bay antreprenè yo plis kapasite, ranfòse kominote yo, epi ankouraje devlopman ekonomik dirab lè li ede antreprenè yo prepare, lanse, devlope, epi ranfòse biznis ki reyisi."
+    },
+    "eligibility": {
+      "title": "4. Kalifikasyon",
+      "description": "Itilizatè yo dwe legalman kapab antre nan akò obligatwa, bay enfòmasyon egzat, respekte lwa ki aplikab yo, epi itilize Platfòm nan sèlman pou rezon legal. EPEW ka apwouve, refize, sispann, oswa mete fen nan patisipasyon selon egzijans pwogram yo ak konfòmite."
+    },
+    "userAccounts": {
+      "title": "5. Kont Itilizatè",
+      "description": "Itilizatè yo ka enskri kòm antreprenè, Sipòtè Fondatè, antrenè, Patnè Kwasans Sètifye, lidè kominotè, oswa administratè otorize. Itilizatè yo responsab pou kenbe enfòmasyon kont yo egzat, pwoteje enfòmasyon koneksyon yo, epi yo responsab pou tout aktivite ki fèt sou kont yo."
+    },
+    "platformServices": {
+      "title": "6. Sèvis Platfòm nan",
+      "description": "Sèvis Platfòm nan ka gen ladan enskripsyon antreprenè, antrenman, devlopman biznis, preparasyon pou finansman, Paj Akèy Biznis, tablo jesyon sipòtè, mizajou pwojè, sèvis antrenè, sèvis Patnè Kwasans Sètifye, kowòdinasyon administratif, rapò, ak asirans kalite."
+    },
+    "acceptableUse": {
+      "title": "7. Itilizasyon Akseptab",
+      "introduction": "Itilizatè yo dakò pou yo pa:",
+      "items": {
+        "falseInformation": "Bay enfòmasyon fo oswa twonpe.",
+        "impersonation": "Pran pòz ou se yon lòt moun.",
+        "accountUse": "Itilize kont yon lòt moun san pèmisyon.",
+        "unauthorizedAccess": "Eseye jwenn aksè san otorizasyon nan sistèm yo.",
+        "harmfulCode": "Telechaje oswa voye kòd danjere.",
+        "fraud": "Itilize Platfòm nan pou fwod oswa aktivite ilegal.",
+        "harassment": "Anmède, menase, oswa abize lòt moun.",
+        "misrepresentation": "Bay move reprezantasyon sou pwogram, sèvis, oswa règleman EPEW yo."
+      }
+    },
+    "intellectualProperty": {
+      "title": "8. Pwopriyete Entèlektyèl",
+      "description": "Non “Ekero Partners Empower Wealth (EPEW),” “Entrepreneur Development Ecosystem (EDE),” ak “Intelligent Business Operating System (IBOS),” ansanm ak metodoloji, modèl operasyon, kad, pwosesis travay, pwosesis biznis, estrikti gouvènans, materyèl edikatif, tèminoloji, mak, logo, grafik, dokimantasyon, kontni fòmasyon, lojisyèl, bazdone, piblikasyon, ak lòt kontni pwopriyetè ki asosye avèk yo, se pwopriyete entèlektyèl EPEW epi yo pa ka kopye, adapte, distribye, pibliye, bay lisans, vann, fè jeni ranvèse, oswa itilize san otorizasyon ekri davans.",
+      "entrepreneurOwnership": "Antreprenè yo rete pwopriyetè pwòp lide biznis yo, non biznis yo, logo yo, pwodwi yo, sèvis yo, mak komèsyal yo, dwa otè yo, plan biznis yo, ak lòt byen biznis pwopriyetè yo. Lè yo patisipe, antreprenè yo bay EPEW yon pèmisyon limite pou itilize non biznis, logo, foto, videyo, ak istwa siksè ki apwouve pou rezon edikatif, pwomosyonèl, operasyonèl, ak rezon ki gen rapò ak pwogram nan, sof si yo dakò diferan alekri."
+    },
+    "entrepreneurProjects": {
+      "title": "9. Pwojè Antreprenè yo",
+      "description": "Platfòm EPEW la bay antreprenè yo edikasyon, antrenman, resous devlopman biznis, sèvis pwofesyonèl, sistèm entelijan, ak opòtinite patisipasyon kominotè atravè EDE.",
+      "principle": "EPEW devlope antreprenè. Antreprenè yo devlope biznis.",
+      "responsibility": "EPEW prepare epi devlope antreprenè yo atravè edikasyon, antrenman, konsèy pwofesyonèl, sipò kowòdone, ak IBOS. Antreprenè yo rete sèl responsab pou dirije, opere, jere, epi devlope biznis yo."
+    },
+    "foundingSupporter": {
+      "title": "10. Patisipasyon Sipòtè Fondatè yo",
+      "description": "Sipòtè Fondatè yo patisipe volontèman nan vwayaj biznis antreprenè yo atravè EDE. Patisipasyon an pa reprezante acha sekirite finansye, pwopriyetè nan biznis antreprenè yo, patenarya avèk EPEW, oswa travay. Benefis patisipasyon yo, si genyen, gouvène pa règleman pwogram ki aplikab yo epi yo pa garanti."
+    },
+    "payments": {
+      "title": "11. Peman, Kontribisyon, ak Frè Platfòm",
+      "description": "Kèk sèvis Platfòm nan ka gen ladan kontribisyon sipòtè, frè sèvis platfòm, frè sèvis pwofesyonèl, frè pwogram edikatif, oswa lòt chaj ki apwouve. Peman yo trete atravè processeur peman twazyèm pati ki otorize, tankou Stripe oswa lòt founisè ki apwouve."
+    },
+    "noGuarantees": {
+      "title": "12. Pa Gen Garanti",
+      "introduction": "EPEW pa garanti:",
+      "items": {
+        "acceptance": "Akseptasyon nan nenpòt pwogram.",
+        "funding": "Apwobasyon oswa disponiblite finansman.",
+        "businessSuccess": "Siksè biznis.",
+        "revenue": "Jenere revni oswa rantabilite.",
+        "participationBenefits": "Benefis patisipasyon.",
+        "businessGrowth": "Kwasans biznis oswa rezilta finansye espesifik."
+      }
+    },
+    "platformAvailability": {
+      "title": "13. Disponiblite Platfòm nan",
+      "description": "EPEW fè efò pou kenbe aksè serye men li pa garanti disponiblite san entèripsyon oswa san erè. Platfòm nan ka pa disponib poutèt antretyen, mizajou, amelyorasyon sekirite, echèk sistèm, pwoblèm entènèt, oswa evènman ki depase kontwòl rezonab EPEW."
+    },
+    "thirdPartyServices": {
+      "title": "14. Sèvis Twazyèm Pati",
+      "description": "Platfòm nan ka entegre avèk sèvis twazyèm pati tankou Stripe, founisè imel, founisè hosting nwaj, zouti videyokonferans, sèvis analiz, founisè otantifikasyon, sèvis kat, ak zouti kominikasyon. Sèvis sa yo gouvène pa pwòp tèm ak règleman sou konfidansyalite pa yo."
+    },
+    "suspension": {
+      "title": "15. Sispansyon oswa Revokasyon",
+      "description": "EPEW ka sispann, limite, oswa mete fen nan aksè si yon itilizatè vyole Tèm sa yo, bay enfòmasyon fo, mal itilize Platfòm nan, patisipe nan konduit ilegal oswa deranjan, vyole dwa, eseye jwenn aksè san otorizasyon, oswa aji nan yon fason ki pa ann akò ak misyon ak entegrite EPEW."
+    },
+    "liability": {
+      "title": "16. Limit Responsablite",
+      "description": "Nan limit maksimòm lalwa pèmèt, EPEW ak reprezantan li yo pap responsab pou domaj ki soti nan itilizasyon Platfòm nan, pèfòmans biznis antreprenè, desizyon finansman, benefis patisipasyon, rezilta finansye, entèripsyon teknik, sèvis twazyèm pati, oswa desizyon patisipan yo."
+    },
+    "indemnification": {
+      "title": "17. Endemnizasyon",
+      "description": "Ou dakò pou defann, endemnize, epi pwoteje EPEW, direktè li yo, ofisye li yo, anplwaye li yo, volontè li yo, antrenè li yo, Patnè Kwasans Sètifye li yo, afilye li yo, kontraktè li yo, ak reprezantan li yo kont reklamasyon, responsablite, domaj, pèt, depans, frè, oswa frè legal ki soti nan itilizasyon ou fè nan Platfòm nan, vyolasyon Tèm sa yo, vyolasyon lalwa, vyolasyon dwa, operasyon biznis ou, oswa enfòmasyon ou soumèt."
+    },
+    "governingLaw": {
+      "title": "18. Lwa ki Gouvène",
+      "description": "Tèm sa yo pral gouvène epi entèprete an akò ak lwa Eta New York, Etazini, san konsiderasyon prensip konfli lwa yo."
+    },
+    "changes": {
+      "title": "19. Chanjman nan Tèm sa yo",
+      "description": "EPEW ka revize Tèm sa yo detanzantan. Tèm ki mete ajou yo antre an vigè lè yo pibliye. Kontinye itilize Platfòm nan vle di ou aksepte Tèm ki revize yo."
+    },
+    "contact": {
+      "title": "20. Enfòmasyon Kontak"
+    }
+  },
+  "contact": {
+    "addressLine1": "8 The Green",
+    "addressLine2": "Dover, DE 19901",
+    "country": "Etazini",
+    "phoneLabel": "Telefòn",
+    "phone": "(866) 720-0014",
+    "emailLabel": "Imèl",
+    "email": "support@epew.us",
+    "websiteLabel": "Sit Entènèt",
+    "website": "www.epew.us"
+  },
+  "finalAcknowledgment": {
+    "title": "Akseptasyon Final",
+    "description": "Lè ou jwenn aksè, enskri, oswa itilize nenpòt pati nan Platfòm EPEW la, ou rekonèt ke ou li, konprann, epi dakò pou respekte Tèm Itilizasyon sa yo, ansanm ak Règleman sou Konfidansyalite a, Avi Limitasyon Platfòm nan, ak tout akò ak règleman EPEW ki aplikab yo."
+  },
+  "officialDeclaration": {
+    "title": "Deklarasyon Ofisyèl Òganizasyon an",
+    "description1": "EPEW se plis pase yon platfòm teknoloji. Li se yon Ekosistèm Devlopman Antreprenè kowòdone ki kreye pou bay antreprenè yo plis kapasite, ranfòse kominote yo, epi ankouraje devlopman ekonomik dirab.",
+    "description2": "Atravè edikasyon, antrenman, konsèy pwofesyonèl, patenarya estratejik, lidèchip kominotè, ak IBOS, EPEW prepare antreprenè yo pou transfòme lide yo an biznis ki reyisi epi ki dirab.",
+    "principle": "EPEW devlope antreprenè. Antreprenè yo devlope biznis."
+  }
+}

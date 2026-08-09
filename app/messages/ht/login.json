@@ -1,5 +1,89 @@
 {
-  "content": {
-    "sign_in_once_and_access_your_available_epew": "Sign in once and access your available EPEW portals."
+  "common": {
+    "email": "Adrès Imèl",
+    "emailShort": "Imèl",
+    "password": "Modpas",
+    "enterEmail": "Antre imèl ou",
+    "enterPassword": "Antre modpas ou",
+    "signIn": "Konekte",
+    "signingIn": "Ap konekte...",
+    "loggingIn": "Ap konekte...",
+    "rememberMe": "Sonje mwen",
+    "forgotPassword": "Ou Bliye Modpas?",
+    "forgotPasswordLower": "Ou bliye modpas?",
+    "show": "Montre",
+    "hide": "Kache",
+    "returnToEpew": "Retounen nan EPEW",
+    "login": "Koneksyon",
+    "createAccount": "Kreye Kont",
+    "accessDenied": "Aksè refize.",
+    "loginFailed": "Koneksyon echwe. Tanpri eseye ankò."
+  },
+  "partner": {
+  "title": "Koneksyon Patnè",
+  "description": "Konekte pou jwenn aksè nan Pòtal Patnè EPEW ou epi jere aktivite patenarya ou yo.",
+  "verifyError": "Nou pa kapab verifye aksè patnè a.",
+  "accessDenied": "Aksè refize. Kont sa a pa anrejistre kòm yon patnè EPEW.",
+  "button": "Konekte nan Pòtal Patnè",
+  "returnToEpew": "Retounen nan EPEW"
+}
+,
+  "general": {
+    "title": "Koneksyon EPEW",
+    "description": "Konekte yon sèl fwa pou jwenn aksè nan pòtal EPEW ki disponib pou ou.",
+    "noValidPortal": "Pa gen okenn pòtal valab pou kont sa a.",
+    "noPortalRole": "Pa gen okenn wòl pòtal ki konekte ak kont sa a."
+  },
+  "entrepreneur": {
+    "title": "Koneksyon Antreprenè",
+    "description": "Konekte pou jwenn aksè nan Tablo Jesyon Antreprenè EPEW ou.",
+    "forgotPassword": "Ou Bliye Modpas?"
+  },
+  "supporter": {
+    "title": "Koneksyon Sipòtè",
+    "description": "Konekte pou jwenn aksè nan Tablo Jesyon Sipòtè EPEW ou.",
+    "noAccount": "Nou pa jwenn okenn kont sipòtè pou imèl sa a. Tanpri enskri kòm sipòtè anvan.",
+    "alreadyRegistered": "Ou deja enskri?",
+    "signInAccount": "Konekte nan kont sipòtè ou",
+    "createAccount": "Kreye Kont Sipòtè"
+  },
+  "coach": {
+    "title": "Koneksyon Antrenè",
+    "description": "Antrenè EPEW ki otorize yo ka konekte pou jere antreprenè yo asiyen, entèvyou, nòt, ak preparasyon pou mache a.",
+    "verifyError": "Nou pa kapab verifye kont antrenè a.",
+    "accessDenied": "Aksè refize. Imèl sa a pa anrejistre kòm yon antrenè EPEW.",
+    "button": "Konekte nan Tablo Jesyon Antrenè",
+    "notice": "Aksè antrenè limite sèlman pou antrenè EPEW ki otorize."
+  },
+  "support": {
+    "title": "Koneksyon Sipòtè",
+    "description": "Aksede tablo jesyon sipòtè ou, suiv pwogrè antreprenè yo, revize aktivite patisipasyon, epi jere kont EPEW ou an sekirite.",
+    "formTitle": "Koneksyon",
+    "rememberMe": "Sonje mwen",
+    "secureLogin": "Konekte an Sekirite",
+    "createAccount": "Kreye Kont Sipòtè",
+    "verify2fa": "Verifye 2FA",
+    "imageAlt": "Koneksyon Sipòtè",
+    "securityNotice": "EPEW itilize pwoteksyon kont sekirize, verifikasyon idantite, ak sistèm patisipasyon estriktire pou ede kenbe transparans, responsablite, ak entegrite ekosistèm nan."
+  },
+  "admin": {
+    "controlCenter": "Sant Kontwòl Administratè",
+    "title": "Koneksyon Administratè",
+    "description": "Antre enfòmasyon koneksyon administratè otorize ou.",
+    "email": "Imèl Administratè",
+    "emailPlaceholder": "admin@epew.us",
+    "notAuthorized": "Kont sa a pa otorize pou jwenn aksè nan Sant Kontwòl Administratè a.",
+    "unableToSignIn": "Nou pa kapab konekte.",
+    "unexpectedError": "Yon erè inatandi rive. Tanpri eseye ankò.",
+    "verifying": "Ap verifye aksè...",
+    "button": "Konekte kòm Administratè",
+    "notice": "Aksè rezève sèlman pou administratè otorize. Tout tantativ aksè ka siveye epi anrejistre."
+  },
+  "vendor": {
+    "title": "Koneksyon Vandè",
+    "description": "Konekte pou jwenn aksè nan Pòtal Vandè EPEW ou epi jere patisipasyon ou nan mache a.",
+    "verifyError": "Nou pa kapab verifye aksè vandè a.",
+    "accessDenied": "Aksè refize. Kont sa a pa anrejistre kòm yon vandè EPEW.",
+    "button": "Konekte nan Pòtal Vandè"
   }
 }

@@ -66,12 +66,13 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col bg-white text-black">
         <LanguageProvider
           initialLocale="en"
-          namespaces={[
-            "common",
-            "navigation",
-            "homepage",
-            "about",
-          ]}
+         namespaces={[
+  "common",
+  "navigation",
+  "homepage",
+  "about",
+  "login",
+]}
           detectBrowserLanguage
           useStoredPreference
           persistPreference

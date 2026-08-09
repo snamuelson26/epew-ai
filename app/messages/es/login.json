@@ -1,5 +1,88 @@
 {
-  "content": {
-    "sign_in_once_and_access_your_available_epew": "Sign in once and access your available EPEW portals."
+  "common": {
+    "email": "Correo Electrónico",
+    "emailShort": "Correo",
+    "password": "Contraseña",
+    "enterEmail": "Ingrese su correo electrónico",
+    "enterPassword": "Ingrese su contraseña",
+    "signIn": "Iniciar Sesión",
+    "signingIn": "Iniciando sesión...",
+    "loggingIn": "Iniciando sesión...",
+    "rememberMe": "Recordarme",
+    "forgotPassword": "¿Olvidó su contraseña?",
+    "forgotPasswordLower": "¿Olvidó su contraseña?",
+    "show": "Mostrar",
+    "hide": "Ocultar",
+    "returnToEpew": "Volver a EPEW",
+    "login": "Inicio de Sesión",
+    "createAccount": "Crear Cuenta",
+    "accessDenied": "Acceso denegado.",
+    "loginFailed": "No se pudo iniciar sesión. Inténtelo nuevamente."
+  },
+  "partner": {
+  "title": "Inicio de Sesión para Socios",
+  "description": "Inicie sesión para acceder a su Portal de Socios EPEW y administrar sus actividades de asociación.",
+  "verifyError": "No se pudo verificar el acceso del socio.",
+  "accessDenied": "Acceso denegado. Esta cuenta no está registrada como socio de EPEW.",
+  "button": "Acceder al Portal de Socios",
+  "returnToEpew": "Volver a EPEW"
+},
+  "general": {
+    "title": "Inicio de Sesión EPEW",
+    "description": "Inicie sesión una vez para acceder a los portales EPEW disponibles para su cuenta.",
+    "noValidPortal": "No se encontró un portal válido para esta cuenta.",
+    "noPortalRole": "No hay ningún rol de portal asociado con esta cuenta."
+  },
+  "entrepreneur": {
+    "title": "Inicio de Sesión para Emprendedores",
+    "description": "Inicie sesión para acceder a su Panel de Emprendedor EPEW.",
+    "forgotPassword": "¿Olvidó su contraseña?"
+  },
+  "supporter": {
+    "title": "Inicio de Sesión para Colaboradores",
+    "description": "Inicie sesión para acceder a su Panel de Colaborador EPEW.",
+    "noAccount": "No se encontró ninguna cuenta de colaborador para este correo electrónico. Regístrese primero como colaborador.",
+    "alreadyRegistered": "¿Ya está registrado?",
+    "signInAccount": "Inicie sesión en su cuenta de colaborador",
+    "createAccount": "Crear Cuenta de Colaborador"
+  },
+  "coach": {
+    "title": "Inicio de Sesión para Coaches",
+    "description": "Los coaches autorizados de EPEW pueden iniciar sesión para administrar emprendedores asignados, entrevistas, notas y preparación para el mercado.",
+    "verifyError": "No se pudo verificar la cuenta del coach.",
+    "accessDenied": "Acceso denegado. Este correo electrónico no está registrado como coach de EPEW.",
+    "button": "Acceder al Panel del Coach",
+    "notice": "El acceso está limitado únicamente a coaches autorizados de EPEW."
+  },
+  "support": {
+    "title": "Inicio de Sesión para Colaboradores",
+    "description": "Acceda a su panel, siga el progreso de los emprendedores, revise su actividad de participación y administre su cuenta EPEW de forma segura.",
+    "formTitle": "Inicio de Sesión",
+    "rememberMe": "Recordarme",
+    "secureLogin": "Iniciar Sesión de Forma Segura",
+    "createAccount": "Crear Cuenta de Colaborador",
+    "verify2fa": "Verificar 2FA",
+    "imageAlt": "Inicio de Sesión para Colaboradores",
+    "securityNotice": "EPEW utiliza protección segura de cuentas, verificación de identidad y sistemas estructurados de participación para ayudar a mantener la transparencia, la responsabilidad y la integridad del ecosistema."
+  },
+  "admin": {
+    "controlCenter": "Centro de Control del Administrador",
+    "title": "Inicio de Sesión del Administrador",
+    "description": "Ingrese sus credenciales de administrador autorizado.",
+    "email": "Correo del Administrador",
+    "emailPlaceholder": "admin@epew.us",
+    "notAuthorized": "Esta cuenta no está autorizada para acceder al Centro de Control del Administrador.",
+    "unableToSignIn": "No se pudo iniciar sesión.",
+    "unexpectedError": "Ocurrió un error inesperado. Inténtelo nuevamente.",
+    "verifying": "Verificando acceso...",
+    "button": "Iniciar Sesión como Administrador",
+    "notice": "Acceso exclusivo para administradores autorizados. Todos los intentos de acceso pueden ser supervisados y registrados."
+  },
+  "vendor": {
+    "title": "Inicio de Sesión para Vendedores",
+    "description": "Inicie sesión para acceder a su Portal de Vendedor EPEW y administrar su participación en el mercado.",
+    "verifyError": "No se pudo verificar el acceso del vendedor.",
+    "accessDenied": "Acceso denegado. Esta cuenta no está registrada como vendedor de EPEW.",
+    "button": "Acceder al Portal de Vendedor"
   }
 }

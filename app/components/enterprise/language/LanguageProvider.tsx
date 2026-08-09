@@ -856,6 +856,12 @@ export function LanguageProvider({
       requestedNamespaces,
     );
 
+    console.log("LOAD NAMESPACES REQUEST", {
+      locale: localeRef.current,
+      requestedNamespaces,
+      normalized,
+    });
+
     const missingNamespaces = normalized.filter(
       (namespace) => {
         const currentLocaleLoaded =

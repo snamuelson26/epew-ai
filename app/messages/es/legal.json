@@ -7,5 +7,30 @@
     "privacyPolicy": "Política de Privacidad",
     "termsOfUse": "Términos de Uso",
     "platformDisclaimer": "Aviso Legal de la Plataforma"
+  },
+  "landing": {
+    "title": "Centro Legal",
+    "description": "Acceda a los documentos legales oficiales que rigen el Ecosistema de Desarrollo Empresarial (EDE), coordinado mediante el Sistema Inteligente de Operación Empresarial (IBOS)."
+  },
+  "cards": {
+    "privacy": {
+      "title": "Política de Privacidad",
+      "description": "Conozca cómo EPEW recopila, protege, almacena y administra su información personal en nuestro sitio web, plataformas y servicios.",
+      "button": "Leer la Política"
+    },
+    "terms": {
+      "title": "Términos de Uso",
+      "description": "Revise las normas, responsabilidades, uso aceptable y condiciones que rigen la participación en la Plataforma EPEW.",
+      "button": "Leer los Términos"
+    },
+    "disclaimer": {
+      "title": "Aviso Legal de la Plataforma",
+      "description": "Comprenda el papel de EPEW, las responsabilidades de los participantes, las divulgaciones legales importantes y la estructura del Ecosistema de Desarrollo Empresarial.",
+      "button": "Leer el Aviso"
+    }
+  },
+  "support": {
+    "title": "¿Necesita Ayuda?",
+    "description": "Si tiene preguntas sobre nuestros documentos legales o políticas, comuníquese con nuestro equipo de soporte."
   }
 }

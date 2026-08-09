@@ -1,0 +1,151 @@
+{
+  "page": {
+    "title": "Avi Limitasyon Platfòm nan"
+  },
+  "organization": {
+    "name": "Ekero Partners Empower Wealth (EPEW)"
+  },
+  "dates": {
+    "effectiveDateLabel": "Dat Antre an Vigè:",
+    "effectiveDate": "2 Jiyè 2026",
+    "lastUpdatedLabel": "Dènye Mizajou:",
+    "lastUpdated": "2 Jiyè 2026"
+  },
+  "identity": {
+    "title": "Idantite Ofisyèl Òganizasyon an",
+    "description": "Ekero Partners Empower Wealth (EPEW) se yon òganizasyon san bi likratif nan Etazini ki gen yon vizyon mondyal pou bay antreprenè yo plis kapasite, ranfòse kominote yo, epi ankouraje devlopman ekonomik dirab atravè Ekosistèm Devlopman Antreprenè (EDE), ki kowòdone epi delivre atravè Sistèm Operasyon Entelijan pou Biznis la (IBOS)."
+  },
+  "mission": {
+    "title": "Misyon Nou",
+    "description": "Pou bay antreprenè yo plis kapasite, ranfòse kominote yo, epi ankouraje devlopman ekonomik dirab lè nou bay edikasyon, antrenman, devlopman biznis, patenarya estratejik, lidèchip kominotè, ak sipò kowòdone ki prepare antreprenè yo pou bati biznis ki reyisi epi ki dirab atravè Ekosistèm Devlopman Antreprenè (EDE)."
+  },
+  "sections": {
+    "purpose": {
+      "title": "1. Objektif Avi sa a",
+      "description": "Avi Limitasyon Platfòm sa a eksplike nati Platfòm EPEW la, sèvis EPEW bay yo, ak responsablite respektif antreprenè yo, Sipòtè Fondatè yo, antrenè yo, Patnè Kwasans Sètifye yo, administratè yo, ak lòt patisipan yo nan Ekosistèm Devlopman Antreprenè a."
+    },
+    "organizationNature": {
+      "title": "2. Nati Òganizasyon an",
+      "description1": "EPEW se yon òganizasyon san bi likratif ki dedye a devlopman antreprenè, lidèchip kominotè, edikasyon biznis, antrenman, konsèy pwofesyonèl, ak devlopman ekonomik dirab.",
+      "description2": "EPEW devlope epi kowòdone Ekosistèm Devlopman Antreprenè (EDE) pou ede antreprenè yo prepare, lanse, devlope, epi ranfòse biznis ki reyisi.",
+      "description3": "EPEW pa òganize ni opere kòm yon enstitisyon finansye oswa yon konpayi envestisman."
+    },
+    "platformNature": {
+      "title": "3. Nati Platfòm nan",
+      "description": "Platfòm EPEW la se yon platfòm devlopman antreprenè.",
+      "introduction": "Objektif prensipal li se:",
+      "items": {
+        "prepareEntrepreneurs": "Prepare antreprenè yo.",
+        "businessDevelopment": "Kowòdone devlopman biznis.",
+        "coaching": "Bay antrenman ak konseye.",
+        "partnerServices": "Kowòdone sèvis Patnè Kwasans Sètifye yo.",
+        "communityParticipation": "Fasilite patisipasyon kominotè.",
+        "readiness": "Sipòte preparasyon antreprenè yo.",
+        "businessLaunch": "Kowòdone aktivite lansman biznis.",
+        "longTermGrowth": "Sipòte kwasans biznis alontèm."
+      },
+      "ibosDescription1": "Aktivite sa yo kowòdone atravè Sistèm Operasyon Entelijan pou Biznis la (IBOS).",
+      "ibosDescription2": "IBOS sèvi kòm sistèm kowòdinasyon operasyonèl ki sipòte vwayaj patisipan yo, kominikasyon, jesyon pwosesis travay, devlopman biznis, rapò, ak kolaborasyon atravè tout ekosistèm nan."
+    },
+    "notFinancialInstitution": {
+      "title": "4. EPEW Pa Yon Enstitisyon Finansye",
+      "introduction": "EPEW pa:",
+      "items": {
+        "bank": "Yon bank.",
+        "creditUnion": "Yon koperativ kredi.",
+        "lender": "Yon pretè.",
+        "financeCompany": "Yon konpayi finans.",
+        "insuranceCompany": "Yon konpayi asirans.",
+        "securitiesBroker": "Yon koutye sekirite.",
+        "brokerDealer": "Yon koutye-dilè.",
+        "investmentAdviser": "Yon konseye envestisman.",
+        "investmentCompany": "Yon konpayi envestisman ki anrejistre.",
+        "ventureCapitalFund": "Yon fon kapital risk.",
+        "crowdfundingPortal": "Yon pòtal finansman kolektif sof si li anrejistre apa jan lalwa egzije sa."
+      }
+    },
+    "noInvestment": {
+      "title": "5. Pa Gen Òf Envestisman",
+      "description1": "Platfòm nan pa ofri sekirite, aksyon, pwopriyete ekite, kontra envestisman, pwodwi finansye garanti, oswa envestisman piblik.",
+      "description2": "Patisipasyon Sipòtè Fondatè yo se yon patisipasyon kominotè volontè ki gouvène pa akò ak règleman EPEW yo."
+    },
+    "noFundingGuarantee": {
+      "title": "6. Pa Gen Garanti Finansman",
+      "introduction": "EPEW pa garanti:",
+      "items": {
+        "acceptance": "Akseptasyon nan nenpòt pwogram.",
+        "fundingApproval": "Apwobasyon finansman.",
+        "fundingAvailability": "Disponiblite finansman.",
+        "communityGoals": "Reyalizasyon objektif patisipasyon kominotè yo.",
+        "fundingTimelines": "Delè finansman.",
+        "businessLaunchDates": "Dat lansman biznis."
+      }
+    },
+    "noBusinessSuccess": {
+      "title": "7. Pa Gen Garanti Siksè Biznis",
+      "description": "Antreprenarya gen risk ladan l. EPEW pa garanti siksè biznis, rentabilite, jwenn kliyan, kwasans biznis, revni, pèfòmans finansye, oswa akseptasyon sou mache a."
+    },
+    "participationBenefits": {
+      "title": "8. Benefis Patisipasyon",
+      "description": "Benefis patisipasyon yo, si genyen, gouvène pa règleman pwogram EPEW ki aplikab yo epi yo pa garanti."
+    },
+    "independentBusinesses": {
+      "title": "9. Biznis Antreprenè Endepandan",
+      "description1": "Antreprenè yo rete pwopriyetè biznis endepandan. EPEW pa posede, jere, opere, oswa kontwole biznis antreprenè yo.",
+      "description2": "Antreprenè yo rete sèl responsab pou pwopriyetè, jesyon, operasyon, ak konfòmite legal."
+    },
+    "noAgencyRelationship": {
+      "title": "10. Pa Gen Relasyon Ajans",
+      "description": "Patisipasyon nan Ekosistèm Devlopman Antreprenè a pa kreye yon relasyon ajans, travay, patenarya, antrepriz ansanm, relasyon fidisyè, oswa relasyon reprezantan ant EPEW ak nenpòt antreprenè, Sipòtè Fondatè, antrenè, Patnè Kwasans Sètifye, oswa patisipan."
+    },
+    "professionalAdvice": {
+      "title": "11. Konsèy Pwofesyonèl",
+      "description": "Enfòmasyon EPEW bay yo se pou rezon edikatif ak enfòmatif sèlman. Sof si yo deklare klèman lòt bagay, EPEW pa bay konsèy legal, fiskal, kontab, finansye, envestisman, medikal, jeni, oswa lòt konsèy pwofesyonèl ki mande lisans."
+    },
+    "thirdPartyServices": {
+      "title": "12. Sèvis Twazyèm Pati",
+      "description": "Platfòm nan ka entegre avèk Stripe, founisè sèvis nwaj, sèvis otantifikasyon, sèvis entèlijans atifisyèl, founisè kominikasyon, founisè analiz, ak lòt teknoloji twazyèm pati ki gouvène pa pwòp tèm pa yo."
+    },
+    "noWarranty": {
+      "title": "13. Pa Gen Garanti",
+      "description": "Platfòm nan, lojisyèl, materyèl edikatif, kominikasyon, ak sèvis ki gen rapò yo disponib \"jan yo disponib\" ak \"jan yo bay yo.\" EPEW rejte tout garanti nan limit maksimòm lalwa pèmèt."
+    },
+    "limitationResponsibility": {
+      "title": "14. Limit Responsablite",
+      "description": "EPEW kowòdone Ekosistèm Devlopman Antreprenè a atravè edikasyon, antrenman, devlopman biznis, konsèy pwofesyonèl, patenarya estratejik, lidèchip kominotè, ak kowòdinasyon entelijan atravè IBOS.",
+      "principle1": "EPEW devlope antreprenè.",
+      "principle2": "Antreprenè yo devlope biznis."
+    },
+    "internationalParticipation": {
+      "title": "15. Patisipasyon Entènasyonal",
+      "description": "Malgre EPEW gen katye jeneral li nan Etazini, li akeyi patisipasyon atravè lemond kote lwa ki aplikab yo pèmèt sa."
+    },
+    "governingLaw": {
+      "title": "16. Lwa ki Gouvène",
+      "description": "Avi sa a gouvène pa lwa Eta New York, Etazini."
+    },
+    "contact": {
+      "title": "17. Enfòmasyon Kontak"
+    }
+  },
+  "contact": {
+    "addressLine1": "8 The Green",
+    "addressLine2": "Dover, DE 19901",
+    "country": "Etazini",
+    "phoneLabel": "Telefòn",
+    "phone": "(866) 720-0014",
+    "emailLabel": "Imèl",
+    "email": "support@epew.us",
+    "websiteLabel": "Sit Entènèt",
+    "website": "www.epew.us"
+  },
+  "officialDeclaration": {
+    "title": "Deklarasyon Ofisyèl Òganizasyon an",
+    "description1": "EPEW se plis pase yon platfòm teknoloji. Li se yon Ekosistèm Devlopman Antreprenè (EDE) kowòdone ki kreye pou bay antreprenè yo plis kapasite, ranfòse kominote yo, epi ankouraje devlopman ekonomik dirab.",
+    "description2": "Atravè edikasyon, antrenman, konsèy pwofesyonèl, patenarya estratejik, lidèchip kominotè, ak Sistèm Operasyon Entelijan pou Biznis la (IBOS), EPEW prepare antreprenè yo pou transfòme lide yo an biznis ki reyisi epi ki dirab.",
+    "description3": "Chak fonksyon, sèvis, pwogram, patenarya, ak inovasyon nan Platfòm nan egziste pou devlope antreprenè yo, kowòdone resous yo, epi sipòte kwasans biznis alontèm pandan y ap prezève endepandans, lidèchip, ak responsablite chak antreprenè.",
+    "principle1": "EPEW devlope antreprenè.",
+    "principle2": "Antreprenè yo devlope biznis.",
+    "conclusion": "Ansanm, EPEW, antreprenè yo, Sipòtè Fondatè yo, antrenè yo, Patnè Kwasans Sètifye yo, ak lidè kominotè yo bati kominote ki pi solid, kreye pwosperite ki dire, epi avanse yon chemen dirab pou diminye povrete atravè antreprenarya."
+  }
+}

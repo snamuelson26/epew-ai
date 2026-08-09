@@ -1,0 +1,151 @@
+{
+  "page": {
+    "title": "Platform Disclaimer"
+  },
+  "organization": {
+    "name": "Ekero Partners Empower Wealth (EPEW)"
+  },
+  "dates": {
+    "effectiveDateLabel": "Effective Date:",
+    "effectiveDate": "July 2, 2026",
+    "lastUpdatedLabel": "Last Updated:",
+    "lastUpdated": "July 2, 2026"
+  },
+  "identity": {
+    "title": "Official Organizational Identity",
+    "description": "Ekero Partners Empower Wealth (EPEW) is a United States nonprofit organization with a global vision to empower entrepreneurs, strengthen communities, and promote sustainable economic development through the Entrepreneur Development Ecosystem (EDE), coordinated and delivered through the Intelligent Business Operating System (IBOS)."
+  },
+  "mission": {
+    "title": "Our Mission",
+    "description": "To empower entrepreneurs, strengthen communities, and promote sustainable economic development by providing education, coaching, business development, strategic partnerships, community leadership, and coordinated support that prepare entrepreneurs to build successful and sustainable businesses through the Entrepreneur Development Ecosystem (EDE)."
+  },
+  "sections": {
+    "purpose": {
+      "title": "1. Purpose of This Disclaimer",
+      "description": "This Platform Disclaimer explains the nature of the EPEW Platform, the services provided by EPEW, and the respective responsibilities of entrepreneurs, Founding Supporters, coaches, Certified Growth Partners, administrators, and other participants within the Entrepreneur Development Ecosystem."
+    },
+    "organizationNature": {
+      "title": "2. Nature of the Organization",
+      "description1": "EPEW is a nonprofit organization dedicated to entrepreneur development, community leadership, business education, coaching, professional guidance, and sustainable economic development.",
+      "description2": "EPEW develops and coordinates the Entrepreneur Development Ecosystem (EDE) to help entrepreneurs prepare, launch, grow, and strengthen successful businesses.",
+      "description3": "EPEW is not organized or operated as a financial institution or investment company."
+    },
+    "platformNature": {
+      "title": "3. Nature of the Platform",
+      "description": "The EPEW Platform is an entrepreneur development platform.",
+      "introduction": "Its primary purpose is to:",
+      "items": {
+        "prepareEntrepreneurs": "Prepare entrepreneurs.",
+        "businessDevelopment": "Coordinate business development.",
+        "coaching": "Provide coaching and mentorship.",
+        "partnerServices": "Coordinate Certified Growth Partner services.",
+        "communityParticipation": "Facilitate community participation.",
+        "readiness": "Support entrepreneur readiness.",
+        "businessLaunch": "Coordinate business launch activities.",
+        "longTermGrowth": "Support long-term business growth."
+      },
+      "ibosDescription1": "These activities are coordinated through the Intelligent Business Operating System (IBOS).",
+      "ibosDescription2": "IBOS serves as the operational coordination system supporting participant journeys, communications, workflow management, business development, reporting, and ecosystem-wide collaboration."
+    },
+    "notFinancialInstitution": {
+      "title": "4. EPEW Is Not a Financial Institution",
+      "introduction": "EPEW is not:",
+      "items": {
+        "bank": "A bank.",
+        "creditUnion": "A credit union.",
+        "lender": "A lender.",
+        "financeCompany": "A finance company.",
+        "insuranceCompany": "An insurance company.",
+        "securitiesBroker": "A securities broker.",
+        "brokerDealer": "A broker-dealer.",
+        "investmentAdviser": "An investment adviser.",
+        "investmentCompany": "A registered investment company.",
+        "ventureCapitalFund": "A venture capital fund.",
+        "crowdfundingPortal": "A crowdfunding portal unless separately registered by law."
+      }
+    },
+    "noInvestment": {
+      "title": "5. No Investment Offering",
+      "description1": "The Platform does not offer securities, stock ownership, equity ownership, investment contracts, guaranteed financial products, or public investments.",
+      "description2": "Founding Supporter participation is voluntary community participation governed by EPEW agreements and policies."
+    },
+    "noFundingGuarantee": {
+      "title": "6. No Guarantee of Funding",
+      "introduction": "EPEW does not guarantee:",
+      "items": {
+        "acceptance": "Acceptance into any program.",
+        "fundingApproval": "Funding approval.",
+        "fundingAvailability": "Funding availability.",
+        "communityGoals": "Completion of community participation goals.",
+        "fundingTimelines": "Funding timelines.",
+        "businessLaunchDates": "Business launch dates."
+      }
+    },
+    "noBusinessSuccess": {
+      "title": "7. No Guarantee of Business Success",
+      "description": "Entrepreneurship involves risk. EPEW does not guarantee business success, profitability, customer acquisition, business growth, revenue, financial performance, or market acceptance."
+    },
+    "participationBenefits": {
+      "title": "8. Participation Benefits",
+      "description": "Participation benefits, if any, are governed by applicable EPEW program policies and are not guaranteed."
+    },
+    "independentBusinesses": {
+      "title": "9. Independent Entrepreneur Businesses",
+      "description1": "Entrepreneurs remain independent business owners. EPEW does not own, manage, operate, or control entrepreneur businesses.",
+      "description2": "Entrepreneurs remain solely responsible for ownership, management, operation, and legal compliance."
+    },
+    "noAgencyRelationship": {
+      "title": "10. No Agency Relationship",
+      "description": "Participation in the Entrepreneur Development Ecosystem does not create an agency, employment, partnership, joint venture, fiduciary, or representative relationship between EPEW and any entrepreneur, Founding Supporter, coach, Certified Growth Partner, or participant."
+    },
+    "professionalAdvice": {
+      "title": "11. Professional Advice",
+      "description": "Information provided by EPEW is educational and informational only. Unless expressly stated otherwise, EPEW does not provide legal, tax, accounting, financial, investment, medical, engineering, or other licensed professional advice."
+    },
+    "thirdPartyServices": {
+      "title": "12. Third-Party Services",
+      "description": "The Platform may integrate with Stripe, cloud providers, authentication services, AI services, communication providers, analytics providers, and other third-party technologies governed by their own terms."
+    },
+    "noWarranty": {
+      "title": "13. No Warranty",
+      "description": "The Platform, software, educational materials, communications, and related services are provided \"as available\" and \"as provided.\" EPEW disclaims all warranties to the fullest extent permitted by law."
+    },
+    "limitationResponsibility": {
+      "title": "14. Limitation of Responsibility",
+      "description": "EPEW coordinates the Entrepreneur Development Ecosystem through education, coaching, business development, professional guidance, strategic partnerships, community leadership, and intelligent coordination through IBOS.",
+      "principle1": "EPEW develops entrepreneurs.",
+      "principle2": "Entrepreneurs develop businesses."
+    },
+    "internationalParticipation": {
+      "title": "15. International Participation",
+      "description": "Although headquartered in the United States, EPEW welcomes global participation where permitted by applicable law."
+    },
+    "governingLaw": {
+      "title": "16. Governing Law",
+      "description": "This Disclaimer is governed by the laws of the State of New York, United States of America."
+    },
+    "contact": {
+      "title": "17. Contact Information"
+    }
+  },
+  "contact": {
+    "addressLine1": "8 The Green",
+    "addressLine2": "Dover, DE 19901",
+    "country": "United States",
+    "phoneLabel": "Phone",
+    "phone": "(866) 720-0014",
+    "emailLabel": "Email",
+    "email": "support@epew.us",
+    "websiteLabel": "Website",
+    "website": "www.epew.us"
+  },
+  "officialDeclaration": {
+    "title": "Official Organizational Declaration",
+    "description1": "EPEW is more than a technology platform. It is a coordinated Entrepreneur Development Ecosystem (EDE) created to empower entrepreneurs, strengthen communities, and promote sustainable economic development.",
+    "description2": "Through education, coaching, professional guidance, strategic partnerships, community leadership, and the Intelligent Business Operating System (IBOS), EPEW prepares entrepreneurs to transform ideas into successful and sustainable businesses.",
+    "description3": "Every feature, service, program, partnership, and innovation within the Platform exists to develop entrepreneurs, coordinate resources, and support long-term business growth while preserving the independence, leadership, and responsibility of each entrepreneur.",
+    "principle1": "EPEW develops entrepreneurs.",
+    "principle2": "Entrepreneurs develop businesses.",
+    "conclusion": "Together, EPEW, entrepreneurs, Founding Supporters, coaches, Certified Growth Partners, and community leaders build stronger communities, create lasting prosperity, and advance a sustainable pathway toward reducing poverty through entrepreneurship."
+  }
+}

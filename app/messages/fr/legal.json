@@ -7,5 +7,30 @@
     "privacyPolicy": "Politique de Confidentialité",
     "termsOfUse": "Conditions d'Utilisation",
     "platformDisclaimer": "Clause de Non-Responsabilité de la Plateforme"
+  },
+  "landing": {
+    "title": "Centre Juridique",
+    "description": "Accédez aux documents juridiques officiels régissant l'Écosystème de Développement Entrepreneurial (EDE), coordonné par le Système Intelligent d'Exploitation des Entreprises (IBOS)."
+  },
+  "cards": {
+    "privacy": {
+      "title": "Politique de Confidentialité",
+      "description": "Découvrez comment EPEW collecte, protège, conserve et gère vos informations personnelles sur notre site web, nos plateformes et nos services.",
+      "button": "Lire la Politique"
+    },
+    "terms": {
+      "title": "Conditions d'Utilisation",
+      "description": "Consultez les règles, responsabilités, conditions d'utilisation et modalités régissant la participation à la plateforme EPEW.",
+      "button": "Lire les Conditions"
+    },
+    "disclaimer": {
+      "title": "Clause de Non-Responsabilité",
+      "description": "Comprenez le rôle d'EPEW, les responsabilités des participants, les informations juridiques importantes et la structure de l'Écosystème de Développement Entrepreneurial.",
+      "button": "Lire la Clause"
+    }
+  },
+  "support": {
+    "title": "Besoin d'Aide ?",
+    "description": "Si vous avez des questions concernant nos documents juridiques ou nos politiques, veuillez contacter notre équipe d'assistance."
   }
 }

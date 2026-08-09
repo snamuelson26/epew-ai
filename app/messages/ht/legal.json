@@ -7,5 +7,30 @@
     "privacyPolicy": "Règleman sou Konfidansyalite",
     "termsOfUse": "Tèm Itilizasyon",
     "platformDisclaimer": "Avi Limitasyon Platfòm nan"
+  },
+  "landing": {
+    "title": "Sant Legal",
+    "description": "Aksede dokiman legal ofisyèl ki gouvène Ekosistèm Devlopman Antreprenè (EDE), ki kowòdone atravè Sistèm Operasyon Entelijan pou Biznis la (IBOS)."
+  },
+  "cards": {
+    "privacy": {
+      "title": "Règleman sou Konfidansyalite",
+      "description": "Aprann kijan EPEW kolekte, pwoteje, estoke, epi jere enfòmasyon pèsonèl ou atravè sit entènèt, platfòm, ak sèvis nou yo.",
+      "button": "Li Règleman an"
+    },
+    "terms": {
+      "title": "Tèm Itilizasyon",
+      "description": "Revize règ yo, responsablite yo, kondisyon itilizasyon, ak tout dispozisyon ki gouvène patisipasyon sou Platfòm EPEW la.",
+      "button": "Li Tèm yo"
+    },
+    "disclaimer": {
+      "title": "Avi Limitasyon Platfòm nan",
+      "description": "Konprann wòl EPEW, responsablite patisipan yo, deklarasyon legal yo, ak estrikti Ekosistèm Devlopman Antreprenè a.",
+      "button": "Li Avi a"
+    }
+  },
+  "support": {
+    "title": "Bezwen Èd?",
+    "description": "Si ou gen kesyon konsènan dokiman legal oswa règleman nou yo, tanpri kontakte ekip sipò nou an."
   }
 }

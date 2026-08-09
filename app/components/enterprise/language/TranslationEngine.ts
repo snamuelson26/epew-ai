@@ -265,6 +265,28 @@ const namespaceRegistry: Record<
 
       return module.default as TranslationDictionary;
     },
+
+    "terms-of-use": async () => {
+      const module = await import(
+        "../../../messages/en/terms-of-use.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+    "disclaimer": async () => {
+  const module = await import(
+    "../../../messages/en/disclaimer.json"
+  );
+
+  return module.default as TranslationDictionary;
+},
+login: async () => {
+  const module = await import(
+    "../../../messages/en/login.json"
+  );
+
+  return module.default as TranslationDictionary;
+},
   },
 
   ht: {
@@ -323,6 +345,29 @@ const namespaceRegistry: Record<
 
       return module.default as TranslationDictionary;
     },
+
+    "terms-of-use": async () => {
+      const module = await import(
+        "../../../messages/ht/terms-of-use.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+    // HT
+"disclaimer": async () => {
+  const module = await import(
+    "../../../messages/ht/disclaimer.json"
+  );
+
+  return module.default as TranslationDictionary;
+},
+login: async () => {
+  const module = await import(
+    "../../../messages/ht/login.json"
+  );
+
+  return module.default as TranslationDictionary;
+},
   },
 
   fr: {
@@ -381,6 +426,29 @@ const namespaceRegistry: Record<
 
       return module.default as TranslationDictionary;
     },
+
+    "terms-of-use": async () => {
+      const module = await import(
+        "../../../messages/fr/terms-of-use.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+    // FR
+"disclaimer": async () => {
+  const module = await import(
+    "../../../messages/fr/disclaimer.json"
+  );
+
+  return module.default as TranslationDictionary;
+},
+login: async () => {
+  const module = await import(
+    "../../../messages/fr/login.json"
+  );
+
+  return module.default as TranslationDictionary;
+},
   },
 
   es: {
@@ -439,8 +507,31 @@ const namespaceRegistry: Record<
 
       return module.default as TranslationDictionary;
     },
+
+    "terms-of-use": async () => {
+      const module = await import(
+        "../../../messages/es/terms-of-use.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+    // ES
+"disclaimer": async () => {
+  const module = await import(
+    "../../../messages/es/disclaimer.json"
+  );
+
+  return module.default as TranslationDictionary;
+},
+login: async () => {
+  const module = await import(
+    "../../../messages/es/login.json"
+  );
+
+  return module.default as TranslationDictionary;
+},
   },
-};
+};4
 
 /**
  * ============================================================

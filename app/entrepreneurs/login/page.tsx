@@ -1,88 +1,114 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+
 import { supabase } from "@/lib/supabase";
 
-import Link from "next/link";
+import {
+  useLanguage,
+  useTranslation,
+} from "@/app/components/enterprise/language";
+
+import EnterpriseLoginCard from "@/app/components/enterprise/auth/EnterpriseLoginCard";
+
+const NAMESPACE = "login";
 
 export default function EntrepreneurLoginPage() {
   const router = useRouter();
 
+  const { t } = useTranslation();
+  const { loadNamespaces } = useLanguage();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-    setMessage("");
+  useEffect(() => {
+    void loadNamespaces([NAMESPACE]);
+  }, [loadNamespaces]);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+  const translate = (key: string) =>
+    t(key, {
+      namespace: NAMESPACE,
     });
 
-    if (error) {
-      setMessage(error.message);
-      return;
-    }
+  async function handleLogin(
+    event: React.FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault();
 
-    router.push("/entrepreneurs/dashboard");
+    setMessage("");
+    setLoading(true);
+
+    try {
+      const cleanEmail =
+        email.trim().toLowerCase();
+
+      const { error } =
+        await supabase.auth.signInWithPassword({
+          email: cleanEmail,
+          password,
+        });
+
+      if (error) {
+        setMessage(error.message);
+        return;
+      }
+
+      router.push(
+        "/entrepreneurs/dashboard",
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f7fb] flex items-center justify-center px-6 py-20">
-      <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-xl w-full">
-        <h1 className="text-5xl font-extrabold text-[#06245c] mb-6 text-center">
-          Entrepreneur Login
-        </h1>
-
-        <p className="text-xl text-gray-700 text-center mb-10">
-          Sign in to access your EPEW Entrepreneur Dashboard.
-        </p>
-
-        <form onSubmit={handleLogin} className="space-y-6">
-          <input
-            type="email"
-            placeholder="Email Address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="border rounded-2xl p-4 w-full text-xl"
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="border rounded-2xl p-4 w-full text-xl"
-          />
-
-          {message && (
-            <p className="text-red-700 text-center text-xl font-bold">
-              {message}
-            </p>
+    <EnterpriseLoginCard
+      title={translate(
+        "entrepreneur.title",
+      )}
+      description={translate(
+        "entrepreneur.description",
+      )}
+      email={email}
+      password={password}
+      emailLabel={translate(
+        "common.email",
+      )}
+      passwordLabel={translate(
+        "common.password",
+      )}
+      emailPlaceholder={translate(
+        "common.enterEmail",
+      )}
+      passwordPlaceholder={translate(
+        "common.enterPassword",
+      )}
+      submitLabel={translate(
+        "common.signIn",
+      )}
+      loadingLabel={translate(
+        "common.signingIn",
+      )}
+      loading={loading}
+      message={message}
+      onEmailChange={setEmail}
+      onPasswordChange={setPassword}
+      onSubmit={handleLogin}
+      footer={
+        <Link
+          href="/entrepreneurs/forgot-password"
+          className="text-xl font-bold text-blue-700 transition hover:text-green-600"
+        >
+          {translate(
+            "entrepreneur.forgotPassword",
           )}
-
-          <button
-  type="submit"
-  className="w-full bg-[#06245c] text-white py-5 rounded-2xl text-2xl font-bold hover:bg-green-600 transition"
->
-  Sign In
-</button>
-
-<div className="text-center mt-6">
-  <Link
-    href="/entrepreneurs/forgot-password"
-    className="text-blue-700 text-xl font-bold hover:text-green-600 transition"
-  >
-    Forgot Password?
-  </Link>
-</div>
-        </form>
-      </div>
-    </main>
+        </Link>
+      }
+    />
   );
 }

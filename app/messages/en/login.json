@@ -1,5 +1,95 @@
 {
-  "content": {
-    "sign_in_once_and_access_your_available_epew": "Sign in once and access your available EPEW portals."
+  "common": {
+    "email": "Email Address",
+    "emailShort": "Email",
+    "password": "Password",
+    "enterEmail": "Enter your email",
+    "enterPassword": "Enter your password",
+    "signIn": "Sign In",
+    "signingIn": "Signing In...",
+    "loggingIn": "Logging in...",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot Password?",
+    "forgotPasswordLower": "Forgot password?",
+    "show": "Show",
+    "hide": "Hide",
+    "returnToEpew": "Return to EPEW",
+    "login": "Login",
+    "createAccount": "Create Account",
+    "accessDenied": "Access denied.",
+    "loginFailed": "Login failed. Please try again."
+  },
+
+  "partner": {
+  "title": "Partner Login",
+  "description": "Sign in to access your EPEW Partner Portal and manage your partnership activities.",
+  "verifyError": "Unable to verify partner access.",
+  "accessDenied": "Access denied. This account is not registered as an EPEW partner.",
+  "button": "Login to Partner Portal",
+  "returnToEpew": "Return to EPEW"
+},
+  "general": {
+    "title": "EPEW Login",
+    "description": "Sign in once and access your available EPEW portals.",
+    "noValidPortal": "No valid portal found for this account.",
+    "noPortalRole": "No portal role is connected to this account."
+  },
+
+  "entrepreneur": {
+    "title": "Entrepreneur Login",
+    "description": "Sign in to access your EPEW Entrepreneur Dashboard.",
+    "forgotPassword": "Forgot Password?"
+  },
+
+  "supporter": {
+    "title": "Supporter Login",
+    "description": "Sign in to access your EPEW Supporter Dashboard.",
+    "noAccount": "No supporter account was found for this email. Please register as a supporter first.",
+    "alreadyRegistered": "Already registered?",
+    "signInAccount": "Sign in to your supporter account",
+    "createAccount": "Create Supporter Account"
+  },
+
+  "coach": {
+    "title": "Coach Login",
+    "description": "Authorized EPEW coaches can log in to manage assigned entrepreneurs, interviews, notes, and marketplace readiness.",
+    "verifyError": "Unable to verify coach account.",
+    "accessDenied": "Access denied. This email is not registered as an EPEW coach.",
+    "button": "Login to Coach Dashboard",
+    "notice": "Coach access is limited to authorized EPEW coaches only."
+  },
+
+  "support": {
+    "title": "Supporter Login",
+    "description": "Access your supporter dashboard, follow entrepreneur progress, review participation activity, and manage your EPEW account securely.",
+    "formTitle": "Login",
+    "rememberMe": "Remember me",
+    "secureLogin": "Login Securely",
+    "createAccount": "Create Supporter Account",
+    "verify2fa": "Verify 2FA",
+    "imageAlt": "Supporter Login",
+    "securityNotice": "EPEW uses secure account protection, identity verification, and structured participation systems to help maintain transparency, accountability, and ecosystem integrity."
+  },
+
+  "admin": {
+    "controlCenter": "Administrator Control Center",
+    "title": "Administrator Login",
+    "description": "Enter your authorized administrator credentials.",
+    "email": "Administrator Email",
+    "emailPlaceholder": "admin@epew.us",
+    "notAuthorized": "This account is not authorized to access the Administrator Control Center.",
+    "unableToSignIn": "Unable to sign in.",
+    "unexpectedError": "An unexpected error occurred. Please try again.",
+    "verifying": "Verifying access...",
+    "button": "Login as Administrator",
+    "notice": "Authorized administrator access only. All access attempts may be monitored and recorded."
+  },
+
+  "vendor": {
+    "title": "Vendor Login",
+    "description": "Sign in to access your EPEW Vendor Portal and manage your marketplace participation.",
+    "verifyError": "Unable to verify vendor access.",
+    "accessDenied": "Access denied. This account is not registered as an EPEW vendor.",
+    "button": "Login to Vendor Portal"
   }
 }

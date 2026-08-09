@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { supabase } from "@/lib/supabase";
 
@@ -14,7 +15,7 @@ import EnterpriseLoginCard from "@/app/components/enterprise/auth/EnterpriseLogi
 
 const NAMESPACE = "login";
 
-export default function CoachLoginPage() {
+export default function VendorLoginPage() {
   const router = useRouter();
 
   const { t } = useTranslation();
@@ -60,38 +61,40 @@ export default function CoachLoginPage() {
       const user = data.user;
 
       const {
-        data: coachData,
-        error: coachError,
+        data: vendorRole,
+        error: vendorRoleError,
       } = await supabase
-        .from("coaches")
-        .select("*")
-        .eq("email", cleanEmail)
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "vendor")
         .maybeSingle();
 
-      if (coachError) {
+      if (vendorRoleError) {
+        await supabase.auth.signOut();
+
         setMessage(
           `${translate(
-            "coach.verifyError",
-          )} ${coachError.message}`,
+            "vendor.verifyError",
+          )} ${vendorRoleError.message}`,
         );
+
         return;
       }
 
-      if (!coachData) {
+      if (!vendorRole) {
         await supabase.auth.signOut();
 
         setMessage(
           translate(
-            "coach.accessDenied",
+            "vendor.accessDenied",
           ),
         );
 
         return;
       }
 
-      router.push(
-        "/coaches/dashboard",
-      );
+      router.push("/vendors/dashboard");
     } finally {
       setLoading(false);
     }
@@ -100,10 +103,10 @@ export default function CoachLoginPage() {
   return (
     <EnterpriseLoginCard
       title={translate(
-        "coach.title",
+        "vendor.title",
       )}
       description={translate(
-        "coach.description",
+        "vendor.description",
       )}
       email={email}
       password={password}
@@ -120,22 +123,26 @@ export default function CoachLoginPage() {
         "common.enterPassword",
       )}
       submitLabel={translate(
-        "coach.button",
+        "vendor.button",
       )}
       loadingLabel={translate(
-        "common.loggingIn",
+        "common.signingIn",
       )}
       loading={loading}
       message={message}
       onEmailChange={setEmail}
       onPasswordChange={setPassword}
       onSubmit={handleLogin}
+      icon="🏪"
       footer={
-        <p className="text-lg text-gray-600">
+        <Link
+          href="/"
+          className="text-lg font-bold text-[#06245c] transition hover:text-green-600"
+        >
           {translate(
-            "coach.notice",
+            "common.returnToEpew",
           )}
-        </p>
+        </Link>
       }
     />
   );
