@@ -329,7 +329,7 @@ export default function Navbar() {
                   href="/admin/login"
                   className="block px-6 py-3 hover:bg-green-100"
                 >
-                  <T id="navigation.adminLogin" fallback="Admin Login" />
+                  <T id="navigation.adminLogin" fallback="Administrator Login" />
                 </Link>
               </div>
             </div>
@@ -377,7 +377,7 @@ export default function Navbar() {
                 <p className="mt-1 text-base font-bold">
                   <T
                     id="navigation.selectYourLogin"
-                    fallback="Select your login"
+                    fallback="Select Your Login"
                   />
                 </p>
               </div>
@@ -437,7 +437,7 @@ export default function Navbar() {
                   onClick={closeDropdowns}
                   className="block px-5 py-3 font-semibold hover:bg-green-100"
                 >
-                  <T id="navigation.adminLogin" fallback="Admin Login" />
+                  <T id="navigation.adminLogin" fallback="Administrator Login" />
                 </Link>
               </div>
             </div>

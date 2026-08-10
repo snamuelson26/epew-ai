@@ -1,17 +1,203 @@
 {
-  "headings": {
-    "support_entrepreneurs": "Support Entrepreneurs.",
-    "who_is_a_supporter": "Who Is a Supporter?",
-    "why_become_a_supporter": "Why Become a Supporter?",
-    "who_can_become_a_supporter": "Who Can Become a Supporter?",
-    "up_to_6": "Up To 6%"
+  "loading": "Cargando...",
+  "hero": {
+    "imageAlt": "Supporters de EPEW",
+    "titleLine1": "Apoya a los Emprendedores.",
+    "titleLine2": "Fortalece las Comunidades.",
+    "description": "Los Supporters son la base y el motor del Ecosistema de Desarrollo Emprendedor EPEW. Tu participación ayuda a transformar ideas en negocios exitosos que crean empleos, fortalecen familias y construyen comunidades más fuertes.",
+    "supportButton": "Convertirse en Supporter",
+    "videosButton": "Ver Videos e Historias"
   },
-  "content": {
-    "strengthen_communities": "Strengthen Communities.",
-    "view_videos_stories": "View Videos & Stories",
-    "you_believe_in_entrepreneurs": "You believe in entrepreneurs.",
-    "we_prepare_entrepreneurs": "We prepare entrepreneurs.",
-    "we_provide_the_ecosystem": "We provide the ecosystem.",
-    "together_we_build_successful_businesses": "Together, we build successful businesses."
+  "who": {
+    "title": "¿Quién es un Supporter?",
+    "description": "Un Supporter es una persona que cree en los emprendedores y desea ayudar a transformar ideas de negocio en empresas exitosas. Los Supporters participan en un ecosistema estructurado que prepara emprendedores, coordina servicios profesionales, apoya la preparación para financiamiento y fortalece comunidades.",
+    "cards": {
+      "community": {
+        "title": "Participación Comunitaria",
+        "text": "Los Supporters ayudan a los emprendedores a avanzar desde las ideas hacia el desarrollo, la preparación y el lanzamiento del negocio."
+      },
+      "growth": {
+        "title": "Crecimiento Emprendedor",
+        "text": "Tu participación apoya coaching, estructura, servicios profesionales, visibilidad y crecimiento empresarial responsable."
+      },
+      "impact": {
+        "title": "Impacto Comunitario",
+        "text": "Los negocios exitosos pueden crear empleos, fortalecer familias y contribuir al desarrollo comunitario a largo plazo."
+      }
+    }
+  },
+  "whySupport": {
+    "title": "¿Por Qué Convertirse en Supporter?",
+    "description": "Los Supporters hacen posible el emprendimiento. Ayudan a crear la base que permite a los emprendedores prepararse, lanzar, crecer y generar un impacto duradero.",
+    "imageAlt": "Por qué los Supporters son importantes",
+    "cards": {
+      "ideas": {
+        "title": "Ayudar a Convertir Ideas en Negocios",
+        "text": "Tu participación ayuda a los emprendedores a recibir el apoyo necesario para pasar de la visión a la preparación empresarial."
+      },
+      "launch": {
+        "title": "Ayudar a Lanzar Negocios",
+        "text": "Los Supporters ayudan a los emprendedores a acceder a estructura, coaching, visibilidad y preparación profesional."
+      },
+      "families": {
+        "title": "Fortalecer Familias",
+        "text": "Cuando los emprendedores tienen éxito, las familias obtienen oportunidades, estabilidad, confianza y crecimiento a largo plazo."
+      },
+      "economic": {
+        "title": "Apoyar el Desarrollo Económico",
+        "text": "Los negocios sólidos crean empleos, servicios, oportunidades y actividad económica local."
+      },
+      "longTerm": {
+        "title": "Construir Impacto a Largo Plazo",
+        "text": "Los Supporters ayudan a crear negocios que pueden crecer más allá del lanzamiento y continuar sirviendo a las comunidades."
+      },
+      "movement": {
+        "title": "Ser Parte de un Movimiento",
+        "text": "EPEW está construyendo un modelo global de desarrollo emprendedor que las comunidades pueden adoptar para reducir la pobreza mediante el emprendimiento."
+      }
+    }
+  },
+  "eligibility": {
+    "title": "¿Quién Puede Convertirse en Supporter?",
+    "description": "Cualquier persona que crea en el emprendimiento, el desarrollo comunitario y el crecimiento empresarial puede convertirse en Supporter.",
+    "cards": {
+      "entrepreneurs": {
+        "title": "Emprendedores",
+        "text": "Los emprendedores pueden apoyar a otros emprendedores y ayudar a hacer crecer el ecosistema."
+      },
+      "students": {
+        "title": "Estudiantes",
+        "text": "Los estudiantes pueden participar aprendiendo sobre emprendimiento y apoyando a futuros líderes empresariales."
+      },
+      "workers": {
+        "title": "Trabajadores",
+        "text": "Los trabajadores pueden participar ayudando a los emprendedores a crear empleos y oportunidades."
+      },
+      "coaches": {
+        "title": "Coaches",
+        "text": "Los coaches pueden apoyar el ecosistema mientras guían a los emprendedores hacia la preparación."
+      },
+      "retired": {
+        "title": "Personas Jubiladas",
+        "text": "Las personas jubiladas pueden usar su experiencia y participación para apoyar a emprendedores."
+      },
+      "anyone": {
+        "title": "Cualquier Persona que Crea",
+        "text": "Cualquier persona que crea en el emprendimiento, las familias, las comunidades y las oportunidades económicas puede convertirse en Supporter."
+      }
+    }
+  },
+  "participation": {
+    "title": "Cómo Participan los Supporters",
+    "description": "EPEW sigue un proceso de participación estructurado diseñado para promover transparencia, responsabilidad, preparación del emprendedor e impacto comunitario.",
+    "imageAlt": "Cómo participan los Supporters",
+    "steps": {
+      "register": {
+        "title": "Registrarse",
+        "text": "Crea tu cuenta de Supporter."
+      },
+      "choose": {
+        "title": "Elegir",
+        "text": "Elige tu opción de participación."
+      },
+      "support": {
+        "title": "Apoyar",
+        "text": "Apoya a emprendedores dentro del ecosistema."
+      },
+      "follow": {
+        "title": "Seguir",
+        "text": "Recibe actualizaciones y sigue el progreso."
+      },
+      "impact": {
+        "title": "Impacto",
+        "text": "Ayuda a construir comunidades más fuertes."
+      }
+    }
+  },
+  "ecosystem": {
+    "imageAlt": "Los Supporters fortalecen el ecosistema",
+    "title": "Todo Emprendedor Necesita una Comunidad Detrás",
+    "paragraph1": "Los negocios exitosos rara vez se construyen solos. Todo emprendedor se beneficia del ánimo, la preparación, la orientación profesional y una comunidad que cree en su visión.",
+    "paragraph2": "Los Founding Supporters hacen posible el emprendimiento al ayudar a crear el entorno donde los negocios pueden lanzarse, crecer y generar un impacto comunitario duradero.",
+    "cards": {
+      "preparation": {
+        "title": "Preparación",
+        "text": "Apoyar la preparación del emprendedor antes del financiamiento."
+      },
+      "development": {
+        "title": "Desarrollo Empresarial",
+        "text": "Ayudar a los emprendedores a organizar y fortalecer sus negocios."
+      },
+      "services": {
+        "title": "Servicios Profesionales",
+        "text": "Apoyar servicios coordinados que preparen a los emprendedores para el éxito."
+      },
+      "launch": {
+        "title": "Lanzamiento del Negocio",
+        "text": "Ayudar a los emprendedores a abrir sus negocios exitosamente."
+      },
+      "growth": {
+        "title": "Crecimiento Comunitario",
+        "text": "Cada emprendedor exitoso fortalece la comunidad local."
+      },
+      "longTerm": {
+        "title": "Éxito a Largo Plazo",
+        "text": "Apoyar los negocios después de su apertura mediante crecimiento continuo."
+      }
+    }
+  },
+  "impact": {
+    "imageAlt": "Impacto Comunitario",
+    "title": "Tu Participación Genera Impacto Comunitario",
+    "description": "Cada emprendedor apoyado por EPEW tiene el potencial de crear empleos, fortalecer familias, ofrecer servicios valiosos y contribuir a comunidades más fuertes y a un crecimiento económico duradero."
+  },
+  "benefits": {
+    "title": "Beneficios de Participación",
+    "description": "Los Supporters participan en el éxito de los emprendedores, el desarrollo comunitario y el crecimiento de negocios dentro del ecosistema EPEW.",
+    "rate": "Hasta 6%",
+    "rateDescription": "Los Supporters calificados pueden recibir beneficios anuales de participación de hasta 6%, sujetos a las políticas del programa y al desempeño de los negocios.",
+    "disclaimer": "Los beneficios de participación no están garantizados. Dependen del desempeño de los negocios, el éxito de los emprendedores y las políticas del programa EPEW."
+  },
+  "whyEpew": {
+    "title": "Por Qué las Personas Eligen EPEW",
+    "cards": {
+      "structured": {
+        "title": "Estructurado",
+        "text": "Cada emprendedor sigue un proceso de desarrollo claro."
+      },
+      "transparent": {
+        "title": "Transparente",
+        "text": "Los Supporters pueden seguir el progreso del emprendedor durante todo el recorrido."
+      },
+      "accountable": {
+        "title": "Responsable",
+        "text": "Los emprendedores proporcionan informes trimestrales y mantienen una responsabilidad continua."
+      },
+      "community": {
+        "title": "Impulsado por la Comunidad",
+        "text": "Las comunidades se convierten en participantes activos del emprendimiento."
+      },
+      "entrepreneur": {
+        "title": "Enfocado en el Emprendedor",
+        "text": "Todo está diseñado para ayudar a los emprendedores a tener éxito."
+      },
+      "vision": {
+        "title": "Visión a Largo Plazo",
+        "text": "Construir negocios que continúen creando valor durante muchos años."
+      }
+    }
+  },
+  "promise": {
+    "title": "La Promesa Oficial de EPEW",
+    "line1": "Tú crees en los emprendedores.",
+    "line2": "Nosotros preparamos a los emprendedores.",
+    "line3": "Nosotros proporcionamos el ecosistema.",
+    "line4": "Juntos construimos negocios exitosos."
+  },
+  "cta": {
+    "title": "Conviértete en Founding Supporter Hoy",
+    "description": "Tu participación ayuda a transformar ideas en negocios, negocios en oportunidades y oportunidades en comunidades más fuertes.",
+    "supportButton": "Convertirse en Supporter",
+    "learnButton": "Conoce Cómo Funciona EPEW"
   }
 }

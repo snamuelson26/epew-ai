@@ -1,41 +1,61 @@
 "use client";
 
-
-import { useTranslation } from "@/app/components/enterprise/language";
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+
+import {
+  useLanguage,
+  useTranslation,
+} from "@/app/components/enterprise/language";
+
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 
+const NAMESPACE = "how-it-works";
+
 export default function HowItWorksPage() {
   const { t } = useTranslation();
+  const { loadNamespaces } = useLanguage();
 
-  const steps = [
-    [
-      "1",
-      "The Entrepreneur Brings the Idea",
-      "Every successful business begins with an idea. The entrepreneur brings the vision, passion, and determination.",
-    ],
-    [
-      "2",
-      "EPEW Develops the Idea",
-      "EPEW transforms the idea into a structured business opportunity through coaching, planning, and professional guidance.",
-    ],
-    [
-      "3",
-      "EPEW Prepares the Entrepreneur",
-      "EPEW prepares the entrepreneur for business ownership, funding readiness, and long-term growth.",
-    ],
-    [
-      "4",
-      "EPEW Provides the Ecosystem",
-      "EPEW provides the Entrepreneur Development Ecosystem with coaches, professional support, supporters, and partners.",
-    ],
-    [
-      "5",
-      "IBOS Coordinates the Journey",
-      "IBOS coordinates preparation, services, milestones, communications, funding readiness, and business growth.",
-    ],
+  useEffect(() => {
+    void loadNamespaces([NAMESPACE]);
+  }, [loadNamespaces]);
+
+  const tr = (key: string) =>
+    t(key, { namespace: NAMESPACE });
+
+  const processSteps = [1, 2, 3, 4, 5].map(
+    (number) => ({
+      number: String(number),
+      title: tr(
+        `process.steps.step${number}.title`,
+      ),
+      description: tr(
+        `process.steps.step${number}.description`,
+      ),
+    }),
+  );
+
+  const modelSteps = [1, 2, 3, 4, 5].map(
+    (number) => ({
+      number: String(number),
+      title: tr(
+        `developmentModel.steps.step${number}.title`,
+      ),
+      description: tr(
+        `developmentModel.steps.step${number}.description`,
+      ),
+    }),
+  );
+
+  const results = [
+    "result.successfulEntrepreneur",
+    "result.successfulBusiness",
+    "result.newJobs",
+    "result.strongerFamilies",
+    "result.strongerCommunities",
+    "result.lastingWealth",
   ];
 
   return (
@@ -47,84 +67,43 @@ export default function HowItWorksPage() {
           <div className="mx-auto max-w-7xl">
             <Image
               src="/images/epew-process.png"
-              alt={t("images.howEpewHelpsAlt", { namespace: "how-it-works" })}
+              alt={tr("hero.imageAlt")}
               width={1600}
               height={1000}
               className="mx-auto mb-16 rounded-3xl shadow-2xl"
               priority
             />
 
-            <h1 className="mb-12 text-7xl font-extrabold">
-              How EPEW Works
+            <h1 className="mb-6 text-5xl font-extrabold md:text-7xl">
+              {tr("hero.title")}
             </h1>
 
+            <h2 className="mb-12 text-3xl font-bold md:text-4xl">
+              {tr("hero.subtitle")}
+            </h2>
+
             <div className="mx-auto max-w-6xl text-left">
-              <h2 className="mb-10 text-center text-4xl font-bold">
-                The Official EPEW Development Process
-              </h2>
-
-              <ul className="space-y-8 text-3xl leading-relaxed text-gray-700">
-                <li>
-                  <strong>{t("content.1_the_entrepreneur_brings_the_idea")}</strong>
-                  <br />
-                  Every successful business begins with an idea. The entrepreneur
-                  brings the vision, passion, and determination to build
-                  something meaningful.
-                </li>
-
-                <li>
-                  {t(
-                 "content.2_description",
-                { namespace: "how-it-works" },
-               )}
-                  <br />
-                  EPEW develops the idea into a structured business opportunity
-                  through education, coaching, planning, professional guidance,
-                  and business development.
-                </li>
-
-                <li>
-                  <strong>
-                    {t("content.3_epew_prepares_the_entrepreneur_and_connects_funding")}
-                  </strong>
-                  <br />
-                  {t(
-                  "content.3_description",
-                  { namespace: "how-it-works" },
-                 )}
-                </li>
-
-               <li>
-               <strong>
-                {t(
-                "content.4_epew_provides_the_entrepreneur_development_ecosystem",
-                { namespace: "how-it-works" },
-                 )}
-                </strong>
-
-               <br />
-
-               {t(
-               "content.4_description",
-               { namespace: "how-it-works" },
-           )}
-             </li>
+              <ul className="space-y-8 text-2xl leading-relaxed text-gray-700 md:text-3xl">
+                {processSteps.map((step) => (
+                  <li key={step.number}>
+                    <strong>
+                      {step.number}. {step.title}
+                    </strong>
+                    <br />
+                    {step.description}
+                  </li>
+                ))}
               </ul>
 
               <div className="mt-16 rounded-3xl border-l-8 border-green-600 bg-green-50 p-10">
                 <h3 className="mb-6 text-4xl font-extrabold text-green-800">
-                  {t("headings.the_result", {
-                 namespace: "how-it-works",
-             })}
+                  {tr("result.title")}
                 </h3>
 
                 <ul className="space-y-4 text-2xl font-semibold text-gray-700">
-                  <li>{t("content.successful_entrepreneur")}</li>
-                  <li>{t("content.successful_business")}</li>
-                  <li>{t("content.new_jobs")}</li>
-                  <li>{t("content.stronger_families")}</li>
-                  <li>{t("content.stronger_communities")}</li>
-                  <li>{t("content.lasting_wealth")}</li>
+                  {results.map((key) => (
+                    <li key={key}>{tr(key)}</li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -132,28 +111,31 @@ export default function HowItWorksPage() {
         </section>
 
         <section className="mx-auto max-w-7xl px-8 py-24">
-          <h2 className="mb-10 text-center text-6xl font-extrabold">
-            The EPEW Development Model
+          <h2 className="mb-10 text-center text-5xl font-extrabold md:text-6xl">
+            {tr("developmentModel.title")}
           </h2>
 
-          <p className="mx-auto mb-16 max-w-6xl text-center text-3xl leading-relaxed text-gray-700">
-            The development model below shows how EPEW transforms an
-            entrepreneur’s idea into a successful business through preparation,
-            coordinated support, professional services, the Entrepreneur
-            Development Ecosystem, and IBOS.
+          <p className="mx-auto mb-16 max-w-6xl text-center text-2xl leading-relaxed text-gray-700 md:text-3xl">
+            {tr("developmentModel.description")}
           </p>
 
           <div className="grid gap-6 md:grid-cols-5">
-            {steps.map(([number, title, text]) => (
+            {modelSteps.map((step) => (
               <div
-                key={number}
+                key={step.number}
                 className="rounded-3xl bg-white p-8 text-center shadow-xl"
               >
                 <div className="mb-6 text-6xl font-extrabold text-green-600">
-                  {number}
+                  {step.number}
                 </div>
-                <h3 className="mb-4 text-2xl font-black">{title}</h3>
-                <p className="text-lg leading-relaxed text-gray-700">{text}</p>
+
+                <h3 className="mb-4 text-2xl font-black">
+                  {step.title}
+                </h3>
+
+                <p className="text-lg leading-relaxed text-gray-700">
+                  {step.description}
+                </p>
               </div>
             ))}
           </div>
@@ -161,30 +143,30 @@ export default function HowItWorksPage() {
 
         <section className="bg-white px-8 py-24">
           <div className="mx-auto max-w-7xl text-center">
-            <h2 className="mb-10 text-6xl font-extrabold">
-              {t("headings.epew_ede_ibos")}
+            <h2 className="mb-10 text-5xl font-extrabold md:text-6xl">
+              {tr("systems.title")}
             </h2>
 
             <div className="grid gap-10 md:grid-cols-3">
               <Card
                 icon="🏛️"
-               title={t("systems.epew.title", { namespace: "how-it-works" })}
-               subtitle={t("systems.epew.subtitle", { namespace: "how-it-works" })}
-                text={t("systems.epew.text", { namespace: "how-it-works" })}
+                title={tr("systems.epew.title")}
+                subtitle={tr("systems.epew.subtitle")}
+                text={tr("systems.epew.text")}
               />
 
               <Card
                 icon="🌍"
-                title={t("systems.ede.title", { namespace: "how-it-works" })}
-                subtitle={t("systems.ede.subtitle", { namespace: "how-it-works" })}
-                text={t("systems.ede.text", { namespace: "how-it-works" })}
+                title={tr("systems.ede.title")}
+                subtitle={tr("systems.ede.subtitle")}
+                text={tr("systems.ede.text")}
               />
 
               <Card
                 icon="🤖"
-                title={t("systems.ibos.title", { namespace: "how-it-works" })}
-                subtitle={t("systems.ibos.subtitle", { namespace: "how-it-works" })}
-                text={t("systems.ibos.text", { namespace: "how-it-works" })}
+                title={tr("systems.ibos.title")}
+                subtitle={tr("systems.ibos.subtitle")}
+                text={tr("systems.ibos.text")}
               />
             </div>
           </div>
@@ -192,14 +174,12 @@ export default function HowItWorksPage() {
 
         <section className="bg-[#06245c] px-8 py-24 text-white">
           <div className="mx-auto max-w-6xl text-center">
-            <h2 className="mb-8 text-6xl font-extrabold">
-              One Ecosystem. Clear Steps. Shared Growth.
+            <h2 className="mb-8 text-5xl font-extrabold md:text-6xl">
+              {tr("cta.title")}
             </h2>
 
-            <p className="mb-12 text-3xl leading-relaxed text-blue-100">
-              EPEW helps entrepreneurs move from idea to structure, from
-              preparation to funding readiness, and from business launch to
-              long-term growth.
+            <p className="mb-12 text-2xl leading-relaxed text-blue-100 md:text-3xl">
+              {tr("cta.description")}
             </p>
 
             <div className="flex flex-col justify-center gap-8 md:flex-row">
@@ -207,14 +187,14 @@ export default function HowItWorksPage() {
                 href="/entrepreneurs"
                 className="rounded-2xl bg-green-600 px-12 py-5 text-2xl font-bold hover:bg-green-700"
               >
-                Apply as Entrepreneur
+                {tr("cta.entrepreneurButton")}
               </Link>
 
               <Link
                 href="/supporters"
                 className="rounded-2xl bg-white px-12 py-5 text-2xl font-bold text-[#06245c] hover:bg-gray-200"
               >
-                Become a Supporter
+                {tr("cta.supporterButton")}
               </Link>
             </div>
           </div>
@@ -238,11 +218,20 @@ function Card({
   text: string;
 }) {
   return (
-    <div className="rounded-3xl bg-[#f5f7fb] p-10 shadow-xl">
-      <div className="mb-6 text-7xl">{icon}</div>
-      <h3 className="text-5xl font-extrabold">{title}</h3>
-      <p className="mt-3 text-2xl font-bold text-green-700">{subtitle}</p>
-      <p className="mt-6 text-2xl leading-relaxed text-gray-700">{text}</p>
+    <div className="rounded-3xl bg-[#f5f7fb] p-10 shadow-lg">
+      <div className="mb-5 text-6xl">{icon}</div>
+
+      <h3 className="text-4xl font-extrabold">
+        {title}
+      </h3>
+
+      <p className="mt-2 text-xl font-bold text-green-700">
+        {subtitle}
+      </p>
+
+      <p className="mt-6 text-lg leading-relaxed text-gray-700">
+        {text}
+      </p>
     </div>
   );
 }

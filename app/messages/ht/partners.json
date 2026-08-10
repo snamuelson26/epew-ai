@@ -1,0 +1,69 @@
+{
+  "hero": {
+    "imageAlt": "Patnè Kwasans Sètifye EPEW",
+    "eyebrow": "Patnè Kwasans Sètifye EPEW",
+    "title": "Patnè Kwasans Sètifye k ap Sipòte Siksè Antreprenè yo",
+    "description": "EPEW travay avèk patnè pwofesyonèl ki ede antreprenè yo devlope, prepare, lanse, fè pwomosyon epi fè biznis yo grandi avèk siksè."
+  },
+  "ecosystem": {
+    "title": "Yon Ekosistèm Pwofesyonèl Sipòte Antreprenè yo",
+    "paragraph1": "Depi yon antreprenè apwouve, EPEW konekte li ak yon sistèm sipò kowòdone. Patnè Kwasans Sètifye yo ede bay konsèy, sèvis, preparasyon ak vizibilite ki nesesè pou bati yon vrè biznis.",
+    "paragraph2": "Apre coach la prezante antreprenè a ak sipò pwofesyonèl ki apwopriye a, antreprenè a kapab fè demann sèvis atravè Sant Sèvis Pwofesyonèl EPEW la."
+  },
+  "areas": {
+    "formation": {
+      "title": "Patnè pou Kreyasyon Biznis",
+      "text": "Yo ede antreprenè yo etabli estrikti biznis pwofesyonèl yo kòrèkteman depi nan kòmansman."
+    },
+    "financial": {
+      "title": "Patnè Finansye ak Konfòmite",
+      "text": "Yo sipòte antreprenè yo nan preparasyon finansye, konfòmite, kontablite, pewòl ak òganizasyon taks."
+    },
+    "development": {
+      "title": "Patnè pou Devlopman Biznis",
+      "text": "Yo ede antreprenè yo avèk planifikasyon, òganizasyon, preparasyon, konsiltasyon biznis ak devlopman operasyonèl."
+    },
+    "branding": {
+      "title": "Patnè pou Mak ak Konsepsyon",
+      "text": "Yo ede antreprenè yo kreye yon imaj biznis pwofesyonèl, tankou logo, kat biznis, depliyan, bwochi, banyè ak materyèl pwomosyonèl."
+    },
+    "promotion": {
+      "title": "Patnè pou Pwomosyon ak Medya",
+      "text": "Yo ede antreprenè yo jwenn plis vizibilite atravè pwomosyon biznis, medya, rezo sosyal, ekspozisyon nan kominote a ak kominikasyon pou lansman."
+    },
+    "launch": {
+      "title": "Patnè pou Lansman ak Evènman",
+      "text": "Yo sipòte planifikasyon gran ouvèti, òganizasyon evènman, aktivite lansman biznis, evènman kominotè ak prezantasyon piblik."
+    }
+  },
+  "service": {
+    "title": "Kijan Patnè yo Sèvi Antreprenè yo",
+    "steps": {
+      "review": {
+        "title": "Revizyon Coach la",
+        "text": "Coach la idantifye bezwen antreprenè a."
+      },
+      "introduction": {
+        "title": "Entwodiksyon ak Patnè",
+        "text": "EPEW prezante antreprenè a ak bon sipò pwofesyonèl la."
+      },
+      "request": {
+        "title": "Demann Sèvis",
+        "text": "Antreprenè a mande sèvis la atravè platfòm nan."
+      },
+      "delivery": {
+        "title": "Founiti Sèvis",
+        "text": "Patnè a bay sèvis la epi bay mizajou sou pwogrè a."
+      }
+    }
+  },
+  "strength": {
+    "title": "Patnè yo Ranfòse Ekosistèm nan",
+    "description": "Patnè Kwasans Sètifye yo ede transfòme lide yo an biznis ki prepare, pwofesyonèl, vizib epi dirab.",
+    "line1": "Antreprenè a pote vizyon an.",
+    "line2": "EPEW bay ekosistèm nan.",
+    "line3": "Patnè yo ede ranfòse biznis la.",
+    "supportButton": "Gade Sipò Pwofesyonèl",
+    "partnerButton": "Vin yon Patnè"
+  }
+}

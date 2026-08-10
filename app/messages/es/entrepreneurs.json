@@ -1,20 +1,157 @@
 {
-  "content": {
-    "business_idea_refinement": "✅ Business idea refinement",
-    "interview_and_readiness_preparation": "✅ Interview and readiness preparation",
-    "budget_preparation_and_planning": "✅ Budget preparation and planning",
-    "business_structure_readiness": "✅ Business structure readiness",
-    "professional_service_coordination": "✅ Professional service coordination",
-    "funding_readiness_preparation": "✅ Funding readiness preparation",
-    "launch_preparation_and_accountability": "✅ Launch preparation and accountability",
-    "you_are_the_owner": "You are the owner.",
-    "you_make_the_decisions": "You make the decisions.",
-    "you_build_the_vision": "You build the vision.",
-    "epew_does_not_run_your_business": "EPEW does not run your business.",
-    "epew_provides_the_ecosystem_that_helps_your_business": "EPEW provides the ecosystem that helps your business succeed.",
-    "you_bring_the_vision": "You bring the vision.",
-    "we_develop_the_idea": "We develop the idea.",
-    "we_provide_the_ecosystem": "We provide the ecosystem.",
-    "we_help_you_get_the_funding_needed_to": "We help you get the funding needed to launch your business."
+  "hero": {
+    "imageAlt": "Convertirse en emprendedor",
+    "title": "Construye tu negocio a través de EPEW",
+    "description": "Todo negocio exitoso comienza con una idea. EPEW desarrolla emprendedores mediante un Ecosistema de Desarrollo de Emprendedores coordinado que transforma ideas en negocios exitosos.",
+    "entrepreneurButton": "Convertirse en emprendedor",
+    "videoButton": "Ver video de introducción"
+  },
+  "dream": {
+    "title": "Todo gran negocio comienza con una idea",
+    "paragraph1": "Tu idea tiene el potencial de transformar tu futuro, crear empleos, fortalecer a tu familia y mejorar tu comunidad.",
+    "paragraph2": "En EPEW creemos que los emprendedores se desarrollan, no simplemente se financian. Mediante preparación, orientación profesional, apoyo coordinado y el Ecosistema de Desarrollo de Emprendedores, las ideas se convierten en negocios exitosos.",
+    "imageAlt": "Sueño emprendedor"
+  },
+  "funding": {
+    "imageAlt": "Oportunidad de financiamiento",
+    "title": "La preparación viene antes del financiamiento",
+    "description": "EPEW prepara primero a los emprendedores. Cuando están listos para operar un negocio, EPEW los conecta con el financiamiento necesario para lanzar y hacer crecer negocios exitosos."
+  },
+  "developmentModel": {
+    "title": "El modelo oficial de desarrollo de emprendedores de EPEW",
+    "description": "EPEW sigue un modelo estructurado de desarrollo de emprendedores que los prepara, coordina apoyo profesional, conecta financiamiento y fortalece negocios mediante el Ecosistema de Desarrollo de Emprendedores.",
+    "steps": {
+      "step1": {
+        "title": "El emprendedor aporta la idea",
+        "text": "Todo negocio exitoso comienza con una idea. El emprendedor aporta la visión, la pasión, la determinación y el compromiso para construir algo significativo."
+      },
+      "step2": {
+        "title": "EPEW desarrolla la idea",
+        "text": "EPEW transforma la idea en una oportunidad empresarial estructurada mediante educación, coaching, planificación, orientación profesional y desarrollo empresarial."
+      },
+      "step3": {
+        "title": "EPEW prepara al emprendedor",
+        "text": "Los emprendedores reciben la preparación, los conocimientos, el coaching y la orientación necesarios para estar listos para operar un negocio y recibir financiamiento."
+      },
+      "step4": {
+        "title": "EPEW conecta al emprendedor con financiamiento",
+        "text": "Una vez preparados, EPEW conecta a los emprendedores con el financiamiento necesario para lanzar y hacer crecer sus negocios."
+      },
+      "step5": {
+        "title": "EPEW proporciona el Ecosistema de Desarrollo de Emprendedores (EDE)",
+        "text": "El Ecosistema de Desarrollo de Emprendedores reúne coaches, equipos profesionales, Supporters Fundadores, Socios de Crecimiento Certificados, tecnología inteligente y recursos coordinados en un sistema completo de apoyo."
+      },
+      "step6": {
+        "title": "EPEW te ayuda a abrir tu negocio",
+        "text": "EPEW coordina los servicios profesionales, la preparación del lanzamiento, la apertura del negocio, la promoción y la gran inauguración para que los emprendedores comiencen a operar con confianza."
+      },
+      "step7": {
+        "title": "IBOS coordina el recorrido",
+        "text": "El Sistema Inteligente de Operación Empresarial coordina cada etapa del desarrollo del emprendedor mediante la gestión de flujos de trabajo, comunicaciones, solicitudes de servicio, hitos, seguimiento del progreso, preparación empresarial, preparación para financiamiento y operaciones a largo plazo."
+      },
+      "step8": {
+        "title": "EPEW ayuda a fortalecer tu negocio",
+        "text": "El emprendimiento no termina el día de la apertura. EPEW continúa apoyando a los emprendedores mediante coaching, servicios profesionales, informes trimestrales, promoción, tecnología inteligente y crecimiento empresarial a largo plazo."
+      }
+    }
+  },
+  "ecosystem": {
+    "imageAlt": "Ecosistema de Desarrollo de Emprendedores",
+    "title": "Cuentas con el apoyo de un ecosistema completo",
+    "paragraph1": "Desde el momento en que eres aprobado, formas parte de un Ecosistema de Desarrollo de Emprendedores coordinado y dedicado a ayudar a que tu negocio tenga éxito.",
+    "paragraph2": "El ecosistema reúne coaching, apoyo profesional, Supporters Fundadores, Socios de Crecimiento Certificados, herramientas digitales, preparación para financiamiento y crecimiento empresarial a largo plazo.",
+    "features": {
+      "coach": {
+        "title": "Coach dedicado",
+        "text": "Tu coach guía tu recorrido de desarrollo y ayuda a coordinar el apoyo que necesitas."
+      },
+      "teams": {
+        "title": "Equipos profesionales",
+        "text": "Los equipos profesionales apoyan la formación del negocio, la marca, la promoción, la planificación y la preparación del lanzamiento."
+      },
+      "digital": {
+        "title": "Presencia digital del negocio",
+        "text": "Cada emprendedor aprobado recibe una página pública permanente de presentación de su negocio."
+      },
+      "supporters": {
+        "title": "Supporters Fundadores",
+        "text": "Construye una comunidad de personas que creen en tu visión y desean apoyar la historia de tu negocio."
+      },
+      "partners": {
+        "title": "Socios de Crecimiento Certificados",
+        "text": "Accede a experiencia especializada mediante socios que fortalecen el desarrollo de tu negocio."
+      },
+      "ibos": {
+        "title": "Coordinación de IBOS",
+        "text": "IBOS coordina flujos de trabajo, hitos, solicitudes de servicio, comunicaciones y preparación para financiamiento."
+      }
+    }
+  },
+  "coachGuided": {
+    "imageAlt": "Sistema guiado por un coach",
+    "title": "Desarrollo guiado por un coach",
+    "description": "Tu coach asignado actúa como tu guía principal durante todo tu recorrido emprendedor. El coach te ayuda a prepararte, organizarte, comprender las expectativas y conectarte con el apoyo necesario para avanzar.",
+    "helpTitle": "En qué ayudan los coaches",
+    "help": {
+      "idea": "Refinamiento de la idea de negocio",
+      "interview": "Preparación para entrevista y evaluación de preparación",
+      "budget": "Preparación y planificación del presupuesto",
+      "structure": "Preparación de la estructura empresarial",
+      "services": "Coordinación de servicios profesionales",
+      "funding": "Preparación para financiamiento",
+      "launch": "Preparación del lanzamiento y responsabilidad"
+    },
+    "validationTitle": "Proceso estructurado de validación",
+    "validationDescription": "Cada emprendedor sigue un proceso estructurado de preparación y validación antes de entrar en la fila de financiamiento. Esto ayuda a garantizar preparación empresarial, responsabilidad y éxito a largo plazo.",
+    "validationRule": "Ningún emprendedor entra en el proceso de financiamiento sin completar el recorrido de preparación de EPEW."
+  },
+  "leader": {
+    "title": "Tú sigues siendo el líder",
+    "owner": "Tú eres el propietario.",
+    "decisions": "Tú tomas las decisiones.",
+    "vision": "Tú construyes la visión.",
+    "notRun": "EPEW no dirige tu negocio.",
+    "ecosystem": "EPEW proporciona el ecosistema que ayuda a que tu negocio tenga éxito."
+  },
+  "journey": {
+    "imageAlt": "Recorrido del emprendedor",
+    "title": "Tu recorrido como emprendedor",
+    "description": "EPEW ayuda a los emprendedores a pasar de la idea a la preparación, de la preparación a estar listos para financiamiento, y del lanzamiento al crecimiento a largo plazo.",
+    "steps": {
+      "apply": {
+        "title": "Solicitar",
+        "text": "Envía tu solicitud como emprendedor."
+      },
+      "coach": {
+        "title": "Coach",
+        "text": "Conoce al coach que te fue asignado."
+      },
+      "prepare": {
+        "title": "Preparar",
+        "text": "Desarrolla tu negocio y completa la preparación."
+      },
+      "funding": {
+        "title": "Financiamiento",
+        "text": "Prepárate para financiamiento y entra en la fila."
+      },
+      "launch": {
+        "title": "Lanzamiento",
+        "text": "Abre y comienza a hacer crecer tu negocio."
+      }
+    }
+  },
+  "promise": {
+    "title": "La promesa oficial de EPEW",
+    "line1": "Tú aportas la visión.",
+    "line2": "Nosotros desarrollamos la idea.",
+    "line3": "Nosotros proporcionamos el ecosistema.",
+    "line4": "Te ayudamos a obtener el financiamiento necesario para lanzar tu negocio.",
+    "description": "Juntos construimos negocios exitosos, fortalecemos comunidades y creamos riqueza duradera."
+  },
+  "cta": {
+    "title": "Comienza tu recorrido como emprendedor",
+    "description": "Tu idea de negocio es el comienzo. EPEW proporciona el ecosistema que ayuda a transformarla en un negocio exitoso.",
+    "applyButton": "Solicitar como emprendedor",
+    "learnButton": "Aprender cómo funciona EPEW"
   }
 }

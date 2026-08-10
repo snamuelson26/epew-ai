@@ -1,33 +1,161 @@
 {
-  "headings": {
-    "your_coach_your_guide_your_accountability_partner": "Your Coach. Your Guide. Your Accountability Partner.",
-    "no_entrepreneur_should_walk_the_journey_alone": "No Entrepreneur Should Walk the Journey Alone.",
-    "what_does_an_epew_coach_do": "What Does an EPEW Coach Do?",
-    "who_can_become_an_epew_coach": "Who Can Become an EPEW Coach?",
-    "every_great_entrepreneur_has_someone_who_believed_in": "Every Great Entrepreneur Has Someone Who Believed in Them.",
-    "the_coachs_commitment": "The Coach’s Commitment"
+  "hero": {
+    "imageAlt": "Coach accompagnant des entrepreneurs",
+    "title": "Votre coach. Votre guide. Votre partenaire de responsabilisation.",
+    "description": "Chaque entrepreneur se voit attribuer un Coach d’Entreprise EPEW formé, qui agit comme un guide de confiance tout au long du parcours entrepreneurial.",
+    "loginButton": "Connexion Coach",
+    "applyButton": "Postuler comme Coach"
   },
-  "content": {
-    "develop_business_ideas": "✅ Develop business ideas",
-    "clarify_business_vision": "✅ Clarify business vision",
-    "build_strategic_goals": "✅ Build strategic goals",
-    "prepare_business_plans": "✅ Prepare business plans",
-    "coordinate_professional_services": "✅ Coordinate professional services",
-    "monitor_entrepreneur_progress": "✅ Monitor entrepreneur progress",
-    "prepare_funding_readiness": "✅ Prepare funding readiness",
-    "guide_business_launch": "✅ Guide business launch",
-    "strengthen_businesses": "✅ Strengthen businesses",
-    "guide_entrepreneurs": "✅ Guide entrepreneurs",
-    "monitor_progress": "✅ Monitor progress",
-    "conduct_interviews": "✅ Conduct interviews",
-    "review_questionnaires": "✅ Review questionnaires",
-    "coordinate_professional_support": "✅ Coordinate professional support",
-    "approve_milestones": "✅ Approve milestones",
-    "encourage_accountability": "✅ Encourage accountability",
-    "support_business_growth": "✅ Support business growth",
-    "the_entrepreneur_brings_the_vision": "The entrepreneur brings the vision.",
-    "the_coach_develops_the_entrepreneur": "The coach develops the entrepreneur.",
-    "epew_provides_the_ecosystem": "EPEW provides the ecosystem.",
-    "together_we_build_successful_businesses": "Together, we build successful businesses."
+  "neverAlone": {
+    "imageAlt": "Coach soutenant un entrepreneur",
+    "title": "Aucun entrepreneur ne devrait parcourir ce chemin seul.",
+    "paragraph1": "Chaque entrepreneur mérite quelqu’un qui croit en son potentiel, comprend ses défis et l’aide à rester concentré sur le chemin de la réussite.",
+    "paragraph2": "Un Coach EPEW devient un conseiller de confiance, un mentor, un facilitateur et un partenaire de responsabilisation qui aide les entrepreneurs à passer avec confiance de l’idée à la propriété d’une entreprise prospère."
+  },
+  "whatCoachDoes": {
+    "title": "Que fait un Coach EPEW ?",
+    "description": "Un coach d’entreprise travaille avec les entrepreneurs pour développer leurs idées, clarifier leur vision, établir des objectifs stratégiques et construire des plans d’action qui les conduisent vers la réussite."
+  },
+  "roles": {
+    "title": "Le rôle d’un Coach EPEW",
+    "description": "Nos coaches formés agissent comme conseillers stratégiques, facilitateurs et partenaires de responsabilisation qui aident les entrepreneurs à révéler leur potentiel, renforcer leurs compétences, surmonter les obstacles et favoriser une croissance durable.",
+    "cards": {
+      "advisor": {
+        "title": "Conseiller stratégique",
+        "text": "Aider les entrepreneurs à prendre des décisions éclairées et à renforcer l’orientation de leur entreprise."
+      },
+      "development": {
+        "title": "Partenaire de développement d’entreprise",
+        "text": "Transformer les idées en opportunités d’entreprise structurées grâce à la planification et à la préparation."
+      },
+      "facilitator": {
+        "title": "Facilitateur",
+        "text": "Mettre les entrepreneurs en relation avec le soutien professionnel, les demandes de services et les ressources de l’écosystème."
+      },
+      "accountability": {
+        "title": "Partenaire de responsabilisation",
+        "text": "Aider les entrepreneurs à rester concentrés sur les étapes, les responsabilités, la préparation et les engagements."
+      },
+      "leadership": {
+        "title": "Mentor en leadership",
+        "text": "Développer la confiance, les compétences en leadership, la pensée entrepreneuriale et la prise de décision responsable."
+      },
+      "ibos": {
+        "title": "Coordinateur IBOS",
+        "text": "Utiliser IBOS pour suivre les progrès, mettre à jour les étapes, coordonner les flux de travail et suivre l’état de préparation des entrepreneurs."
+      }
+    }
+  },
+  "accomplish": {
+    "title": "Ce que les coaches aident les entrepreneurs à accomplir",
+    "description": "Les coaches EPEW aident les entrepreneurs à transformer leurs idées en opportunités organisées, préparées et prêtes à devenir de véritables entreprises.",
+    "items": {
+      "idea": "Développer les idées d’entreprise",
+      "vision": "Clarifier la vision de l’entreprise",
+      "goals": "Établir des objectifs stratégiques",
+      "plans": "Préparer des plans d’affaires",
+      "services": "Coordonner les services professionnels",
+      "progress": "Suivre les progrès de l’entrepreneur",
+      "funding": "Préparer l’état de préparation au financement",
+      "launch": "Guider le lancement de l’entreprise",
+      "strengthen": "Renforcer les entreprises"
+    }
+  },
+  "journey": {
+    "title": "Le parcours du Coach EPEW",
+    "description": "Les coaches EPEW guident les entrepreneurs dans un parcours de développement structuré, de l’affectation jusqu’à la croissance de l’entreprise.",
+    "steps": {
+      "assignment": {
+        "title": "Affectation",
+        "text": "Un entrepreneur est jumelé à un Coach EPEW."
+      },
+      "discovery": {
+        "title": "Découverte",
+        "text": "Le coach découvre les objectifs, la vision, les forces et les défis de l’entrepreneur."
+      },
+      "development": {
+        "title": "Développement",
+        "text": "L’entrepreneur reçoit du coaching, de la préparation et du soutien au développement de son entreprise."
+      },
+      "readiness": {
+        "title": "Préparation",
+        "text": "Le coach aide à préparer l’entrepreneur au financement et au lancement de l’entreprise."
+      },
+      "growth": {
+        "title": "Croissance",
+        "text": "Le coach continue de soutenir la responsabilisation et les progrès de l’entreprise."
+      }
+    }
+  },
+  "philosophy": {
+    "title": "La philosophie de coaching EPEW",
+    "description": "Nous croyons que les entrepreneurs réussissent lorsqu’ils reçoivent des conseils constants, de la responsabilisation, de la préparation, des encouragements et un soutien professionnel. Les coaches EPEW ne construisent pas les entreprises à la place des entrepreneurs. Ils développent des entrepreneurs qui construisent des entreprises prospères."
+  },
+  "qualifications": {
+    "title": "Qui peut devenir Coach EPEW ?",
+    "description": "EPEW accueille des personnes qualifiées possédant de l’expérience, du professionnalisme, du leadership et une passion pour aider les entrepreneurs à réussir.",
+    "cards": {
+      "business": {
+        "title": "Professionnels des affaires",
+        "text": "Professionnels ayant de l’expérience en affaires, gestion, opérations, finance ou consultation."
+      },
+      "entrepreneurs": {
+        "title": "Entrepreneurs",
+        "text": "Entrepreneurs expérimentés qui comprennent les défis liés à la création et à la croissance d’une entreprise."
+      },
+      "educators": {
+        "title": "Éducateurs",
+        "text": "Enseignants, formateurs et mentors qui savent guider les personnes dans l’apprentissage et le développement."
+      },
+      "community": {
+        "title": "Leaders communautaires",
+        "text": "Leaders engagés à renforcer les communautés grâce à l’entrepreneuriat et aux possibilités économiques."
+      },
+      "retired": {
+        "title": "Cadres retraités",
+        "text": "Professionnels retraités qui souhaitent utiliser leur expérience pour guider de nouveaux entrepreneurs."
+      },
+      "service": {
+        "title": "Professionnels axés sur le service",
+        "text": "Personnes passionnées par l’aide aux entrepreneurs afin qu’ils révèlent leur potentiel et bâtissent des entreprises durables."
+      }
+    }
+  },
+  "responsibilities": {
+    "title": "Responsabilités du Coach",
+    "description": "Les coaches EPEW soutiennent les entrepreneurs grâce aux conseils, à la responsabilisation, à l’évaluation des étapes et à une préparation coordonnée.",
+    "items": {
+      "guide": "Guider les entrepreneurs",
+      "monitor": "Suivre les progrès",
+      "interviews": "Mener des entretiens",
+      "questionnaires": "Examiner les questionnaires",
+      "support": "Coordonner le soutien professionnel",
+      "milestones": "Approuver les étapes importantes",
+      "funding": "Préparer l’état de préparation au financement",
+      "accountability": "Encourager la responsabilisation",
+      "growth": "Soutenir la croissance de l’entreprise"
+    }
+  },
+  "impact": {
+    "imageAlt": "Impact du Coach",
+    "title": "Derrière chaque grand entrepreneur se trouve quelqu’un qui a cru en lui.",
+    "description": "Derrière chaque entrepreneur prospère se trouve quelqu’un qui l’a encouragé, mis au défi, guidé et aidé à continuer d’avancer. Les coaches EPEW contribuent à créer des entreprises plus fortes, des familles plus fortes et des communautés plus fortes."
+  },
+  "commitment": {
+    "title": "L’engagement du Coach",
+    "description": "En tant que Coach EPEW, je m’engage à guider les entrepreneurs avec intégrité, professionnalisme, responsabilisation, respect et encouragement. Je les aiderai à se préparer à la réussite tout en leur donnant les moyens de diriger leur propre entreprise avec confiance et responsabilité."
+  },
+  "statement": {
+    "title": "Aucun entrepreneur ne devrait parcourir ce chemin seul.",
+    "line1": "L’entrepreneur apporte la vision.",
+    "line2": "Le coach développe l’entrepreneur.",
+    "line3": "EPEW fournit l’écosystème.",
+    "line4": "Ensemble, nous bâtissons des entreprises prospères."
+  },
+  "cta": {
+    "title": "Devenir Coach EPEW",
+    "description": "Aidez à développer les entrepreneurs. Aidez à renforcer les communautés. Aidez à transformer des vies grâce à l’entrepreneuriat.",
+    "applyButton": "Postuler comme Coach",
+    "loginButton": "Connexion Coach"
   }
 }

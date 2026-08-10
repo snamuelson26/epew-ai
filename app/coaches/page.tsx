@@ -1,11 +1,29 @@
 "use client";
 
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 
+import {
+  useLanguage,
+  useTranslation,
+} from "@/app/components/enterprise/language";
+
+const NAMESPACE = "coaches";
+
 export default function CoachesPage() {
+  const { t } = useTranslation();
+  const { loadNamespaces } = useLanguage();
+
+  useEffect(() => {
+    void loadNamespaces([NAMESPACE]);
+  }, [loadNamespaces]);
+
+  const tr = (key: string) =>
+    t(key, { namespace: NAMESPACE });
+
   return (
     <>
       <Navbar />
@@ -16,7 +34,7 @@ export default function CoachesPage() {
           <div className="max-w-7xl mx-auto px-8 text-center">
             <Image
               src="/images/coaches-hero.png"
-              alt="Coach mentoring entrepreneurs"
+              alt={tr("hero.imageAlt")}
               width={1600}
               height={900}
               className="w-full rounded-3xl shadow-2xl object-cover mb-16"
@@ -24,12 +42,11 @@ export default function CoachesPage() {
             />
 
             <h1 className="text-7xl font-extrabold mb-8">
-              Your Coach. Your Guide. Your Accountability Partner.
+              {tr("hero.title")}
             </h1>
 
             <p className="text-3xl text-gray-700 leading-relaxed max-w-6xl mx-auto mb-12">
-              Every entrepreneur is assigned a trained EPEW Business Coach who
-              serves as a trusted guide throughout the entrepreneurial journey.
+              {tr("hero.description")}
             </p>
 
             <div className="flex flex-col md:flex-row gap-6 justify-center">
@@ -37,14 +54,14 @@ export default function CoachesPage() {
                 href="/coaches/login"
                 className="bg-[#06245c] text-white px-10 py-5 rounded-2xl text-2xl font-bold hover:bg-green-600 transition"
               >
-                Coach Login
+                {tr("hero.loginButton")}
               </Link>
 
               <Link
                 href="/coaches/apply"
                 className="bg-green-600 text-white px-10 py-5 rounded-2xl text-2xl font-bold hover:bg-[#06245c] transition"
               >
-                Apply as a Coach
+                {tr("hero.applyButton")}
               </Link>
             </div>
           </div>
@@ -57,7 +74,7 @@ export default function CoachesPage() {
               <div>
                 <Image
                   src="/images/coach-support.png"
-                  alt="Coach supporting entrepreneur"
+                  alt={tr("neverAlone.imageAlt")}
                   width={900}
                   height={900}
                   className="rounded-3xl shadow-2xl w-full h-auto"
@@ -66,19 +83,15 @@ export default function CoachesPage() {
 
               <div>
                 <h2 className="text-6xl font-extrabold mb-10">
-                  No Entrepreneur Should Walk the Journey Alone.
+                  {tr("neverAlone.title")}
                 </h2>
 
                 <p className="text-3xl text-gray-700 leading-relaxed mb-8">
-                  Every entrepreneur deserves someone who believes in their
-                  potential, understands their challenges, and helps them stay
-                  focused on the path to success.
+                  {tr("neverAlone.paragraph1")}
                 </p>
 
                 <p className="text-3xl text-gray-700 leading-relaxed">
-                  An EPEW Coach becomes a trusted advisor, mentor, facilitator,
-                  and accountability partner who helps entrepreneurs move
-                  confidently from idea to successful business ownership.
+                  {tr("neverAlone.paragraph2")}
                 </p>
               </div>
             </div>
@@ -89,13 +102,11 @@ export default function CoachesPage() {
         <section className="py-24 bg-white">
           <div className="max-w-7xl mx-auto px-8 text-center">
             <h2 className="text-6xl font-extrabold mb-10">
-              What Does an EPEW Coach Do?
+              {tr("whatCoachDoes.title")}
             </h2>
 
             <p className="text-3xl text-gray-700 leading-relaxed max-w-6xl mx-auto">
-              A business coach partners with entrepreneurs to develop their
-              business ideas, clarify their vision, establish strategic goals,
-              and build actionable plans that move them toward business success.
+              {tr("whatCoachDoes.description")}
             </p>
           </div>
         </section>
@@ -105,52 +116,49 @@ export default function CoachesPage() {
           <div className="max-w-7xl mx-auto px-8">
             <div className="text-center mb-20">
               <h2 className="text-6xl font-extrabold mb-10">
-                The Role of an EPEW Coach
+                {tr("roles.title")}
               </h2>
 
               <p className="text-3xl text-gray-700 leading-relaxed max-w-6xl mx-auto">
-                Our trained coaches serve as strategic advisors, facilitators,
-                and accountability partners who empower entrepreneurs to unlock
-                their potential, strengthen their skills, overcome roadblocks,
-                and drive sustainable growth.
+                {tr("roles.description")}
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-10">
               <CoachCard
                 icon="🧭"
-                title="Strategic Advisor"
-                text="Helping entrepreneurs make informed business decisions and strengthen their business direction."
+                title={tr("roles.cards.advisor.title")}
+                text={tr("roles.cards.advisor.text")}
               />
 
               <CoachCard
                 icon="🏢"
-                title="Business Development Partner"
-                text="Transforming ideas into structured business opportunities through planning and preparation."
+                title={tr("roles.cards.development.title")}
+                text={tr("roles.cards.development.text")}
               />
 
               <CoachCard
                 icon="🤝"
-                title="Facilitator"
-                text="Connecting entrepreneurs with professional support, service requests, and ecosystem resources."
+                title={tr("roles.cards.facilitator.title")}
+                text={tr("roles.cards.facilitator.text")}
               />
 
               <CoachCard
                 icon="📋"
-                title="Accountability Partner"
-                text="Helping entrepreneurs stay focused on milestones, responsibilities, readiness, and commitments."
+                title={tr("roles.cards.accountability.title")}
+                text={tr("roles.cards.accountability.text")}
               />
 
               <CoachCard
                 icon="🌱"
-                title="Leadership Mentor"
-                text="Developing confidence, leadership skills, entrepreneurial thinking, and responsible decision-making."
+                title={tr("roles.cards.leadership.title")}
+                text={tr("roles.cards.leadership.text")}
               />
 
               <CoachCard
                 icon="🤖"
-                title="IBOS Coordinator"
-                text="Using IBOS to monitor progress, update milestones, coordinate workflows, and track entrepreneur readiness."
+                title={tr("roles.cards.ibos.title")}
+                text={tr("roles.cards.ibos.text")}
               />
             </div>
           </div>
@@ -161,26 +169,25 @@ export default function CoachesPage() {
           <div className="max-w-7xl mx-auto px-8">
             <div className="text-center mb-16">
               <h2 className="text-6xl font-extrabold mb-10">
-                What Coaches Help Entrepreneurs Accomplish
+                {tr("accomplish.title")}
               </h2>
 
               <p className="text-3xl text-gray-700 leading-relaxed max-w-6xl mx-auto">
-                EPEW coaches help entrepreneurs move from ideas to organized,
-                prepared, and business-ready opportunities.
+                {tr("accomplish.description")}
               </p>
             </div>
 
             <div className="bg-[#f5f7fb] rounded-3xl shadow-2xl p-12">
               <div className="grid md:grid-cols-3 gap-8 text-2xl text-gray-700">
-                <p>✅ Develop business ideas</p>
-                <p>✅ Clarify business vision</p>
-                <p>✅ Build strategic goals</p>
-                <p>✅ Prepare business plans</p>
-                <p>✅ Coordinate professional services</p>
-                <p>✅ Monitor entrepreneur progress</p>
-                <p>✅ Prepare funding readiness</p>
-                <p>✅ Guide business launch</p>
-                <p>✅ Strengthen businesses</p>
+                <p>✅ {tr("accomplish.items.idea")}</p>
+                <p>✅ {tr("accomplish.items.vision")}</p>
+                <p>✅ {tr("accomplish.items.goals")}</p>
+                <p>✅ {tr("accomplish.items.plans")}</p>
+                <p>✅ {tr("accomplish.items.services")}</p>
+                <p>✅ {tr("accomplish.items.progress")}</p>
+                <p>✅ {tr("accomplish.items.funding")}</p>
+                <p>✅ {tr("accomplish.items.launch")}</p>
+                <p>✅ {tr("accomplish.items.strengthen")}</p>
               </div>
             </div>
           </div>
@@ -190,43 +197,42 @@ export default function CoachesPage() {
         <section className="py-24 bg-[#f5f7fb]">
           <div className="max-w-7xl mx-auto px-8 text-center">
             <h2 className="text-6xl font-extrabold mb-10">
-              The EPEW Coach Journey
+              {tr("journey.title")}
             </h2>
 
             <p className="text-3xl text-gray-700 leading-relaxed max-w-6xl mx-auto mb-16">
-              EPEW coaches guide entrepreneurs through a structured development
-              journey from assignment to business growth.
+              {tr("journey.description")}
             </p>
 
             <div className="grid md:grid-cols-5 gap-6">
               <StepCard
                 number="1"
-                title="Assignment"
-                text="An entrepreneur is matched with an EPEW Coach."
+                title={tr("journey.steps.assignment.title")}
+                text={tr("journey.steps.assignment.text")}
               />
 
               <StepCard
                 number="2"
-                title="Discovery"
-                text="The coach learns the entrepreneur’s goals, vision, strengths, and challenges."
+                title={tr("journey.steps.discovery.title")}
+                text={tr("journey.steps.discovery.text")}
               />
 
               <StepCard
                 number="3"
-                title="Development"
-                text="The entrepreneur receives coaching, preparation, and business development support."
+                title={tr("journey.steps.development.title")}
+                text={tr("journey.steps.development.text")}
               />
 
               <StepCard
                 number="4"
-                title="Readiness"
-                text="The coach helps prepare the entrepreneur for funding readiness and business launch."
+                title={tr("journey.steps.readiness.title")}
+                text={tr("journey.steps.readiness.text")}
               />
 
               <StepCard
                 number="5"
-                title="Growth"
-                text="The coach continues supporting accountability and business progress."
+                title={tr("journey.steps.growth.title")}
+                text={tr("journey.steps.growth.text")}
               />
             </div>
           </div>
@@ -236,15 +242,11 @@ export default function CoachesPage() {
         <section className="py-24 bg-[#06245c] text-white">
           <div className="max-w-6xl mx-auto px-8 text-center">
             <h2 className="text-6xl font-extrabold mb-10">
-              The EPEW Coaching Philosophy
+              {tr("philosophy.title")}
             </h2>
 
             <p className="text-3xl text-blue-100 leading-relaxed">
-              We believe entrepreneurs succeed when they receive consistent
-              guidance, accountability, preparation, encouragement, and
-              professional support. EPEW coaches do not build businesses for
-              entrepreneurs. They develop entrepreneurs who build successful
-              businesses.
+              {tr("philosophy.description")}
             </p>
           </div>
         </section>
@@ -254,7 +256,7 @@ export default function CoachesPage() {
           <div className="max-w-7xl mx-auto px-8">
             <div className="text-center mb-16">
               <h2 className="text-6xl font-extrabold mb-10">
-                Who Can Become an EPEW Coach?
+                {tr("qualifications.title")}
               </h2>
 
               <p className="text-3xl text-gray-700 leading-relaxed max-w-6xl mx-auto">
@@ -267,38 +269,38 @@ export default function CoachesPage() {
             <div className="grid md:grid-cols-3 gap-10">
               <CoachCard
                 icon="💼"
-                title="Business Professionals"
-                text="Professionals with experience in business, management, operations, finance, or consulting."
+                title={tr("qualifications.cards.business.title")}
+                text={tr("qualifications.cards.business.text")}
               />
 
               <CoachCard
                 icon="🏢"
-                title="Entrepreneurs"
-                text="Experienced entrepreneurs who understand the challenges of building and growing a business."
+                title={tr("qualifications.cards.entrepreneurs.title")}
+                text={tr("qualifications.cards.entrepreneurs.text")}
               />
 
               <CoachCard
                 icon="🎓"
-                title="Educators"
-                text="Teachers, trainers, and mentors who know how to guide people through learning and development."
+                title={tr("qualifications.cards.educators.title")}
+                text={tr("qualifications.cards.educators.text")}
               />
 
               <CoachCard
                 icon="🌍"
-                title="Community Leaders"
-                text="Leaders committed to strengthening communities through entrepreneurship and economic opportunity."
+                title={tr("qualifications.cards.community.title")}
+                text={tr("qualifications.cards.community.text")}
               />
 
               <CoachCard
                 icon="🧓"
-                title="Retired Executives"
-                text="Retired professionals who want to use their experience to guide new entrepreneurs."
+                title={tr("qualifications.cards.retired.title")}
+                text={tr("qualifications.cards.retired.text")}
               />
 
               <CoachCard
                 icon="🤝"
-                title="Service-Minded Professionals"
-                text="Individuals passionate about helping entrepreneurs unlock potential and build sustainable businesses."
+                title={tr("qualifications.cards.service.title")}
+                text={tr("qualifications.cards.service.text")}
               />
             </div>
           </div>
@@ -309,7 +311,7 @@ export default function CoachesPage() {
           <div className="max-w-7xl mx-auto px-8">
             <div className="text-center mb-16">
               <h2 className="text-6xl font-extrabold mb-10">
-                Coach Responsibilities
+                {tr("responsibilities.title")}
               </h2>
 
               <p className="text-3xl text-gray-700 leading-relaxed max-w-6xl mx-auto">
@@ -320,15 +322,15 @@ export default function CoachesPage() {
 
             <div className="bg-white rounded-3xl shadow-2xl p-12">
               <div className="grid md:grid-cols-3 gap-8 text-2xl text-gray-700">
-                <p>✅ Guide entrepreneurs</p>
-                <p>✅ Monitor progress</p>
-                <p>✅ Conduct interviews</p>
-                <p>✅ Review questionnaires</p>
-                <p>✅ Coordinate professional support</p>
-                <p>✅ Approve milestones</p>
-                <p>✅ Prepare funding readiness</p>
-                <p>✅ Encourage accountability</p>
-                <p>✅ Support business growth</p>
+                <p>✅ {tr("responsibilities.items.guide")}</p>
+                <p>✅ {tr("responsibilities.items.monitor")}</p>
+                <p>✅ {tr("responsibilities.items.interviews")}</p>
+                <p>✅ {tr("responsibilities.items.questionnaires")}</p>
+                <p>✅ {tr("responsibilities.items.support")}</p>
+                <p>✅ {tr("responsibilities.items.milestones")}</p>
+                <p>✅ {tr("accomplish.items.funding")}</p>
+                <p>✅ {tr("responsibilities.items.accountability")}</p>
+                <p>✅ {tr("responsibilities.items.growth")}</p>
               </div>
             </div>
           </div>
@@ -339,14 +341,14 @@ export default function CoachesPage() {
           <div className="max-w-7xl mx-auto px-8 text-center">
             <Image
               src="/images/coach-impact.png"
-              alt="Coach Impact"
+              alt={tr("impact.imageAlt")}
               width={1400}
               height={900}
               className="rounded-3xl shadow-2xl mx-auto mb-16"
             />
 
             <h2 className="text-6xl font-extrabold mb-10">
-              Every Great Entrepreneur Has Someone Who Believed in Them.
+              {tr("impact.title")}
             </h2>
 
             <p className="text-3xl text-gray-700 leading-relaxed max-w-6xl mx-auto">
@@ -363,7 +365,7 @@ export default function CoachesPage() {
           <div className="max-w-6xl mx-auto px-8">
             <div className="rounded-3xl border-l-8 border-green-600 bg-white p-12 shadow-2xl">
               <h2 className="text-6xl font-extrabold mb-10 text-center">
-                The Coach’s Commitment
+                {tr("commitment.title")}
               </h2>
 
               <p className="text-3xl text-gray-700 leading-relaxed text-center">
@@ -381,14 +383,14 @@ export default function CoachesPage() {
         <section className="py-24 bg-[#06245c] text-white">
           <div className="max-w-6xl mx-auto px-8 text-center">
             <h2 className="text-6xl font-extrabold mb-12">
-              No Entrepreneur Should Walk the Journey Alone.
+              {tr("statement.title")}
             </h2>
 
             <div className="space-y-5 text-4xl font-black text-lime-300">
-              <p>The entrepreneur brings the vision.</p>
-              <p>The coach develops the entrepreneur.</p>
-              <p>EPEW provides the ecosystem.</p>
-              <p>Together, we build successful businesses.</p>
+              <p>{tr("statement.line1")}</p>
+              <p>{tr("statement.line2")}</p>
+              <p>{tr("statement.line3")}</p>
+              <p>{tr("statement.line4")}</p>
             </div>
           </div>
         </section>
@@ -397,7 +399,7 @@ export default function CoachesPage() {
         <section className="py-24 bg-white">
           <div className="max-w-7xl mx-auto px-8 text-center">
             <h2 className="text-7xl font-extrabold mb-10">
-              Become an EPEW Coach
+              {tr("cta.title")}
             </h2>
 
             <p className="text-3xl text-gray-700 leading-relaxed max-w-5xl mx-auto mb-14">
@@ -410,14 +412,14 @@ export default function CoachesPage() {
                 href="/coaches/apply"
                 className="bg-[#06245c] text-white px-14 py-6 rounded-2xl text-2xl font-bold hover:bg-green-600 transition"
               >
-                Apply as a Coach
+                {tr("hero.applyButton")}
               </Link>
 
               <Link
                 href="/coaches/login"
                 className="border-2 border-[#06245c] text-[#06245c] px-14 py-6 rounded-2xl text-2xl font-bold hover:bg-[#06245c] hover:text-white transition"
               >
-                Coach Login
+                {tr("cta.loginButton")}
               </Link>
             </div>
           </div>

@@ -1,51 +1,69 @@
 "use client";
 
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 
+import {
+  useLanguage,
+  useTranslation,
+} from "@/app/components/enterprise/language";
+
+const NAMESPACE = "entrepreneurs";
+
 export default function EntrepreneursPage() {
+  const { t } = useTranslation();
+  const { loadNamespaces } = useLanguage();
+
+  useEffect(() => {
+    void loadNamespaces([NAMESPACE]);
+  }, [loadNamespaces]);
+
+  const tr = (key: string) =>
+    t(key, { namespace: NAMESPACE });
+
   const developmentModel = [
     {
       number: "1",
-      title: "The Entrepreneur Brings the Idea",
-      text: "Every successful business begins with an idea. The entrepreneur brings the vision, passion, determination, and commitment to build something meaningful.",
+      title: tr("developmentModel.steps.step1.title"),
+      text: tr("developmentModel.steps.step1.text"),
     },
     {
       number: "2",
-      title: "EPEW Develops the Idea",
-      text: "EPEW transforms the idea into a structured business opportunity through education, coaching, planning, professional guidance, and business development.",
+      title: tr("developmentModel.steps.step2.title"),
+      text: tr("developmentModel.steps.step2.text"),
     },
     {
       number: "3",
-      title: "EPEW Prepares the Entrepreneur",
-      text: "Entrepreneurs receive the preparation, knowledge, coaching, and guidance needed to become business-ready and funding-ready.",
+      title: tr("developmentModel.steps.step3.title"),
+      text: tr("developmentModel.steps.step3.text"),
     },
     {
       number: "4",
-      title: "EPEW Connects the Entrepreneur with Funding",
-      text: "Once entrepreneurs are prepared, EPEW connects them with the funding needed to launch and grow their businesses.",
+      title: tr("developmentModel.steps.step4.title"),
+      text: tr("developmentModel.steps.step4.text"),
     },
     {
       number: "5",
-      title: "EPEW Provides the Entrepreneur Development Ecosystem (EDE)",
-      text: "The Entrepreneur Development Ecosystem brings together coaches, professional teams, Founding Supporters, Certified Growth Partners, intelligent technology, and coordinated resources into one complete support system.",
+      title: tr("developmentModel.steps.step5.title"),
+      text: tr("developmentModel.steps.step5.text"),
     },
     {
       number: "6",
-      title: "EPEW Helps You Open Your Business",
-      text: "EPEW coordinates the professional services, launch preparation, business opening, promotion, and grand opening so entrepreneurs begin operations with confidence.",
+      title: tr("developmentModel.steps.step6.title"),
+      text: tr("developmentModel.steps.step6.text"),
     },
     {
       number: "7",
-      title: "IBOS Coordinates the Journey",
-      text: "The Intelligent Business Operating System coordinates every stage of entrepreneur development by managing workflows, communications, service requests, milestones, progress tracking, business readiness, funding readiness, and long-term business operations.",
+      title: tr("developmentModel.steps.step7.title"),
+      text: tr("developmentModel.steps.step7.text"),
     },
     {
       number: "8",
-      title: "EPEW Helps Strengthen Your Business",
-      text: "Entrepreneurship does not end at opening day. EPEW continues supporting entrepreneurs through coaching, professional services, quarterly reporting, promotion, intelligent technology, and long-term business growth.",
+      title: tr("developmentModel.steps.step8.title"),
+      text: tr("developmentModel.steps.step8.text"),
     },
   ];
 
@@ -63,7 +81,7 @@ export default function EntrepreneursPage() {
             <div className="flex justify-center mb-14">
               <Image
                 src="/images/entrepreneur-hero.png"
-                alt="Become an Entrepreneur"
+                alt={tr("hero.imageAlt")}
                 width={1400}
                 height={850}
                 className="rounded-3xl shadow-2xl"
@@ -72,14 +90,11 @@ export default function EntrepreneursPage() {
             </div>
 
             <h1 className="text-7xl font-extrabold mb-10">
-              Build Your Business Through EPEW
+              {tr("hero.title")}
             </h1>
 
             <p className="text-3xl text-gray-700 leading-relaxed max-w-6xl mx-auto">
-              Every successful business begins with an idea.
-              EPEW develops entrepreneurs through a coordinated
-              Entrepreneur Development Ecosystem that transforms
-              ideas into successful businesses.
+              {tr("hero.description")}
             </p>
 
             <div className="flex flex-col md:flex-row justify-center gap-8 mt-14">
@@ -87,14 +102,14 @@ export default function EntrepreneursPage() {
                 href="/entrepreneurs/enroll"
                 className="bg-green-600 text-white px-12 py-6 rounded-2xl text-2xl font-bold hover:bg-green-700 transition"
               >
-                Become an Entrepreneur
+                {tr("hero.entrepreneurButton")}
               </Link>
 
               <Link
                 href="/videos"
                 className="bg-[#06245c] text-white px-12 py-6 rounded-2xl text-2xl font-bold hover:bg-blue-700 transition"
               >
-                Watch Introduction Video
+                {tr("hero.videoButton")}
               </Link>
             </div>
 
@@ -112,19 +127,15 @@ export default function EntrepreneursPage() {
               <div>
 
                 <h2 className="text-6xl font-extrabold mb-10">
-                  Every Great Business Begins With One Idea
+                  {tr("dream.title")}
                 </h2>
 
                 <p className="text-3xl text-gray-700 leading-relaxed mb-8">
-                  Your idea has the potential to transform your future,
-                  create jobs, strengthen your family,
-                  and improve your community.
+                  {tr("dream.paragraph1")}
                 </p>
 
                 <p className="text-3xl text-gray-700 leading-relaxed">
-                  At EPEW, we believe entrepreneurs are developed—not simply funded. 
-                  Through preparation, professional guidance, coordinated support, 
-                  and the Entrepreneur Development Ecosystem, ideas become successful businesses.
+                  {tr("dream.paragraph2")}
                 </p>
 
               </div>
@@ -133,7 +144,7 @@ export default function EntrepreneursPage() {
 
                 <Image
   src="/images/entrepreneur-dream.png"
-  alt="Entrepreneur Dream"
+  alt={tr("dream.imageAlt")}
   width={1000}
   height={700}
   className="rounded-3xl shadow-2xl w-full h-auto"
@@ -152,7 +163,7 @@ export default function EntrepreneursPage() {
 
             <Image
               src="/images/100k-banner.png"
-              alt="Funding Opportunity"
+              alt={tr("funding.imageAlt")}
               width={1400}
               height={900}
               className="rounded-3xl shadow-2xl mx-auto mb-16"
@@ -161,14 +172,11 @@ export default function EntrepreneursPage() {
             <div className="text-center">
 
               <h2 className="text-6xl font-extrabold mb-10">
-                Preparation Comes Before Funding
+                {tr("funding.title")}
               </h2>
 
               <p className="text-3xl text-gray-700 leading-relaxed max-w-6xl mx-auto">
-                EPEW prepares entrepreneurs first.
-                When entrepreneurs become business-ready,
-                EPEW connects them with the funding needed
-                to launch and grow successful businesses.
+                {tr("funding.description")}
               </p>
 
             </div>
@@ -184,16 +192,11 @@ export default function EntrepreneursPage() {
           <div className="max-w-7xl mx-auto px-8 text-center">
 
             <h2 className="text-6xl font-extrabold mb-10">
-              The Official EPEW Entrepreneur Development Model
+              {tr("developmentModel.title")}
             </h2>
 
             <p className="text-3xl text-gray-700 max-w-6xl mx-auto leading-relaxed mb-16">
-              EPEW follows a structured entrepreneur development model
-              that prepares entrepreneurs,
-              coordinates professional support,
-              connects funding,
-              and strengthens businesses through the Entrepreneur
-              Development Ecosystem.
+              {tr("developmentModel.description")}
             </p>
 
             <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-8">
@@ -233,7 +236,7 @@ export default function EntrepreneursPage() {
 
                 <Image
                   src="/images/ecosystem.png"
-                  alt="Entrepreneur Development Ecosystem"
+                  alt={tr("ecosystem.imageAlt")}
                   width={900}
                   height={900}
                   className="rounded-3xl shadow-2xl"
@@ -244,19 +247,15 @@ export default function EntrepreneursPage() {
               <div>
 
                 <h2 className="text-6xl font-extrabold mb-10">
-                  You Are Supported by a Complete Ecosystem
+                  {tr("ecosystem.title")}
                 </h2>
 
                 <p className="text-3xl text-gray-700 leading-relaxed mb-8">
-                  From the moment you are approved, you become part of a coordinated
-                  Entrepreneur Development Ecosystem dedicated to helping your business
-                  succeed.
+                  {tr("ecosystem.paragraph1")}
                 </p>
 
                 <p className="text-3xl text-gray-700 leading-relaxed">
-                  The ecosystem brings together coaching, professional support,
-                  Founding Supporters, Certified Growth Partners, digital tools,
-                  funding readiness, and long-term business growth.
+                  {tr("ecosystem.paragraph2")}
                 </p>
 
               </div>
@@ -267,38 +266,38 @@ export default function EntrepreneursPage() {
 
               <FeatureCard
                 icon="👨‍🏫"
-                title="Dedicated Coach"
-                text="Your coach guides your development journey and helps coordinate the support you need."
+                title={tr("ecosystem.features.coach.title")}
+                text={tr("ecosystem.features.coach.text")}
               />
 
               <FeatureCard
                 icon="🏢"
-                title="Professional Teams"
-                text="Professional teams support business formation, branding, promotion, planning, and launch preparation."
+                title={tr("ecosystem.features.teams.title")}
+                text={tr("ecosystem.features.teams.text")}
               />
 
               <FeatureCard
                 icon="🌐"
-                title="Digital Business Presence"
-                text="Every approved entrepreneur receives a permanent public Business Welcome Page."
+                title={tr("ecosystem.features.digital.title")}
+                text={tr("ecosystem.features.digital.text")}
               />
 
               <FeatureCard
                 icon="🤝"
-                title="Founding Supporters"
-                text="Build a community of people who believe in your vision and want to support your business story."
+                title={tr("ecosystem.features.supporters.title")}
+                text={tr("ecosystem.features.supporters.text")}
               />
 
               <FeatureCard
                 icon="🌍"
-                title="Certified Growth Partners"
-                text="Access specialized expertise through partners that strengthen your business development."
+                title={tr("ecosystem.features.partners.title")}
+                text={tr("ecosystem.features.partners.text")}
               />
 
               <FeatureCard
                 icon="🤖"
-                title="IBOS Coordination"
-                text="IBOS coordinates workflows, milestones, service requests, communications, and funding readiness."
+                title={tr("ecosystem.features.ibos.title")}
+                text={tr("ecosystem.features.ibos.text")}
               />
 
             </div>
@@ -315,7 +314,7 @@ export default function EntrepreneursPage() {
 
             <Image
               src="/images/coach-guided.png"
-              alt="Coach Guided System"
+              alt={tr("coachGuided.imageAlt")}
               width={1400}
               height={900}
               className="rounded-3xl shadow-2xl mx-auto mb-16"
@@ -324,7 +323,7 @@ export default function EntrepreneursPage() {
             <div className="text-center mb-20">
 
               <h2 className="text-6xl font-extrabold mb-10">
-                Coach-Guided Development
+                {tr("coachGuided.title")}
               </h2>
 
               <p className="text-3xl text-gray-700 leading-relaxed max-w-6xl mx-auto">
@@ -340,17 +339,17 @@ export default function EntrepreneursPage() {
               <div className="bg-white rounded-3xl p-12 shadow-2xl">
 
                 <h3 className="text-4xl font-bold mb-8">
-                  What Coaches Help With
+                  {tr("coachGuided.helpTitle")}
                 </h3>
 
                 <ul className="space-y-6 text-2xl text-gray-700">
-                  <li>✅ Business idea refinement</li>
-                  <li>✅ Interview and readiness preparation</li>
-                  <li>✅ Budget preparation and planning</li>
-                  <li>✅ Business structure readiness</li>
-                  <li>✅ Professional service coordination</li>
-                  <li>✅ Funding readiness preparation</li>
-                  <li>✅ Launch preparation and accountability</li>
+                  <li>✅ {tr("coachGuided.help.idea")}</li>
+                  <li>✅ {tr("coachGuided.help.interview")}</li>
+                  <li>✅ {tr("coachGuided.help.budget")}</li>
+                  <li>✅ {tr("coachGuided.help.structure")}</li>
+                  <li>✅ {tr("coachGuided.help.services")}</li>
+                  <li>✅ {tr("coachGuided.help.funding")}</li>
+                  <li>✅ {tr("coachGuided.help.launch")}</li>
                 </ul>
 
               </div>
@@ -358,7 +357,7 @@ export default function EntrepreneursPage() {
               <div className="bg-white rounded-3xl p-12 shadow-2xl">
 
                 <h3 className="text-4xl font-bold mb-8">
-                  Structured Validation Process
+                  {tr("coachGuided.validationTitle")}
                 </h3>
 
                 <p className="text-2xl text-gray-700 leading-relaxed mb-8">
@@ -391,15 +390,15 @@ export default function EntrepreneursPage() {
             <div className="rounded-3xl border-4 border-green-500 bg-green-50 p-12 shadow-2xl text-center">
 
               <h2 className="text-6xl font-extrabold text-green-900 mb-10">
-                You Remain the Leader
+                {tr("leader.title")}
               </h2>
 
               <div className="space-y-4 text-3xl font-bold text-green-950">
-                <p>You are the owner.</p>
-                <p>You make the decisions.</p>
-                <p>You build the vision.</p>
-                <p>EPEW does not run your business.</p>
-                <p>EPEW provides the ecosystem that helps your business succeed.</p>
+                <p>{tr("leader.owner")}</p>
+                <p>{tr("leader.decisions")}</p>
+                <p>{tr("leader.vision")}</p>
+                <p>{tr("leader.notRun")}</p>
+                <p>{tr("leader.ecosystem")}</p>
               </div>
 
             </div>
@@ -416,14 +415,14 @@ export default function EntrepreneursPage() {
 
             <Image
               src="/images/entrepreneur-journey.png"
-              alt="Entrepreneur Journey"
+              alt={tr("journey.imageAlt")}
               width={1400}
               height={900}
               className="rounded-3xl shadow-2xl mx-auto mb-16"
             />
 
             <h2 className="text-6xl font-extrabold mb-10">
-              Your Entrepreneur Journey
+              {tr("journey.title")}
             </h2>
 
             <p className="text-3xl text-gray-700 leading-relaxed max-w-6xl mx-auto mb-16">
@@ -436,32 +435,32 @@ export default function EntrepreneursPage() {
 
               <JourneyCard
                 number="1"
-                title="Apply"
-                text="Submit your entrepreneur application."
+                title={tr("journey.steps.apply.title")}
+                text={tr("journey.steps.apply.text")}
               />
 
               <JourneyCard
                 number="2"
-                title="Coach"
-                text="Meet your assigned coach."
+                title={tr("journey.steps.coach.title")}
+                text={tr("journey.steps.coach.text")}
               />
 
               <JourneyCard
                 number="3"
-                title="Prepare"
-                text="Develop your business and complete preparation."
+                title={tr("journey.steps.prepare.title")}
+                text={tr("journey.steps.prepare.text")}
               />
 
               <JourneyCard
                 number="4"
-                title="Funding"
-                text="Become funding-ready and enter the queue."
+                title={tr("journey.steps.funding.title")}
+                text={tr("journey.steps.funding.text")}
               />
 
               <JourneyCard
                 number="5"
-                title="Launch"
-                text="Open and begin growing your business."
+                title={tr("journey.steps.launch.title")}
+                text={tr("journey.steps.launch.text")}
               />
 
             </div>
@@ -477,14 +476,14 @@ export default function EntrepreneursPage() {
           <div className="max-w-6xl mx-auto px-8 text-center">
 
             <h2 className="text-6xl font-extrabold mb-12">
-              The Official EPEW Promise
+              {tr("promise.title")}
             </h2>
 
             <div className="space-y-5 text-4xl font-black text-lime-300">
-              <p>You bring the vision.</p>
-              <p>We develop the idea.</p>
-              <p>We provide the ecosystem.</p>
-              <p>We help you get the funding needed to launch your business.</p>
+              <p>{tr("promise.line1")}</p>
+              <p>{tr("promise.line2")}</p>
+              <p>{tr("promise.line3")}</p>
+              <p>{tr("promise.line4")}</p>
             </div>
 
             <p className="mt-12 text-3xl text-blue-100 leading-relaxed">
@@ -504,7 +503,7 @@ export default function EntrepreneursPage() {
           <div className="max-w-7xl mx-auto px-8 text-center">
 
             <h2 className="text-7xl font-extrabold mb-12">
-              Start Your Entrepreneur Journey
+              Start {tr("journey.title")}
             </h2>
 
             <p className="text-3xl text-gray-700 leading-relaxed max-w-5xl mx-auto mb-14">
@@ -517,14 +516,14 @@ export default function EntrepreneursPage() {
                 href="/entrepreneurs/enroll"
                 className="bg-[#06245c] text-white px-14 py-6 rounded-2xl text-2xl font-bold hover:bg-green-600 transition"
               >
-                Apply as an Entrepreneur
+                {tr("cta.applyButton")}
               </Link>
 
               <Link
                 href="/how-it-works"
                 className="border-2 border-[#06245c] text-[#06245c] px-14 py-6 rounded-2xl text-2xl font-bold hover:bg-[#06245c] hover:text-white transition"
               >
-                Learn How EPEW Works
+                {tr("cta.learnButton")}
               </Link>
             </div>
 

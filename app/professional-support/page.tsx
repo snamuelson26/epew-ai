@@ -1,8 +1,55 @@
+"use client";
+
+import { useEffect } from "react";
 import Link from "next/link";
+
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 
+import {
+  useLanguage,
+  useTranslation,
+} from "@/app/components/enterprise/language";
+
+const NAMESPACE = "professional-support";
+
 export default function ProfessionalSupportPage() {
+  const { t } = useTranslation();
+  const { loadNamespaces } = useLanguage();
+
+  useEffect(() => {
+    void loadNamespaces([NAMESPACE]);
+  }, [loadNamespaces]);
+
+  const tr = (key: string) =>
+    t(key, { namespace: NAMESPACE });
+
+  const services = [
+    ["🏢", "formation"],
+    ["💰", "financial"],
+    ["📈", "development"],
+    ["🎨", "branding"],
+    ["📣", "marketing"],
+    ["🎉", "launch"],
+    ["🎥", "media"],
+    ["🤝", "community"],
+  ];
+
+  const coachSteps = [
+    "approval",
+    "coach",
+    "support",
+    "growth",
+  ];
+
+  const modelSteps = [
+    "idea",
+    "develop",
+    "prepare",
+    "ede",
+    "ibos",
+  ];
+
   return (
     <>
       <Navbar />
@@ -11,17 +58,15 @@ export default function ProfessionalSupportPage() {
         <section className="bg-gradient-to-r from-[#06245c] via-[#0b3b91] to-green-700 px-8 py-20 text-white">
           <div className="mx-auto max-w-7xl text-center">
             <p className="text-xl font-black uppercase tracking-widest text-lime-300">
-              EPEW Professional Support Center
+              {tr("hero.eyebrow")}
             </p>
 
             <h1 className="mt-5 text-6xl font-extrabold leading-tight">
-              Professional Support for Every Stage of Business Development
+              {tr("hero.title")}
             </h1>
 
             <p className="mx-auto mt-8 max-w-5xl text-3xl leading-relaxed text-blue-100">
-              Every successful business begins with an idea. EPEW helps
-              entrepreneurs develop that idea into a structured, professional,
-              funded, and sustainable business.
+              {tr("hero.description")}
             </p>
           </div>
         </section>
@@ -29,110 +74,51 @@ export default function ProfessionalSupportPage() {
         <section className="mx-auto max-w-7xl px-8 py-16">
           <div className="rounded-3xl bg-white p-12 shadow-xl">
             <h2 className="text-5xl font-extrabold">
-              Develop Your Idea. Build Your Business. Create Wealth.
+              {tr("intro.title")}
             </h2>
 
             <p className="mt-8 text-3xl leading-relaxed text-gray-700">
-              What makes a successful business is the development of the idea.
-              EPEW assists entrepreneurs by providing structure, professional
-              guidance, coordinated support, and access to resources that help
-              them prepare, launch, and grow their businesses with confidence.
+              {tr("intro.paragraph1")}
             </p>
 
             <p className="mt-8 text-3xl leading-relaxed text-gray-700">
-              Through the Entrepreneur Development Ecosystem, entrepreneurs are
-              connected to the right guidance, tools, people, and services
-              needed to move from vision to business readiness.
+              {tr("intro.paragraph2")}
             </p>
           </div>
         </section>
 
         <section className="mx-auto max-w-7xl px-8 pb-16">
           <div className="grid gap-8 lg:grid-cols-2">
-            <SupportCard
-              icon="🏢"
-              title="Business Formation"
-              text="We help entrepreneurs establish professional businesses correctly from the beginning, providing a strong foundation to build on."
-            />
-
-            <SupportCard
-              icon="💰"
-              title="Financial Services"
-              text="Professional financial support is designed to prepare your business for long-term success and improve readiness for future funding opportunities."
-            />
-
-            <SupportCard
-              icon="📈"
-              title="Business Development"
-              text="Our ecosystem helps entrepreneurs strengthen their ideas, organize their operations, and move from concept to business readiness."
-            />
-
-            <SupportCard
-              icon="🎨"
-              title="Branding & Business Identity"
-              text="A strong business needs a professional identity. EPEW helps entrepreneurs present their business with confidence and credibility."
-            />
-
-            <SupportCard
-              icon="📣"
-              title="Marketing & Community Visibility"
-              text="Entrepreneurs receive support to become visible, connect with their community, and build awareness around their business."
-            />
-
-            <SupportCard
-              icon="🎉"
-              title="Business Launch Support"
-              text="Launching a business is a major milestone. EPEW helps entrepreneurs prepare for a professional opening and public introduction."
-            />
-
-            <SupportCard
-              icon="🎥"
-              title="Media & Digital Presence"
-              text="Entrepreneurs receive support to share their story, present their business online, and build a permanent digital business presence."
-            />
-
-            <SupportCard
-              icon="🤝"
-              title="Community Support"
-              text="EPEW helps entrepreneurs build a community of Founding Supporters who believe in their vision and want to be part of their story."
-            />
+            {services.map(([icon, key]) => (
+              <SupportCard
+                key={key}
+                icon={icon}
+                title={tr(`services.${key}.title`)}
+                text={tr(`services.${key}.text`)}
+              />
+            ))}
           </div>
         </section>
 
         <section className="mx-auto max-w-7xl px-8 pb-16">
           <div className="rounded-3xl bg-white p-12 shadow-xl">
             <h2 className="text-5xl font-extrabold">
-              Your Coach Leads the Way
+              {tr("coach.title")}
             </h2>
 
             <p className="mt-8 text-3xl leading-relaxed text-gray-700">
-              Your assigned coach serves as your primary guide throughout your
-              EPEW journey. After learning about your business goals, your coach
-              introduces you to the appropriate professional support and helps
-              coordinate the services that best fit your needs.
+              {tr("coach.description")}
             </p>
 
             <div className="mt-10 grid gap-6 md:grid-cols-4">
-              <Step
-                number="1"
-                title="Approval"
-                text="You are approved as an EPEW entrepreneur."
-              />
-              <Step
-                number="2"
-                title="Coach"
-                text="A coach guides your next steps."
-              />
-              <Step
-                number="3"
-                title="Support"
-                text="You are introduced to professional support."
-              />
-              <Step
-                number="4"
-                title="Growth"
-                text="Your business develops with structure."
-              />
+              {coachSteps.map((key, index) => (
+                <Step
+                  key={key}
+                  number={String(index + 1)}
+                  title={tr(`coach.steps.${key}.title`)}
+                  text={tr(`coach.steps.${key}.text`)}
+                />
+              ))}
             </div>
           </div>
         </section>
@@ -140,53 +126,37 @@ export default function ProfessionalSupportPage() {
         <section className="mx-auto max-w-7xl px-8 pb-16">
           <div className="rounded-3xl bg-white p-12 shadow-xl">
             <h2 className="text-5xl font-extrabold">
-              The EPEW Development Model
+              {tr("model.title")}
             </h2>
 
             <div className="mt-10 grid gap-6 md:grid-cols-5">
-              <Step
-                number="1"
-                title="Idea"
-                text="The entrepreneur brings the idea."
-              />
-              <Step
-                number="2"
-                title="Develop"
-                text="EPEW develops the idea."
-              />
-              <Step
-                number="3"
-                title="Prepare"
-                text="EPEW prepares the entrepreneur and connects them with funding."
-              />
-              <Step
-                number="4"
-                title="EDE"
-                text="EPEW provides the Entrepreneur Development Ecosystem."
-              />
-              <Step
-                number="5"
-                title="IBOS"
-                text="IBOS coordinates the journey toward readiness and funding."
-              />
+              {modelSteps.map((key, index) => (
+                <Step
+                  key={key}
+                  number={String(index + 1)}
+                  title={tr(`model.steps.${key}.title`)}
+                  text={tr(`model.steps.${key}.text`)}
+                />
+              ))}
             </div>
           </div>
         </section>
 
         <section className="mx-auto max-w-7xl px-8 pb-16">
           <div className="rounded-3xl bg-[#06245c] p-12 text-center text-white shadow-xl">
-            <h2 className="text-5xl font-extrabold">Our Commitment</h2>
+            <h2 className="text-5xl font-extrabold">
+              {tr("commitment.title")}
+            </h2>
 
             <div className="mt-10 space-y-4 text-4xl font-black text-lime-300">
-              <p>You bring the vision.</p>
-              <p>We develop the idea.</p>
-              <p>We provide the ecosystem.</p>
-              <p>We prepare you and connect you with the funding needed.</p>
+              <p>{tr("commitment.line1")}</p>
+              <p>{tr("commitment.line2")}</p>
+              <p>{tr("commitment.line3")}</p>
+              <p>{tr("commitment.line4")}</p>
             </div>
 
             <p className="mx-auto mt-10 max-w-5xl text-2xl leading-relaxed text-blue-100">
-              Together, we build successful businesses, strengthen communities,
-              and create lasting wealth.
+              {tr("commitment.description")}
             </p>
 
             <div className="mt-10 flex flex-col items-center justify-center gap-5 md:flex-row">
@@ -194,14 +164,14 @@ export default function ProfessionalSupportPage() {
                 href="/entrepreneurs"
                 className="rounded-2xl bg-lime-400 px-10 py-5 text-2xl font-black text-[#06245c] hover:bg-lime-300"
               >
-                Become an Entrepreneur
+                {tr("commitment.entrepreneurButton")}
               </Link>
 
               <Link
                 href="/how-it-works"
                 className="rounded-2xl bg-white px-10 py-5 text-2xl font-black text-[#06245c] hover:bg-gray-200"
               >
-                Learn How EPEW Works
+                {tr("commitment.learnButton")}
               </Link>
             </div>
           </div>
@@ -225,8 +195,12 @@ function SupportCard({
   return (
     <div className="rounded-3xl bg-white p-10 shadow-xl">
       <div className="text-6xl">{icon}</div>
-      <h3 className="mt-5 text-3xl font-extrabold text-[#06245c]">{title}</h3>
-      <p className="mt-5 text-2xl leading-relaxed text-gray-700">{text}</p>
+      <h3 className="mt-5 text-3xl font-extrabold text-[#06245c]">
+        {title}
+      </h3>
+      <p className="mt-5 text-2xl leading-relaxed text-gray-700">
+        {text}
+      </p>
     </div>
   );
 }
@@ -245,8 +219,12 @@ function Step({
       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-700 text-2xl font-black text-white">
         {number}
       </div>
-      <h3 className="mt-5 text-2xl font-extrabold text-[#06245c]">{title}</h3>
-      <p className="mt-3 text-lg leading-relaxed text-gray-700">{text}</p>
+      <h3 className="mt-5 text-2xl font-extrabold text-[#06245c]">
+        {title}
+      </h3>
+      <p className="mt-3 text-lg leading-relaxed text-gray-700">
+        {text}
+      </p>
     </div>
   );
 }

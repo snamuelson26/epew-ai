@@ -1,18 +1,90 @@
 {
-  "content": {
-    "1_the_entrepreneur_brings_the_idea": "1. The Entrepreneur Brings the Idea",
-    "2_epew_develops_the_idea": "2. EPEW Develops the Idea",
-    "3_epew_prepares_the_entrepreneur_and_connects_funding": "3. EPEW Prepares the Entrepreneur and Connects Funding",
-    "5_ibos_coordinates_the_journey": "5. IBOS Coordinates the Journey",
-    "successful_entrepreneur": "✅ Successful Entrepreneur",
-    "successful_business": "✅ Successful Business",
-    "new_jobs": "✅ New Jobs",
-    "stronger_families": "✅ Stronger Families",
-    "stronger_communities": "✅ Stronger Communities",
-    "lasting_wealth": "✅ Lasting Wealth"
+  "hero": {
+    "title": "Comment fonctionne EPEW",
+    "subtitle": "Le processus officiel de développement EPEW",
+    "imageAlt": "Comment EPEW aide les entrepreneurs à créer de véritables entreprises"
   },
-  "headings": {
-    "epew_ede_ibos": "EPEW • EDE • IBOS",
-    "one_ecosystem_clear_steps_shared_growth": "One Ecosystem. Clear Steps. Shared Growth."
+  "process": {
+    "steps": {
+      "step1": {
+        "title": "L’entrepreneur apporte l’idée",
+        "description": "Toute entreprise prospère commence par une idée. L’entrepreneur apporte la vision, la passion et la détermination nécessaires pour créer quelque chose de significatif."
+      },
+      "step2": {
+        "title": "EPEW développe l’idée",
+        "description": "EPEW transforme l’idée en une opportunité d’affaires structurée grâce à l’éducation, au coaching, à la planification, à l’accompagnement professionnel et au développement de l’entreprise."
+      },
+      "step3": {
+        "title": "EPEW prépare l’entrepreneur et le met en relation avec le financement",
+        "description": "EPEW prépare l’entrepreneur à la propriété d’entreprise, à l’admissibilité au financement et le met en relation avec les ressources financières nécessaires au lancement et à la croissance."
+      },
+      "step4": {
+        "title": "EPEW fournit l’Écosystème de Développement des Entrepreneurs",
+        "description": "L’EDE réunit les coachs, les équipes professionnelles, les Supporters Fondateurs, les Partenaires Certifiés de Croissance, la technologie et les ressources coordonnées au sein d’un système complet de soutien."
+      },
+      "step5": {
+        "title": "IBOS coordonne le parcours",
+        "description": "IBOS coordonne la préparation, les services professionnels, le développement de l’entreprise, les étapes clés, les communications, les demandes de services, la préparation au financement et la croissance à long terme."
+      }
+    }
+  },
+  "result": {
+    "title": "Le résultat",
+    "successfulEntrepreneur": "✅ Entrepreneur prospère",
+    "successfulBusiness": "✅ Entreprise prospère",
+    "newJobs": "✅ Nouveaux emplois",
+    "strongerFamilies": "✅ Familles plus fortes",
+    "strongerCommunities": "✅ Communautés plus fortes",
+    "lastingWealth": "✅ Richesse durable"
+  },
+  "developmentModel": {
+    "title": "Le modèle de développement EPEW",
+    "description": "Le modèle de développement ci-dessous montre comment EPEW transforme l’idée d’un entrepreneur en une entreprise prospère grâce à la préparation, au soutien coordonné, aux services professionnels, à l’Écosystème de Développement des Entrepreneurs et à IBOS.",
+    "steps": {
+      "step1": {
+        "title": "L’entrepreneur apporte l’idée",
+        "description": "Toute entreprise prospère commence par une idée. L’entrepreneur apporte la vision, la passion et la détermination."
+      },
+      "step2": {
+        "title": "EPEW développe l’idée",
+        "description": "EPEW transforme l’idée en une opportunité d’affaires structurée grâce au coaching, à la planification et à l’accompagnement professionnel."
+      },
+      "step3": {
+        "title": "EPEW prépare l’entrepreneur",
+        "description": "EPEW prépare l’entrepreneur à la propriété d’entreprise, au financement et à la croissance à long terme."
+      },
+      "step4": {
+        "title": "EPEW fournit l’écosystème",
+        "description": "EPEW fournit l’Écosystème de Développement des Entrepreneurs avec des coachs, du soutien professionnel, des supporters et des partenaires."
+      },
+      "step5": {
+        "title": "IBOS coordonne le parcours",
+        "description": "IBOS coordonne la préparation, les services, les étapes clés, les communications, la préparation au financement et la croissance de l’entreprise."
+      }
+    }
+  },
+  "systems": {
+    "title": "EPEW • EDE • IBOS",
+    "epew": {
+      "title": "EPEW",
+      "subtitle": "L’organisation",
+      "text": "EPEW établit la mission entrepreneuriale, les normes, les programmes, la participation communautaire et la gouvernance qui orientent le parcours de l’entrepreneur."
+    },
+    "ede": {
+      "title": "EDE",
+      "subtitle": "L’écosystème",
+      "text": "L’Enterprise Development Environment réunit les coachs, partenaires, fournisseurs, supporters, services professionnels et ressources nécessaires au développement de l’entreprise."
+    },
+    "ibos": {
+      "title": "IBOS",
+      "subtitle": "Le système d’exploitation",
+      "text": "IBOS coordonne le parcours opérationnel de l’entrepreneur, les flux de travail, les étapes clés, les communications, les services, la préparation au financement et le développement à long terme."
+    }
+  },
+  "cta": {
+    "title": "Un seul écosystème. Des étapes claires. Une croissance partagée.",
+    "description": "EPEW aide les entrepreneurs à passer de l’idée à la structure, de la préparation à l’admissibilité au financement, puis du lancement de l’entreprise à la croissance à long terme.",
+    "entrepreneurButton": "Devenir entrepreneur",
+    "supporterButton": "Devenir supporter"
   }
 }

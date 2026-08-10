@@ -1,20 +1,157 @@
 {
-  "content": {
-    "business_idea_refinement": "✅ Business idea refinement",
-    "interview_and_readiness_preparation": "✅ Interview and readiness preparation",
-    "budget_preparation_and_planning": "✅ Budget preparation and planning",
-    "business_structure_readiness": "✅ Business structure readiness",
-    "professional_service_coordination": "✅ Professional service coordination",
-    "funding_readiness_preparation": "✅ Funding readiness preparation",
-    "launch_preparation_and_accountability": "✅ Launch preparation and accountability",
-    "you_are_the_owner": "You are the owner.",
-    "you_make_the_decisions": "You make the decisions.",
-    "you_build_the_vision": "You build the vision.",
-    "epew_does_not_run_your_business": "EPEW does not run your business.",
-    "epew_provides_the_ecosystem_that_helps_your_business": "EPEW provides the ecosystem that helps your business succeed.",
-    "you_bring_the_vision": "You bring the vision.",
-    "we_develop_the_idea": "We develop the idea.",
-    "we_provide_the_ecosystem": "We provide the ecosystem.",
-    "we_help_you_get_the_funding_needed_to": "We help you get the funding needed to launch your business."
+  "hero": {
+    "imageAlt": "Become an Entrepreneur",
+    "title": "Build Your Business Through EPEW",
+    "description": "Every successful business begins with an idea. EPEW develops entrepreneurs through a coordinated Entrepreneur Development Ecosystem that transforms ideas into successful businesses.",
+    "entrepreneurButton": "Become an Entrepreneur",
+    "videoButton": "Watch Introduction Video"
+  },
+  "dream": {
+    "title": "Every Great Business Begins With One Idea",
+    "paragraph1": "Your idea has the potential to transform your future, create jobs, strengthen your family, and improve your community.",
+    "paragraph2": "At EPEW, we believe entrepreneurs are developed—not simply funded. Through preparation, professional guidance, coordinated support, and the Entrepreneur Development Ecosystem, ideas become successful businesses.",
+    "imageAlt": "Entrepreneur Dream"
+  },
+  "funding": {
+    "imageAlt": "Funding Opportunity",
+    "title": "Preparation Comes Before Funding",
+    "description": "EPEW prepares entrepreneurs first. When entrepreneurs become business-ready, EPEW connects them with the funding needed to launch and grow successful businesses."
+  },
+  "developmentModel": {
+    "title": "The Official EPEW Entrepreneur Development Model",
+    "description": "EPEW follows a structured entrepreneur development model that prepares entrepreneurs, coordinates professional support, connects funding, and strengthens businesses through the Entrepreneur Development Ecosystem.",
+    "steps": {
+      "step1": {
+        "title": "The Entrepreneur Brings the Idea",
+        "text": "Every successful business begins with an idea. The entrepreneur brings the vision, passion, determination, and commitment to build something meaningful."
+      },
+      "step2": {
+        "title": "EPEW Develops the Idea",
+        "text": "EPEW transforms the idea into a structured business opportunity through education, coaching, planning, professional guidance, and business development."
+      },
+      "step3": {
+        "title": "EPEW Prepares the Entrepreneur",
+        "text": "Entrepreneurs receive the preparation, knowledge, coaching, and guidance needed to become business-ready and funding-ready."
+      },
+      "step4": {
+        "title": "EPEW Connects the Entrepreneur with Funding",
+        "text": "Once entrepreneurs are prepared, EPEW connects them with the funding needed to launch and grow their businesses."
+      },
+      "step5": {
+        "title": "EPEW Provides the Entrepreneur Development Ecosystem (EDE)",
+        "text": "The Entrepreneur Development Ecosystem brings together coaches, professional teams, Founding Supporters, Certified Growth Partners, intelligent technology, and coordinated resources into one complete support system."
+      },
+      "step6": {
+        "title": "EPEW Helps You Open Your Business",
+        "text": "EPEW coordinates the professional services, launch preparation, business opening, promotion, and grand opening so entrepreneurs begin operations with confidence."
+      },
+      "step7": {
+        "title": "IBOS Coordinates the Journey",
+        "text": "The Intelligent Business Operating System coordinates every stage of entrepreneur development by managing workflows, communications, service requests, milestones, progress tracking, business readiness, funding readiness, and long-term business operations."
+      },
+      "step8": {
+        "title": "EPEW Helps Strengthen Your Business",
+        "text": "Entrepreneurship does not end at opening day. EPEW continues supporting entrepreneurs through coaching, professional services, quarterly reporting, promotion, intelligent technology, and long-term business growth."
+      }
+    }
+  },
+  "ecosystem": {
+    "imageAlt": "Entrepreneur Development Ecosystem",
+    "title": "You Are Supported by a Complete Ecosystem",
+    "paragraph1": "From the moment you are approved, you become part of a coordinated Entrepreneur Development Ecosystem dedicated to helping your business succeed.",
+    "paragraph2": "The ecosystem brings together coaching, professional support, Founding Supporters, Certified Growth Partners, digital tools, funding readiness, and long-term business growth.",
+    "features": {
+      "coach": {
+        "title": "Dedicated Coach",
+        "text": "Your coach guides your development journey and helps coordinate the support you need."
+      },
+      "teams": {
+        "title": "Professional Teams",
+        "text": "Professional teams support business formation, branding, promotion, planning, and launch preparation."
+      },
+      "digital": {
+        "title": "Digital Business Presence",
+        "text": "Every approved entrepreneur receives a permanent public Business Welcome Page."
+      },
+      "supporters": {
+        "title": "Founding Supporters",
+        "text": "Build a community of people who believe in your vision and want to support your business story."
+      },
+      "partners": {
+        "title": "Certified Growth Partners",
+        "text": "Access specialized expertise through partners that strengthen your business development."
+      },
+      "ibos": {
+        "title": "IBOS Coordination",
+        "text": "IBOS coordinates workflows, milestones, service requests, communications, and funding readiness."
+      }
+    }
+  },
+  "coachGuided": {
+    "imageAlt": "Coach Guided System",
+    "title": "Coach-Guided Development",
+    "description": "Your assigned coach serves as your primary guide throughout your entrepreneur journey. The coach helps you prepare, organize, understand expectations, and connect with the support needed to move forward.",
+    "helpTitle": "What Coaches Help With",
+    "help": {
+      "idea": "Business idea refinement",
+      "interview": "Interview and readiness preparation",
+      "budget": "Budget preparation and planning",
+      "structure": "Business structure readiness",
+      "services": "Professional service coordination",
+      "funding": "Funding readiness preparation",
+      "launch": "Launch preparation and accountability"
+    },
+    "validationTitle": "Structured Validation Process",
+    "validationDescription": "Every entrepreneur follows a structured preparation and validation process before entering the funding queue. This helps ensure business readiness, accountability, and long-term success.",
+    "validationRule": "No entrepreneur enters the funding process without completing the EPEW preparation journey."
+  },
+  "leader": {
+    "title": "You Remain the Leader",
+    "owner": "You are the owner.",
+    "decisions": "You make the decisions.",
+    "vision": "You build the vision.",
+    "notRun": "EPEW does not run your business.",
+    "ecosystem": "EPEW provides the ecosystem that helps your business succeed."
+  },
+  "journey": {
+    "imageAlt": "Entrepreneur Journey",
+    "title": "Your Entrepreneur Journey",
+    "description": "EPEW helps entrepreneurs move from idea to preparation, from preparation to funding readiness, and from launch to long-term growth.",
+    "steps": {
+      "apply": {
+        "title": "Apply",
+        "text": "Submit your entrepreneur application."
+      },
+      "coach": {
+        "title": "Coach",
+        "text": "Meet your assigned coach."
+      },
+      "prepare": {
+        "title": "Prepare",
+        "text": "Develop your business and complete preparation."
+      },
+      "funding": {
+        "title": "Funding",
+        "text": "Become funding-ready and enter the queue."
+      },
+      "launch": {
+        "title": "Launch",
+        "text": "Open and begin growing your business."
+      }
+    }
+  },
+  "promise": {
+    "title": "The Official EPEW Promise",
+    "line1": "You bring the vision.",
+    "line2": "We develop the idea.",
+    "line3": "We provide the ecosystem.",
+    "line4": "We help you get the funding needed to launch your business.",
+    "description": "Together, we build successful businesses, strengthen communities, and create lasting wealth."
+  },
+  "cta": {
+    "title": "Start Your Entrepreneur Journey",
+    "description": "Your business idea is the beginning. EPEW provides the ecosystem to help transform it into a successful business.",
+    "applyButton": "Apply as an Entrepreneur",
+    "learnButton": "Learn How EPEW Works"
   }
 }

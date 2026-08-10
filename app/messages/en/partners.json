@@ -1,0 +1,69 @@
+{
+  "hero": {
+    "imageAlt": "EPEW Certified Growth Partners",
+    "eyebrow": "EPEW Certified Growth Partners",
+    "title": "Certified Growth Partners Supporting Entrepreneur Success",
+    "description": "EPEW works with professional partners who help entrepreneurs develop, prepare, launch, promote, and grow successful businesses."
+  },
+  "ecosystem": {
+    "title": "Entrepreneurs Are Supported by a Professional Ecosystem",
+    "paragraph1": "From the moment an entrepreneur is approved, EPEW connects them to a coordinated support system. Certified Growth Partners help provide the guidance, services, preparation, and visibility needed to build a real business.",
+    "paragraph2": "After the coach introduces the entrepreneur to the appropriate professional support, the entrepreneur gains access to service requests through the EPEW Professional Service Center."
+  },
+  "areas": {
+    "formation": {
+      "title": "Business Formation Partners",
+      "text": "Help entrepreneurs establish professional business structures correctly from the beginning."
+    },
+    "financial": {
+      "title": "Financial & Compliance Partners",
+      "text": "Support entrepreneurs with financial readiness, compliance preparation, accounting, payroll, and tax-related organization."
+    },
+    "development": {
+      "title": "Business Development Partners",
+      "text": "Assist entrepreneurs with planning, organization, readiness, business consulting, and operational development."
+    },
+    "branding": {
+      "title": "Branding & Design Partners",
+      "text": "Help entrepreneurs create a professional business image, including logo, business cards, flyers, brochures, banners, and promotional materials."
+    },
+    "promotion": {
+      "title": "Promotion & Media Partners",
+      "text": "Help entrepreneurs gain visibility through business promotion, media coverage, social media, community exposure, and launch communication."
+    },
+    "launch": {
+      "title": "Launch & Event Partners",
+      "text": "Support grand opening planning, event setup, business launch activities, community events, and public introduction."
+    }
+  },
+  "service": {
+    "title": "How Partners Serve Entrepreneurs",
+    "steps": {
+      "review": {
+        "title": "Coach Review",
+        "text": "The coach identifies the entrepreneur’s needs."
+      },
+      "introduction": {
+        "title": "Partner Introduction",
+        "text": "EPEW introduces the right professional support."
+      },
+      "request": {
+        "title": "Service Request",
+        "text": "The entrepreneur requests the service through the platform."
+      },
+      "delivery": {
+        "title": "Service Delivery",
+        "text": "The partner completes the service with progress updates."
+      }
+    }
+  },
+  "strength": {
+    "title": "Partners Strengthen the Ecosystem",
+    "description": "Certified Growth Partners help transform ideas into prepared, professional, visible, and sustainable businesses.",
+    "line1": "The entrepreneur brings the vision.",
+    "line2": "EPEW provides the ecosystem.",
+    "line3": "Partners help strengthen the business.",
+    "supportButton": "View Professional Support",
+    "partnerButton": "Become a Partner"
+  }
+}

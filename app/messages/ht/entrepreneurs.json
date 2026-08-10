@@ -1,20 +1,157 @@
 {
-  "content": {
-    "business_idea_refinement": "✅ Business idea refinement",
-    "interview_and_readiness_preparation": "✅ Interview and readiness preparation",
-    "budget_preparation_and_planning": "✅ Budget preparation and planning",
-    "business_structure_readiness": "✅ Business structure readiness",
-    "professional_service_coordination": "✅ Professional service coordination",
-    "funding_readiness_preparation": "✅ Funding readiness preparation",
-    "launch_preparation_and_accountability": "✅ Launch preparation and accountability",
-    "you_are_the_owner": "You are the owner.",
-    "you_make_the_decisions": "You make the decisions.",
-    "you_build_the_vision": "You build the vision.",
-    "epew_does_not_run_your_business": "EPEW does not run your business.",
-    "epew_provides_the_ecosystem_that_helps_your_business": "EPEW provides the ecosystem that helps your business succeed.",
-    "you_bring_the_vision": "You bring the vision.",
-    "we_develop_the_idea": "We develop the idea.",
-    "we_provide_the_ecosystem": "We provide the ecosystem.",
-    "we_help_you_get_the_funding_needed_to": "We help you get the funding needed to launch your business."
+  "hero": {
+    "imageAlt": "Vin yon Antreprenè",
+    "title": "Bati Biznis Ou avèk EPEW",
+    "description": "Chak biznis ki reyisi kòmanse ak yon lide. EPEW devlope antreprenè yo atravè yon Ekosistèm Devlopman Antreprenè ki kowòdone pou transfòme lide yo an biznis ki reyisi.",
+    "entrepreneurButton": "Vin yon Antreprenè",
+    "videoButton": "Gade Videyo Entwodiksyon an"
+  },
+  "dream": {
+    "title": "Chak Gwo Biznis Kòmanse ak Yon Lide",
+    "paragraph1": "Lide ou kapab transfòme avni ou, kreye travay, ranfòse fanmi ou epi amelyore kominote ou.",
+    "paragraph2": "Nan EPEW, nou kwè yo devlope antreprenè yo, yo pa sèlman finanse yo. Atravè preparasyon, konsèy pwofesyonèl, sipò kowòdone ak Ekosistèm Devlopman Antreprenè a, lide yo tounen biznis ki reyisi.",
+    "imageAlt": "Rèv Antreprenè"
+  },
+  "funding": {
+    "imageAlt": "Opòtinite Finansman",
+    "title": "Preparasyon Vini Anvan Finansman",
+    "description": "EPEW prepare antreprenè yo an premye. Lè yo pare pou biznis, EPEW konekte yo ak finansman yo bezwen pou lanse epi fè biznis yo grandi avèk siksè."
+  },
+  "developmentModel": {
+    "title": "Modèl Ofisyèl Devlopman Antreprenè EPEW",
+    "description": "EPEW suiv yon modèl devlopman antreprenè ki estriktire pou prepare antreprenè yo, kowòdone sipò pwofesyonèl, konekte yo ak finansman epi ranfòse biznis yo atravè Ekosistèm Devlopman Antreprenè a.",
+    "steps": {
+      "step1": {
+        "title": "Antreprenè a Pote Lide a",
+        "text": "Chak biznis ki reyisi kòmanse ak yon lide. Antreprenè a pote vizyon, pasyon, detèminasyon ak angajman pou bati yon bagay ki gen sans."
+      },
+      "step2": {
+        "title": "EPEW Devlope Lide a",
+        "text": "EPEW transfòme lide a an yon opòtinite biznis ki estriktire atravè edikasyon, coaching, planifikasyon, konsèy pwofesyonèl ak devlopman biznis."
+      },
+      "step3": {
+        "title": "EPEW Prepare Antreprenè a",
+        "text": "Antreprenè yo resevwa preparasyon, konesans, coaching ak konsèy yo bezwen pou yo pare pou biznis epi pare pou finansman."
+      },
+      "step4": {
+        "title": "EPEW Konekte Antreprenè a ak Finansman",
+        "text": "Lè antreprenè yo fin prepare, EPEW konekte yo ak finansman yo bezwen pou lanse epi devlope biznis yo."
+      },
+      "step5": {
+        "title": "EPEW Bay Ekosistèm Devlopman Antreprenè a (EDE)",
+        "text": "Ekosistèm Devlopman Antreprenè a rasanble coaches, ekip pwofesyonèl, Sipòtè Fondatè, Patnè Kwasans Sètifye, teknoloji entèlijan ak resous kowòdone nan yon sistèm sipò konplè."
+      },
+      "step6": {
+        "title": "EPEW Ede Ou Louvri Biznis Ou",
+        "text": "EPEW kowòdone sèvis pwofesyonèl, preparasyon pou lansman, ouvèti biznis, pwomosyon ak gran ouvèti pou antreprenè yo kapab kòmanse operasyon yo avèk konfyans."
+      },
+      "step7": {
+        "title": "IBOS Kowòdone Pakou a",
+        "text": "Sistèm Entèlijan Operasyon Biznis la kowòdone chak etap devlopman antreprenè a lè li jere workflows, kominikasyon, demann sèvis, etap enpòtan, swivi pwogrè, preparasyon biznis, preparasyon finansman ak operasyon biznis alontèm."
+      },
+      "step8": {
+        "title": "EPEW Ede Ranfòse Biznis Ou",
+        "text": "Antreprenarya pa fini jou biznis la louvri. EPEW kontinye sipòte antreprenè yo atravè coaching, sèvis pwofesyonèl, rapò chak trimès, pwomosyon, teknoloji entèlijan ak kwasans biznis alontèm."
+      }
+    }
+  },
+  "ecosystem": {
+    "imageAlt": "Ekosistèm Devlopman Antreprenè",
+    "title": "Yon Ekosistèm Konplè Sipòte Ou",
+    "paragraph1": "Depi yo apwouve ou, ou vin fè pati yon Ekosistèm Devlopman Antreprenè ki kowòdone epi ki dedye pou ede biznis ou reyisi.",
+    "paragraph2": "Ekosistèm nan rasanble coaching, sipò pwofesyonèl, Sipòtè Fondatè, Patnè Kwasans Sètifye, zouti dijital, preparasyon finansman ak kwasans biznis alontèm.",
+    "features": {
+      "coach": {
+        "title": "Coach Dedye",
+        "text": "Coach ou gide pakou devlopman ou epi ede kowòdone sipò ou bezwen."
+      },
+      "teams": {
+        "title": "Ekip Pwofesyonèl",
+        "text": "Ekip pwofesyonèl yo sipòte kreyasyon biznis, mak, pwomosyon, planifikasyon ak preparasyon pou lansman."
+      },
+      "digital": {
+        "title": "Prezans Dijital Biznis",
+        "text": "Chak antreprenè yo apwouve resevwa yon paj piblik pèmanan pou prezante biznis li."
+      },
+      "supporters": {
+        "title": "Sipòtè Fondatè",
+        "text": "Bati yon kominote moun ki kwè nan vizyon ou epi ki vle sipòte istwa biznis ou."
+      },
+      "partners": {
+        "title": "Patnè Kwasans Sètifye",
+        "text": "Jwenn aksè ak ekspètiz espesyalize atravè patnè ki ranfòse devlopman biznis ou."
+      },
+      "ibos": {
+        "title": "Kowòdinasyon IBOS",
+        "text": "IBOS kowòdone workflows, etap enpòtan, demann sèvis, kominikasyon ak preparasyon finansman."
+      }
+    }
+  },
+  "coachGuided": {
+    "imageAlt": "Sistèm Coach la Gide",
+    "title": "Devlopman Coach la Gide",
+    "description": "Coach yo asiyen ou a sèvi kòm gid prensipal ou pandan tout pakou antreprenè ou. Coach la ede ou prepare, òganize, konprann sa yo atann de ou epi konekte ak sipò ou bezwen pou avanse.",
+    "helpTitle": "Sa Coaches yo Ede Ou Fè",
+    "help": {
+      "idea": "Rafine lide biznis la",
+      "interview": "Preparasyon pou entèvyou ak evalyasyon preparasyon",
+      "budget": "Preparasyon ak planifikasyon bidjè",
+      "structure": "Preparasyon estrikti biznis",
+      "services": "Kowòdinasyon sèvis pwofesyonèl",
+      "funding": "Preparasyon pou finansman",
+      "launch": "Preparasyon pou lansman ak responsabilite"
+    },
+    "validationTitle": "Pwosesis Validasyon Estriktire",
+    "validationDescription": "Chak antreprenè suiv yon pwosesis preparasyon ak validasyon ki estriktire anvan li antre nan liy finansman an. Sa ede asire preparasyon biznis, responsabilite ak siksè alontèm.",
+    "validationRule": "Okenn antreprenè pa antre nan pwosesis finansman an san li pa fin konplete pakou preparasyon EPEW la."
+  },
+  "leader": {
+    "title": "Ou Rete Lidè a",
+    "owner": "Se ou ki pwopriyetè a.",
+    "decisions": "Se ou ki pran desizyon yo.",
+    "vision": "Se ou ki bati vizyon an.",
+    "notRun": "EPEW pa dirije biznis ou.",
+    "ecosystem": "EPEW bay ekosistèm ki ede biznis ou reyisi."
+  },
+  "journey": {
+    "imageAlt": "Pakou Antreprenè",
+    "title": "Pakou Antreprenè Ou",
+    "description": "EPEW ede antreprenè yo pase soti nan lide pou rive nan preparasyon, soti nan preparasyon pou rive nan preparasyon finansman, epi soti nan lansman pou rive nan kwasans alontèm.",
+    "steps": {
+      "apply": {
+        "title": "Aplike",
+        "text": "Soumèt aplikasyon antreprenè ou."
+      },
+      "coach": {
+        "title": "Coach",
+        "text": "Rankontre coach yo asiyen ou a."
+      },
+      "prepare": {
+        "title": "Prepare",
+        "text": "Devlope biznis ou epi konplete preparasyon an."
+      },
+      "funding": {
+        "title": "Finansman",
+        "text": "Vin pare pou finansman epi antre nan liy lan."
+      },
+      "launch": {
+        "title": "Lanse",
+        "text": "Louvri epi kòmanse fè biznis ou grandi."
+      }
+    }
+  },
+  "promise": {
+    "title": "Pwomès Ofisyèl EPEW",
+    "line1": "Ou pote vizyon an.",
+    "line2": "Nou devlope lide a.",
+    "line3": "Nou bay ekosistèm nan.",
+    "line4": "Nou ede ou jwenn finansman ou bezwen pou lanse biznis ou.",
+    "description": "Ansanm, nou bati biznis ki reyisi, ranfòse kominote yo epi kreye richès dirab."
+  },
+  "cta": {
+    "title": "Kòmanse Pakou Antreprenè Ou",
+    "description": "Lide biznis ou se kòmansman an. EPEW bay ekosistèm ki ede transfòme li an yon biznis ki reyisi.",
+    "applyButton": "Aplike kòm Antreprenè",
+    "learnButton": "Aprann Kijan EPEW Fonksyone"
   }
 }

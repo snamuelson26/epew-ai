@@ -1,25 +1,66 @@
 {
-  "headings": {
-    "learn_prepare_grow": "Learn. Prepare. Grow.",
-    "why_the_video_library": "Why the Video Library?"
+  "hero": {
+    "imageAlt": "Bibliothèque vidéo EPEW",
+    "title": "Apprendre. Se préparer. Grandir.",
+    "description": "La Bibliothèque Vidéo EPEW propose une formation pratique, des conseils d’experts, des témoignages d’entrepreneurs et des formations étape par étape pour vous aider à bâtir une entreprise prospère.",
+    "watchFeatured": "Regarder les vidéos vedettes",
+    "becomeEntrepreneur": "Devenir Entrepreneur"
   },
-  "attributes": {
-    "title": {
-      "coaching_mentorship": "Coaching & Mentorship",
-      "marketing_promotion": "Marketing & Promotion",
-      "business_launch_growth": "Business Launch & Growth"
+  "why": {
+    "title": "Pourquoi la Bibliothèque Vidéo ?",
+    "description": "Chez EPEW, l’éducation vient avant le financement. Notre bibliothèque vidéo aide les entrepreneurs, les supporters, les coaches et les partenaires à comprendre l’écosystème, à se préparer de manière responsable et à grandir avec confiance."
+  },
+  "categories": {
+    "title": "Catégories de vidéos",
+    "entrepreneurFundamentals": "Fondamentaux de l’entrepreneuriat",
+    "businessDevelopment": "Développement d’entreprise",
+    "coachingMentorship": "Coaching et mentorat",
+    "fundingReadiness": "Préparation au financement",
+    "marketingPromotion": "Marketing et promotion",
+    "businessOperations": "Opérations d’entreprise",
+    "financialManagement": "Gestion financière",
+    "successStories": "Histoires de réussite"
+  },
+  "featured": {
+    "title": "Vidéos vedettes",
+    "comingSoon": "🚧 Bientôt disponible",
+    "comingSoonDescription": "Nos premières vidéos de formation et de présentation EPEW sont actuellement en production et seront bientôt disponibles.",
+    "welcome": {
+      "title": "Bienvenue à EPEW",
+      "description": "Une introduction à la mission EPEW, à son écosystème et au parcours de l’entrepreneur."
     },
-    "description": {
-      "an_introduction_to_the_epew_mission_ecosystem_and": "An introduction to the EPEW mission, ecosystem, and entrepreneur journey.",
-      "learn_how_epew_helps_entrepreneurs_develop_ideas_into": "Learn how EPEW helps entrepreneurs develop ideas into business opportunities.",
-      "understand_how_supporters_become_the_foundation_and_engine": "Understand how supporters become the foundation and engine of the ecosystem.",
-      "see_how_epew_coaches_guide_entrepreneurs_through_preparation": "See how EPEW coaches guide entrepreneurs through preparation and growth.",
-      "learn_why_preparation_comes_before_funding_inside_the": "Learn why preparation comes before funding inside the EPEW model.",
-      "explore_how_entrepreneurs_launch_report_and_strengthen_their": "Explore how entrepreneurs launch, report, and strengthen their businesses."
-    }
+    "ideaToBusiness": {
+      "title": "De l’idée à l’entreprise",
+      "description": "Découvrez comment EPEW aide les entrepreneurs à transformer leurs idées en opportunités d’affaires."
+    },
+    "supporters": {
+      "title": "Comment les Supporters contribuent",
+      "description": "Comprenez comment les supporters deviennent la fondation et le moteur de l’écosystème."
+    },
+    "coaching": {
+      "title": "Développement guidé par un Coach",
+      "description": "Découvrez comment les coaches EPEW accompagnent les entrepreneurs dans leur préparation et leur croissance."
+    },
+    "funding": {
+      "title": "Préparation au financement",
+      "description": "Découvrez pourquoi la préparation vient avant le financement dans le modèle EPEW."
+    },
+    "launch": {
+      "title": "Lancement et croissance de l’entreprise",
+      "description": "Découvrez comment les entrepreneurs lancent, rendent compte et renforcent leurs entreprises."
+    },
+    "duration": "Bientôt disponible"
   },
-  "content": {
-    "coming_soon": "🚧 Coming Soon",
-    "our_first_epew_training_and_introduction_videos_are": "Our first EPEW training and introduction videos are currently in production and will be available soon."
+  "journey": {
+    "title": "Le parcours d’apprentissage EPEW",
+    "startHere": "Commencez ici",
+    "learnEcosystem": "Comprendre l’écosystème",
+    "developBusiness": "Développez votre entreprise",
+    "prepareGrowth": "Préparez-vous à la croissance"
+  },
+  "cta": {
+    "title": "Commencez à apprendre dès aujourd’hui",
+    "description": "La connaissance est la fondation de tout entrepreneur qui réussit. Continuez à apprendre. Continuez à vous préparer. Continuez à bâtir votre avenir.",
+    "button": "Commencer votre parcours entrepreneurial"
   }
 }

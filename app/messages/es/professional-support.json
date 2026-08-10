@@ -1,0 +1,103 @@
+{
+  "hero": {
+    "eyebrow": "Centro de Apoyo Profesional de EPEW",
+    "title": "Apoyo profesional para cada etapa del desarrollo empresarial",
+    "description": "Todo negocio exitoso comienza con una idea. EPEW ayuda a los emprendedores a convertir esa idea en un negocio estructurado, profesional, financiado y sostenible."
+  },
+  "intro": {
+    "title": "Desarrolla tu idea. Construye tu negocio. Crea riqueza.",
+    "paragraph1": "El éxito de un negocio depende del desarrollo de la idea. EPEW ayuda a los emprendedores proporcionando estructura, orientación profesional, apoyo coordinado y acceso a recursos que les permiten preparar, lanzar y desarrollar sus negocios con confianza.",
+    "paragraph2": "A través del Ecosistema de Desarrollo de Emprendedores, los emprendedores se conectan con la orientación, las herramientas, las personas y los servicios adecuados para pasar de la visión a la preparación empresarial."
+  },
+  "services": {
+    "formation": {
+      "title": "Formación de empresas",
+      "text": "Ayudamos a los emprendedores a establecer correctamente negocios profesionales desde el principio, creando una base sólida para crecer."
+    },
+    "financial": {
+      "title": "Servicios financieros",
+      "text": "El apoyo financiero profesional prepara su negocio para el éxito a largo plazo y mejora su preparación para futuras oportunidades de financiamiento."
+    },
+    "development": {
+      "title": "Desarrollo empresarial",
+      "text": "Nuestro ecosistema ayuda a los emprendedores a fortalecer sus ideas, organizar sus operaciones y pasar del concepto a la preparación empresarial."
+    },
+    "branding": {
+      "title": "Marca e identidad empresarial",
+      "text": "Un negocio sólido necesita una identidad profesional. EPEW ayuda a los emprendedores a presentar su negocio con confianza y credibilidad."
+    },
+    "marketing": {
+      "title": "Marketing y visibilidad comunitaria",
+      "text": "Los emprendedores reciben apoyo para ganar visibilidad, conectarse con su comunidad y aumentar el conocimiento de su negocio."
+    },
+    "launch": {
+      "title": "Apoyo para el lanzamiento del negocio",
+      "text": "Lanzar un negocio es un gran paso. EPEW ayuda a los emprendedores a prepararse para una apertura profesional y una presentación pública."
+    },
+    "media": {
+      "title": "Medios y presencia digital",
+      "text": "Los emprendedores reciben apoyo para compartir su historia, presentar su negocio en línea y construir una presencia digital permanente."
+    },
+    "community": {
+      "title": "Apoyo comunitario",
+      "text": "EPEW ayuda a los emprendedores a crear una comunidad de Supporters Fundadores que creen en su visión y desean formar parte de su historia."
+    }
+  },
+  "coach": {
+    "title": "Tu coach guía el camino",
+    "description": "Tu coach asignado actúa como tu guía principal durante todo tu recorrido en EPEW. Después de conocer tus objetivos empresariales, te conecta con el apoyo profesional adecuado y ayuda a coordinar los servicios que mejor se adaptan a tus necesidades.",
+    "steps": {
+      "approval": {
+        "title": "Aprobación",
+        "text": "Eres aprobado como emprendedor de EPEW."
+      },
+      "coach": {
+        "title": "Coach",
+        "text": "Un coach guía tus próximos pasos."
+      },
+      "support": {
+        "title": "Apoyo",
+        "text": "Se te conecta con apoyo profesional."
+      },
+      "growth": {
+        "title": "Crecimiento",
+        "text": "Tu negocio se desarrolla con estructura."
+      }
+    }
+  },
+  "model": {
+    "title": "El modelo de desarrollo de EPEW",
+    "steps": {
+      "idea": {
+        "title": "Idea",
+        "text": "El emprendedor aporta la idea."
+      },
+      "develop": {
+        "title": "Desarrollar",
+        "text": "EPEW desarrolla la idea."
+      },
+      "prepare": {
+        "title": "Preparar",
+        "text": "EPEW prepara al emprendedor y lo conecta con financiamiento."
+      },
+      "ede": {
+        "title": "EDE",
+        "text": "EPEW proporciona el Ecosistema de Desarrollo de Emprendedores."
+      },
+      "ibos": {
+        "title": "IBOS",
+        "text": "IBOS coordina el recorrido hacia la preparación y el financiamiento."
+      }
+    }
+  },
+  "commitment": {
+    "title": "Nuestro compromiso",
+    "line1": "Tú aportas la visión.",
+    "line2": "Nosotros desarrollamos la idea.",
+    "line3": "Nosotros proporcionamos el ecosistema.",
+    "line4": "Te preparamos y te conectamos con el financiamiento necesario.",
+    "description": "Juntos construimos negocios exitosos, fortalecemos comunidades y creamos riqueza duradera.",
+    "entrepreneurButton": "Convertirse en emprendedor",
+    "learnButton": "Aprender cómo funciona EPEW"
+  }
+}

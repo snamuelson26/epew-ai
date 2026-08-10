@@ -1,20 +1,157 @@
 {
-  "content": {
-    "business_idea_refinement": "✅ Business idea refinement",
-    "interview_and_readiness_preparation": "✅ Interview and readiness preparation",
-    "budget_preparation_and_planning": "✅ Budget preparation and planning",
-    "business_structure_readiness": "✅ Business structure readiness",
-    "professional_service_coordination": "✅ Professional service coordination",
-    "funding_readiness_preparation": "✅ Funding readiness preparation",
-    "launch_preparation_and_accountability": "✅ Launch preparation and accountability",
-    "you_are_the_owner": "You are the owner.",
-    "you_make_the_decisions": "You make the decisions.",
-    "you_build_the_vision": "You build the vision.",
-    "epew_does_not_run_your_business": "EPEW does not run your business.",
-    "epew_provides_the_ecosystem_that_helps_your_business": "EPEW provides the ecosystem that helps your business succeed.",
-    "you_bring_the_vision": "You bring the vision.",
-    "we_develop_the_idea": "We develop the idea.",
-    "we_provide_the_ecosystem": "We provide the ecosystem.",
-    "we_help_you_get_the_funding_needed_to": "We help you get the funding needed to launch your business."
+  "hero": {
+    "imageAlt": "Devenir entrepreneur",
+    "title": "Construisez votre entreprise avec EPEW",
+    "description": "Toute entreprise prospère commence par une idée. EPEW développe les entrepreneurs grâce à un Écosystème de Développement des Entrepreneurs coordonné qui transforme les idées en entreprises prospères.",
+    "entrepreneurButton": "Devenir entrepreneur",
+    "videoButton": "Regarder la vidéo de présentation"
+  },
+  "dream": {
+    "title": "Toute grande entreprise commence par une idée",
+    "paragraph1": "Votre idée peut transformer votre avenir, créer des emplois, renforcer votre famille et améliorer votre communauté.",
+    "paragraph2": "Chez EPEW, nous croyons que les entrepreneurs se développent et ne sont pas simplement financés. Grâce à la préparation, aux conseils professionnels, au soutien coordonné et à l’Écosystème de Développement des Entrepreneurs, les idées deviennent des entreprises prospères.",
+    "imageAlt": "Rêve entrepreneurial"
+  },
+  "funding": {
+    "imageAlt": "Possibilité de financement",
+    "title": "La préparation vient avant le financement",
+    "description": "EPEW prépare d’abord les entrepreneurs. Lorsqu’ils sont prêts à exploiter leur entreprise, EPEW les met en relation avec le financement nécessaire pour lancer et développer des entreprises prospères."
+  },
+  "developmentModel": {
+    "title": "Le modèle officiel de développement des entrepreneurs EPEW",
+    "description": "EPEW suit un modèle structuré de développement des entrepreneurs qui les prépare, coordonne le soutien professionnel, les met en relation avec le financement et renforce les entreprises grâce à l’Écosystème de Développement des Entrepreneurs.",
+    "steps": {
+      "step1": {
+        "title": "L’entrepreneur apporte l’idée",
+        "text": "Toute entreprise prospère commence par une idée. L’entrepreneur apporte la vision, la passion, la détermination et l’engagement nécessaires pour bâtir quelque chose de significatif."
+      },
+      "step2": {
+        "title": "EPEW développe l’idée",
+        "text": "EPEW transforme l’idée en une opportunité d’entreprise structurée grâce à l’éducation, au coaching, à la planification, aux conseils professionnels et au développement d’entreprise."
+      },
+      "step3": {
+        "title": "EPEW prépare l’entrepreneur",
+        "text": "Les entrepreneurs reçoivent la préparation, les connaissances, le coaching et les conseils nécessaires pour être prêts à exploiter leur entreprise et à recevoir un financement."
+      },
+      "step4": {
+        "title": "EPEW met l’entrepreneur en relation avec le financement",
+        "text": "Une fois préparés, les entrepreneurs sont mis en relation par EPEW avec le financement nécessaire pour lancer et développer leur entreprise."
+      },
+      "step5": {
+        "title": "EPEW fournit l’Écosystème de Développement des Entrepreneurs (EDE)",
+        "text": "L’Écosystème de Développement des Entrepreneurs rassemble les coaches, les équipes professionnelles, les Supporters Fondateurs, les Partenaires de Croissance Certifiés, la technologie intelligente et les ressources coordonnées dans un système complet de soutien."
+      },
+      "step6": {
+        "title": "EPEW vous aide à ouvrir votre entreprise",
+        "text": "EPEW coordonne les services professionnels, la préparation au lancement, l’ouverture, la promotion et la grande ouverture afin que les entrepreneurs commencent leurs activités avec confiance."
+      },
+      "step7": {
+        "title": "IBOS coordonne le parcours",
+        "text": "Le Système Intelligent d’Exploitation des Entreprises coordonne chaque étape du développement de l’entrepreneur en gérant les flux de travail, les communications, les demandes de services, les étapes importantes, le suivi des progrès, la préparation de l’entreprise, la préparation au financement et les opérations à long terme."
+      },
+      "step8": {
+        "title": "EPEW aide à renforcer votre entreprise",
+        "text": "L’entrepreneuriat ne s’arrête pas le jour de l’ouverture. EPEW continue de soutenir les entrepreneurs grâce au coaching, aux services professionnels, aux rapports trimestriels, à la promotion, à la technologie intelligente et à la croissance à long terme."
+      }
+    }
+  },
+  "ecosystem": {
+    "imageAlt": "Écosystème de Développement des Entrepreneurs",
+    "title": "Vous êtes soutenu par un écosystème complet",
+    "paragraph1": "Dès votre approbation, vous faites partie d’un Écosystème de Développement des Entrepreneurs coordonné, consacré à la réussite de votre entreprise.",
+    "paragraph2": "L’écosystème rassemble le coaching, le soutien professionnel, les Supporters Fondateurs, les Partenaires de Croissance Certifiés, les outils numériques, la préparation au financement et la croissance à long terme.",
+    "features": {
+      "coach": {
+        "title": "Coach dédié",
+        "text": "Votre coach guide votre parcours de développement et aide à coordonner le soutien dont vous avez besoin."
+      },
+      "teams": {
+        "title": "Équipes professionnelles",
+        "text": "Les équipes professionnelles soutiennent la création d’entreprise, l’image de marque, la promotion, la planification et la préparation au lancement."
+      },
+      "digital": {
+        "title": "Présence numérique de l’entreprise",
+        "text": "Chaque entrepreneur approuvé reçoit une page publique permanente de présentation de son entreprise."
+      },
+      "supporters": {
+        "title": "Supporters Fondateurs",
+        "text": "Créez une communauté de personnes qui croient en votre vision et souhaitent soutenir l’histoire de votre entreprise."
+      },
+      "partners": {
+        "title": "Partenaires de Croissance Certifiés",
+        "text": "Accédez à une expertise spécialisée grâce à des partenaires qui renforcent le développement de votre entreprise."
+      },
+      "ibos": {
+        "title": "Coordination IBOS",
+        "text": "IBOS coordonne les flux de travail, les étapes importantes, les demandes de services, les communications et la préparation au financement."
+      }
+    }
+  },
+  "coachGuided": {
+    "imageAlt": "Système guidé par un coach",
+    "title": "Développement guidé par un coach",
+    "description": "Votre coach assigné est votre guide principal tout au long de votre parcours entrepreneurial. Il vous aide à vous préparer, à vous organiser, à comprendre les attentes et à vous connecter au soutien nécessaire pour progresser.",
+    "helpTitle": "Ce que les coaches vous aident à accomplir",
+    "help": {
+      "idea": "Affinement de l’idée d’entreprise",
+      "interview": "Préparation à l’entretien et à l’évaluation de l’état de préparation",
+      "budget": "Préparation et planification du budget",
+      "structure": "Préparation de la structure de l’entreprise",
+      "services": "Coordination des services professionnels",
+      "funding": "Préparation au financement",
+      "launch": "Préparation au lancement et responsabilisation"
+    },
+    "validationTitle": "Processus structuré de validation",
+    "validationDescription": "Chaque entrepreneur suit un processus structuré de préparation et de validation avant d’entrer dans la file de financement. Cela contribue à assurer la préparation de l’entreprise, la responsabilisation et la réussite à long terme.",
+    "validationRule": "Aucun entrepreneur n’entre dans le processus de financement sans avoir terminé le parcours de préparation EPEW."
+  },
+  "leader": {
+    "title": "Vous restez le leader",
+    "owner": "Vous êtes le propriétaire.",
+    "decisions": "Vous prenez les décisions.",
+    "vision": "Vous bâtissez la vision.",
+    "notRun": "EPEW ne dirige pas votre entreprise.",
+    "ecosystem": "EPEW fournit l’écosystème qui aide votre entreprise à réussir."
+  },
+  "journey": {
+    "imageAlt": "Parcours entrepreneurial",
+    "title": "Votre parcours entrepreneurial",
+    "description": "EPEW aide les entrepreneurs à passer de l’idée à la préparation, de la préparation à l’état de préparation au financement, puis du lancement à la croissance à long terme.",
+    "steps": {
+      "apply": {
+        "title": "Postuler",
+        "text": "Soumettez votre demande d’inscription comme entrepreneur."
+      },
+      "coach": {
+        "title": "Coach",
+        "text": "Rencontrez le coach qui vous est assigné."
+      },
+      "prepare": {
+        "title": "Préparer",
+        "text": "Développez votre entreprise et terminez votre préparation."
+      },
+      "funding": {
+        "title": "Financement",
+        "text": "Devenez prêt au financement et entrez dans la file."
+      },
+      "launch": {
+        "title": "Lancement",
+        "text": "Ouvrez votre entreprise et commencez à la développer."
+      }
+    }
+  },
+  "promise": {
+    "title": "La promesse officielle EPEW",
+    "line1": "Vous apportez la vision.",
+    "line2": "Nous développons l’idée.",
+    "line3": "Nous fournissons l’écosystème.",
+    "line4": "Nous vous aidons à obtenir le financement nécessaire pour lancer votre entreprise.",
+    "description": "Ensemble, nous bâtissons des entreprises prospères, renforçons les communautés et créons une richesse durable."
+  },
+  "cta": {
+    "title": "Commencez votre parcours entrepreneurial",
+    "description": "Votre idée d’entreprise est le point de départ. EPEW fournit l’écosystème qui aide à la transformer en une entreprise prospère.",
+    "applyButton": "Postuler comme entrepreneur",
+    "learnButton": "Découvrir comment fonctionne EPEW"
   }
 }

@@ -139,6 +139,127 @@ export default function EntrepreneurEnrollPage() {
   const [formData, setFormData] =
     useState<EntrepreneurFormData>(INITIAL_FORM_DATA);
 
+
+  const [reminderLanguage, setReminderLanguage] = useState("");
+  const [additionalPreferredLanguage, setAdditionalPreferredLanguage] =
+    useState("");
+  const [reminderEmail, setReminderEmail] = useState("");
+  const [reminderPhone, setReminderPhone] = useState("");
+  const [reminderPriorityChannel, setReminderPriorityChannel] =
+    useState<"email" | "text" | "">("");
+  const [reminderConsent, setReminderConsent] = useState(false);
+  const [reminderMessage, setReminderMessage] = useState("");
+  const [reminderSaved, setReminderSaved] = useState(false);
+  const [isSavingReminder, setIsSavingReminder] = useState(false);
+
+  const handleReminderSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
+    event.preventDefault();
+
+    if (isSavingReminder) {
+      return;
+    }
+
+    setReminderMessage("");
+    setReminderSaved(false);
+
+    if (!reminderLanguage) {
+      setReminderMessage(
+        "Please choose the language you want EPEW to use when communicating with you.",
+      );
+      return;
+    }
+
+    if (!reminderEmail.trim() && !reminderPhone.trim()) {
+      setReminderMessage(
+        "Please provide your email address or phone number.",
+      );
+      return;
+    }
+
+    if (!reminderPriorityChannel) {
+      setReminderMessage(
+        "Please choose whether Email or Text Message should be your priority contact method.",
+      );
+      return;
+    }
+
+    if (
+      reminderPriorityChannel === "email" &&
+      !reminderEmail.trim()
+    ) {
+      setReminderMessage(
+        "Please add your email address because Email is your priority contact method.",
+      );
+      return;
+    }
+
+    if (
+      reminderPriorityChannel === "text" &&
+      !reminderPhone.trim()
+    ) {
+      setReminderMessage(
+        "Please add your phone number because Text Message is your priority contact method.",
+      );
+      return;
+    }
+
+    if (!reminderConsent) {
+      setReminderMessage(
+        "Please agree to receive weekly EPEW communications.",
+      );
+      return;
+    }
+
+    setIsSavingReminder(true);
+
+    try {
+      const response = await fetch(
+        "/api/entrepreneurs/reminder-contact",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            communication_language: reminderLanguage,
+            additional_preferred_language:
+              additionalPreferredLanguage,
+            email: reminderEmail,
+            phone: reminderPhone,
+            priority_channel: reminderPriorityChannel,
+            weekly_information_consent: reminderConsent,
+          }),
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        setReminderMessage(
+          result?.error ||
+            "Unable to save your communication preference.",
+        );
+        return;
+      }
+
+      setReminderSaved(true);
+      setReminderMessage(
+        result.message ||
+          "Your EPEW communication preference has been saved.",
+      );
+    } catch (error) {
+      console.error("Reminder preference error:", error);
+
+      setReminderMessage(
+        "Unable to save your communication preference. Please try again.",
+      );
+    } finally {
+      setIsSavingReminder(false);
+    }
+  };
+
   const handleChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -601,7 +722,253 @@ const { error: applicationError } = await supabase
             </p>
           </div>
 
-          {submitted ? (
+    
+      {!submitted && (
+        <div className="mb-12 rounded-3xl border-2 border-green-200 bg-green-50 p-8 shadow-xl">
+          <div className="mx-auto max-w-5xl">
+            <div className="mb-8 text-center">
+              <p className="mb-3 text-lg font-extrabold uppercase tracking-wide text-green-700">
+                Stay Connected With EPEW
+              </p>
+
+              <h3 className="mb-5 text-3xl font-extrabold text-[#06245c] md:text-4xl">
+                Not Ready to Finish Your Application?
+              </h3>
+
+              <p className="text-lg leading-relaxed text-gray-700 md:text-xl">
+                Leave your email address or phone number and EPEW will
+                remind you once a week to complete your Entrepreneur
+                Application, along with other valuable information in
+                your selected language.
+              </p>
+            </div>
+
+            <form
+              onSubmit={handleReminderSubmit}
+              className="rounded-3xl bg-white p-7 shadow-lg md:p-9"
+            >
+              <div className="mb-8">
+                <h4 className="mb-3 text-2xl font-extrabold text-[#06245c]">
+                  1. Choose Your EPEW Communication Language
+                </h4>
+
+                <p className="mb-5 leading-relaxed text-gray-600">
+                  Choose the language you want EPEW to use when
+                  communicating with you. You must select one of the
+                  four EPEW communication languages below.
+                </p>
+
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  {[
+                    "English",
+                    "French",
+                    "Haitian Creole",
+                    "Spanish",
+                  ].map((language) => (
+                    <label
+                      key={language}
+                      className={`cursor-pointer rounded-2xl border-2 p-4 text-center font-bold transition ${
+                        reminderLanguage === language
+                          ? "border-green-600 bg-green-100 text-green-800"
+                          : "border-gray-200 bg-white text-gray-700 hover:border-green-400"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="reminder_language"
+                        value={language}
+                        checked={reminderLanguage === language}
+                        onChange={() =>
+                          setReminderLanguage(language)
+                        }
+                        className="sr-only"
+                      />
+                      {language === "French"
+                        ? "Français"
+                        : language === "Haitian Creole"
+                          ? "Kreyòl Ayisyen"
+                          : language === "Spanish"
+                            ? "Español"
+                            : language}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-8 rounded-2xl bg-[#f5f7fb] p-6">
+                <label
+                  htmlFor="additional-preferred-language"
+                  className="mb-3 block text-xl font-bold text-[#06245c]"
+                >
+                  2. Additional Preferred Language — Optional
+                </label>
+
+                <p className="mb-4 leading-relaxed text-gray-600">
+                  Do you have another preferred language you would also
+                  like EPEW to know about? This is additional
+                  information and does not replace your selected EPEW
+                  communication language.
+                </p>
+
+                <input
+                  id="additional-preferred-language"
+                  type="text"
+                  value={additionalPreferredLanguage}
+                  onChange={(event) =>
+                    setAdditionalPreferredLanguage(
+                      event.target.value,
+                    )
+                  }
+                  placeholder="Example: Portuguese, Arabic, Tagalog, etc."
+                  className="w-full rounded-2xl border bg-white p-4"
+                />
+              </div>
+
+              <div className="mb-8">
+                <h4 className="mb-3 text-2xl font-extrabold text-[#06245c]">
+                  3. Add Your Contact Information
+                </h4>
+
+                <p className="mb-5 leading-relaxed text-gray-600">
+                  You may provide your email address, your phone
+                  number, or both.
+                </p>
+
+                <div className="grid gap-5 md:grid-cols-2">
+                  <input
+                    type="email"
+                    value={reminderEmail}
+                    onChange={(event) =>
+                      setReminderEmail(event.target.value)
+                    }
+                    placeholder="Add your email address"
+                    className="w-full rounded-2xl border p-4"
+                  />
+
+                  <input
+                    type="tel"
+                    value={reminderPhone}
+                    onChange={(event) =>
+                      setReminderPhone(event.target.value)
+                    }
+                    placeholder="Add your phone number"
+                    className="w-full rounded-2xl border p-4"
+                  />
+                </div>
+              </div>
+
+              <div className="mb-8">
+                <h4 className="mb-3 text-2xl font-extrabold text-[#06245c]">
+                  4. Choose Your Priority Contact Method
+                </h4>
+
+                <p className="mb-5 leading-relaxed text-gray-600">
+                  EPEW may use both contact methods when available.
+                  Choose which one should receive priority.
+                </p>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <label
+                    className={`cursor-pointer rounded-2xl border-2 p-5 ${
+                      reminderPriorityChannel === "email"
+                        ? "border-green-600 bg-green-50"
+                        : "border-gray-200"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="priority_channel"
+                      value="email"
+                      checked={
+                        reminderPriorityChannel === "email"
+                      }
+                      onChange={() =>
+                        setReminderPriorityChannel("email")
+                      }
+                      className="mr-3 h-5 w-5"
+                    />
+                    <span className="text-lg font-bold">
+                      Email — Priority
+                    </span>
+                  </label>
+
+                  <label
+                    className={`cursor-pointer rounded-2xl border-2 p-5 ${
+                      reminderPriorityChannel === "text"
+                        ? "border-green-600 bg-green-50"
+                        : "border-gray-200"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="priority_channel"
+                      value="text"
+                      checked={
+                        reminderPriorityChannel === "text"
+                      }
+                      onChange={() =>
+                        setReminderPriorityChannel("text")
+                      }
+                      className="mr-3 h-5 w-5"
+                    />
+                    <span className="text-lg font-bold">
+                      Text Message — Priority
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <label className="mb-8 flex items-start gap-4 rounded-2xl border border-gray-200 bg-[#f5f7fb] p-5 text-lg leading-relaxed text-gray-700">
+                <input
+                  type="checkbox"
+                  checked={reminderConsent}
+                  onChange={(event) =>
+                    setReminderConsent(event.target.checked)
+                  }
+                  className="mt-1 h-6 w-6"
+                />
+
+                <span>
+                  I agree to receive weekly EPEW communications,
+                  application reminders when applicable, and valuable
+                  entrepreneurship information in my selected language.
+                </span>
+              </label>
+
+              {reminderMessage && (
+                <div
+                  className={`mb-6 rounded-2xl border-2 p-5 text-lg font-bold ${
+                    reminderSaved
+                      ? "border-green-500 bg-green-50 text-green-800"
+                      : "border-red-400 bg-red-50 text-red-700"
+                  }`}
+                >
+                  {reminderMessage}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isSavingReminder}
+                className="w-full rounded-2xl bg-green-700 py-4 text-xl font-extrabold text-white transition hover:bg-[#06245c] disabled:cursor-not-allowed disabled:bg-gray-500"
+              >
+                {isSavingReminder
+                  ? "Saving Your Preference..."
+                  : "Remind Me Weekly"}
+              </button>
+
+              <p className="mt-5 text-center text-sm leading-relaxed text-gray-500">
+                Once you submit your Entrepreneur Application, EPEW
+                can stop application reminders while continuing to
+                send valuable weekly information according to your
+                communication preference.
+              </p>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {submitted ? (
             <div className="mt-10 rounded-3xl bg-white p-10 shadow-2xl">
               <div className="mb-10 rounded-2xl border-2 border-green-600 bg-green-50 p-6 text-xl font-bold leading-relaxed text-green-800 md:text-2xl">
                 {message}

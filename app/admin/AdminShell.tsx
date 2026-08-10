@@ -55,6 +55,7 @@ export default function AdminShell({
       title: "Operations",
       links: [
         { name: "Marketplace", href: "/admin/marketplace" },
+        { name: "ETVMC", href: "/admin/etvmc" },
         { name: "Vendors", href: "/admin/vendors" },
         { name: "Documents", href: "/admin/documents" },
         { name: "Annual Meetings", href: "/admin/annual-meetings" },

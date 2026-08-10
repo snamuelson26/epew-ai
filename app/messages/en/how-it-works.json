@@ -1,50 +1,90 @@
 {
-  "content": {
-    "1_the_entrepreneur_brings_the_idea": "1. The Entrepreneur Brings the Idea",
-    "1_description": "Every successful business begins with an idea. The entrepreneur brings the vision, passion, and determination to build something meaningful.",
-
-    "2_epew_develops_the_idea": "2. EPEW Develops the Idea",
-    "2_description": "EPEW develops the idea into a structured business opportunity through education, coaching, planning, professional guidance, and business development.",
-
-    "3_epew_prepares_the_entrepreneur_and_connects_funding": "3. EPEW Prepares the Entrepreneur and Connects Funding",
-    "3_description": "EPEW prepares the entrepreneur for business ownership, funding readiness, and connects them with the funding needed to launch and grow.",
-
-    "4_epew_provides_the_entrepreneur_development_ecosystem": "4. EPEW Provides the Entrepreneur Development Ecosystem",
-    "4_description": "The EDE brings together coaches, professional teams, Founding Supporters, Certified Growth Partners, technology, and coordinated resources into one complete support system.",
-
-    "5_ibos_coordinates_the_journey": "5. IBOS Coordinates the Journey",
-    "5_description": "IBOS coordinates preparation, professional services, business development, milestones, communications, service requests, funding readiness, and long-term business growth.",
-
-    "successful_entrepreneur": "✅ Successful Entrepreneur",
-    "successful_business": "✅ Successful Business",
-    "new_jobs": "✅ New Jobs",
-    "stronger_families": "✅ Stronger Families",
-    "stronger_communities": "✅ Stronger Communities",
-    "lasting_wealth": "✅ Lasting Wealth"
+  "hero": {
+    "title": "How EPEW Works",
+    "subtitle": "The Official EPEW Development Process",
+    "imageAlt": "How EPEW Helps Entrepreneurs Build Real Businesses"
   },
-
-  "headings": {
-    "epew_ede_ibos": "EPEW • EDE • IBOS",
-    "one_ecosystem_clear_steps_shared_growth": "One Ecosystem. Clear Steps. Shared Growth.",
-    "the_result": "The Result"
+  "process": {
+    "steps": {
+      "step1": {
+        "title": "The Entrepreneur Brings the Idea",
+        "description": "Every successful business begins with an idea. The entrepreneur brings the vision, passion, and determination to build something meaningful."
+      },
+      "step2": {
+        "title": "EPEW Develops the Idea",
+        "description": "EPEW develops the idea into a structured business opportunity through education, coaching, planning, professional guidance, and business development."
+      },
+      "step3": {
+        "title": "EPEW Prepares the Entrepreneur and Connects Funding",
+        "description": "EPEW prepares the entrepreneur for business ownership, funding readiness, and connects them with the funding needed to launch and grow."
+      },
+      "step4": {
+        "title": "EPEW Provides the Entrepreneur Development Ecosystem",
+        "description": "The EDE brings together coaches, professional teams, Founding Supporters, Certified Growth Partners, technology, and coordinated resources into one complete support system."
+      },
+      "step5": {
+        "title": "IBOS Coordinates the Journey",
+        "description": "IBOS coordinates preparation, professional services, business development, milestones, communications, service requests, funding readiness, and long-term business growth."
+      }
+    }
   },
-
-  "images": {
-    "howEpewHelpsAlt": "How EPEW Helps Entrepreneurs Build Real Businesses"
+  "result": {
+    "title": "The Result",
+    "successfulEntrepreneur": "✅ Successful Entrepreneur",
+    "successfulBusiness": "✅ Successful Business",
+    "newJobs": "✅ New Jobs",
+    "strongerFamilies": "✅ Stronger Families",
+    "strongerCommunities": "✅ Stronger Communities",
+    "lastingWealth": "✅ Lasting Wealth"
   },
-
+  "developmentModel": {
+    "title": "The EPEW Development Model",
+    "description": "The development model below shows how EPEW transforms an entrepreneur’s idea into a successful business through preparation, coordinated support, professional services, the Entrepreneur Development Ecosystem, and IBOS.",
+    "steps": {
+      "step1": {
+        "title": "The Entrepreneur Brings the Idea",
+        "description": "Every successful business begins with an idea. The entrepreneur brings the vision, passion, and determination."
+      },
+      "step2": {
+        "title": "EPEW Develops the Idea",
+        "description": "EPEW transforms the idea into a structured business opportunity through coaching, planning, and professional guidance."
+      },
+      "step3": {
+        "title": "EPEW Prepares the Entrepreneur",
+        "description": "EPEW prepares the entrepreneur for business ownership, funding readiness, and long-term growth."
+      },
+      "step4": {
+        "title": "EPEW Provides the Ecosystem",
+        "description": "EPEW provides the Entrepreneur Development Ecosystem with coaches, professional support, supporters, and partners."
+      },
+      "step5": {
+        "title": "IBOS Coordinates the Journey",
+        "description": "IBOS coordinates preparation, services, milestones, communications, funding readiness, and business growth."
+      }
+    }
+  },
   "systems": {
+    "title": "EPEW • EDE • IBOS",
     "epew": {
       "title": "EPEW",
-      "subtitle": "The Organization"
+      "subtitle": "The Organization",
+      "text": "EPEW establishes the entrepreneurship mission, standards, programs, community participation, and governance that guide the entrepreneur’s journey."
     },
     "ede": {
       "title": "EDE",
-      "subtitle": "The Ecosystem"
+      "subtitle": "The Ecosystem",
+      "text": "The Enterprise Development Environment brings together coaches, partners, vendors, supporters, professional services, and resources needed to develop the business."
     },
     "ibos": {
       "title": "IBOS",
-      "subtitle": "The Operating System"
+      "subtitle": "The Operating System",
+      "text": "IBOS coordinates the entrepreneur’s operational journey, workflows, milestones, communications, services, funding readiness, and long-term business development."
     }
+  },
+  "cta": {
+    "title": "One Ecosystem. Clear Steps. Shared Growth.",
+    "description": "EPEW helps entrepreneurs move from idea to structure, from preparation to funding readiness, and from business launch to long-term growth.",
+    "entrepreneurButton": "Apply as Entrepreneur",
+    "supporterButton": "Become a Supporter"
   }
 }

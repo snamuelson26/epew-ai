@@ -1,0 +1,69 @@
+{
+  "hero": {
+    "imageAlt": "Partenaires de croissance certifiés EPEW",
+    "eyebrow": "Partenaires de croissance certifiés EPEW",
+    "title": "Des partenaires de croissance certifiés au service de la réussite des entrepreneurs",
+    "description": "EPEW travaille avec des partenaires professionnels qui aident les entrepreneurs à développer, préparer, lancer, promouvoir et faire croître des entreprises prospères."
+  },
+  "ecosystem": {
+    "title": "Les entrepreneurs sont soutenus par un écosystème professionnel",
+    "paragraph1": "Dès qu’un entrepreneur est approuvé, EPEW le connecte à un système de soutien coordonné. Les Partenaires de Croissance Certifiés fournissent les conseils, services, préparatifs et la visibilité nécessaires pour bâtir une véritable entreprise.",
+    "paragraph2": "Après que le coach a orienté l’entrepreneur vers le soutien professionnel approprié, l’entrepreneur peut soumettre des demandes de services par l’intermédiaire du Centre de Services Professionnels EPEW."
+  },
+  "areas": {
+    "formation": {
+      "title": "Partenaires en création d’entreprise",
+      "text": "Ils aident les entrepreneurs à établir correctement des structures d’entreprise professionnelles dès le départ."
+    },
+    "financial": {
+      "title": "Partenaires financiers et de conformité",
+      "text": "Ils soutiennent les entrepreneurs dans la préparation financière, la conformité, la comptabilité, la paie et l’organisation fiscale."
+    },
+    "development": {
+      "title": "Partenaires en développement d’entreprise",
+      "text": "Ils accompagnent les entrepreneurs dans la planification, l’organisation, la préparation, le conseil en affaires et le développement opérationnel."
+    },
+    "branding": {
+      "title": "Partenaires en image de marque et design",
+      "text": "Ils aident les entrepreneurs à créer une image d’entreprise professionnelle, notamment des logos, cartes professionnelles, dépliants, brochures, bannières et matériels promotionnels."
+    },
+    "promotion": {
+      "title": "Partenaires en promotion et médias",
+      "text": "Ils aident les entrepreneurs à accroître leur visibilité grâce à la promotion, aux médias, aux réseaux sociaux, à l’exposition communautaire et aux communications de lancement."
+    },
+    "launch": {
+      "title": "Partenaires en lancement et événements",
+      "text": "Ils soutiennent la planification des grandes ouvertures, l’organisation d’événements, les activités de lancement, les événements communautaires et les présentations publiques."
+    }
+  },
+  "service": {
+    "title": "Comment les partenaires servent les entrepreneurs",
+    "steps": {
+      "review": {
+        "title": "Évaluation par le coach",
+        "text": "Le coach identifie les besoins de l’entrepreneur."
+      },
+      "introduction": {
+        "title": "Présentation au partenaire",
+        "text": "EPEW oriente l’entrepreneur vers le soutien professionnel approprié."
+      },
+      "request": {
+        "title": "Demande de service",
+        "text": "L’entrepreneur demande le service par l’intermédiaire de la plateforme."
+      },
+      "delivery": {
+        "title": "Prestation du service",
+        "text": "Le partenaire fournit le service et communique les mises à jour sur l’avancement."
+      }
+    }
+  },
+  "strength": {
+    "title": "Les partenaires renforcent l’écosystème",
+    "description": "Les Partenaires de Croissance Certifiés contribuent à transformer les idées en entreprises préparées, professionnelles, visibles et durables.",
+    "line1": "L’entrepreneur apporte la vision.",
+    "line2": "EPEW fournit l’écosystème.",
+    "line3": "Les partenaires contribuent à renforcer l’entreprise.",
+    "supportButton": "Voir le soutien professionnel",
+    "partnerButton": "Devenir partenaire"
+  }
+}

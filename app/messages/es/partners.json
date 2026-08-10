@@ -1,0 +1,69 @@
+{
+  "hero": {
+    "imageAlt": "Socios de Crecimiento Certificados de EPEW",
+    "eyebrow": "Socios de Crecimiento Certificados de EPEW",
+    "title": "Socios de Crecimiento Certificados que apoyan el éxito de los emprendedores",
+    "description": "EPEW trabaja con socios profesionales que ayudan a los emprendedores a desarrollar, preparar, lanzar, promover y hacer crecer negocios exitosos."
+  },
+  "ecosystem": {
+    "title": "Los emprendedores cuentan con el apoyo de un ecosistema profesional",
+    "paragraph1": "Desde el momento en que un emprendedor es aprobado, EPEW lo conecta con un sistema de apoyo coordinado. Los Socios de Crecimiento Certificados ayudan a proporcionar la orientación, los servicios, la preparación y la visibilidad necesarias para construir un negocio real.",
+    "paragraph2": "Después de que el coach conecta al emprendedor con el apoyo profesional apropiado, el emprendedor obtiene acceso a solicitudes de servicios a través del Centro de Servicios Profesionales de EPEW."
+  },
+  "areas": {
+    "formation": {
+      "title": "Socios para la formación de empresas",
+      "text": "Ayudan a los emprendedores a establecer correctamente estructuras empresariales profesionales desde el principio."
+    },
+    "financial": {
+      "title": "Socios financieros y de cumplimiento",
+      "text": "Apoyan a los emprendedores con preparación financiera, cumplimiento, contabilidad, nómina y organización tributaria."
+    },
+    "development": {
+      "title": "Socios de desarrollo empresarial",
+      "text": "Ayudan a los emprendedores con planificación, organización, preparación, consultoría empresarial y desarrollo operativo."
+    },
+    "branding": {
+      "title": "Socios de marca y diseño",
+      "text": "Ayudan a los emprendedores a crear una imagen empresarial profesional, incluyendo logotipos, tarjetas de presentación, volantes, folletos, pancartas y materiales promocionales."
+    },
+    "promotion": {
+      "title": "Socios de promoción y medios",
+      "text": "Ayudan a los emprendedores a ganar visibilidad mediante promoción empresarial, cobertura de medios, redes sociales, exposición comunitaria y comunicación de lanzamiento."
+    },
+    "launch": {
+      "title": "Socios de lanzamiento y eventos",
+      "text": "Apoyan la planificación de grandes aperturas, organización de eventos, actividades de lanzamiento, eventos comunitarios y presentaciones públicas."
+    }
+  },
+  "service": {
+    "title": "Cómo los socios sirven a los emprendedores",
+    "steps": {
+      "review": {
+        "title": "Revisión del coach",
+        "text": "El coach identifica las necesidades del emprendedor."
+      },
+      "introduction": {
+        "title": "Presentación al socio",
+        "text": "EPEW conecta al emprendedor con el apoyo profesional adecuado."
+      },
+      "request": {
+        "title": "Solicitud de servicio",
+        "text": "El emprendedor solicita el servicio a través de la plataforma."
+      },
+      "delivery": {
+        "title": "Prestación del servicio",
+        "text": "El socio completa el servicio y proporciona actualizaciones del progreso."
+      }
+    }
+  },
+  "strength": {
+    "title": "Los socios fortalecen el ecosistema",
+    "description": "Los Socios de Crecimiento Certificados ayudan a transformar ideas en negocios preparados, profesionales, visibles y sostenibles.",
+    "line1": "El emprendedor aporta la visión.",
+    "line2": "EPEW proporciona el ecosistema.",
+    "line3": "Los socios ayudan a fortalecer el negocio.",
+    "supportButton": "Ver apoyo profesional",
+    "partnerButton": "Convertirse en socio"
+  }
+}

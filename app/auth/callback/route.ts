@@ -1,62 +1,70 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
+
   const code = requestUrl.searchParams.get("code");
   const type = requestUrl.searchParams.get("type");
+  const next = requestUrl.searchParams.get("next");
 
   const siteUrl =
     process.env.NEXT_PUBLIC_SITE_URL || requestUrl.origin;
 
   const loginUrl = new URL(
     "/entrepreneurs/login",
-    siteUrl,
+    siteUrl
   );
 
   const confirmedUrl = new URL(
     "/auth/email-confirmed",
-    siteUrl,
+    siteUrl
   );
 
   const alreadyConfirmedUrl = new URL(
     "/auth/email-already-confirmed",
-    siteUrl,
+    siteUrl
   );
 
   if (!code) {
     return NextResponse.redirect(alreadyConfirmedUrl);
   }
 
-  const supabaseUrl =
-    process.env.NEXT_PUBLIC_SUPABASE_URL;
-
-  const supabaseAnonKey =
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    return NextResponse.redirect(loginUrl);
-  }
-
-  const supabase = createClient(
-    supabaseUrl,
-    supabaseAnonKey,
-    {
-      auth: {
-        persistSession: false,
-      },
-    },
-  );
+  const supabase = await createClient();
 
   const { error } =
     await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
-    return NextResponse.redirect(alreadyConfirmedUrl);
+    console.error(
+      "Supabase callback session exchange failed:",
+      error
+    );
+
+    return NextResponse.redirect(
+      alreadyConfirmedUrl
+    );
+  }
+
+  if (type === "recovery") {
+    const resetDestination =
+      next && next.startsWith("/")
+        ? next
+        : "/admin/reset-password";
+
+    return NextResponse.redirect(
+      new URL(resetDestination, siteUrl)
+    );
   }
 
   if (type === "signup" || !type) {
     return NextResponse.redirect(confirmedUrl);
+  }
+
+  if (next && next.startsWith("/")) {
+    return NextResponse.redirect(
+      new URL(next, siteUrl)
+    );
   }
 
   return NextResponse.redirect(loginUrl);

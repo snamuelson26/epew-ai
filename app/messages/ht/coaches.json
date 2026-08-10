@@ -1,33 +1,161 @@
 {
-  "headings": {
-    "your_coach_your_guide_your_accountability_partner": "Your Coach. Your Guide. Your Accountability Partner.",
-    "no_entrepreneur_should_walk_the_journey_alone": "No Entrepreneur Should Walk the Journey Alone.",
-    "what_does_an_epew_coach_do": "What Does an EPEW Coach Do?",
-    "who_can_become_an_epew_coach": "Who Can Become an EPEW Coach?",
-    "every_great_entrepreneur_has_someone_who_believed_in": "Every Great Entrepreneur Has Someone Who Believed in Them.",
-    "the_coachs_commitment": "The Coach’s Commitment"
+  "hero": {
+    "imageAlt": "Coach k ap gide antreprenè",
+    "title": "Coach Ou. Gid Ou. Patnè Responsabilite Ou.",
+    "description": "Chak antreprenè resevwa yon Coach Biznis EPEW ki resevwa fòmasyon epi ki sèvi kòm yon gid de konfyans pandan tout pakou antreprenarya a.",
+    "loginButton": "Koneksyon Coach",
+    "applyButton": "Aplike kòm Coach"
   },
-  "content": {
-    "develop_business_ideas": "✅ Develop business ideas",
-    "clarify_business_vision": "✅ Clarify business vision",
-    "build_strategic_goals": "✅ Build strategic goals",
-    "prepare_business_plans": "✅ Prepare business plans",
-    "coordinate_professional_services": "✅ Coordinate professional services",
-    "monitor_entrepreneur_progress": "✅ Monitor entrepreneur progress",
-    "prepare_funding_readiness": "✅ Prepare funding readiness",
-    "guide_business_launch": "✅ Guide business launch",
-    "strengthen_businesses": "✅ Strengthen businesses",
-    "guide_entrepreneurs": "✅ Guide entrepreneurs",
-    "monitor_progress": "✅ Monitor progress",
-    "conduct_interviews": "✅ Conduct interviews",
-    "review_questionnaires": "✅ Review questionnaires",
-    "coordinate_professional_support": "✅ Coordinate professional support",
-    "approve_milestones": "✅ Approve milestones",
-    "encourage_accountability": "✅ Encourage accountability",
-    "support_business_growth": "✅ Support business growth",
-    "the_entrepreneur_brings_the_vision": "The entrepreneur brings the vision.",
-    "the_coach_develops_the_entrepreneur": "The coach develops the entrepreneur.",
-    "epew_provides_the_ecosystem": "EPEW provides the ecosystem.",
-    "together_we_build_successful_businesses": "Together, we build successful businesses."
+  "neverAlone": {
+    "imageAlt": "Coach k ap sipòte antreprenè",
+    "title": "Okenn Antreprenè Pa Ta Dwe Fè Pakou a Poukont Li.",
+    "paragraph1": "Chak antreprenè merite yon moun ki kwè nan potansyèl li, konprann defi li yo epi ede li rete konsantre sou chemen siksè a.",
+    "paragraph2": "Yon Coach EPEW vin yon konseye de konfyans, yon mentor, yon fasilitatè ak yon patnè responsabilite ki ede antreprenè yo pase avèk konfyans soti nan lide pou rive nan posesyon yon biznis ki reyisi."
+  },
+  "whatCoachDoes": {
+    "title": "Kisa yon Coach EPEW Fè?",
+    "description": "Yon coach biznis travay avèk antreprenè yo pou devlope lide biznis yo, klarifye vizyon yo, etabli objektif estratejik epi bati plan aksyon ki mennen yo nan direksyon siksè biznis."
+  },
+  "roles": {
+    "title": "Wòl yon Coach EPEW",
+    "description": "Coaches nou yo ki resevwa fòmasyon sèvi kòm konseye estratejik, fasilitatè ak patnè responsabilite ki ede antreprenè yo devlope potansyèl yo, ranfòse kapasite yo, simonte obstak epi reyalize kwasans dirab.",
+    "cards": {
+      "advisor": {
+        "title": "Konseye Estratejik",
+        "text": "Ede antreprenè yo pran desizyon biznis ki enfòme epi ranfòse direksyon biznis yo."
+      },
+      "development": {
+        "title": "Patnè Devlopman Biznis",
+        "text": "Transfòme lide yo an opòtinite biznis ki estriktire atravè planifikasyon ak preparasyon."
+      },
+      "facilitator": {
+        "title": "Fasilitatè",
+        "text": "Konekte antreprenè yo ak sipò pwofesyonèl, demann sèvis ak resous ekosistèm nan."
+      },
+      "accountability": {
+        "title": "Patnè Responsabilite",
+        "text": "Ede antreprenè yo rete konsantre sou etap enpòtan, responsablite, preparasyon ak angajman."
+      },
+      "leadership": {
+        "title": "Mentor Lidèchip",
+        "text": "Devlope konfyans, kapasite lidèchip, panse antreprenarya ak pran desizyon responsab."
+      },
+      "ibos": {
+        "title": "Kowòdonatè IBOS",
+        "text": "Sèvi ak IBOS pou swiv pwogrè, mete etap enpòtan ajou, kowòdone workflows epi swiv preparasyon antreprenè yo."
+      }
+    }
+  },
+  "accomplish": {
+    "title": "Sa Coaches yo Ede Antreprenè yo Akonpli",
+    "description": "Coaches EPEW ede antreprenè yo pase soti nan lide pou rive nan opòtinite ki òganize, prepare epi pare pou biznis.",
+    "items": {
+      "idea": "Devlope lide biznis",
+      "vision": "Klarifye vizyon biznis",
+      "goals": "Bati objektif estratejik",
+      "plans": "Prepare plan biznis",
+      "services": "Kowòdone sèvis pwofesyonèl",
+      "progress": "Swiv pwogrè antreprenè",
+      "funding": "Prepare pou finansman",
+      "launch": "Gide lansman biznis",
+      "strengthen": "Ranfòse biznis yo"
+    }
+  },
+  "journey": {
+    "title": "Pakou Coach EPEW la",
+    "description": "Coaches EPEW gide antreprenè yo atravè yon pakou devlopman ki estriktire soti nan asiyasyon pou rive nan kwasans biznis.",
+    "steps": {
+      "assignment": {
+        "title": "Asiyasyon",
+        "text": "Yo matche yon antreprenè ak yon Coach EPEW."
+      },
+      "discovery": {
+        "title": "Dekouvèt",
+        "text": "Coach la aprann objektif, vizyon, fòs ak defi antreprenè a."
+      },
+      "development": {
+        "title": "Devlopman",
+        "text": "Antreprenè a resevwa coaching, preparasyon ak sipò devlopman biznis."
+      },
+      "readiness": {
+        "title": "Preparasyon",
+        "text": "Coach la ede prepare antreprenè a pou finansman ak lansman biznis."
+      },
+      "growth": {
+        "title": "Kwasans",
+        "text": "Coach la kontinye sipòte responsabilite ak pwogrè biznis la."
+      }
+    }
+  },
+  "philosophy": {
+    "title": "Filozofi Coaching EPEW",
+    "description": "Nou kwè antreprenè yo reyisi lè yo resevwa konsèy regilye, responsabilite, preparasyon, ankourajman ak sipò pwofesyonèl. Coaches EPEW pa bati biznis pou antreprenè yo. Yo devlope antreprenè ki bati biznis ki reyisi."
+  },
+  "qualifications": {
+    "title": "Kilès ki Ka Vin yon Coach EPEW?",
+    "description": "EPEW akeyi moun ki kalifye, ki gen eksperyans, pwofesyonalis, lidèchip ak pasyon pou ede antreprenè yo reyisi.",
+    "cards": {
+      "business": {
+        "title": "Pwofesyonèl Biznis",
+        "text": "Pwofesyonèl ki gen eksperyans nan biznis, jesyon, operasyon, finans oswa konsiltasyon."
+      },
+      "entrepreneurs": {
+        "title": "Antreprenè",
+        "text": "Antreprenè ki gen eksperyans epi ki konprann defi pou bati ak fè yon biznis grandi."
+      },
+      "educators": {
+        "title": "Edikatè",
+        "text": "Pwofesè, fòmatè ak mentors ki konnen kijan pou gide moun atravè aprantisaj ak devlopman."
+      },
+      "community": {
+        "title": "Lidè Kominotè",
+        "text": "Lidè ki angaje pou ranfòse kominote yo atravè antreprenarya ak opòtinite ekonomik."
+      },
+      "retired": {
+        "title": "Kad Retrete",
+        "text": "Pwofesyonèl retrete ki vle sèvi ak eksperyans yo pou gide nouvo antreprenè."
+      },
+      "service": {
+        "title": "Pwofesyonèl ki Gen Lespri Sèvis",
+        "text": "Moun ki pasyone pou ede antreprenè yo devlope potansyèl yo epi bati biznis dirab."
+      }
+    }
+  },
+  "responsibilities": {
+    "title": "Responsablite Coach la",
+    "description": "Coaches EPEW sipòte antreprenè yo atravè konsèy, responsabilite, revizyon etap enpòtan ak preparasyon kowòdone.",
+    "items": {
+      "guide": "Gide antreprenè yo",
+      "monitor": "Swiv pwogrè",
+      "interviews": "Fè entèvyou",
+      "questionnaires": "Revize kestyonè yo",
+      "support": "Kowòdone sipò pwofesyonèl",
+      "milestones": "Apwouve etap enpòtan yo",
+      "funding": "Prepare pou finansman",
+      "accountability": "Ankouraje responsabilite",
+      "growth": "Sipòte kwasans biznis"
+    }
+  },
+  "impact": {
+    "imageAlt": "Enpak Coach la",
+    "title": "Dèyè Chak Gwo Antreprenè Gen Yon Moun ki Te Kwè nan Li.",
+    "description": "Dèyè chak antreprenè ki reyisi gen yon moun ki te ankouraje li, pouse li, gide li epi ede li kontinye avanse. Coaches EPEW ede kreye biznis ki pi solid, fanmi ki pi solid ak kominote ki pi solid."
+  },
+  "commitment": {
+    "title": "Angajman Coach la",
+    "description": "Kòm yon Coach EPEW, mwen pran angajman pou gide antreprenè yo avèk entegrite, pwofesyonalis, responsabilite, respè ak ankourajman. Mwen pral ede yo prepare pou siksè pandan m ap pèmèt yo dirije pwòp biznis yo avèk konfyans ak responsabilite."
+  },
+  "statement": {
+    "title": "Okenn Antreprenè Pa Ta Dwe Fè Pakou a Poukont Li.",
+    "line1": "Antreprenè a pote vizyon an.",
+    "line2": "Coach la devlope antreprenè a.",
+    "line3": "EPEW bay ekosistèm nan.",
+    "line4": "Ansanm, nou bati biznis ki reyisi."
+  },
+  "cta": {
+    "title": "Vin yon Coach EPEW",
+    "description": "Ede devlope antreprenè yo. Ede ranfòse kominote yo. Ede transfòme lavi atravè antreprenarya.",
+    "applyButton": "Aplike kòm Coach",
+    "loginButton": "Koneksyon Coach"
   }
 }

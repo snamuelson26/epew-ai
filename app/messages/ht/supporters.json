@@ -1,17 +1,203 @@
 {
-  "headings": {
-    "support_entrepreneurs": "Support Entrepreneurs.",
-    "who_is_a_supporter": "Who Is a Supporter?",
-    "why_become_a_supporter": "Why Become a Supporter?",
-    "who_can_become_a_supporter": "Who Can Become a Supporter?",
-    "up_to_6": "Up To 6%"
+  "loading": "Chajman...",
+  "hero": {
+    "imageAlt": "Sipotè EPEW",
+    "titleLine1": "Sipòte Antreprenè yo.",
+    "titleLine2": "Ranfòse Kominote yo.",
+    "description": "Sipotè yo se fondasyon ak motè Ekosistèm Devlopman Antreprenarya EPEW la. Patisipasyon ou ede transfòme lide yo an biznis ki reyisi, ki kreye travay, ranfòse fanmi yo, epi bati kominote ki pi solid.",
+    "supportButton": "Vin yon Sipotè",
+    "videosButton": "Gade Videyo ak Istwa"
   },
-  "content": {
-    "strengthen_communities": "Strengthen Communities.",
-    "view_videos_stories": "View Videos & Stories",
-    "you_believe_in_entrepreneurs": "You believe in entrepreneurs.",
-    "we_prepare_entrepreneurs": "We prepare entrepreneurs.",
-    "we_provide_the_ecosystem": "We provide the ecosystem.",
-    "together_we_build_successful_businesses": "Together, we build successful businesses."
+  "who": {
+    "title": "Kilès ki yon sipotè?",
+    "description": "Yon sipotè se yon moun ki kwè nan antreprenè yo epi ki vle ede transfòme lide biznis an biznis ki reyisi. Sipotè yo patisipe nan yon ekosistèm estriktire ki prepare antreprenè yo, kowòdone sèvis pwofesyonèl, sipòte preparasyon pou finansman epi ranfòse kominote yo.",
+    "cards": {
+      "community": {
+        "title": "Patisipasyon Kominotè",
+        "text": "Sipotè yo ede antreprenè yo pase soti nan lide pou rive nan devlopman biznis, preparasyon ak lansman."
+      },
+      "growth": {
+        "title": "Kwasans Antreprenè",
+        "text": "Patisipasyon ou sipòte coaching, estrikti, sèvis pwofesyonèl, vizibilite ak kwasans biznis ki responsab."
+      },
+      "impact": {
+        "title": "Enpak Kominotè",
+        "text": "Biznis ki reyisi kapab kreye travay, ranfòse fanmi epi kontribye nan devlopman kominotè alontèm."
+      }
+    }
+  },
+  "whySupport": {
+    "title": "Poukisa Nou Vin yon sipotè?",
+    "description": "Sipotè yo rann antreprenarya posib. Yo ede kreye fondasyon ki pèmèt antreprenè yo prepare, lanse, grandi epi kreye enpak dirab.",
+    "imageAlt": "Poukisa Sipotè yo enpòtan",
+    "cards": {
+      "ideas": {
+        "title": "Ede Lide yo Vin Biznis",
+        "text": "Patisipasyon ou ede antreprenè yo jwenn sipò yo bezwen pou pase soti nan vizyon pou rive nan preparasyon biznis."
+      },
+      "launch": {
+        "title": "Ede Biznis yo Lanse",
+        "text": "Sipotè yo ede antreprenè yo jwenn estrikti, coaching, vizibilite ak preparasyon pwofesyonèl."
+      },
+      "families": {
+        "title": "Ranfòse Fanmi yo",
+        "text": "Lè antreprenè yo reyisi, fanmi yo jwenn plis opòtinite, estabilite, konfyans ak kwasans alontèm."
+      },
+      "economic": {
+        "title": "Sipòte Devlopman Ekonomik",
+        "text": "Biznis solid kreye travay, sèvis, opòtinite ak aktivite ekonomik lokal."
+      },
+      "longTerm": {
+        "title": "Bati Enpak Alontèm",
+        "text": "Sipotè yo ede kreye biznis ki kapab kontinye grandi apre lansman epi sèvi kominote yo."
+      },
+      "movement": {
+        "title": "Fè Pati yon Mouvman",
+        "text": "EPEW ap bati yon modèl mondyal devlopman antreprenarya ke kominote yo kapab adopte pou diminye povrete atravè antreprenarya."
+      }
+    }
+  },
+  "eligibility": {
+    "title": "Kiyès ki ka vini yon sipotè?",
+    "description": "Nenpòt moun ki kwè nan antreprenarya, devlopman kominotè ak kwasans biznis kapab vin yon sipotè.",
+    "cards": {
+      "entrepreneurs": {
+        "title": "Antreprenè",
+        "text": "Antreprenè yo kapab sipòte lòt antreprenè epi ede ekosistèm nan grandi."
+      },
+      "students": {
+        "title": "Elèv ak Etidyan",
+        "text": "Elèv ak etidyan yo kapab aprann antreprenarya pandan y ap sipòte pwochen lidè biznis yo."
+      },
+      "workers": {
+        "title": "Travayè",
+        "text": "Travayè yo kapab patisipe nan ede antreprenè yo kreye travay ak opòtinite."
+      },
+      "coaches": {
+        "title": "Coaches",
+        "text": "Coaches yo kapab sipòte ekosistèm nan pandan y ap gide antreprenè yo nan direksyon preparasyon."
+      },
+      "retired": {
+        "title": "Moun Retrete",
+        "text": "Moun retrete yo kapab sèvi ak eksperyans yo ak patisipasyon yo pou sipòte antreprenè."
+      },
+      "anyone": {
+        "title": "Nenpòt Moun ki Kwè",
+        "text": "Nenpòt moun ki kwè nan antreprenarya, fanmi, kominote ak opòtinite ekonomik kapab vin yon sipotè."
+      }
+    }
+  },
+  "participation": {
+    "title": "Kijan Sipotè yo Ka Patisipe",
+    "description": "EPEW swiv yon pwosesis patisipasyon estriktire ki fèt pou ankouraje transparans, responsabilite, preparasyon antreprenè ak enpak kominotè.",
+    "imageAlt": "Kijan Sipotè yo patisipe",
+    "steps": {
+      "register": {
+        "title": "Enskri",
+        "text": "Kreye kont sipotè ou."
+      },
+      "choose": {
+        "title": "Chwazi",
+        "text": "Chwazi opsyon patisipasyon ou."
+      },
+      "support": {
+        "title": "Sipòte",
+        "text": "Sipòte antreprenè yo nan ekosistèm nan."
+      },
+      "follow": {
+        "title": "Swiv",
+        "text": "Resevwa mizajou epi swiv pwogrè."
+      },
+      "impact": {
+        "title": "Enpak",
+        "text": "Ede bati kominote ki pi solid."
+      }
+    }
+  },
+  "ecosystem": {
+    "imageAlt": "Sipotè yo ranfòse ekosistèm nan",
+    "title": "Chak Antreprenè Bezwen yon Kominote Dèyè Li",
+    "paragraph1": "Biznis ki reyisi raman bati poukont yo. Chak antreprenè benefisye ankourajman, preparasyon, konsèy pwofesyonèl ak yon kominote ki kwè nan vizyon li.",
+    "paragraph2": "Sipotè Fondatè yo rann antreprenarya posib lè yo ede kreye anviwònman kote biznis yo kapab lanse, grandi epi kreye enpak kominotè dirab.",
+    "cards": {
+      "preparation": {
+        "title": "Preparasyon",
+        "text": "Sipòte preparasyon antreprenè yo anvan finansman."
+      },
+      "development": {
+        "title": "Devlopman Biznis",
+        "text": "Ede antreprenè yo òganize epi ranfòse biznis yo."
+      },
+      "services": {
+        "title": "Sèvis Pwofesyonèl",
+        "text": "Sipòte sèvis kowòdone ki prepare antreprenè yo pou siksè."
+      },
+      "launch": {
+        "title": "Lansman Biznis",
+        "text": "Ede antreprenè yo ouvri biznis yo avèk siksè."
+      },
+      "growth": {
+        "title": "Kwasans Kominotè",
+        "text": "Chak antreprenè ki reyisi ranfòse kominote lokal la."
+      },
+      "longTerm": {
+        "title": "Siksè Alontèm",
+        "text": "Sipòte biznis yo apre jou ouvèti a atravè kwasans kontinyèl."
+      }
+    }
+  },
+  "impact": {
+    "imageAlt": "Enpak Kominotè",
+    "title": "Patisipasyon Nou Kreye Enpak Sou Kominote a",
+    "description": "Chak antreprenè EPEW sipòte gen potansyèl pou kreye travay, ranfòse fanmi, bay sèvis ki gen valè epi kontribye nan kominote ki pi solid ak kwasans ekonomik dirab."
+  },
+  "benefits": {
+    "title": "Benefis Patisipasyon",
+    "description": "Sipotè yo patisipe nan siksè antreprenè, devlopman kominotè ak kwasans biznis atravè ekosistèm EPEW la.",
+    "rate": "Jiska 6%",
+    "rateDescription": "Sipotè ki kalifye yo kapab resevwa benefis patisipasyon anyèl jiska 6%, selon règleman pwogram nan ak pèfòmans biznis yo.",
+    "disclaimer": "Benefis patisipasyon yo pa garanti. Yo depann de pèfòmans biznis, siksè antreprenè ak règleman pwogram EPEW."
+  },
+  "whyEpew": {
+    "title": "Poukisa Moun Chwazi EPEW",
+    "cards": {
+      "structured": {
+        "title": "Estriktire",
+        "text": "Chak antreprenè swiv yon pwosesis devlopman ki klè."
+      },
+      "transparent": {
+        "title": "Transparan",
+        "text": "Sipotè yo kapab swiv pwogrè antreprenè a pandan tout pakou a."
+      },
+      "accountable": {
+        "title": "Responsab",
+        "text": "Antreprenè yo bay rapò chak trimès epi kenbe responsabilite kontinyèl."
+      },
+      "community": {
+        "title": "Kominote an Premye",
+        "text": "Kominote yo vin patisipan aktif nan antreprenarya."
+      },
+      "entrepreneur": {
+        "title": "Konsantre sou Antreprenè",
+        "text": "Tout bagay fèt pou ede antreprenè yo reyisi."
+      },
+      "vision": {
+        "title": "Vizyon Alontèm",
+        "text": "Bati biznis ki kontinye kreye valè pandan anpil ane."
+      }
+    }
+  },
+  "promise": {
+    "title": "Pwomès Ofisyèl EPEW",
+    "line1": "Ou kwè nan antreprenè yo.",
+    "line2": "Nou prepare antreprenè yo.",
+    "line3": "Nou bay ekosistèm nan.",
+    "line4": "Ansanm, nou bati biznis ki reyisi."
+  },
+  "cta": {
+    "title": "Vin yon Sipotè Fondatè Jodi a",
+    "description": "Patisipasyon ou ede transfòme lide an biznis, biznis an opòtinite, epi opòtinite an kominote ki pi solid.",
+    "supportButton": "Vin yon Sipotè",
+    "learnButton": "Aprann Kijan EPEW Fonksyone"
   }
 }

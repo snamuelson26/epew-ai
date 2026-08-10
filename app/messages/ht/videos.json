@@ -1,25 +1,66 @@
 {
-  "headings": {
-    "learn_prepare_grow": "Learn. Prepare. Grow.",
-    "why_the_video_library": "Why the Video Library?"
+  "hero": {
+    "imageAlt": "Bibliyotèk Videyo EPEW",
+    "title": "Aprann. Prepare. Grandi.",
+    "description": "Bibliyotèk Videyo EPEW la bay edikasyon pratik, konsèy ekspè, istwa antreprenè ak fòmasyon etap pa etap pou ede w bati yon biznis ki reyisi.",
+    "watchFeatured": "Gade Videyo Vedèt yo",
+    "becomeEntrepreneur": "Vin yon Antreprenè"
   },
-  "attributes": {
-    "title": {
-      "coaching_mentorship": "Coaching & Mentorship",
-      "marketing_promotion": "Marketing & Promotion",
-      "business_launch_growth": "Business Launch & Growth"
+  "why": {
+    "title": "Poukisa Bibliyotèk Videyo a?",
+    "description": "Nan EPEW, edikasyon vini anvan finansman. Bibliyotèk videyo nou an ede antreprenè, supporters, coaches ak patnè konprann ekosistèm nan, prepare yo avèk responsabilite epi grandi avèk konfyans."
+  },
+  "categories": {
+    "title": "Kategori Videyo",
+    "entrepreneurFundamentals": "Fondamantal Antreprenarya",
+    "businessDevelopment": "Devlopman Biznis",
+    "coachingMentorship": "Coaching ak Mentora",
+    "fundingReadiness": "Preparasyon pou Finansman",
+    "marketingPromotion": "Maketing ak Pwomosyon",
+    "businessOperations": "Operasyon Biznis",
+    "financialManagement": "Jesyon Finansye",
+    "successStories": "Istwa Siksè"
+  },
+  "featured": {
+    "title": "Videyo Vedèt",
+    "comingSoon": "🚧 Ap Vini Byento",
+    "comingSoonDescription": "Premye videyo fòmasyon ak prezantasyon EPEW nou yo ap pwodui kounye a epi yo pral disponib byento.",
+    "welcome": {
+      "title": "Byenveni nan EPEW",
+      "description": "Yon entwodiksyon sou misyon EPEW, ekosistèm nan ak pakou antreprenè a."
     },
-    "description": {
-      "an_introduction_to_the_epew_mission_ecosystem_and": "An introduction to the EPEW mission, ecosystem, and entrepreneur journey.",
-      "learn_how_epew_helps_entrepreneurs_develop_ideas_into": "Learn how EPEW helps entrepreneurs develop ideas into business opportunities.",
-      "understand_how_supporters_become_the_foundation_and_engine": "Understand how supporters become the foundation and engine of the ecosystem.",
-      "see_how_epew_coaches_guide_entrepreneurs_through_preparation": "See how EPEW coaches guide entrepreneurs through preparation and growth.",
-      "learn_why_preparation_comes_before_funding_inside_the": "Learn why preparation comes before funding inside the EPEW model.",
-      "explore_how_entrepreneurs_launch_report_and_strengthen_their": "Explore how entrepreneurs launch, report, and strengthen their businesses."
-    }
+    "ideaToBusiness": {
+      "title": "Soti nan Lide pou Rive nan Biznis",
+      "description": "Aprann kijan EPEW ede antreprenè devlope lide yo pou vin opòtinite biznis."
+    },
+    "supporters": {
+      "title": "Kijan Supporters yo Ede",
+      "description": "Konprann kijan supporters yo vin fondasyon ak motè ekosistèm nan."
+    },
+    "coaching": {
+      "title": "Devlopman Gide pa Coach",
+      "description": "Gade kijan coaches EPEW yo gide antreprenè atravè preparasyon ak kwasans."
+    },
+    "funding": {
+      "title": "Preparasyon pou Finansman",
+      "description": "Aprann poukisa preparasyon vini anvan finansman nan modèl EPEW la."
+    },
+    "launch": {
+      "title": "Lansman ak Kwasans Biznis",
+      "description": "Dekouvri kijan antreprenè yo lanse, rapòte epi ranfòse biznis yo."
+    },
+    "duration": "Ap Vini Byento"
   },
-  "content": {
-    "coming_soon": "🚧 Coming Soon",
-    "our_first_epew_training_and_introduction_videos_are": "Our first EPEW training and introduction videos are currently in production and will be available soon."
+  "journey": {
+    "title": "Pakou Aprantisaj EPEW la",
+    "startHere": "Kòmanse Isit",
+    "learnEcosystem": "Aprann Ekosistèm nan",
+    "developBusiness": "Devlope Biznis Ou",
+    "prepareGrowth": "Prepare pou Kwasans"
+  },
+  "cta": {
+    "title": "Kòmanse Aprann Jodi a",
+    "description": "Konesans se fondasyon chak antreprenè ki reyisi. Kontinye aprann. Kontinye prepare. Kontinye bati avni ou.",
+    "button": "Kòmanse Pakou Antreprenarya Ou"
   }
 }
