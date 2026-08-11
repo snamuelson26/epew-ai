@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { createClient } from "@/lib/supabase/server";
+import {
+  removeVerificationDocuments,
+  uploadVerificationDocuments,
+  type VerificationDocumentPaths,
+} from "@/lib/entrepreneurs/verificationDocuments";
+
+export const runtime = "nodejs";
 
 type ParticipantInput = {
   full_name?: unknown;
@@ -13,19 +21,38 @@ type ParticipantInput = {
   is_secondary_representative?: unknown;
 };
 
-function cleanString(value: unknown) {
+type Participant = {
+  full_name: string;
+  email: string;
+  phone: string;
+  organizational_title: string;
+  project_role: string;
+  project_responsibility: string;
+  is_primary_representative: boolean;
+  is_secondary_representative: boolean;
+};
+
+const DOMESTIC_COUNTRIES = new Set([
+  "united states",
+  "united states of america",
+  "usa",
+  "us",
+  "canada",
+]);
+
+function cleanString(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function cleanEmail(value: unknown) {
+function cleanEmail(value: unknown): string {
   return cleanString(value).toLowerCase();
 }
 
-function cleanBoolean(value: unknown) {
+function cleanBoolean(value: unknown): boolean {
   return value === true;
 }
 
-function cleanNumber(value: unknown) {
+function cleanNumber(value: unknown): number | null {
   if (value === "" || value === null || value === undefined) {
     return null;
   }
@@ -34,24 +61,237 @@ function cleanNumber(value: unknown) {
   return Number.isFinite(number) ? number : null;
 }
 
+function getFile(value: FormDataEntryValue | null): File | null {
+  return value instanceof File && value.size > 0 ? value : null;
+}
+
+function parseParticipants(value: string): Participant[] {
+  let parsed: unknown;
+
+  try {
+    parsed = JSON.parse(value);
+  } catch {
+    throw new Error(
+      "Unable to read the organization participant information.",
+    );
+  }
+
+  if (!Array.isArray(parsed)) {
+    throw new Error(
+      "Organization participant information must be provided as a list.",
+    );
+  }
+
+  return parsed.map((item: ParticipantInput) => ({
+    full_name: cleanString(item.full_name),
+    email: cleanEmail(item.email),
+    phone: cleanString(item.phone),
+    organizational_title: cleanString(item.organizational_title),
+    project_role: cleanString(item.project_role),
+    project_responsibility: cleanString(
+      item.project_responsibility,
+    ),
+    is_primary_representative: cleanBoolean(
+      item.is_primary_representative,
+    ),
+    is_secondary_representative: cleanBoolean(
+      item.is_secondary_representative,
+    ),
+  }));
+}
+
 export async function POST(request: NextRequest) {
+  let uploadedDocuments: VerificationDocumentPaths | null = null;
   let createdApplicationId: number | null = null;
 
   try {
-    const body = await request.json();
+    const formData = await request.formData();
 
-    const supabase = await createClient();
+    const fullName = cleanString(formData.get("full_name"));
+    const email = cleanEmail(formData.get("email"));
+    const phone = cleanString(formData.get("phone"));
+    const password = cleanString(formData.get("password"));
 
-    const fullName = cleanString(body.full_name);
-    const email = cleanEmail(body.email);
-    const password = cleanString(body.password);
-    const phone = cleanString(body.phone);
+    const countryOfCitizenship = cleanString(
+      formData.get("country_of_citizenship"),
+    );
+    const dateOfBirth = cleanString(
+      formData.get("date_of_birth"),
+    );
+    const placeOfBirth = cleanString(
+      formData.get("place_of_birth"),
+    );
 
-    if (!email || !password) {
+    const addressCountry = cleanString(
+      formData.get("address_country"),
+    );
+    const streetAddress = cleanString(
+      formData.get("street_address"),
+    );
+    const city = cleanString(formData.get("city"));
+    const state = cleanString(formData.get("state"));
+    const zipCode = cleanString(formData.get("zip_code"));
+
+    const raceEthnicity = cleanString(
+      formData.get("race_ethnicity"),
+    );
+    const raceEthnicityOther = cleanString(
+      formData.get("race_ethnicity_other"),
+    );
+
+    const legalName = cleanString(
+      formData.get("legal_name"),
+    );
+    const displayName = cleanString(
+      formData.get("display_name"),
+    );
+    const organizationType = cleanString(
+      formData.get("organization_type"),
+    );
+    const registrationNumber = cleanString(
+      formData.get("registration_number"),
+    );
+
+    const enterpriseCountry = cleanString(
+      formData.get("enterprise_country"),
+    );
+    const organizationStreetAddress = cleanString(
+      formData.get("organization_street_address"),
+    );
+    const organizationCity = cleanString(
+      formData.get("organization_city"),
+    );
+    const organizationStateRegion = cleanString(
+      formData.get("organization_state_region"),
+    );
+    const organizationPostalCode = cleanString(
+      formData.get("organization_postal_code"),
+    );
+
+    const yearEstablished = cleanNumber(
+      formData.get("year_established"),
+    );
+    const website = cleanString(
+      formData.get("website"),
+    );
+
+    const primaryRepresentativeName = cleanString(
+      formData.get("primary_representative_name"),
+    );
+    const primaryRepresentativeTitle = cleanString(
+      formData.get("primary_representative_title"),
+    );
+    const primaryRepresentativeEmail = cleanEmail(
+      formData.get("primary_representative_email"),
+    );
+    const primaryRepresentativePhone = cleanString(
+      formData.get("primary_representative_phone"),
+    );
+
+    const secondaryRepresentativeName = cleanString(
+      formData.get("secondary_representative_name"),
+    );
+    const secondaryRepresentativeTitle = cleanString(
+      formData.get("secondary_representative_title"),
+    );
+    const secondaryRepresentativeEmail = cleanEmail(
+      formData.get("secondary_representative_email"),
+    );
+    const secondaryRepresentativePhone = cleanString(
+      formData.get("secondary_representative_phone"),
+    );
+
+    const projectName = cleanString(
+      formData.get("project_name"),
+    );
+    const projectCategory = cleanString(
+      formData.get("project_category"),
+    );
+    const projectDescription = cleanString(
+      formData.get("project_description"),
+    );
+    const productService = cleanString(
+      formData.get("product_service"),
+    );
+    const communityMarketServed = cleanString(
+      formData.get("community_market_served"),
+    );
+    const projectLocation = cleanString(
+      formData.get("project_location"),
+    );
+    const projectStage = cleanString(
+      formData.get("project_stage"),
+    );
+    const existingOperations = cleanString(
+      formData.get("existing_operations"),
+    );
+
+    const expectedJobs = cleanNumber(
+      formData.get("expected_jobs"),
+    );
+    const resourcesRequired = cleanString(
+      formData.get("resources_required"),
+    );
+    const facilityRequirements = cleanString(
+      formData.get("facility_requirements"),
+    );
+    const licensesPermits = cleanString(
+      formData.get("licenses_permits"),
+    );
+
+    const estimatedProjectCost = cleanNumber(
+      formData.get("estimated_project_cost"),
+    );
+    const requestedFinancing = cleanNumber(
+      formData.get("requested_financing"),
+    );
+    const intendedUseOfFinancing = cleanString(
+      formData.get("intended_use_of_financing"),
+    );
+
+    const participantsValue = cleanString(
+      formData.get("participants"),
+    );
+
+    const governmentId = getFile(
+      formData.get("government_id"),
+    );
+    const selfie = getFile(
+      formData.get("selfie"),
+    );
+
+    if (
+      !fullName ||
+      !email ||
+      !phone ||
+      !password ||
+      !countryOfCitizenship ||
+      !dateOfBirth ||
+      !placeOfBirth ||
+      !addressCountry ||
+      !streetAddress ||
+      !city ||
+      !state ||
+      !zipCode ||
+      !legalName ||
+      !enterpriseCountry ||
+      !organizationStreetAddress ||
+      !organizationCity ||
+      !organizationStateRegion ||
+      !organizationPostalCode ||
+      !primaryRepresentativeName ||
+      !primaryRepresentativeEmail ||
+      !projectName ||
+      !projectDescription ||
+      requestedFinancing === null ||
+      !intendedUseOfFinancing ||
+      !participantsValue
+    ) {
       return NextResponse.json(
         {
           success: false,
-          error: "Email address and password are required.",
+          error:
+            "Please complete all required organization application fields.",
         },
         { status: 400 },
       );
@@ -66,6 +306,191 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
+
+    if (!governmentId) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "A valid government-issued identification document is required.",
+        },
+        { status: 400 },
+      );
+    }
+
+    if (!selfie) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "A selfie verification photo is required.",
+        },
+        { status: 400 },
+      );
+    }
+
+    if (
+      raceEthnicity === "Another race or ethnicity" &&
+      !raceEthnicityOther
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Please describe your race or ethnicity, or select another option.",
+        },
+        { status: 400 },
+      );
+    }
+
+    const participants = parseParticipants(participantsValue);
+
+    if (participants.length < 3) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Organization applications require at least 3 active participants.",
+        },
+        { status: 400 },
+      );
+    }
+
+    if (
+      participants.some(
+        (participant) =>
+          !participant.full_name ||
+          !participant.organizational_title ||
+          !participant.project_role ||
+          !participant.project_responsibility,
+      )
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Each organization participant must include a name, organization title, project role, and project responsibility.",
+        },
+        { status: 400 },
+      );
+    }
+
+    if (
+      requestedFinancing <= 0 ||
+      requestedFinancing > 100000
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Organization requested financing must be greater than $0 and cannot exceed $100,000.",
+        },
+        { status: 400 },
+      );
+    }
+
+    if (
+      estimatedProjectCost !== null &&
+      estimatedProjectCost < 0
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Estimated project cost cannot be negative.",
+        },
+        { status: 400 },
+      );
+    }
+
+    if (expectedJobs !== null && expectedJobs < 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Expected jobs cannot be negative.",
+        },
+        { status: 400 },
+      );
+    }
+
+    const currentYear = new Date().getFullYear();
+
+    if (
+      yearEstablished !== null &&
+      (yearEstablished < 1800 ||
+        yearEstablished > currentYear)
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Please provide a valid year established.",
+        },
+        { status: 400 },
+      );
+    }
+
+    const applicationPath =
+      DOMESTIC_COUNTRIES.has(
+        enterpriseCountry.toLowerCase(),
+      )
+        ? "domestic_organization"
+        : "international_organization";
+
+    const duplicateChecks = await Promise.all([
+      supabaseAdmin
+        .from("entrepreneur_applications")
+        .select("id")
+        .ilike("email", email)
+        .limit(1),
+
+      supabaseAdmin
+        .from("entrepreneur_applications")
+        .select("id")
+        .eq("phone", phone)
+        .limit(1),
+
+      supabaseAdmin
+        .from("entrepreneur_applications")
+        .select("id")
+        .ilike("business_name", projectName)
+        .limit(1),
+    ]);
+
+    const duplicateCheckError = duplicateChecks.find(
+      (result) => result.error,
+    )?.error;
+
+    if (duplicateCheckError) {
+      console.error(
+        "Organization application duplicate check failed:",
+        duplicateCheckError,
+      );
+
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Unable to verify the application information.",
+        },
+        { status: 500 },
+      );
+    }
+
+    const duplicateExists = duplicateChecks.some(
+      (result) => (result.data?.length ?? 0) > 0,
+    );
+
+    if (duplicateExists) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "An entrepreneur application already exists with this email address, phone number, or project name.",
+        },
+        { status: 409 },
+      );
+    }
+
+    const supabase = await createClient();
 
     let userId = "";
 
@@ -103,287 +528,19 @@ export async function POST(request: NextRequest) {
       userId = authData.user.id;
     }
 
-    const countryOfCitizenship = cleanString(body.country_of_citizenship);
-    const dateOfBirth = cleanString(body.date_of_birth);
-    const placeOfBirth = cleanString(body.place_of_birth);
-
-    const addressCountry = cleanString(body.address_country);
-    const streetAddress = cleanString(body.street_address);
-    const city = cleanString(body.city);
-    const state = cleanString(body.state);
-    const zipCode = cleanString(body.zip_code);
-
-    const raceEthnicity = cleanString(body.race_ethnicity);
-    const raceEthnicityOther = cleanString(body.race_ethnicity_other);
-
-    const governmentIdPath = cleanString(body.government_id_path);
-    const selfieVerificationPath = cleanString(
-      body.selfie_verification_path,
-    );
-
-    const legalName = cleanString(body.legal_name);
-    const displayName = cleanString(body.display_name);
-    const organizationType = cleanString(body.organization_type);
-    const registrationNumber = cleanString(body.registration_number);
-
-    const enterpriseCountry = cleanString(body.enterprise_country);
-    const organizationStreetAddress = cleanString(
-      body.organization_street_address,
-    );
-    const organizationCity = cleanString(body.organization_city);
-    const organizationStateRegion = cleanString(
-      body.organization_state_region,
-    );
-    const organizationPostalCode = cleanString(
-      body.organization_postal_code,
-    );
-
-    const yearEstablished = cleanNumber(body.year_established);
-    const website = cleanString(body.website);
-
-    const primaryRepresentativeName = cleanString(
-      body.primary_representative_name,
-    );
-    const primaryRepresentativeTitle = cleanString(
-      body.primary_representative_title,
-    );
-    const primaryRepresentativeEmail = cleanEmail(
-      body.primary_representative_email,
-    );
-    const primaryRepresentativePhone = cleanString(
-      body.primary_representative_phone,
-    );
-
-    const secondaryRepresentativeName = cleanString(
-      body.secondary_representative_name,
-    );
-    const secondaryRepresentativeTitle = cleanString(
-      body.secondary_representative_title,
-    );
-    const secondaryRepresentativeEmail = cleanEmail(
-      body.secondary_representative_email,
-    );
-    const secondaryRepresentativePhone = cleanString(
-      body.secondary_representative_phone,
-    );
-
-    const projectName = cleanString(body.project_name);
-    const projectCategory = cleanString(body.project_category);
-    const projectDescription = cleanString(body.project_description);
-    const productService = cleanString(body.product_service);
-    const communityMarketServed = cleanString(
-      body.community_market_served,
-    );
-    const projectLocation = cleanString(body.project_location);
-    const projectStage = cleanString(body.project_stage);
-    const existingOperations = cleanString(body.existing_operations);
-
-    const expectedJobs = cleanNumber(body.expected_jobs);
-    const resourcesRequired = cleanString(body.resources_required);
-    const facilityRequirements = cleanString(body.facility_requirements);
-    const licensesPermits = cleanString(body.licenses_permits);
-
-    const estimatedProjectCost = cleanNumber(body.estimated_project_cost);
-    const requestedFinancing = cleanNumber(body.requested_financing);
-    const intendedUseOfFinancing = cleanString(
-      body.intended_use_of_financing,
-    );
-
-    const participantsRaw = Array.isArray(body.participants)
-      ? body.participants
-      : [];
-
-    const participants: Array<{
-      full_name: string;
-      email: string;
-      phone: string;
-      organizational_title: string;
-      project_role: string;
-      project_responsibility: string;
-      is_primary_representative: boolean;
-      is_secondary_representative: boolean;
-    }> = participantsRaw.map(
-      (participant: ParticipantInput) => ({
-        full_name: cleanString(participant.full_name),
-        email: cleanEmail(participant.email),
-        phone: cleanString(participant.phone),
-        organizational_title: cleanString(
-          participant.organizational_title,
-        ),
-        project_role: cleanString(participant.project_role),
-        project_responsibility: cleanString(
-          participant.project_responsibility,
-        ),
-        is_primary_representative: cleanBoolean(
-          participant.is_primary_representative,
-        ),
-        is_secondary_representative: cleanBoolean(
-          participant.is_secondary_representative,
-        ),
-      }),
-    );
-
-    if (
-      !fullName ||
-      !email ||
-      !phone ||
-      !countryOfCitizenship ||
-      !dateOfBirth ||
-      !placeOfBirth ||
-      !addressCountry ||
-      !streetAddress ||
-      !city ||
-      !state ||
-      !zipCode ||
-      !governmentIdPath ||
-      !selfieVerificationPath ||
-      !legalName ||
-      !enterpriseCountry ||
-      !organizationStreetAddress ||
-      !organizationCity ||
-      !organizationStateRegion ||
-      !organizationPostalCode ||
-      !primaryRepresentativeName ||
-      !primaryRepresentativeEmail ||
-      !projectName ||
-      !projectDescription ||
-      !requestedFinancing ||
-      !intendedUseOfFinancing
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Please complete all required organization application fields.",
-        },
-        { status: 400 },
+    uploadedDocuments =
+      await uploadVerificationDocuments(
+        userId,
+        governmentId,
+        selfie,
       );
-    }
-
-    if (participants.length < 3) {
-      return NextResponse.json(
-        {
-          success: false,
-          error:
-            "Organization applications require at least 3 active participants.",
-        },
-        { status: 400 },
-      );
-    }
-
-    if (
-      participants.some(
-        (participant) =>
-          !participant.full_name ||
-          !participant.organizational_title ||
-          !participant.project_role ||
-          !participant.project_responsibility,
-      )
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
-          error:
-            "Each organization participant must include a name, organization title, project role, and project responsibility.",
-        },
-        { status: 400 },
-      );
-    }
-
-    if (
-      requestedFinancing === null ||
-      requestedFinancing <= 0 ||
-      requestedFinancing > 100000
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
-          error:
-            "Organization requested financing must be greater than $0 and cannot exceed $100,000.",
-        },
-        { status: 400 },
-      );
-    }
-
-    if (estimatedProjectCost !== null && estimatedProjectCost < 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Estimated project cost cannot be negative.",
-        },
-        { status: 400 },
-      );
-    }
-
-    if (expectedJobs !== null && expectedJobs < 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Expected jobs cannot be negative.",
-        },
-        { status: 400 },
-      );
-    }
-
-    if (yearEstablished !== null && yearEstablished < 1800) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Please provide a valid year established.",
-        },
-        { status: 400 },
-      );
-    }
-
-    const applicationPath =
-      enterpriseCountry.toLowerCase() === "united states" ||
-      enterpriseCountry.toLowerCase() === "united states of america" ||
-      enterpriseCountry.toLowerCase() === "usa" ||
-      enterpriseCountry.toLowerCase() === "us" ||
-      enterpriseCountry.toLowerCase() === "canada"
-        ? "domestic_organization"
-        : "international_organization";
-
-    const { data: duplicateApplication, error: duplicateCheckError } =
-      await supabaseAdmin
-        .from("entrepreneur_applications")
-        .select("id")
-        .or(
-          `email.eq.${email},phone.eq.${phone},business_name.eq.${projectName}`,
-        )
-        .limit(1)
-        .maybeSingle();
-
-    if (duplicateCheckError) {
-      console.error(
-        "Organization application duplicate check failed:",
-        duplicateCheckError,
-      );
-
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Unable to verify the application information.",
-        },
-        { status: 500 },
-      );
-    }
-
-    if (duplicateApplication) {
-      return NextResponse.json(
-        {
-          success: false,
-          error:
-            "An entrepreneur application already exists with this email address, phone number, or project name.",
-        },
-        { status: 409 },
-      );
-    }
 
     const { data: application, error: applicationError } =
       await supabaseAdmin
         .from("entrepreneur_applications")
         .insert({
           user_id: userId,
+
           full_name: fullName,
           email,
           phone,
@@ -399,13 +556,17 @@ export async function POST(request: NextRequest) {
           zip_code: zipCode,
 
           race_ethnicity: raceEthnicity || null,
-          race_ethnicity_other: raceEthnicityOther || null,
+          race_ethnicity_other:
+            raceEthnicityOther || null,
 
-          government_id_path: governmentIdPath,
-          selfie_verification_path: selfieVerificationPath,
+          government_id_path:
+            uploadedDocuments.governmentIdPath,
+          selfie_verification_path:
+            uploadedDocuments.selfieVerificationPath,
 
           business_name: projectName,
-          business_type: projectCategory || organizationType || null,
+          business_type:
+            projectCategory || organizationType || null,
           business_description: projectDescription,
 
           applicant_type: "organization",
@@ -433,10 +594,17 @@ export async function POST(request: NextRequest) {
         applicationError,
       );
 
+      await removeVerificationDocuments(
+        uploadedDocuments,
+      );
+
+      uploadedDocuments = null;
+
       return NextResponse.json(
         {
           success: false,
-          error: "Unable to create the organization application.",
+          error:
+            "Unable to create the organization application.",
         },
         { status: 500 },
       );
@@ -453,7 +621,8 @@ export async function POST(request: NextRequest) {
           legal_name: legalName,
           display_name: displayName || null,
           organization_type: organizationType || null,
-          registration_number: registrationNumber || null,
+          registration_number:
+            registrationNumber || null,
 
           country: enterpriseCountry,
           street_address: organizationStreetAddress,
@@ -464,10 +633,12 @@ export async function POST(request: NextRequest) {
           year_established: yearEstablished,
           website: website || null,
 
-          primary_representative_name: primaryRepresentativeName,
+          primary_representative_name:
+            primaryRepresentativeName,
           primary_representative_title:
             primaryRepresentativeTitle || null,
-          primary_representative_email: primaryRepresentativeEmail,
+          primary_representative_email:
+            primaryRepresentativeEmail,
           primary_representative_phone:
             primaryRepresentativePhone || null,
 
@@ -484,19 +655,26 @@ export async function POST(request: NextRequest) {
           project_category: projectCategory || null,
           project_description: projectDescription,
           product_service: productService || null,
-          community_market_served: communityMarketServed || null,
+          community_market_served:
+            communityMarketServed || null,
           project_location: projectLocation || null,
           project_stage: projectStage || null,
-          existing_operations: existingOperations || null,
+          existing_operations:
+            existingOperations || null,
           expected_jobs: expectedJobs,
 
-          resources_required: resourcesRequired || null,
-          facility_requirements: facilityRequirements || null,
-          licenses_permits: licensesPermits || null,
+          resources_required:
+            resourcesRequired || null,
+          facility_requirements:
+            facilityRequirements || null,
+          licenses_permits:
+            licensesPermits || null,
 
-          estimated_project_cost: estimatedProjectCost,
+          estimated_project_cost:
+            estimatedProjectCost,
           requested_financing: requestedFinancing,
-          intended_use_of_financing: intendedUseOfFinancing,
+          intended_use_of_financing:
+            intendedUseOfFinancing,
 
           participant_count: participants.length,
           status: "Pending Review",
@@ -515,33 +693,47 @@ export async function POST(request: NextRequest) {
         .delete()
         .eq("id", createdApplicationId);
 
+      createdApplicationId = null;
+
+      await removeVerificationDocuments(
+        uploadedDocuments,
+      );
+
+      uploadedDocuments = null;
+
       return NextResponse.json(
         {
           success: false,
-          error: "Unable to save the organization application details.",
+          error:
+            "Unable to save the organization application details.",
         },
         { status: 500 },
       );
     }
 
-    const participantRows = participants.map((participant) => ({
-      organization_application_id: organization.id,
-      full_name: participant.full_name,
-      email: participant.email || null,
-      phone: participant.phone || null,
-      organizational_title: participant.organizational_title,
-      project_role: participant.project_role,
-      project_responsibility: participant.project_responsibility,
-      is_primary_representative:
-        participant.is_primary_representative,
-      is_secondary_representative:
-        participant.is_secondary_representative,
-      participation_status: "active",
-    }));
+    const participantRows = participants.map(
+      (participant) => ({
+        organization_application_id: organization.id,
+        full_name: participant.full_name,
+        email: participant.email || null,
+        phone: participant.phone || null,
+        organizational_title:
+          participant.organizational_title,
+        project_role: participant.project_role,
+        project_responsibility:
+          participant.project_responsibility,
+        is_primary_representative:
+          participant.is_primary_representative,
+        is_secondary_representative:
+          participant.is_secondary_representative,
+        participation_status: "active",
+      }),
+    );
 
-    const { error: participantError } = await supabaseAdmin
-      .from("entrepreneur_organization_members")
-      .insert(participantRows);
+    const { error: participantError } =
+      await supabaseAdmin
+        .from("entrepreneur_organization_members")
+        .insert(participantRows);
 
     if (participantError) {
       console.error(
@@ -559,10 +751,19 @@ export async function POST(request: NextRequest) {
         .delete()
         .eq("id", createdApplicationId);
 
+      createdApplicationId = null;
+
+      await removeVerificationDocuments(
+        uploadedDocuments,
+      );
+
+      uploadedDocuments = null;
+
       return NextResponse.json(
         {
           success: false,
-          error: "Unable to save the organization participants.",
+          error:
+            "Unable to save the organization participants.",
         },
         { status: 500 },
       );
@@ -583,13 +784,14 @@ export async function POST(request: NextRequest) {
         roleLookupError,
       );
     } else if (!existingRole) {
-      const { error: roleError } = await supabaseAdmin
-        .from("user_roles")
-        .insert({
-          user_id: userId,
-          email,
-          role: "entrepreneur",
-        });
+      const { error: roleError } =
+        await supabaseAdmin
+          .from("user_roles")
+          .insert({
+            user_id: userId,
+            email,
+            role: "entrepreneur",
+          });
 
       if (roleError) {
         console.error(
@@ -599,18 +801,25 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      application_id: createdApplicationId,
-      organization_application_id: organization.id,
-      applicant_type: "organization",
-      application_path: applicationPath,
-      participant_count: participants.length,
-      message:
-        "Your EPEW Organization / Group Enterprise Application has been received.",
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        application_id: createdApplicationId,
+        organization_application_id:
+          organization.id,
+        applicant_type: "organization",
+        application_path: applicationPath,
+        participant_count: participants.length,
+        message:
+          "Your EPEW Organization / Group Enterprise Application has been received.",
+      },
+      { status: 201 },
+    );
   } catch (error) {
-    console.error("Organization application API error:", error);
+    console.error(
+      "Organization application API error:",
+      error,
+    );
 
     if (createdApplicationId !== null) {
       await supabaseAdmin
@@ -619,10 +828,19 @@ export async function POST(request: NextRequest) {
         .eq("id", createdApplicationId);
     }
 
+    if (uploadedDocuments) {
+      await removeVerificationDocuments(
+        uploadedDocuments,
+      );
+    }
+
     return NextResponse.json(
       {
         success: false,
-        error: "Unable to process your organization application.",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unable to process your organization application.",
       },
       { status: 500 },
     );
