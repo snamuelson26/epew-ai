@@ -1,0 +1,78 @@
+{
+  "hero": {
+    "eyebrow": "Red de Proveedores EPEW",
+    "title": "Ofrezca Servicios Profesionales y Crezca con el Ecosistema EPEW",
+    "description": "EPEW trabaja con proveedores, profesionales, contratistas, distribuidores y prestadores de servicios calificados que pueden apoyar el desarrollo y la operación de negocios propiedad de emprendedores."
+  },
+  "about": {
+    "title": "¿Quién puede convertirse en Proveedor de EPEW?",
+    "paragraph1": "Un Proveedor de EPEW puede ser una empresa, profesional independiente, contratista, distribuidor, consultor, técnico o proveedor especializado capaz de ofrecer productos confiables o servicios profesionales.",
+    "paragraph2": "La participación de los Proveedores está sujeta a revisión de la solicitud, calificación, verificación de cumplimiento y aprobación antes de obtener acceso a oportunidades de la red de Proveedores de EPEW."
+  },
+  "areas": {
+    "business": {
+      "title": "Servicios Empresariales y Profesionales",
+      "text": "Registro de empresas, contabilidad, preparación de impuestos, consultoría, servicios legales, seguros y otros servicios profesionales."
+    },
+    "technology": {
+      "title": "Tecnología y Servicios Digitales",
+      "text": "Desarrollo web, software, servicios de TI, sistemas digitales, soporte técnico y soluciones tecnológicas."
+    },
+    "marketing": {
+      "title": "Marketing, Marca y Promoción",
+      "text": "Diseño gráfico, impresión, señalización, publicidad, redes sociales, producción de medios, promoción y visibilidad empresarial."
+    },
+    "construction": {
+      "title": "Construcción y Servicios de Propiedad",
+      "text": "Construcción, renovación, reparación, instalación, mantenimiento, preparación de espacios comerciales y servicios relacionados."
+    },
+    "equipment": {
+      "title": "Equipos, Inventario y Suministros",
+      "text": "Equipos comerciales, maquinaria, muebles, inventario, suministros, materiales y otros recursos empresariales aprobados."
+    },
+    "specialized": {
+      "title": "Servicios Especializados de Proveedores",
+      "text": "Transporte, entrega, capacitación, belleza, servicios de alimentos, apoyo para eventos, oficios técnicos y otros servicios especializados."
+    }
+  },
+  "qualification": {
+    "title": "Calificación y Cumplimiento del Proveedor",
+    "description": "EPEW puede verificar las calificaciones del Proveedor antes de su aprobación y durante su participación activa en la red.",
+    "items": {
+      "experience": "Experiencia empresarial o profesional relevante",
+      "credentials": "Licencias, certificaciones o credenciales profesionales requeridas",
+      "insurance": "Seguro u otra documentación de cumplimiento cuando sea requerida",
+      "serviceArea": "Capacidad de servicio y cobertura geográfica",
+      "capacity": "Capacidad para completar el trabajo de manera profesional y confiable",
+      "standards": "Acuerdo para cumplir con los estándares de Proveedores de EPEW y los requisitos contractuales"
+    }
+  },
+  "benefits": {
+    "title": "¿Por qué unirse a la Red de Proveedores de EPEW?",
+    "description": "Los Proveedores calificados forman parte de un ecosistema empresarial en crecimiento diseñado para crear oportunidades recurrentes a medida que nuevos emprendedores desarrollan y operan sus negocios.",
+    "items": {
+      "opportunities": {
+        "title": "Oportunidades de Negocio",
+        "text": "Acceda a posibles oportunidades de servicios y suministros generadas en todo el ecosistema EPEW."
+      },
+      "matching": {
+        "title": "Asignación Basada en Experiencia",
+        "text": "Las calificaciones y la experiencia del Proveedor pueden utilizarse para identificar oportunidades apropiadas."
+      },
+      "growth": {
+        "title": "Crecimiento de la Red",
+        "text": "Desarrolle relaciones profesionales y aumente su visibilidad dentro de una red empresarial en crecimiento."
+      },
+      "performance": {
+        "title": "Reconocimiento del Desempeño",
+        "text": "Una alta calidad de servicio y un desempeño confiable pueden fortalecer la posición de un Proveedor dentro de la red."
+      }
+    }
+  },
+  "cta": {
+    "title": "Conviértase en Proveedor de EPEW",
+    "description": "Envíe su solicitud de Proveedor para revisión. Los Proveedores aprobados pueden acceder a oportunidades que coincidan con sus calificaciones, servicios y capacidad operativa.",
+    "applyButton": "Solicitar como Proveedor",
+    "loginButton": "Inicio de Sesión del Proveedor"
+  }
+}

@@ -962,6 +962,14 @@ const namespaceRegistry: Record<
       return module.default as TranslationDictionary;
     },
 
+    "vendors": async () => {
+      const module = await import(
+        "../../../messages/en/vendors.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+
     "legal": async () => {
       const module = await import(
         "../../../messages/en/legal.json"
@@ -1999,6 +2007,14 @@ const namespaceRegistry: Record<
     "partners": async () => {
       const module = await import(
         "../../../messages/ht/partners.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+
+    "vendors": async () => {
+      const module = await import(
+        "../../../messages/ht/vendors.json"
       );
 
       return module.default as TranslationDictionary;
@@ -3046,6 +3062,14 @@ const namespaceRegistry: Record<
       return module.default as TranslationDictionary;
     },
 
+    "vendors": async () => {
+      const module = await import(
+        "../../../messages/fr/vendors.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+
     "legal": async () => {
       const module = await import(
         "../../../messages/fr/legal.json"
@@ -4083,6 +4107,14 @@ const namespaceRegistry: Record<
     "partners": async () => {
       const module = await import(
         "../../../messages/es/partners.json"
+      );
+
+      return module.default as TranslationDictionary;
+    },
+
+    "vendors": async () => {
+      const module = await import(
+        "../../../messages/es/vendors.json"
       );
 
       return module.default as TranslationDictionary;

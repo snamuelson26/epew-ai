@@ -6,6 +6,7 @@ const launchOpen = new Date() >= LAUNCH_DATE;
 
 import Image from "next/image";
 import Link from "next/link";
+import Navbar from "@/app/components/Navbar";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -527,6 +528,8 @@ const { error: applicationError } = await supabase
 
   return (
     <main>
+      <Navbar />
+
       {/* APPLICATION ANNOUNCEMENT */}
       <section className="bg-green-600 px-6 py-4 text-center text-white">
         <p className="text-lg font-extrabold md:text-2xl">

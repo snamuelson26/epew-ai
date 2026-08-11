@@ -1,0 +1,78 @@
+{
+  "hero": {
+    "eyebrow": "Rezo Vandè EPEW",
+    "title": "Bay Sèvis Pwofesyonèl epi Devlope Ansanm ak Ekosistèm EPEW la",
+    "description": "EPEW travay ak vandè, pwofesyonèl, kontraktè, founisè ak prestataire sèvis ki kalifye pou sipòte devlopman ak operasyon biznis antreprenè yo."
+  },
+  "about": {
+    "title": "Kiyès ki ka vin yon Vandè EPEW?",
+    "paragraph1": "Yon Vandè EPEW kapab yon biznis, yon pwofesyonèl endepandan, yon kontraktè, yon founisè, yon konsiltan, yon teknisyen oswa yon prestataire espesyalize ki kapab bay pwodwi serye oswa sèvis pwofesyonèl.",
+    "paragraph2": "Patisipasyon Vandè yo mande revizyon aplikasyon an, kalifikasyon, verifikasyon konfòmite ak apwobasyon anvan yo jwenn aksè ak opòtinite Vandè EPEW yo."
+  },
+  "areas": {
+    "business": {
+      "title": "Sèvis Biznis ak Pwofesyonèl",
+      "text": "Anrejistreman biznis, kontablite, preparasyon taks, konsiltasyon, sèvis legal, asirans ak lòt sipò pwofesyonèl."
+    },
+    "technology": {
+      "title": "Teknoloji ak Sèvis Dijital",
+      "text": "Devlopman sit entènèt, lojisyèl, sèvis IT, sistèm dijital, sipò teknik ak solisyon teknoloji."
+    },
+    "marketing": {
+      "title": "Maketing, Branding ak Pwomosyon",
+      "text": "Konsepsyon grafik, enprime, siy, piblisite, medya sosyal, pwodiksyon medya, pwomosyon ak vizibilite biznis."
+    },
+    "construction": {
+      "title": "Konstriksyon ak Sèvis Pwopriyete",
+      "text": "Konstriksyon, renovasyon, reparasyon, enstalasyon, antretyen, preparasyon espas komèsyal ak lòt sèvis pwopriyete."
+    },
+    "equipment": {
+      "title": "Ekipman, Envantè ak Founiti",
+      "text": "Ekipman biznis, machin, mèb, envantè, founiti, materyèl ak lòt resous biznis ki apwouve."
+    },
+    "specialized": {
+      "title": "Sèvis Vandè Espesyalize",
+      "text": "Transpò, livrezon, fòmasyon, bote, sèvis manje, sipò evènman, metye teknik ak lòt sèvis espesyalize."
+    }
+  },
+  "qualification": {
+    "title": "Kalifikasyon ak Konfòmite Vandè",
+    "description": "EPEW ka verifye kalifikasyon Vandè yo anvan apwobasyon epi pandan patisipasyon aktif yo nan rezo a.",
+    "items": {
+      "experience": "Eksperyans biznis oswa pwofesyonèl ki gen rapò",
+      "credentials": "Lisans, sètifikasyon oswa kalifikasyon pwofesyonèl ki nesesè",
+      "insurance": "Asirans oswa lòt dokiman konfòmite lè sa nesesè",
+      "serviceArea": "Kapasite sèvis ak zòn jewografik",
+      "capacity": "Kapasite pou fè travay la pwofesyonèlman ak seryezman",
+      "standards": "Akò pou respekte estanda Vandè EPEW ak kondisyon kontra yo"
+    }
+  },
+  "benefits": {
+    "title": "Poukisa pou rantre nan Rezo Vandè EPEW la?",
+    "description": "Vandè ki kalifye yo antre nan yon ekosistèm antrepriz k ap grandi ki fèt pou kreye opòtinite regilye pandan nouvo antreprenè ap devlope epi opere biznis yo.",
+    "items": {
+      "opportunities": {
+        "title": "Opòtinite Biznis",
+        "text": "Jwenn aksè ak opòtinite posib pou sèvis ak founiti ki kreye atravè ekosistèm EPEW la."
+      },
+      "matching": {
+        "title": "Korespondans Dapre Ekspètiz",
+        "text": "Kalifikasyon ak ekspètiz Vandè yo ka itilize pou idantifye opòtinite ki apwopriye."
+      },
+      "growth": {
+        "title": "Kwasans Rezo",
+        "text": "Devlope relasyon pwofesyonèl epi ogmante vizibilite w nan yon rezo antreprenarya k ap grandi."
+      },
+      "performance": {
+        "title": "Rekonesans Pèfòmans",
+        "text": "Bon kalite sèvis ak pèfòmans serye ka ranfòse pozisyon yon Vandè nan rezo a."
+      }
+    }
+  },
+  "cta": {
+    "title": "Vin yon Vandè EPEW",
+    "description": "Soumèt aplikasyon Vandè ou pou revizyon. Vandè ki apwouve yo ka jwenn aksè ak opòtinite ki koresponn ak kalifikasyon yo, sèvis yo ak kapasite operasyon yo.",
+    "applyButton": "Aplike kòm Vandè",
+    "loginButton": "Koneksyon Vandè"
+  }
+}

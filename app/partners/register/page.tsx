@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Navbar from "@/app/components/Navbar";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -117,65 +117,8 @@ if (existingCandidate) {
 
   return (
     <>
-      {/* NAVBAR */}
-      <header className="bg-[#06245c] shadow-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-8 py-5">
-          <Image
-            src="/images/epew-logo.png"
-            alt="EPEW Logo"
-            width={220}
-            height={90}
-            style={{ width: "auto", height: "auto" }}
-            priority
-          />
-
-          <div className="hidden md:flex items-center gap-8">
-            <nav className="flex items-center gap-8">
-              <a href="/" className="text-white text-xl font-semibold hover:text-green-400 transition">
-                Home
-              </a>
-
-              <a href="/about" className="text-white text-xl font-semibold hover:text-green-400 transition">
-                About
-              </a>
-
-              <a href="/entrepreneurs" className="text-white text-xl font-semibold hover:text-green-400 transition">
-                Entrepreneurs
-              </a>
-
-              <a href="/supporters" className="text-white text-xl font-semibold hover:text-green-400 transition">
-                Supporters
-              </a>
-
-              <a href="/coaches" className="text-white text-xl font-semibold hover:text-green-400 transition">
-                Coaches
-              </a>
-
-              <a href="/partners" className="text-green-400 text-xl font-semibold">
-                Partners
-              </a>
-            </nav>
-
-            <select
-              className="bg-white text-[#06245c] px-4 py-2 rounded-xl text-lg font-bold outline-none cursor-pointer"
-              defaultValue="EN"
-            >
-              <option value="EN">English (EN)</option>
-              <option value="FR">French (FR)</option>
-              <option value="HT">Haitian Creole (HT)</option>
-              <option value="ES">Spanish (ES)</option>
-              <option value="TL">Tagalog (TL)</option>
-            </select>
-          </div>
-
-          <a
-            href="/login"
-            className="bg-white text-[#06245c] px-7 py-3 rounded-xl text-xl font-bold hover:bg-green-500 hover:text-white transition"
-          >
-            Login
-          </a>
-        </div>
-      </header>
+      {/* OFFICIAL EPEW NAVBAR */}
+      <Navbar />
 
       {/* PAGE */}
       <main className="min-h-screen bg-[#f5f7fb] p-8 text-[#06245c]">

@@ -1,5 +1,7 @@
 "use client";
 
+import Navbar from "@/app/components/Navbar";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -136,6 +138,7 @@ export default function CoachRegisterPage() {
 
   return (
     <main className="min-h-screen bg-[#f5f7fb] flex items-center justify-center p-8 text-[#06245c]">
+      <Navbar />
       <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-2xl w-full">
         <h1 className="text-5xl font-extrabold text-center mb-8">
           Coach Registration

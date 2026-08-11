@@ -1,5 +1,7 @@
 "use client";
 
+import Navbar from "@/app/components/Navbar";
+
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -301,6 +303,7 @@ function SupporterRegisterContent() {
 
   return (
     <main className="min-h-screen bg-[#f5f7fb] p-8 text-[#06245c]">
+      <Navbar />
       <div className="mb-8 rounded-3xl bg-white p-10 shadow-xl">
         <h1 className="mb-3 text-5xl font-extrabold">
           Become an EPEW Supporter

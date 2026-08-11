@@ -1,0 +1,78 @@
+{
+  "hero": {
+    "eyebrow": "Réseau de fournisseurs EPEW",
+    "title": "Fournissez des services professionnels et développez-vous avec l’écosystème EPEW",
+    "description": "EPEW travaille avec des fournisseurs, professionnels, entrepreneurs, distributeurs et prestataires de services qualifiés capables de soutenir le développement et le fonctionnement des entreprises appartenant aux entrepreneurs."
+  },
+  "about": {
+    "title": "Qui peut devenir fournisseur EPEW ?",
+    "paragraph1": "Un fournisseur EPEW peut être une entreprise, un professionnel indépendant, un entrepreneur, un fournisseur, un consultant, un technicien ou un prestataire spécialisé capable de fournir des produits fiables ou des services professionnels.",
+    "paragraph2": "La participation des fournisseurs est soumise à l’examen de la demande, à la qualification, à la vérification de conformité et à l’approbation avant l’accès aux opportunités du réseau de fournisseurs EPEW."
+  },
+  "areas": {
+    "business": {
+      "title": "Services commerciaux et professionnels",
+      "text": "Création d’entreprise, comptabilité, préparation fiscale, conseil, services juridiques, assurance et autres services professionnels."
+    },
+    "technology": {
+      "title": "Technologie et services numériques",
+      "text": "Développement de sites Web, logiciels, services informatiques, systèmes numériques, soutien technique et solutions technologiques."
+    },
+    "marketing": {
+      "title": "Marketing, image de marque et promotion",
+      "text": "Conception graphique, impression, signalisation, publicité, médias sociaux, production médiatique, promotion et visibilité des entreprises."
+    },
+    "construction": {
+      "title": "Construction et services immobiliers",
+      "text": "Construction, rénovation, réparation, installation, entretien, préparation d’espaces commerciaux et services immobiliers connexes."
+    },
+    "equipment": {
+      "title": "Équipement, inventaire et fournitures",
+      "text": "Équipement commercial, machinerie, mobilier, inventaire, fournitures, matériaux et autres ressources commerciales approuvées."
+    },
+    "specialized": {
+      "title": "Services spécialisés de fournisseurs",
+      "text": "Transport, livraison, formation, beauté, restauration, soutien événementiel, métiers techniques et autres services spécialisés."
+    }
+  },
+  "qualification": {
+    "title": "Qualification et conformité des fournisseurs",
+    "description": "EPEW peut vérifier les qualifications des fournisseurs avant leur approbation et pendant leur participation active au réseau.",
+    "items": {
+      "experience": "Expérience commerciale ou professionnelle pertinente",
+      "credentials": "Licences, certifications ou titres professionnels requis",
+      "insurance": "Assurance ou autres documents de conformité lorsque requis",
+      "serviceArea": "Capacité de service et couverture géographique",
+      "capacity": "Capacité à exécuter les travaux de façon professionnelle et fiable",
+      "standards": "Acceptation des normes fournisseurs EPEW et des exigences contractuelles"
+    }
+  },
+  "benefits": {
+    "title": "Pourquoi rejoindre le réseau de fournisseurs EPEW ?",
+    "description": "Les fournisseurs qualifiés intègrent un écosystème d’entreprise en croissance conçu pour créer des opportunités récurrentes à mesure que de nouveaux entrepreneurs développent et exploitent leurs entreprises.",
+    "items": {
+      "opportunities": {
+        "title": "Opportunités commerciales",
+        "text": "Accédez à des possibilités potentielles de services et de fourniture générées dans l’ensemble de l’écosystème EPEW."
+      },
+      "matching": {
+        "title": "Mise en relation selon l’expertise",
+        "text": "Les qualifications et l’expertise du fournisseur peuvent être utilisées pour identifier les opportunités appropriées."
+      },
+      "growth": {
+        "title": "Croissance du réseau",
+        "text": "Développez des relations professionnelles et augmentez votre visibilité au sein d’un réseau entrepreneurial en expansion."
+      },
+      "performance": {
+        "title": "Reconnaissance de la performance",
+        "text": "Une excellente qualité de service et une performance fiable peuvent renforcer la position d’un fournisseur au sein du réseau."
+      }
+    }
+  },
+  "cta": {
+    "title": "Devenez fournisseur EPEW",
+    "description": "Soumettez votre demande de fournisseur pour examen. Les fournisseurs approuvés peuvent accéder à des opportunités correspondant à leurs qualifications, services et capacité opérationnelle.",
+    "applyButton": "Postuler comme fournisseur",
+    "loginButton": "Connexion fournisseur"
+  }
+}

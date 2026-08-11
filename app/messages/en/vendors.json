@@ -1,0 +1,78 @@
+{
+  "hero": {
+    "eyebrow": "EPEW Vendor Network",
+    "title": "Provide Professional Services and Grow With the EPEW Ecosystem",
+    "description": "EPEW works with qualified vendors, professionals, contractors, suppliers, and service providers who can support the development and operation of entrepreneur-owned businesses."
+  },
+  "about": {
+    "title": "Who Can Become an EPEW Vendor?",
+    "paragraph1": "An EPEW Vendor may be a business, independent professional, contractor, supplier, consultant, technician, or specialized service provider capable of delivering reliable products or professional services.",
+    "paragraph2": "Vendor participation is subject to application review, qualification, compliance verification, and approval before access to EPEW Vendor opportunities is granted."
+  },
+  "areas": {
+    "business": {
+      "title": "Business & Professional Services",
+      "text": "Business registration, accounting, tax preparation, consulting, legal services, insurance, and other professional support."
+    },
+    "technology": {
+      "title": "Technology & Digital Services",
+      "text": "Website development, software, IT services, digital systems, technical support, and technology solutions."
+    },
+    "marketing": {
+      "title": "Marketing, Branding & Promotion",
+      "text": "Graphic design, printing, signage, advertising, social media, media production, promotion, and business visibility services."
+    },
+    "construction": {
+      "title": "Construction & Property Services",
+      "text": "Construction, renovation, repair, installation, maintenance, commercial space preparation, and related property services."
+    },
+    "equipment": {
+      "title": "Equipment, Inventory & Supplies",
+      "text": "Business equipment, machinery, furniture, inventory, supplies, materials, and other approved business resources."
+    },
+    "specialized": {
+      "title": "Specialized Vendor Services",
+      "text": "Transportation, delivery, training, beauty, food service, event support, technical trades, and other specialized business services."
+    }
+  },
+  "qualification": {
+    "title": "Vendor Qualification & Compliance",
+    "description": "EPEW may verify Vendor qualifications before approval and during active participation in the Vendor network.",
+    "items": {
+      "experience": "Relevant business or professional experience",
+      "credentials": "Required licenses, certifications, or professional credentials",
+      "insurance": "Insurance or other compliance documentation when required",
+      "serviceArea": "Service capability and geographic coverage",
+      "capacity": "Ability to complete assigned work professionally and reliably",
+      "standards": "Agreement to follow EPEW Vendor standards and contractual requirements"
+    }
+  },
+  "benefits": {
+    "title": "Why Join the EPEW Vendor Network?",
+    "description": "Qualified Vendors become part of a growing enterprise ecosystem designed to create recurring opportunities as new entrepreneurs develop and operate their businesses.",
+    "items": {
+      "opportunities": {
+        "title": "Business Opportunities",
+        "text": "Gain access to potential service and supply opportunities generated throughout the EPEW ecosystem."
+      },
+      "matching": {
+        "title": "Expertise-Based Matching",
+        "text": "Vendor qualifications and service expertise may be used to identify appropriate opportunities."
+      },
+      "growth": {
+        "title": "Network Growth",
+        "text": "Build professional relationships and expand visibility within a growing entrepreneurship network."
+      },
+      "performance": {
+        "title": "Performance Recognition",
+        "text": "Strong service quality and reliable performance can strengthen a Vendor's standing within the network."
+      }
+    }
+  },
+  "cta": {
+    "title": "Become an EPEW Vendor",
+    "description": "Submit your Vendor application for review. Approved Vendors may receive access to opportunities that match their qualifications, services, and operating capacity.",
+    "applyButton": "Apply as a Vendor",
+    "loginButton": "Vendor Login"
+  }
+}
