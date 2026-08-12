@@ -182,6 +182,19 @@ export default function EntrepreneurDashboardPage() {
     }
   }
 
+  async function handleLogout() {
+    setMessage("");
+
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      setMessage("Unable to log out. Please try again.");
+      return;
+    }
+
+    window.location.href = "/entrepreneurs/login";
+  }
+
   async function recordShare() {
     if (!entrepreneur) {
       return;
@@ -334,14 +347,26 @@ export default function EntrepreneurDashboardPage() {
           )}
 
           <section className="rounded-3xl bg-gradient-to-r from-[#10246f] to-[#078443] p-8 text-white shadow-xl md:p-10">
-            <p className="mb-2 text-lg font-extrabold tracking-widest text-lime-300">
-              WELCOME TO THE EPEW-EDE-IBOS PROGRAM
-            </p>
+            <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+              <div>
+                <p className="mb-2 text-lg font-extrabold tracking-widest text-lime-300">
+                  WELCOME TO THE EPEW-EDE-IBOS PROGRAM
+                </p>
 
-            <h1 className="text-3xl font-extrabold md:text-5xl">
-              Your Entrepreneur Development Ecosystem (EDE)
-              Journey
-            </h1>
+                <h1 className="text-3xl font-extrabold md:text-5xl">
+                  Your Entrepreneur Development Ecosystem (EDE)
+                  Journey
+                </h1>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="inline-flex shrink-0 items-center justify-center rounded-xl bg-white px-6 py-3 text-lg font-extrabold text-[#10246f] shadow transition hover:bg-red-50 hover:text-red-700"
+              >
+                Logout
+              </button>
+            </div>
 
             <p className="mt-5 max-w-4xl text-lg leading-relaxed text-white/90">
               Your application has been received successfully and

@@ -32,9 +32,10 @@ export default function EntrepreneurQuestionnairePage() {
 
   const [loading, setLoading] = useState(true);
   const [application, setApplication] = useState<any>(null);
-  const [answers, setAnswers] = useState<string[]>(Array(10).fill(""));
+  const [answers, setAnswers] = useState<string[]>(Array(questions.length).fill(""));
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     loadQuestionnaire();
@@ -110,6 +111,58 @@ export default function EntrepreneurQuestionnairePage() {
       </main>
     );
   }
+
+  if (submitted) {
+    return (
+      <main className="min-h-screen bg-[#f5f7fb] px-6 py-16 text-[#06245c]">
+        <div className="mx-auto max-w-5xl">
+          <div className="rounded-3xl bg-white p-10 text-center shadow-2xl md:p-16">
+            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-green-100 text-5xl font-extrabold text-green-700">
+              ✓
+            </div>
+
+            <p className="mt-8 text-lg font-extrabold uppercase tracking-[0.18em] text-green-600">
+              EPEW Entrepreneur Portal
+            </p>
+
+            <h1 className="mt-5 text-4xl font-extrabold text-[#06245c] md:text-6xl">
+              Thank You for Submitting Your Questionnaire
+            </h1>
+
+            <p className="mx-auto mt-8 max-w-3xl text-2xl leading-relaxed text-gray-700">
+              Your Entrepreneur Questionnaire has been successfully submitted.
+            </p>
+
+            <div className="mx-auto mt-10 max-w-3xl rounded-3xl bg-green-50 p-8">
+              <h2 className="text-3xl font-extrabold text-green-800">
+                Your Next Step
+              </h2>
+
+              <p className="mt-5 text-2xl leading-relaxed text-gray-800">
+                You are set to have a Personal Coach assigned to you within
+                approximately <strong>3 to 15 days</strong>.
+              </p>
+
+              <p className="mt-5 text-xl leading-relaxed text-gray-700">
+                Your Personal Coach will review your application and
+                questionnaire, contact you, and guide you through the next
+                stage of your EPEW Entrepreneur Development journey.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => router.push("/entrepreneurs/dashboard")}
+              className="mt-10 rounded-2xl bg-[#06245c] px-10 py-5 text-xl font-extrabold text-white transition hover:bg-green-700"
+            >
+              Return to Entrepreneur Dashboard
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
 
   return (
     <main className="min-h-screen bg-[#f5f7fb] p-8 text-[#06245c]">
@@ -193,6 +246,14 @@ export default function EntrepreneurQuestionnairePage() {
               {message}
             </p>
           )}
+
+          <button
+            type="button"
+            onClick={() => router.push("/entrepreneurs/dashboard")}
+            className="mt-8 ml-4 rounded-2xl bg-[#06245c] px-10 py-4 text-2xl font-bold text-white transition hover:bg-green-700"
+          >
+            Return to Entrepreneur Dashboard
+          </button>
         </div>
 
         <div className="bg-[#06245c] text-white rounded-3xl shadow-2xl p-10">

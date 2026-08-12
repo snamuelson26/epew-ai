@@ -1,25 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const SUPPORTED_LANGUAGES = [
-  "English",
-  "French",
-  "Haitian Creole",
-  "Spanish",
-] as const;
+const LANGUAGE_MAP: Record<string, "en" | "fr" | "ht" | "es"> = {
+  English: "en",
+  French: "fr",
+  "Haitian Creole": "ht",
+  Spanish: "es",
+  en: "en",
+  fr: "fr",
+  ht: "ht",
+  es: "es",
+};
 
-const PRIORITY_CHANNELS = ["email", "text"] as const;
+const PRIORITY_CHANNEL_MAP: Record<string, "email" | "sms"> = {
+  email: "email",
+  text: "sms",
+  sms: "sms",
+};
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const communicationLanguage =
+    const rawCommunicationLanguage =
       typeof body.communication_language === "string"
         ? body.communication_language.trim()
         : "";
 
-    const additionalPreferredLanguage =
+    const rawAdditionalPreferredLanguage =
       typeof body.additional_preferred_language === "string"
         ? body.additional_preferred_language.trim()
         : "";
@@ -34,22 +42,41 @@ export async function POST(request: NextRequest) {
         ? body.phone.trim()
         : "";
 
-    const priorityChannel =
+    const rawPriorityChannel =
       typeof body.priority_channel === "string"
         ? body.priority_channel.trim().toLowerCase()
         : "";
 
     const consent = body.weekly_information_consent === true;
 
-    if (
-      !SUPPORTED_LANGUAGES.includes(
-        communicationLanguage as (typeof SUPPORTED_LANGUAGES)[number],
-      )
-    ) {
+    const communicationLanguage =
+      LANGUAGE_MAP[rawCommunicationLanguage] ?? null;
+
+    const additionalPreferredLanguage = rawAdditionalPreferredLanguage
+      ? LANGUAGE_MAP[rawAdditionalPreferredLanguage] ?? null
+      : null;
+
+    const priorityChannel =
+      PRIORITY_CHANNEL_MAP[rawPriorityChannel] ?? null;
+
+    if (!communicationLanguage) {
       return NextResponse.json(
         {
           success: false,
           error: "Please select your EPEW communication language.",
+        },
+        { status: 400 },
+      );
+    }
+
+    if (
+      rawAdditionalPreferredLanguage &&
+      !additionalPreferredLanguage
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Please select a valid additional preferred language.",
         },
         { status: 400 },
       );
@@ -65,11 +92,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (
-      !PRIORITY_CHANNELS.includes(
-        priorityChannel as (typeof PRIORITY_CHANNELS)[number],
-      )
-    ) {
+    if (!priorityChannel) {
       return NextResponse.json(
         {
           success: false,
@@ -90,7 +113,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (priorityChannel === "text" && !phone) {
+    if (priorityChannel === "sms" && !phone) {
       return NextResponse.json(
         {
           success: false,
@@ -145,18 +168,52 @@ export async function POST(request: NextRequest) {
     let applicationRemindersActive = true;
 
     if (email) {
-      const { data: application } = await adminSupabase
+      const {
+        data: application,
+        error: applicationLookupError,
+      } = await adminSupabase
         .from("entrepreneur_applications")
         .select("id,user_id")
-        .eq("email", email)
+        .ilike("email", email)
         .order("id", { ascending: false })
         .limit(1)
         .maybeSingle();
 
+      if (applicationLookupError) {
+        console.error(
+          "Unable to locate entrepreneur application:",
+          applicationLookupError,
+        );
+
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "Unable to verify your entrepreneur application at this time.",
+          },
+          { status: 500 },
+        );
+      }
+
       if (application) {
         applicationId = application.id;
-        userId = application.user_id;
         applicationRemindersActive = false;
+
+        if (application.user_id) {
+          const { data: authUserData, error: authUserError } =
+            await adminSupabase.auth.admin.getUserById(
+              application.user_id,
+            );
+
+          if (authUserError) {
+            console.warn(
+              "Application references an unavailable Auth user. Saving communication preferences without user_id:",
+              authUserError,
+            );
+          } else if (authUserData?.user) {
+            userId = authUserData.user.id;
+          }
+        }
       }
     }
 
@@ -166,8 +223,7 @@ export async function POST(request: NextRequest) {
       email: email || null,
       phone: phone || null,
       communication_language: communicationLanguage,
-      additional_preferred_language:
-        additionalPreferredLanguage || null,
+      additional_preferred_language: additionalPreferredLanguage,
       priority_channel: priorityChannel,
       weekly_information_consent: true,
       application_reminders_active: applicationRemindersActive,
@@ -182,7 +238,10 @@ export async function POST(request: NextRequest) {
     let existingContactId: string | null = null;
 
     if (email) {
-      const { data: existingByEmail } = await adminSupabase
+      const {
+        data: existingByEmail,
+        error: emailLookupError,
+      } = await adminSupabase
         .from("entrepreneur_reminder_contacts")
         .select("id")
         .eq("email", email)
@@ -191,11 +250,29 @@ export async function POST(request: NextRequest) {
         .limit(1)
         .maybeSingle();
 
+      if (emailLookupError) {
+        console.error(
+          "Unable to search communication preference by email:",
+          emailLookupError,
+        );
+
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Unable to save your communication preference.",
+          },
+          { status: 500 },
+        );
+      }
+
       existingContactId = existingByEmail?.id ?? null;
     }
 
     if (!existingContactId && phone) {
-      const { data: existingByPhone } = await adminSupabase
+      const {
+        data: existingByPhone,
+        error: phoneLookupError,
+      } = await adminSupabase
         .from("entrepreneur_reminder_contacts")
         .select("id")
         .eq("phone", phone)
@@ -203,6 +280,21 @@ export async function POST(request: NextRequest) {
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
+
+      if (phoneLookupError) {
+        console.error(
+          "Unable to search communication preference by phone:",
+          phoneLookupError,
+        );
+
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Unable to save your communication preference.",
+          },
+          { status: 500 },
+        );
+      }
 
       existingContactId = existingByPhone?.id ?? null;
     }
@@ -251,9 +343,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       applicant: Boolean(applicationId),
-      message: applicationId
-        ? "Your EPEW communication preferences have been saved."
-        : "Thank you. EPEW will remind you once a week and share valuable information in your selected language.",
+      message:
+        "Your EPEW communication preferences have been successfully submitted.",
+      next_step: "/entrepreneurs/questionnaire",
     });
   } catch (error) {
     console.error("Entrepreneur reminder contact error:", error);
