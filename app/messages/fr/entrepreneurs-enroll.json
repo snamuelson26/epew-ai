@@ -253,5 +253,36 @@
     "questionnaire_button": "Compléter le Formulaire d’information de l’Entrepreneur",
     "login_button": "Accéder à la connexion Entrepreneur",
     "welcome": "Bienvenue à EPEW-EDE-IBOS."
+  },
+  "options": {
+    "countries": {
+      "united_states": "États-Unis",
+      "canada": "Canada",
+      "haiti": "Haïti",
+      "dominican_republic": "République dominicaine",
+      "france": "France",
+      "united_kingdom": "Royaume-Uni",
+      "mexico": "Mexique",
+      "jamaica": "Jamaïque",
+      "bahamas": "Bahamas",
+      "brazil": "Brésil",
+      "germany": "Allemagne",
+      "spain": "Espagne",
+      "italy": "Italie",
+      "china": "Chine",
+      "india": "Inde",
+      "japan": "Japon"
+    },
+    "race_ethnicity": {
+      "black_african_american": "Noir ou Afro-Américain",
+      "hispanic_latino": "Hispanique ou Latino",
+      "white": "Blanc",
+      "asian": "Asiatique",
+      "american_indian_alaska_native": "Amérindien ou Autochtone d’Alaska",
+      "middle_eastern_north_african": "Moyen-Oriental ou Nord-Africain",
+      "native_hawaiian_pacific_islander": "Hawaïen autochtone ou Insulaire du Pacifique",
+      "another": "Autre race ou origine ethnique",
+      "prefer_not_to_answer": "Préfère ne pas répondre"
+    }
   }
 }

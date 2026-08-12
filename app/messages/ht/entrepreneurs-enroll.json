@@ -253,5 +253,36 @@
     "questionnaire_button": "Ranpli Fòm Enfòmasyon Antreprenè",
     "login_button": "Ale nan Koneksyon Antreprenè",
     "welcome": "Byenveni nan EPEW-EDE-IBOS."
+  },
+  "options": {
+    "countries": {
+      "united_states": "Etazini",
+      "canada": "Kanada",
+      "haiti": "Ayiti",
+      "dominican_republic": "Repiblik Dominikèn",
+      "france": "Lafrans",
+      "united_kingdom": "Wayòm Ini",
+      "mexico": "Meksik",
+      "jamaica": "Jamayik",
+      "bahamas": "Bahamas",
+      "brazil": "Brezil",
+      "germany": "Almay",
+      "spain": "Espay",
+      "italy": "Itali",
+      "china": "Lachin",
+      "india": "Lend",
+      "japan": "Japon"
+    },
+    "race_ethnicity": {
+      "black_african_american": "Nwa oswa Afriken Ameriken",
+      "hispanic_latino": "Ispanik oswa Latino",
+      "white": "Blan",
+      "asian": "Azyatik",
+      "american_indian_alaska_native": "Endyen Ameriken oswa Natifnatal Alaska",
+      "middle_eastern_north_african": "Mwayen Oryan oswa Afrik Dinò",
+      "native_hawaiian_pacific_islander": "Natifnatal Awayi oswa Zile Pasifik",
+      "another": "Yon lòt ras oswa orijin etnik",
+      "prefer_not_to_answer": "Mwen prefere pa reponn"
+    }
   }
 }
