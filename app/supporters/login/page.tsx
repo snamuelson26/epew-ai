@@ -134,6 +134,13 @@ export default function SupporterLoginPage() {
       footer={
         <div className="space-y-4">
           <Link
+            href="/supporters/forgot-password"
+            className="block text-lg font-bold text-[#06245c] transition hover:underline"
+          >
+            Forgot Password?
+          </Link>
+
+          <Link
             href="/supporters/register"
             className="block text-lg font-bold text-green-700 transition hover:underline"
           >

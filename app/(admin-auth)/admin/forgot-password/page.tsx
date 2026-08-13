@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 
 export default function AdminForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -23,7 +23,7 @@ export default function AdminForgotPasswordPage() {
 
     setSending(true);
 
-    const redirectTo = `${window.location.origin}/auth/callback?type=recovery&next=/admin/reset-password`;
+    const redirectTo = `${window.location.origin}/admin/reset-password`;
 
     const { error } = await supabase.auth.resetPasswordForEmail(
       email.trim(),

@@ -1,56 +1,53 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 
-export default function ResetPasswordPage() {
+export default function EntrepreneurResetPasswordPage() {
   const router = useRouter();
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [ready, setReady] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
-    async function prepareSession() {
-      const searchParams = new URLSearchParams(window.location.search);
-      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    let recoveryDetected = false;
 
-      const code = searchParams.get("code");
-      const accessToken = hashParams.get("access_token");
-      const refreshToken = hashParams.get("refresh_token");
-
-      if (code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(code);
-        if (error) {
-          setMessage(error.message);
-          return;
-        }
-      } else if (accessToken && refreshToken) {
-        const { error } = await supabase.auth.setSession({
-          access_token: accessToken,
-          refresh_token: refreshToken,
-        });
-
-        if (error) {
-          setMessage(error.message);
-          return;
-        }
-      } else {
-        setMessage("Reset session missing. Please request a new password reset link.");
-        return;
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY" && session?.user) {
+        recoveryDetected = true;
+        setMessage("");
+        setReady(true);
       }
+    });
 
-      setReady(true);
-    }
+    const timer = window.setTimeout(() => {
+      if (!recoveryDetected) {
+        setReady(false);
+        setMessage(
+          "Your password reset session is missing or has expired. Please request a new password reset link.",
+        );
+      }
+    }, 2500);
 
-    prepareSession();
+    return () => {
+      window.clearTimeout(timer);
+      subscription.unsubscribe();
+    };
   }, []);
 
-  async function handleReset(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
     setMessage("");
+    setIsSuccess(false);
 
     if (password.length < 8) {
       setMessage("Password must be at least 8 characters.");
@@ -62,73 +59,130 @@ export default function ResetPasswordPage() {
       return;
     }
 
+    setUpdating(true);
+
     const { error } = await supabase.auth.updateUser({
       password,
     });
 
+    setUpdating(false);
+
     if (error) {
-      setMessage(error.message);
+      setMessage(
+        "Unable to update your password. Please request a new password reset link and try again.",
+      );
       return;
     }
 
+    setIsSuccess(true);
+    setReady(false);
     setMessage("Password updated successfully. Redirecting to login...");
 
     setTimeout(() => {
       router.push("/entrepreneurs/login");
-    }, 2000);
+    }, 1500);
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f7fb] flex items-center justify-center px-6 py-20">
-      <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-xl w-full">
-        <h1 className="text-5xl font-extrabold text-[#06245c] mb-6 text-center">
-          Reset Password
-        </h1>
+    <main className="flex min-h-screen items-center justify-center bg-[#f5f7fb] px-6 py-20">
+      <div className="w-full max-w-xl rounded-3xl bg-white p-10 shadow-2xl">
+        <div className="text-center">
+          <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-green-600">
+            EPEW Entrepreneur Portal
+          </p>
 
-        <p className="text-xl text-gray-700 text-center mb-10">
-          Enter your new password below.
-        </p>
+          <h1 className="mt-4 text-4xl font-extrabold text-[#06245c] md:text-5xl">
+            Reset Password
+          </h1>
+
+          <p className="mt-6 text-xl leading-relaxed text-gray-700">
+            Enter and confirm your new password.
+          </p>
+        </div>
 
         {message && (
-          <p
-            className={`text-center text-xl font-bold mb-6 ${
-              message.includes("successfully")
-                ? "text-green-700"
-                : "text-red-700"
+          <div
+            className={`mt-8 rounded-2xl p-5 text-lg font-semibold ${
+              isSuccess
+                ? "bg-green-50 text-green-800"
+                : "bg-red-50 text-red-800"
             }`}
           >
             {message}
-          </p>
+          </div>
         )}
 
         {ready && (
-          <form onSubmit={handleReset} className="space-y-6">
-            <input
-              type="password"
-              placeholder="New Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="border rounded-2xl p-4 w-full text-xl"
-            />
+          <form onSubmit={handleSubmit} className="mt-10 space-y-6">
+            <div>
+              <label
+                htmlFor="password"
+                className="mb-2 block text-lg font-bold text-gray-700"
+              >
+                New Password
+              </label>
 
-            <input
-              type="password"
-              placeholder="Confirm New Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              className="border rounded-2xl p-4 w-full text-xl"
-            />
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter new password"
+                required
+                autoComplete="new-password"
+                className="w-full rounded-2xl border border-gray-300 p-4 text-lg outline-none transition focus:border-[#06245c]"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="confirm-password"
+                className="mb-2 block text-lg font-bold text-gray-700"
+              >
+                Confirm New Password
+              </label>
+
+              <input
+                id="confirm-password"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm new password"
+                required
+                autoComplete="new-password"
+                className="w-full rounded-2xl border border-gray-300 p-4 text-lg outline-none transition focus:border-[#06245c]"
+              />
+            </div>
 
             <button
               type="submit"
-              className="w-full bg-[#06245c] text-white py-5 rounded-2xl text-2xl font-bold hover:bg-green-600 transition"
+              disabled={updating}
+              className="w-full rounded-2xl bg-[#06245c] px-8 py-5 text-xl font-extrabold text-white transition hover:bg-green-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Update Password
+              {updating ? "Updating Password..." : "Update Password"}
             </button>
           </form>
         )}
+
+        {!ready && !isSuccess && (
+          <div className="mt-8 text-center">
+            <Link
+              href="/entrepreneurs/forgot-password"
+              className="font-bold text-[#06245c] hover:underline"
+            >
+              Request a New Reset Link
+            </Link>
+          </div>
+        )}
+
+        <div className="mt-8 text-center">
+          <Link
+            href="/entrepreneurs/login"
+            className="font-bold text-[#06245c] hover:underline"
+          >
+            Return to Entrepreneur Login
+          </Link>
+        </div>
       </div>
     </main>
   );

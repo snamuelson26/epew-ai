@@ -135,14 +135,23 @@ export default function VendorLoginPage() {
       onSubmit={handleLogin}
       icon="🏪"
       footer={
-        <Link
-          href="/"
-          className="text-lg font-bold text-[#06245c] transition hover:text-green-600"
-        >
-          {translate(
-            "common.returnToEpew",
-          )}
-        </Link>
+        <div className="space-y-4">
+          <Link
+            href="/vendors/forgot-password"
+            className="block text-lg font-bold text-[#06245c] transition hover:underline"
+          >
+            Forgot Password?
+          </Link>
+
+          <Link
+            href="/"
+            className="text-lg font-bold text-[#06245c] transition hover:text-green-600"
+          >
+            {translate(
+              "common.returnToEpew",
+            )}
+          </Link>
+        </div>
       }
     />
   );

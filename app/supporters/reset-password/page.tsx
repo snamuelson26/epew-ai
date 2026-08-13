@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 
-export default function AdminResetPasswordPage() {
+export default function SupporterResetPasswordPage() {
   const router = useRouter();
 
   const [password, setPassword] = useState("");
@@ -79,7 +79,7 @@ export default function AdminResetPasswordPage() {
     setMessage("Password updated successfully. Redirecting to login...");
 
     setTimeout(() => {
-      router.push("/admin/login");
+      router.push("/supporters/login");
     }, 1500);
   }
 
@@ -87,16 +87,16 @@ export default function AdminResetPasswordPage() {
     <main className="flex min-h-screen items-center justify-center bg-[#f5f7fb] px-6 py-20">
       <div className="w-full max-w-xl rounded-3xl bg-white p-10 shadow-2xl">
         <div className="text-center">
-          <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-blue-600">
-            EPEW Admin Control Center
+          <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-green-600">
+            EPEW Supporter Portal
           </p>
 
           <h1 className="mt-4 text-4xl font-extrabold text-[#06245c] md:text-5xl">
-            Reset Administrator Password
+            Reset Password
           </h1>
 
           <p className="mt-6 text-xl leading-relaxed text-gray-700">
-            Enter and confirm your new administrator password.
+            Enter and confirm your new password.
           </p>
         </div>
 
@@ -167,7 +167,7 @@ export default function AdminResetPasswordPage() {
         {!ready && !isSuccess && (
           <div className="mt-8 text-center">
             <Link
-              href="/admin/forgot-password"
+              href="/supporters/forgot-password"
               className="font-bold text-[#06245c] hover:underline"
             >
               Request a New Reset Link
@@ -177,10 +177,10 @@ export default function AdminResetPasswordPage() {
 
         <div className="mt-8 text-center">
           <Link
-            href="/admin/login"
+            href="/supporters/login"
             className="font-bold text-[#06245c] hover:underline"
           >
-            Return to Administrator Login
+            Return to Supporter Login
           </Link>
         </div>
       </div>

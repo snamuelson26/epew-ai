@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 
-export default function EntrepreneurForgotPasswordPage() {
+export default function CoachForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState("");
@@ -26,7 +26,7 @@ export default function EntrepreneurForgotPasswordPage() {
     setSending(true);
 
     const redirectTo =
-      `${window.location.origin}/entrepreneurs/reset-password`;
+      `${window.location.origin}/coaches/reset-password`;
 
     const { error } = await supabase.auth.resetPasswordForEmail(
       normalizedEmail,
@@ -38,7 +38,7 @@ export default function EntrepreneurForgotPasswordPage() {
     setSending(false);
 
     if (error) {
-      console.error("Entrepreneur password recovery error:", error);
+      console.error("Coach password recovery error:", error);
 
       setMessage(
         "Unable to send the password reset link. Please try again.",
@@ -57,7 +57,7 @@ export default function EntrepreneurForgotPasswordPage() {
       <div className="w-full max-w-xl rounded-3xl bg-white p-10 shadow-2xl">
         <div className="text-center">
           <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-green-600">
-            EPEW Entrepreneur Portal
+            EPEW Coach Portal
           </p>
 
           <h1 className="mt-4 text-4xl font-extrabold text-[#06245c] md:text-5xl">
@@ -65,9 +65,9 @@ export default function EntrepreneurForgotPasswordPage() {
           </h1>
 
           <p className="mt-6 text-xl leading-relaxed text-gray-700">
-            Enter the email address associated with your EPEW account.
-            We will send you a secure link to verify your email and
-            create a new password.
+            Enter the email address associated with your EPEW coach
+            account. We will send you a secure link to verify your email
+            and create a new password.
           </p>
         </div>
 
@@ -117,10 +117,10 @@ export default function EntrepreneurForgotPasswordPage() {
 
         <div className="mt-8 text-center">
           <Link
-            href="/entrepreneurs/login"
+            href="/coaches/login"
             className="font-bold text-[#06245c] hover:underline"
           >
-            Return to Entrepreneur Login
+            Return to Coach Login
           </Link>
         </div>
       </div>

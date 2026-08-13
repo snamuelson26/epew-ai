@@ -135,14 +135,23 @@ export default function PartnerLoginPage() {
       onSubmit={handleLogin}
       icon="🤝"
       footer={
-        <Link
-          href="/"
-          className="text-lg font-bold text-[#06245c] transition hover:text-green-600"
-        >
-          {translate(
-            "partner.returnToEpew",
-          )}
-        </Link>
+        <div className="space-y-4">
+          <Link
+            href="/partners/forgot-password"
+            className="block text-lg font-bold text-[#06245c] transition hover:underline"
+          >
+            Forgot Password?
+          </Link>
+
+          <Link
+            href="/"
+            className="text-lg font-bold text-[#06245c] transition hover:text-green-600"
+          >
+            {translate(
+              "partner.returnToEpew",
+            )}
+          </Link>
+        </div>
       }
     />
   );

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { supabase } from "@/lib/supabase";
 
@@ -131,11 +132,20 @@ export default function CoachLoginPage() {
       onPasswordChange={setPassword}
       onSubmit={handleLogin}
       footer={
-        <p className="text-lg text-gray-600">
-          {translate(
-            "coach.notice",
-          )}
-        </p>
+        <div className="space-y-4">
+          <Link
+            href="/coaches/forgot-password"
+            className="block text-lg font-bold text-[#06245c] transition hover:underline"
+          >
+            Forgot Password?
+          </Link>
+
+          <p className="text-lg text-gray-600">
+            {translate(
+              "coach.notice",
+            )}
+          </p>
+        </div>
       }
     />
   );
