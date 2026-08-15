@@ -78,8 +78,11 @@ export default function AdminResetPasswordPage() {
     setReady(false);
     setMessage("Password updated successfully. Redirecting to login...");
 
+    await supabase.auth.signOut();
+
     setTimeout(() => {
-      router.push("/admin/login");
+      router.replace("/admin/login");
+      router.refresh();
     }, 1500);
   }
 
