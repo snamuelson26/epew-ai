@@ -16,17 +16,20 @@ export default function AdminForgotPasswordPage() {
     setMessage("");
     setIsSuccess(false);
 
-    if (!email.trim()) {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail) {
       setMessage("Please enter your administrator email address.");
       return;
     }
 
     setSending(true);
 
-    const redirectTo = `${window.location.origin}/admin/reset-password`;
+    const redirectTo =
+      `${window.location.origin}/admin/reset-password`;
 
     const { error } = await supabase.auth.resetPasswordForEmail(
-      email.trim(),
+      normalizedEmail,
       {
         redirectTo,
       }
@@ -35,7 +38,14 @@ export default function AdminForgotPasswordPage() {
     setSending(false);
 
     if (error) {
-      setMessage(error.message);
+      console.error(
+        "Administrator password recovery error:",
+        error
+      );
+
+      setMessage(
+        "Unable to send the password reset link. Please try again."
+      );
       return;
     }
 
