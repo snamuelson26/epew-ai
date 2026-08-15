@@ -29,7 +29,7 @@ export default async function AdminLayout({
     .from("user_roles")
     .select("role, email")
     .eq("email", user.email)
-    .eq("role", "admin")
+    .eq("role", "administrator")
     .maybeSingle();
 
   // Authenticated, but not authorized as an administrator
