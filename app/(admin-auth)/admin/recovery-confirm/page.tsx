@@ -1,34 +1,54 @@
 "use client";
 
-import { Suspense, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { supabase } from "@/lib/supabase/client";
 
 function RecoveryConfirmContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
 
-  const confirmationUrl = useMemo(() => {
-    const value = searchParams.get("confirmation_url");
+  const tokenHash = searchParams.get("token_hash");
+  const type = searchParams.get("type");
 
-    if (!value) {
-      return null;
+  const [verifying, setVerifying] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const validRecoveryRequest =
+    Boolean(tokenHash) && type === "recovery";
+
+  async function continueToReset() {
+    if (!tokenHash || type !== "recovery") {
+      setMessage(
+        "This password recovery link is invalid or incomplete. Please request a new reset link."
+      );
+      return;
     }
 
-    try {
-      const decoded = decodeURIComponent(value);
-      const url = new URL(decoded);
+    setVerifying(true);
+    setMessage("");
 
-      if (
-        url.protocol !== "https:" &&
-        url.hostname !== "localhost"
-      ) {
-        return null;
-      }
+    const { error } = await supabase.auth.verifyOtp({
+      token_hash: tokenHash,
+      type: "recovery",
+    });
 
-      return decoded;
-    } catch {
-      return null;
+    setVerifying(false);
+
+    if (error) {
+      console.error(
+        "Admin password recovery verification failed:",
+        error
+      );
+
+      setMessage(
+        "This password recovery link is invalid or has expired. Please request a new reset link."
+      );
+      return;
     }
-  }, [searchParams]);
+
+    router.replace("/admin/reset-password");
+  }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#f5f7fb] px-6 py-20">
@@ -49,13 +69,23 @@ function RecoveryConfirmContent() {
           Click the button below to continue securely to the password reset page.
         </p>
 
-        {confirmationUrl ? (
-          <a
-            href={confirmationUrl}
-            className="mt-10 inline-block w-full rounded-2xl bg-[#06245c] px-8 py-5 text-xl font-extrabold text-white transition hover:bg-green-600"
+        {message ? (
+          <div className="mt-8 rounded-2xl bg-red-50 p-5 text-lg font-semibold text-red-800">
+            {message}
+          </div>
+        ) : null}
+
+        {validRecoveryRequest ? (
+          <button
+            type="button"
+            onClick={continueToReset}
+            disabled={verifying}
+            className="mt-10 w-full rounded-2xl bg-[#06245c] px-8 py-5 text-xl font-extrabold text-white transition hover:bg-green-600 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Continue to Reset Password
-          </a>
+            {verifying
+              ? "Verifying..."
+              : "Continue to Reset Password"}
+          </button>
         ) : (
           <div className="mt-8 rounded-2xl bg-red-50 p-5 text-lg font-semibold text-red-800">
             This password recovery link is invalid or incomplete. Please request a new reset link.
