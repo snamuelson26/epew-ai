@@ -47,6 +47,11 @@ type MeetingUpdateRequest = {
 
   coachNotes?: string;
   meetingSummary?: string;
+  coachRecommendations?: string;
+  workRequiredBeforeNextMeeting?: string;
+  requirementsReviewedWithEntrepreneur?: boolean;
+  entrepreneurUnderstandsRequiredWork?: boolean;
+  entrepreneurUnderstandsNextMeetingReview?: boolean;
   nextRequiredAction?: string;
   followUpAt?: string | null;
 
@@ -1143,6 +1148,31 @@ export async function PATCH(
     if (body.meetingSummary !== undefined) {
       updates.meeting_summary =
         body.meetingSummary.trim();
+    }
+
+    if (body.coachRecommendations !== undefined) {
+      updates.coach_recommendations =
+        body.coachRecommendations.trim();
+    }
+
+    if (body.workRequiredBeforeNextMeeting !== undefined) {
+      updates.work_required_before_next_meeting =
+        body.workRequiredBeforeNextMeeting.trim();
+    }
+
+    if (body.requirementsReviewedWithEntrepreneur !== undefined) {
+      updates.requirements_reviewed_with_entrepreneur =
+        Boolean(body.requirementsReviewedWithEntrepreneur);
+    }
+
+    if (body.entrepreneurUnderstandsRequiredWork !== undefined) {
+      updates.entrepreneur_understands_required_work =
+        Boolean(body.entrepreneurUnderstandsRequiredWork);
+    }
+
+    if (body.entrepreneurUnderstandsNextMeetingReview !== undefined) {
+      updates.entrepreneur_understands_next_meeting_review =
+        Boolean(body.entrepreneurUnderstandsNextMeetingReview);
     }
 
     if (

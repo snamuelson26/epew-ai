@@ -89,6 +89,24 @@ export default function EntrepreneurFirstMeetingPage() {
 
   const [coachNotes, setCoachNotes] = useState("");
   const [meetingSummary, setMeetingSummary] = useState("");
+  const [coachRecommendations, setCoachRecommendations] =
+    useState("");
+  const [
+    workRequiredBeforeNextMeeting,
+    setWorkRequiredBeforeNextMeeting,
+  ] = useState("");
+  const [
+    requirementsReviewedWithEntrepreneur,
+    setRequirementsReviewedWithEntrepreneur,
+  ] = useState(false);
+  const [
+    entrepreneurUnderstandsRequiredWork,
+    setEntrepreneurUnderstandsRequiredWork,
+  ] = useState(false);
+  const [
+    entrepreneurUnderstandsNextMeetingReview,
+    setEntrepreneurUnderstandsNextMeetingReview,
+  ] = useState(false);
   const [nextRequiredAction, setNextRequiredAction] =
     useState("");
   const [followUpAt, setFollowUpAt] = useState("");
@@ -195,6 +213,21 @@ export default function EntrepreneurFirstMeetingPage() {
 
       setCoachNotes(meeting?.coach_notes || "");
       setMeetingSummary(meeting?.meeting_summary || "");
+      setCoachRecommendations(
+        meeting?.coach_recommendations || ""
+      );
+      setWorkRequiredBeforeNextMeeting(
+        meeting?.work_required_before_next_meeting || ""
+      );
+      setRequirementsReviewedWithEntrepreneur(
+        Boolean(meeting?.requirements_reviewed_with_entrepreneur)
+      );
+      setEntrepreneurUnderstandsRequiredWork(
+        Boolean(meeting?.entrepreneur_understands_required_work)
+      );
+      setEntrepreneurUnderstandsNextMeetingReview(
+        Boolean(meeting?.entrepreneur_understands_next_meeting_review)
+      );
       setNextRequiredAction(
         meeting?.next_required_action || ""
       );
@@ -274,6 +307,11 @@ export default function EntrepreneurFirstMeetingPage() {
 
         coachNotes,
         meetingSummary,
+        coachRecommendations,
+        workRequiredBeforeNextMeeting,
+        requirementsReviewedWithEntrepreneur,
+        entrepreneurUnderstandsRequiredWork,
+        entrepreneurUnderstandsNextMeetingReview,
         nextRequiredAction,
 
         followUpAt: followUpAt
@@ -966,6 +1004,20 @@ export default function EntrepreneurFirstMeetingPage() {
             />
 
             <TextAreaField
+              label="Coach Recommendations"
+              value={coachRecommendations}
+              onChange={setCoachRecommendations}
+              placeholder="Record the Coach's recommendations based on the questionnaire, discussion, findings, and business-development needs."
+            />
+
+            <TextAreaField
+              label="Work Required Before Second Meeting"
+              value={workRequiredBeforeNextMeeting}
+              onChange={setWorkRequiredBeforeNextMeeting}
+              placeholder={"List the work the entrepreneur must complete before the second meeting.\nEnter one item per line."}
+            />
+
+            <TextAreaField
               label="Immediate Next Stage / Action"
               value={nextRequiredAction}
               onChange={setNextRequiredAction}
@@ -989,6 +1041,63 @@ export default function EntrepreneurFirstMeetingPage() {
               <p className="text-sm text-gray-500 mt-2">
                 Leave empty if no follow-up is required.
               </p>
+            </div>
+          </div>
+
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 mt-6">
+            <h3 className="text-2xl font-bold text-[#06245c]">
+              Entrepreneur Understanding
+            </h3>
+
+            <div className="space-y-4 mt-5 text-lg">
+              <label className="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  checked={requirementsReviewedWithEntrepreneur}
+                  onChange={(event) =>
+                    setRequirementsReviewedWithEntrepreneur(
+                      event.target.checked
+                    )
+                  }
+                  className="mt-1 h-5 w-5"
+                />
+                <span>
+                  Requirements were reviewed with the entrepreneur.
+                </span>
+              </label>
+
+              <label className="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  checked={entrepreneurUnderstandsRequiredWork}
+                  onChange={(event) =>
+                    setEntrepreneurUnderstandsRequiredWork(
+                      event.target.checked
+                    )
+                  }
+                  className="mt-1 h-5 w-5"
+                />
+                <span>
+                  The entrepreneur understands the work that must be completed.
+                </span>
+              </label>
+
+              <label className="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  checked={entrepreneurUnderstandsNextMeetingReview}
+                  onChange={(event) =>
+                    setEntrepreneurUnderstandsNextMeetingReview(
+                      event.target.checked
+                    )
+                  }
+                  className="mt-1 h-5 w-5"
+                />
+                <span>
+                  The entrepreneur understands that completion will be reviewed
+                  at the second meeting.
+                </span>
+              </label>
             </div>
           </div>
 
