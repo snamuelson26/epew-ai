@@ -68,8 +68,15 @@ export default function AdminResetPasswordPage() {
     setUpdating(false);
 
     if (error) {
+      console.error("Admin password update error:", {
+        message: error.message,
+        name: error.name,
+        status: "status" in error ? error.status : undefined,
+        code: "code" in error ? error.code : undefined,
+      });
+
       setMessage(
-        "Unable to update your password. Please request a new password reset link and try again.",
+        `Password update failed: ${error.message}`
       );
       return;
     }
