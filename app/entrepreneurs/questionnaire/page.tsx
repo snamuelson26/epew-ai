@@ -79,21 +79,55 @@ export default function EntrepreneurQuestionnairePage() {
     const completedAnswers = answers.filter((answer) => answer.trim() !== "");
     const readinessScore = Math.round((completedAnswers.length / questions.length) * 100);
 
-    const { error } = await supabase
-      .from("entrepreneur_applications")
-      .update({
-        questionnaire_answers: answers,
-        readiness_score: readinessScore,
-        questionnaire_status:
-          readinessScore === 100 ? "Completed" : "In Progress",
-      })
-      .eq("id", application.id);
+    try {
+      const response = await fetch(
+        "/api/entrepreneurs/questionnaire",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            applicationId: application.id,
+            answers,
+            readinessScore,
+          }),
+        }
+      );
 
-    if (error) {
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        console.log(result);
+        setMessage(
+          result.message ||
+            "There was an error saving your questionnaire."
+        );
+      } else {
+        setMessage(
+          readinessScore === 100
+            ? "Questionnaire completed successfully."
+            : "Questionnaire saved successfully."
+        );
+
+        setApplication((current: any) =>
+          current
+            ? {
+                ...current,
+                questionnaire_answers: answers,
+                readiness_score: readinessScore,
+                questionnaire_status:
+                  result.questionnaireStatus,
+              }
+            : current
+        );
+      }
+    } catch (error) {
       console.log(error);
-      setMessage("There was an error saving your questionnaire.");
-    } else {
-      setMessage("Questionnaire saved successfully.");
+
+      setMessage(
+        "There was an error saving your questionnaire."
+      );
     }
 
     setSaving(false);
