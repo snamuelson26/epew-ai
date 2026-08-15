@@ -3,7 +3,7 @@
   "crons": [
     {
       "path": "/api/internal/communications/process-outbox",
-      "schedule": "*/5 * * * *"
+      "schedule": "20 19 * * *"
     }
   ]
 }
