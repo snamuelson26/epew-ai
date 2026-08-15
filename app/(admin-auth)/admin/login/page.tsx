@@ -89,7 +89,7 @@ export default function AdminLoginPage() {
           "user_id",
           signInData.user.id,
         )
-        .eq("role", "admin")
+        .eq("role", "administrator")
         .maybeSingle();
 
       if (
