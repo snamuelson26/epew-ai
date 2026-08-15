@@ -1,9 +1,9 @@
 "use client";
 
+import { Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
 
-export default function AdminRecoveryConfirmPage() {
+function RecoveryConfirmContent() {
   const searchParams = useSearchParams();
 
   const confirmationUrl = useMemo(() => {
@@ -15,7 +15,6 @@ export default function AdminRecoveryConfirmPage() {
 
     try {
       const decoded = decodeURIComponent(value);
-
       const url = new URL(decoded);
 
       if (
@@ -64,5 +63,21 @@ export default function AdminRecoveryConfirmPage() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function AdminRecoveryConfirmPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-screen items-center justify-center bg-[#f5f7fb] px-6 py-20">
+          <div className="text-xl font-bold text-[#06245c]">
+            Loading secure password reset...
+          </div>
+        </main>
+      }
+    >
+      <RecoveryConfirmContent />
+    </Suspense>
   );
 }
