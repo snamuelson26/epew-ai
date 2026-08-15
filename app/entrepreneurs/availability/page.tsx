@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 type DayAvailability = {
@@ -11,7 +11,7 @@ type DayAvailability = {
   until: string;
 };
 
-export default function EntrepreneurAvailabilityPage() {
+function EntrepreneurAvailabilityContent() {
   const searchParams = useSearchParams();
   const applicationId = Number(searchParams.get("applicationId"));
 
@@ -230,5 +230,14 @@ export default function EntrepreneurAvailabilityPage() {
         </p>
       )}
     </main>
+  );
+}
+
+
+export default function EntrepreneurAvailabilityPage() {
+  return (
+    <Suspense fallback={<main style={{ padding: 40 }}>Loading availability...</main>}>
+      <EntrepreneurAvailabilityContent />
+    </Suspense>
   );
 }
