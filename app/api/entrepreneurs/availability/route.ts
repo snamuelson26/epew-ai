@@ -98,6 +98,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const submittedDates = new Set(
+      body.windows
+        .map((window) => String(window.availableDate ?? "").trim())
+        .filter(Boolean)
+    );
+
+    if (submittedDates.size > 3) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Please select no more than 3 days during the 7-day availability window.",
+        },
+        { status: 400 }
+      );
+    }
+
     const { data: application, error: applicationError } =
       await supabaseAdmin
         .from("entrepreneur_applications")
@@ -266,7 +283,14 @@ export async function POST(request: NextRequest) {
         .select("id, status")
         .eq("application_id", applicationId)
         .eq("meeting_type", "entrepreneur_first_meeting")
-        .in("status", ["collecting", "submitted", "matching", "matched"])
+        .in("status", [
+          "collecting",
+          "submitted",
+          "matching",
+          "scheduling_review",
+          "manual_review_required",
+          "matched",
+        ])
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -302,6 +326,11 @@ export async function POST(request: NextRequest) {
               Boolean(body.personalContextConsent),
             participant_timezone: participantTimezone,
             submitted_at: now,
+            matched_at: null,
+            scheduling_review_started_at: null,
+            scheduling_review_eligible_at: null,
+            scheduling_review_deadline_at: null,
+            scheduling_review_completed_at: null,
           })
           .eq("id", availabilityId);
 
@@ -505,10 +534,11 @@ export async function POST(request: NextRequest) {
       message:
         matchingResult.matchCount > 0
           ? "Your availability has been matched with your Personal Coach's private schedule."
-          : "Your availability has been submitted. EPEW will continue looking for a compatible appointment time.",
+          : matchingResult.status === "scheduling_review"
+            ? "We’re finding the best appointment for you. Please allow approximately 5–15 minutes while EPEW privately reviews compatible Personal Coach availability."
+            : "Your availability has been submitted.",
       availabilityId,
-      status:
-        matchingResult.matchCount > 0 ? "matched" : "submitted",
+      status: matchingResult.status,
       matchCount: matchingResult.matchCount,
       appointmentChoices: appointmentChoices ?? [],
       windowStartDate,
@@ -525,6 +555,271 @@ export async function POST(request: NextRequest) {
           error instanceof Error
             ? error.message
             : "Unable to save your availability.",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const supabase = await createClient();
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Authentication required.",
+        },
+        { status: 401 }
+      );
+    }
+
+    const applicationId = Number(
+      request.nextUrl.searchParams.get("applicationId")
+    );
+
+    if (!Number.isInteger(applicationId) || applicationId <= 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "A valid Application ID is required.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const { data: application, error: applicationError } =
+      await supabaseAdmin
+        .from("entrepreneur_applications")
+        .select("id, user_id")
+        .eq("id", applicationId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+    if (applicationError) {
+      throw applicationError;
+    }
+
+    if (!application) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Entrepreneur application not found.",
+        },
+        { status: 404 }
+      );
+    }
+
+    const { data: availability, error: availabilityError } =
+      await supabaseAdmin
+        .from("epew_participant_availability")
+        .select(
+          `
+          id,
+          status,
+          scheduling_review_started_at,
+          scheduling_review_eligible_at,
+          scheduling_review_deadline_at,
+          scheduling_review_completed_at
+        `
+        )
+        .eq("application_id", applicationId)
+        .eq("meeting_type", "entrepreneur_first_meeting")
+        .in("status", [
+          "submitted",
+          "matching",
+          "scheduling_review",
+          "manual_review_required",
+          "matched",
+          "scheduled"
+        ])
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+    if (availabilityError) {
+      throw availabilityError;
+    }
+
+    if (!availability) {
+      return NextResponse.json(
+        {
+          success: true,
+          status: "not_submitted",
+          matchCount: 0,
+          appointmentChoices: [],
+        }
+      );
+    }
+
+    let currentStatus = availability.status;
+
+    if (currentStatus === "scheduling_review") {
+      const currentTime = Date.now();
+
+      const eligibleAt = availability.scheduling_review_eligible_at
+        ? new Date(
+            availability.scheduling_review_eligible_at
+          ).getTime()
+        : null;
+
+      const deadlineAt = availability.scheduling_review_deadline_at
+        ? new Date(
+            availability.scheduling_review_deadline_at
+          ).getTime()
+        : null;
+
+      if (
+        deadlineAt !== null &&
+        currentTime >= deadlineAt
+      ) {
+        const completedAt = new Date().toISOString();
+
+        const { error: manualReviewError } =
+          await supabaseAdmin
+            .from("epew_participant_availability")
+            .update({
+              status: "manual_review_required",
+              scheduling_review_completed_at: completedAt,
+              updated_at: completedAt,
+            })
+            .eq("id", availability.id)
+            .eq("status", "scheduling_review");
+
+        if (manualReviewError) {
+          throw manualReviewError;
+        }
+
+        const { error: manualReviewHistoryError } =
+          await supabaseAdmin
+            .from("epew_operational_history")
+            .insert({
+              application_id: applicationId,
+              event_type:
+                "manual_scheduling_review_required",
+              event_name:
+                "Manual Scheduling Review Required",
+              event_description:
+                "The automated 5–15 minute Scheduling Review completed without finding a compatible appointment. The entrepreneur's submitted availability remains active for EPEW follow-up.",
+              previous_status:
+                "scheduling_review",
+              new_status:
+                "manual_review_required",
+              occurred_at: completedAt,
+
+              actor_role: "system",
+              actor_type: "automation",
+              actor_name:
+                "EMCC Scheduling Review Engine",
+
+              decision_made_by_role: "system",
+              decision_made_by_type: "automation",
+              decision_made_by_name:
+                "EMCC Scheduling Review Engine",
+              decision_organization: "EPEW",
+              decision_reason:
+                "No compatible appointment was found within the automated Scheduling Review period.",
+              decision_at: completedAt,
+
+              executed_by:
+                "EMCC Scheduling Review Engine",
+              recorded_by: "EPEW EDE / IBOS",
+              source_system:
+                "EMCC Scheduling Engine",
+              communication_channel: "system",
+
+              reference_type:
+                "participant_availability",
+              reference_id: availability.id,
+
+              metadata: {
+                schedulingReviewStartedAt:
+                  availability.scheduling_review_started_at,
+                schedulingReviewEligibleAt:
+                  availability.scheduling_review_eligible_at,
+                schedulingReviewDeadlineAt:
+                  availability.scheduling_review_deadline_at,
+                schedulingReviewCompletedAt:
+                  completedAt,
+                automatedReviewResult:
+                  "no_compatible_appointment",
+                participantResubmissionRequired:
+                  false,
+              },
+            });
+
+        if (manualReviewHistoryError) {
+          console.error(
+            "Unable to record manual Scheduling Review history:",
+            manualReviewHistoryError
+          );
+        }
+
+        currentStatus = "manual_review_required";
+      } else if (
+        eligibleAt !== null &&
+        currentTime >= eligibleAt
+      ) {
+        const reviewResult =
+          await PrivateAvailabilityMatchingService.matchAvailability(
+            availability.id,
+            { runSchedulingReview: true }
+          );
+
+        currentStatus = reviewResult.status;
+      }
+    }
+
+    const { data: appointmentChoices, error: appointmentChoicesError } =
+      await supabaseAdmin
+        .from("epew_private_schedule_matches")
+        .select(
+          "id, proposed_start_at, reserved_until, reservation_minutes"
+        )
+        .eq("availability_id", availability.id)
+        .eq("status", "available")
+        .eq("exposed_to_participant", true)
+        .order("proposed_start_at", { ascending: true })
+        .limit(12);
+
+    if (appointmentChoicesError) {
+      throw appointmentChoicesError;
+    }
+
+    const matchCount = appointmentChoices?.length ?? 0;
+
+    return NextResponse.json({
+      success: true,
+      availabilityId: availability.id,
+      status:
+        matchCount > 0
+          ? "matched"
+          : currentStatus,
+      matchCount,
+      appointmentChoices: appointmentChoices ?? [],
+      schedulingReview: {
+        startedAt: availability.scheduling_review_started_at,
+        eligibleAt: availability.scheduling_review_eligible_at,
+        deadlineAt: availability.scheduling_review_deadline_at,
+        completedAt: availability.scheduling_review_completed_at,
+      },
+    });
+  } catch (error) {
+    console.error("Entrepreneur availability status API error:", error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          error instanceof Error
+            ? error.message
+            : "Unable to check scheduling status.",
       },
       { status: 500 }
     );
