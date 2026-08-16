@@ -4,6 +4,44 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
+type AppointmentResponse = {
+  success: boolean;
+  applicationId?: number;
+  appointment: {
+    id: string;
+    type: string;
+    status: string | null;
+    scheduledAt: string | null;
+    provider: string | null;
+    joinUrl: string | null;
+  } | null;
+  coach: {
+    id: string | null;
+    name: string | null;
+  } | null;
+  recovery: {
+    status: string | null;
+    noShowDetectedAt: string | null;
+    recoveryStartedAt: string | null;
+    recoveryDeadlineAt: string | null;
+    nextRequiredAction: string | null;
+    rescheduledAt: string | null;
+    closedAt: string | null;
+  } | null;
+  action: {
+    type:
+      | "join_meeting"
+      | "change_appointment"
+      | "reschedule_appointment"
+      | "scheduling_in_progress"
+      | "appointment_completed"
+      | "recovery_closed"
+      | "waiting_for_appointment";
+    label: string;
+    href: string | null;
+  };
+};
+
 type Entrepreneur = {
   id: string | number;
   user_id?: string | null;
@@ -45,6 +83,10 @@ export default function EntrepreneurDashboardPage() {
 
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [appointment, setAppointment] =
+    useState<AppointmentResponse | null>(null);
+  const [appointmentLoading, setAppointmentLoading] =
+    useState(true);
 
   useEffect(() => {
     void loadEntrepreneur();
@@ -98,6 +140,39 @@ export default function EntrepreneurDashboardPage() {
       }
 
       setEntrepreneur(data as Entrepreneur);
+
+      try {
+        const appointmentResponse = await fetch(
+          "/api/entrepreneurs/appointment",
+          {
+            method: "GET",
+            credentials: "include",
+            cache: "no-store",
+          }
+        );
+
+        const appointmentData =
+          (await appointmentResponse.json()) as AppointmentResponse;
+
+        if (appointmentResponse.ok && appointmentData.success) {
+          setAppointment(appointmentData);
+        } else {
+          console.error(
+            "Unable to load entrepreneur appointment:",
+            appointmentData
+          );
+          setAppointment(null);
+        }
+      } catch (appointmentError) {
+        console.error(
+          "Unable to load entrepreneur appointment:",
+          appointmentError
+        );
+        setAppointment(null);
+      } finally {
+        setAppointmentLoading(false);
+      }
+
       setLoading(false);
     } catch (error) {
       console.error("Unable to load entrepreneur dashboard:", error);
@@ -302,6 +377,39 @@ export default function EntrepreneurDashboardPage() {
     const qualificationReview =
       applicationStatus === "Qualification Review";
 
+    const appointmentStatus =
+      appointment?.appointment?.status?.toLowerCase() ?? null;
+
+    const appointmentAction =
+      appointment?.action ?? null;
+
+    const scheduledAt =
+      appointment?.appointment?.scheduledAt
+        ? new Date(appointment.appointment.scheduledAt)
+        : null;
+
+    const scheduledDateTime =
+      scheduledAt && !Number.isNaN(scheduledAt.getTime())
+        ? new Intl.DateTimeFormat("en-US", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            timeZoneName: "short",
+          }).format(scheduledAt)
+        : null;
+
+    const isNoShow =
+      appointmentStatus === "no_show";
+
+    const isSchedulingReview =
+      appointmentAction?.type === "scheduling_in_progress";
+
+    const appointmentCompleted =
+      appointmentAction?.type === "appointment_completed";
+
     const journeySteps = [
       {
         label: "Application Received",
@@ -346,34 +454,46 @@ export default function EntrepreneurDashboardPage() {
             </div>
           )}
 
-          <section className="rounded-3xl bg-gradient-to-r from-[#10246f] to-[#078443] p-8 text-white shadow-xl md:p-10">
-            <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-              <div>
-                <p className="mb-2 text-lg font-extrabold tracking-widest text-lime-300">
-                  WELCOME TO THE EPEW-EDE-IBOS PROGRAM
-                </p>
-
-                <h1 className="text-3xl font-extrabold md:text-5xl">
-                  Your Entrepreneur Development Ecosystem (EDE)
-                  Journey
-                </h1>
+          <section className="rounded-3xl bg-gradient-to-r from-[#1f7cf0] via-[#168fb7] to-[#078443] p-8 text-white shadow-xl md:p-10">
+            <div className="grid gap-8 md:grid-cols-[280px_1fr] md:items-center">
+              <div className="flex justify-center md:justify-start">
+                <img
+                  src="/images/epew-ede-ibos-logo.png"
+                  alt="EPEW EDE IBOS Platform"
+                  className="h-auto w-full max-w-[260px] brightness-110"
+                />
               </div>
 
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="inline-flex shrink-0 items-center justify-center rounded-xl bg-white px-6 py-3 text-lg font-extrabold text-[#10246f] shadow transition hover:bg-red-50 hover:text-red-700"
-              >
-                Logout
-              </button>
-            </div>
+              <div className="flex min-w-0 flex-col">
+                <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                  <div>
+                    <p className="mb-2 text-lg font-extrabold tracking-widest text-lime-300">
+                      WELCOME TO THE EPEW-EDE-IBOS PROGRAM
+                    </p>
 
-            <p className="mt-5 max-w-4xl text-lg leading-relaxed text-white/90">
+                    <h1 className="text-3xl font-extrabold md:text-5xl">
+                      Your Entrepreneur Development Ecosystem (EDE)
+                      Journey
+                    </h1>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="inline-flex shrink-0 items-center justify-center self-start rounded-xl bg-white px-6 py-3 text-lg font-extrabold text-[#10246f] shadow transition hover:bg-red-50 hover:text-red-700"
+                  >
+                    Logout
+                  </button>
+                </div>
+
+                <p className="mt-5 max-w-4xl text-lg leading-relaxed text-white/90">
               Your application has been received successfully and
               is currently under review. Please allow approximately
               3 to 15 days for a Personal Coach to be assigned and
-              guide you through the next steps.
-            </p>
+                  guide you through the next steps.
+                </p>
+              </div>
+            </div>
           </section>
 
           <section className="rounded-3xl bg-white p-6 shadow">
@@ -394,6 +514,153 @@ export default function EntrepreneurDashboardPage() {
                   {step.complete ? "✅" : "⬜"} {step.label}
                 </div>
               ))}
+            </div>
+          </section>
+
+          <section
+            className={`rounded-3xl border-2 p-6 shadow-lg md:p-8 ${
+              isNoShow
+                ? "border-red-300 bg-red-50"
+                : appointmentCompleted
+                  ? "border-green-300 bg-green-50"
+                  : "border-blue-200 bg-white"
+            }`}
+          >
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex-1">
+                <div className="mb-3 flex flex-wrap items-center gap-3">
+                  <h2 className="text-2xl font-extrabold text-[#10246f] md:text-3xl">
+                    Your Appointment
+                  </h2>
+
+                  {isNoShow && (
+                    <span className="rounded-full bg-red-600 px-4 py-1 text-sm font-extrabold uppercase tracking-wide text-white">
+                      Missed — Action Required
+                    </span>
+                  )}
+
+                  {appointmentCompleted && (
+                    <span className="rounded-full bg-green-700 px-4 py-1 text-sm font-extrabold uppercase tracking-wide text-white">
+                      Completed
+                    </span>
+                  )}
+
+                  {isSchedulingReview && (
+                    <span className="rounded-full bg-amber-500 px-4 py-1 text-sm font-extrabold uppercase tracking-wide text-white">
+                      Rescheduling
+                    </span>
+                  )}
+                </div>
+
+                {appointmentLoading ? (
+                  <p className="text-gray-600">
+                    Loading your appointment...
+                  </p>
+                ) : appointment?.appointment ? (
+                  <div className="space-y-3">
+                    <p className="text-xl font-extrabold text-gray-900">
+                      EPEW Establishment Meeting
+                    </p>
+
+                    {scheduledDateTime && (
+                      <p className="text-lg font-bold text-gray-800">
+                        📅 {scheduledDateTime}
+                      </p>
+                    )}
+
+                    {appointment.coach?.name && (
+                      <p className="text-gray-700">
+                        <span className="font-bold">
+                          Personal Coach:
+                        </span>{" "}
+                        {appointment.coach.name}
+                      </p>
+                    )}
+
+                    <p className="text-gray-700">
+                      <span className="font-bold">
+                        Meeting Status:
+                      </span>{" "}
+                      {isNoShow
+                        ? "Missed / No Show"
+                        : appointmentCompleted
+                          ? "Completed"
+                          : isSchedulingReview
+                            ? "Scheduling in Progress"
+                            : appointment.appointment.status
+                              ?.replaceAll("_", " ")
+                              .replace(/\b\w/g, (letter) =>
+                                letter.toUpperCase()
+                              ) || "Being Prepared"}
+                    </p>
+
+                    {isNoShow && (
+                      <div className="mt-4 rounded-2xl border border-red-200 bg-white p-4">
+                        <p className="font-extrabold text-red-700">
+                          You missed your scheduled Establishment Meeting.
+                        </p>
+                        <p className="mt-2 leading-relaxed text-gray-700">
+                          Your missed appointment has been recorded in your
+                          EPEW portal. Please reschedule so your Personal Coach
+                          can continue your entrepreneur development process.
+                        </p>
+                      </div>
+                    )}
+
+                    {isSchedulingReview && (
+                      <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                        <p className="font-extrabold text-amber-800">
+                          We’re finding the best appointment for you.
+                        </p>
+                        <p className="mt-2 text-gray-700">
+                          Your availability has been received. EPEW is
+                          privately comparing it with available Coach
+                          schedules.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-lg font-bold text-gray-800">
+                      Your Establishment Meeting is being prepared.
+                    </p>
+                    <p className="mt-2 leading-relaxed text-gray-600">
+                      When your appointment is scheduled, the date, time,
+                      Personal Coach, meeting status, and available actions
+                      will appear here automatically.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {!appointmentLoading &&
+                appointmentAction?.href &&
+                appointmentAction.type !== "join_meeting" && (
+                  <Link
+                    href={appointmentAction.href}
+                    className={`inline-flex shrink-0 items-center justify-center rounded-xl px-7 py-4 text-center text-lg font-extrabold text-white shadow transition ${
+                      isNoShow
+                        ? "bg-red-600 hover:bg-red-700"
+                        : "bg-[#10246f] hover:bg-green-700"
+                    }`}
+                  >
+                    {appointmentAction.label}
+                  </Link>
+                )}
+
+              {!appointmentLoading &&
+                appointmentAction?.type === "join_meeting" &&
+                appointmentAction.href && (
+                  <a
+                    href={appointmentAction.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex shrink-0 items-center justify-center rounded-xl bg-green-700 px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-green-800"
+                  >
+                    Join Meeting
+                  </a>
+                )}
             </div>
           </section>
 
