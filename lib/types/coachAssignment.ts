@@ -6,13 +6,25 @@
 
 import { AssignmentMethod } from "./coach";
 
+// =======================================================
+// Assignment Status
+//
+// Supports both the legacy permanent-entrepreneur lifecycle
+// and the application / EMCC First Meeting lifecycle.
+// =======================================================
+
 export type AssignmentStatus =
   | "assigned"
+  | "active"
   | "accepted"
   | "paused"
+  | "reassignment_required"
   | "reassigned"
   | "completed"
-  | "cancelled";
+  | "cancelled"
+  | "declined"
+  | "ended"
+  | "inactive";
 
 export type InterviewStatus =
   | "pending"
@@ -27,10 +39,26 @@ export type CommunicationThreadStatus =
   | "waiting_for_coach"
   | "closed";
 
+// =======================================================
+// Coach Assignment
+//
+// applicationId:
+//   Used during Application → Coach Assignment → EMCC
+//   First Meeting.
+//
+// entrepreneurId:
+//   Used after the permanent public.entrepreneurs record
+//   exists.
+//
+// During the application stage entrepreneurId may be null.
+// =======================================================
+
 export interface CoachAssignment {
   id: string;
 
-  entrepreneurId: string;
+  applicationId: number | null;
+
+  entrepreneurId: string | null;
 
   coachId: string | null;
 
@@ -73,6 +101,14 @@ export interface CoachAssignment {
   updatedAt: string;
 }
 
+// =======================================================
+// Assignment History
+//
+// Existing assignment history remains tied to the permanent
+// entrepreneur lifecycle. Application-stage activity is
+// handled separately until a permanent entrepreneur exists.
+// =======================================================
+
 export interface AssignmentHistory {
   id: string;
 
@@ -99,8 +135,22 @@ export interface AssignmentHistory {
   createdAt: string;
 }
 
+// =======================================================
+// Assignment Request
+//
+// At least one identity must be supplied:
+//
+// applicationId
+// OR
+// entrepreneurId
+//
+// The service enforces this at runtime.
+// =======================================================
+
 export interface AssignmentRequest {
-  entrepreneurId: string;
+  applicationId?: number;
+
+  entrepreneurId?: string;
 
   coachId?: string;
 
@@ -108,9 +158,20 @@ export interface AssignmentRequest {
 
   assignmentReason?: string;
 
-  // NEW
+  /**
+   * Auth user UUID when the assignment was performed
+   * by a specific authenticated user.
+   *
+   * System labels such as
+   * "EntrepreneurLifecycleOrchestrator" must not be written
+   * into the UUID database column.
+   */
   assignedBy?: string;
 }
+
+// =======================================================
+// Reassignment Request
+// =======================================================
 
 export interface ReassignmentRequest {
   assignmentId: string;
@@ -118,7 +179,15 @@ export interface ReassignmentRequest {
   newCoachId: string;
 
   reason: string;
+
+  applicationId?: number;
+
+  entrepreneurId?: string;
 }
+
+// =======================================================
+// Assignment Summary
+// =======================================================
 
 export interface AssignmentSummary {
   totalAssignments: number;
