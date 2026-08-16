@@ -3,246 +3,80 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-type DayAvailability = {
-  date: string;
-  label: string;
-  enabled: boolean;
-  from: string;
-  until: string;
-};
-
-type AppointmentChoice = {
-  id: string;
-  proposed_start_at: string;
-  reserved_until: string;
-  reservation_minutes: number;
-};
-
 function EntrepreneurAvailabilityContent() {
   const searchParams = useSearchParams();
   const applicationId = Number(searchParams.get("applicationId"));
 
-  const [days, setDays] = useState<DayAvailability[]>([]);
+  const [appointmentDate, setAppointmentDate] = useState("");
+  const [appointmentTime, setAppointmentTime] = useState("");
   const [saving, setSaving] = useState(false);
-  const [selectingMatchId, setSelectingMatchId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
-  const [appointmentChoices, setAppointmentChoices] =
-    useState<AppointmentChoice[]>([]);
-  const [schedulingReview, setSchedulingReview] = useState(false);
-  const [manualReviewRequired, setManualReviewRequired] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const [minimumDate, setMinimumDate] = useState("");
+  const [maximumDate, setMaximumDate] = useState("");
 
   useEffect(() => {
-    const items: DayAvailability[] = [];
+    const isSamuelFoodFansEarlyAccess = applicationId === 27;
 
-    for (let i = 0; i < 7; i++) {
-      const date = new Date();
-      date.setDate(date.getDate() + i);
+    const firstAvailableDate = isSamuelFoodFansEarlyAccess
+      ? new Date()
+      : new Date(2026, 7, 18);
 
-      items.push({
-        date: [
-          date.getFullYear(),
-          String(date.getMonth() + 1).padStart(2, "0"),
-          String(date.getDate()).padStart(2, "0"),
-        ].join("-"),
-        label: new Intl.DateTimeFormat("en-US", {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-        }).format(date),
-        enabled: false,
-        from: "09:00",
-        until: "17:00",
-      });
+    const lastDay = new Date(firstAvailableDate);
+    lastDay.setDate(lastDay.getDate() + 6);
+
+    function formatDate(date: Date) {
+      return [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0"),
+        String(date.getDate()).padStart(2, "0"),
+      ].join("-");
     }
 
-    setDays(items);
-  }, []);
+    setMinimumDate(formatDate(firstAvailableDate));
+    setMaximumDate(formatDate(lastDay));
+  }, [applicationId]);
 
-  useEffect(() => {
-    if (!schedulingReview || !applicationId) {
-      return;
-    }
-
-    let cancelled = false;
-
-    async function checkSchedulingReview() {
-      try {
-        const response = await fetch(
-          `/api/entrepreneurs/availability?applicationId=${applicationId}`,
-          {
-            method: "GET",
-            cache: "no-store",
-          }
-        );
-
-        const result = await response.json();
-
-        if (cancelled) return;
-
-        if (!response.ok || !result.success) {
-          return;
-        }
-
-        if (
-          result.status === "matched" &&
-          Array.isArray(result.appointmentChoices) &&
-          result.appointmentChoices.length > 0
-        ) {
-          setAppointmentChoices(result.appointmentChoices);
-          setSchedulingReview(false);
-          setMessage(
-            "Good news! EPEW found compatible appointment times for you. Please choose the time that works best below."
-          );
-          return;
-        }
-
-        if (result.status === "manual_review_required") {
-          setSchedulingReview(false);
-          setManualReviewRequired(true);
-          setAppointmentChoices([]);
-          setMessage(
-            "Your Scheduling Review is complete. EPEW was not able to confirm a compatible appointment within the automated review period. You may keep your current availability for continued review or choose different days."
-          );
-          return;
-        }
-
-        if (result.status === "scheduled") {
-          setSchedulingReview(false);
-        }
-      } catch {
-        // Keep the review active and try again on the next interval.
-      }
-    }
-
-    checkSchedulingReview();
-
-    const interval = window.setInterval(
-      checkSchedulingReview,
-      30000
-    );
-
-    return () => {
-      cancelled = true;
-      window.clearInterval(interval);
-    };
-  }, [schedulingReview, applicationId]);
-
-  function updateDay(
-    index: number,
-    changes: Partial<DayAvailability>
-  ) {
-    setDays((current) =>
-      current.map((day, i) =>
-        i === index ? { ...day, ...changes } : day
-      )
-    );
-  }
-
-  async function submitAvailability() {
-    const selected = days.filter((day) => day.enabled);
-
+  async function scheduleAppointment() {
     if (!applicationId) {
+      setSuccess(false);
       setMessage("Application information is missing.");
       return;
     }
 
-    if (selected.length === 0) {
-      setMessage("Please choose at least one available day.");
+    if (!appointmentDate) {
+      setSuccess(false);
+      setMessage("Please choose the date you want for your appointment.");
+      return;
+    }
+
+    if (!appointmentTime) {
+      setSuccess(false);
+      setMessage("Please choose the time you want for your appointment.");
+      return;
+    }
+
+    const requestedDate = new Date(
+      `${appointmentDate}T${appointmentTime}`
+    );
+
+    if (Number.isNaN(requestedDate.getTime())) {
+      setSuccess(false);
+      setMessage("Please choose a valid appointment date and time.");
+      return;
+    }
+
+    if (requestedDate <= new Date()) {
+      setSuccess(false);
+      setMessage(
+        "Please choose an appointment date and time in the future."
+      );
       return;
     }
 
     setSaving(true);
-    setMessage("");
-
-    try {
-      const participantTimezone =
-        Intl.DateTimeFormat().resolvedOptions().timeZone ||
-        "America/New_York";
-
-      const response = await fetch(
-        "/api/entrepreneurs/availability",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            applicationId,
-            participantTimezone,
-            windows: selected.map((day) => ({
-              availableDate: day.date,
-              availableFrom: day.from,
-              availableUntil: day.until,
-              isOvernight: day.until <= day.from,
-            })),
-          }),
-        }
-      );
-
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        setMessage(
-          result.message ||
-            "Unable to submit your availability."
-        );
-        return;
-      }
-
-      setAppointmentChoices(result.appointmentChoices ?? []);
-      setManualReviewRequired(false);
-
-      if (result.status === "scheduling_review") {
-        setSchedulingReview(true);
-        setMessage(
-          "We’re Finding the Best Appointment for You — Your preferred times have been received. EPEW is privately reviewing Personal Coach availability to find the best compatible appointment for you. Please allow approximately 5–15 minutes. You do not need to submit your availability again."
-        );
-      } else if (result.matchCount > 0) {
-        setSchedulingReview(false);
-        setMessage(
-          "We found appointment times that work for both you and your Personal Coach. Please choose one below."
-        );
-      } else {
-        setSchedulingReview(false);
-        setMessage(
-          result.message || "Your availability has been submitted."
-        );
-      }
-    } catch {
-      setMessage("Unable to submit your availability.");
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  function chooseDifferentDays() {
-    setManualReviewRequired(false);
-    setSchedulingReview(false);
-    setAppointmentChoices([]);
-    setMessage(
-      "Please choose up to 3 different days during the next 7 days and submit your availability again."
-    );
-
-    setDays((current) =>
-      current.map((day) => ({
-        ...day,
-        enabled: false,
-      }))
-    );
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  }
-
-  async function selectAppointment(matchId: string) {
-    if (!applicationId) {
-      setMessage("Application information is missing.");
-      return;
-    }
-
-    setSelectingMatchId(matchId);
+    setSuccess(false);
     setMessage("");
 
     try {
@@ -255,7 +89,7 @@ function EntrepreneurAvailabilityContent() {
           },
           body: JSON.stringify({
             applicationId,
-            matchId,
+            requestedStartAt: requestedDate.toISOString(),
           }),
         }
       );
@@ -263,14 +97,13 @@ function EntrepreneurAvailabilityContent() {
       const result = await response.json();
 
       if (!response.ok || !result.success) {
+        setSuccess(false);
         setMessage(
           result.message ||
-            "Unable to schedule this appointment."
+            "That date and time is not available. Please choose another date or time."
         );
         return;
       }
-
-      setAppointmentChoices([]);
 
       const scheduledDate = new Date(
         result.appointment.scheduledAt
@@ -286,15 +119,17 @@ function EntrepreneurAvailabilityContent() {
         timeZoneName: "short",
       }).format(scheduledDate);
 
+      setSuccess(true);
       setMessage(
-        `Your Establishment Meeting has been rescheduled for ${formatted}. A confirmation with your Zoom information has been sent to you.`
+        `Your appointment is approved. Your EPEW Establishment Meeting is scheduled for ${formatted}. A confirmation with your meeting information has been sent to you.`
       );
     } catch {
+      setSuccess(false);
       setMessage(
-        "Unable to schedule this appointment."
+        "Unable to schedule your appointment right now. Please try again."
       );
     } finally {
-      setSelectingMatchId(null);
+      setSaving(false);
     }
   }
 
@@ -316,7 +151,7 @@ function EntrepreneurAvailabilityContent() {
         }}
       >
         <img
-          src="/images/epew-logo.png"
+          src="/images/epew-ede-ibos-logo.png"
           alt="EPEW EDE IBOS Platform"
           style={{
             width: "100%",
@@ -340,7 +175,7 @@ function EntrepreneurAvailabilityContent() {
         </p>
 
         <h1 style={{ marginBottom: 12 }}>
-          Choose Your Best Time
+          Choose Your Appointment
         </h1>
 
         <p
@@ -350,293 +185,269 @@ function EntrepreneurAvailabilityContent() {
             marginBottom: 10,
           }}
         >
-          Help us find the best time for your Establishment
-          Meeting. Select up to <strong>3 days</strong> during
-          the next 7 days and tell us when you are available.
+          Choose the exact date and time you would like for your
+          Establishment Meeting.
         </p>
 
         <p style={{ lineHeight: 1.6, margin: 0 }}>
-          Your Personal Coach&apos;s calendar remains private.
-          EPEW will compare your availability with the
-          Coach&apos;s schedule and present only appointment
-          times that work for both of you.
+          EPEW will automatically check your Personal Coach&apos;s
+          availability. If the requested 60-minute appointment period
+          is available, your appointment will be approved and scheduled
+          immediately.
         </p>
+
+        <a
+          href="/entrepreneurs/dashboard"
+          style={{
+            display: "inline-flex",
+            marginTop: 22,
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 10,
+            background: "#10246f",
+            color: "#ffffff",
+            padding: "12px 20px",
+            fontWeight: 800,
+            textDecoration: "none",
+          }}
+        >
+          Back to Entrepreneur Portal
+        </a>
       </header>
 
-      <div style={{ marginTop: 30 }}>
-        {days.map((day, index) => (
-          <div
-            key={day.date}
-            style={{
-              border: "1px solid #ddd",
-              borderRadius: 8,
-              padding: 16,
-              marginBottom: 12,
-            }}
-          >
-            <label
-              style={{
-                display: "flex",
-                gap: 10,
-                alignItems: "center",
-                fontWeight: 700,
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={day.enabled}
-                onChange={(event) => {
-                  const checked = event.target.checked;
-
-                  if (
-                    checked &&
-                    days.filter((item) => item.enabled).length >= 3
-                  ) {
-                    setMessage(
-                      "Please select no more than 3 days during the 7-day availability window."
-                    );
-                    return;
-                  }
-
-                  setMessage("");
-
-                  updateDay(index, {
-                    enabled: checked,
-                  });
-                }}
-              />
-              {day.label}
-            </label>
-
-            {day.enabled && (
-              <div
-                style={{
-                  display: "flex",
-                  gap: 16,
-                  marginTop: 14,
-                  flexWrap: "wrap",
-                }}
-              >
-                <label>
-                  Available from
-                  <br />
-                  <input
-                    type="time"
-                    value={day.from}
-                    onChange={(event) =>
-                      updateDay(index, {
-                        from: event.target.value,
-                      })
-                    }
-                  />
-                </label>
-
-                <label>
-                  Available until
-                  <br />
-                  <input
-                    type="time"
-                    value={day.until}
-                    onChange={(event) =>
-                      updateDay(index, {
-                        until: event.target.value,
-                      })
-                    }
-                  />
-                </label>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      <button
-        type="button"
-        disabled={saving}
-        onClick={submitAvailability}
+      <section
         style={{
-          marginTop: 20,
-          padding: "14px 24px",
-          fontSize: 16,
-          cursor: saving ? "default" : "pointer",
+          border: "1px solid #ddd",
+          borderRadius: 14,
+          padding: 24,
+          marginTop: 28,
         }}
       >
-        {saving ? "Submitting..." : "Submit My Availability"}
-      </button>
+        <h2 style={{ marginTop: 0 }}>
+          Select Your Date and Time
+        </h2>
 
-      {message && (
-        <p style={{ marginTop: 20, fontWeight: 600 }}>
-          {message}
+        <p
+          style={{
+            lineHeight: 1.6,
+            marginBottom: 24,
+          }}
+        >
+          Appointments may be selected during the next 7 days.
+          Each Establishment Meeting reserves up to 60 minutes.
         </p>
-      )}
 
-      {manualReviewRequired && (
-        <section
+        <div
           style={{
-            marginTop: 28,
-            padding: 24,
-            border: "1px solid #ddd",
-            borderRadius: 12,
-            textAlign: "center",
+            display: "grid",
+            gap: 22,
           }}
         >
-          <h2 style={{ marginTop: 0 }}>
-            More Scheduling Options
-          </h2>
-
-          <p style={{ lineHeight: 1.7 }}>
-            We were not able to confirm a compatible appointment
-            during the automated Scheduling Review.
-          </p>
-
-          <p style={{ lineHeight: 1.7 }}>
-            You may keep your current availability so EPEW can
-            continue reviewing it, or choose up to 3 different days
-            during the next 7 days.
-          </p>
-
-          <div
-            style={{
-              display: "flex",
-              gap: 12,
-              justifyContent: "center",
-              flexWrap: "wrap",
-              marginTop: 20,
-            }}
-          >
-            <button
-              type="button"
-              onClick={chooseDifferentDays}
-              style={{
-                padding: "12px 18px",
-                fontSize: 16,
-                cursor: "pointer",
-              }}
-            >
-              Choose Different Days
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setManualReviewRequired(false);
-                setMessage(
-                  "Your current availability remains active. EPEW will continue the scheduling review. You do not need to submit anything else at this time."
-                );
-              }}
-              style={{
-                padding: "12px 18px",
-                fontSize: 16,
-                cursor: "pointer",
-              }}
-            >
-              Keep My Availability
-            </button>
-          </div>
-        </section>
-      )}
-
-      {schedulingReview && (
-        <section
-          style={{
-            marginTop: 28,
-            padding: 24,
-            border: "1px solid #ddd",
-            borderRadius: 12,
-            textAlign: "center",
-          }}
-        >
-          <h2 style={{ marginTop: 0 }}>
-            We’re Finding the Best Appointment for You
-          </h2>
-
-          <p style={{ lineHeight: 1.7, marginBottom: 10 }}>
-            Your preferred times have been received. EPEW is
-            privately reviewing Personal Coach availability to
-            find the best compatible appointment for you.
-          </p>
-
-          <p style={{ lineHeight: 1.7, marginBottom: 0 }}>
-            Please allow approximately <strong>5–15 minutes</strong>.
-            This page will check automatically. You do not need to
-            submit your availability again.
-          </p>
-        </section>
-      )}
-
-      {appointmentChoices.length > 0 && (
-        <section style={{ marginTop: 32 }}>
-          <h2>Matching Appointment Times</h2>
-
-          <p>
-            These times work with both your availability and your
-            Personal Coach&apos;s private schedule. Your Coach&apos;s full
-            calendar remains private.
-          </p>
-
-          <div
+          <label
             style={{
               display: "grid",
-              gap: 12,
-              marginTop: 18,
+              gap: 8,
+              fontWeight: 700,
             }}
           >
-            {appointmentChoices.map((choice) => {
-              const start = new Date(
-                choice.proposed_start_at
-              );
+            Desired Appointment Date
+            <input
+              type="date"
+              value={appointmentDate}
+              min={minimumDate}
+              max={maximumDate}
+              onChange={(event) => {
+                setAppointmentDate(event.target.value);
+                setMessage("");
+                setSuccess(false);
+              }}
+              style={{
+                padding: "13px 14px",
+                fontSize: 17,
+                border: "1px solid #bbb",
+                borderRadius: 8,
+              }}
+            />
+          </label>
 
-              const label = new Intl.DateTimeFormat(
-                "en-US",
-                {
-                  weekday: "long",
-                  month: "long",
-                  day: "numeric",
-                  hour: "numeric",
-                  minute: "2-digit",
-                  timeZoneName: "short",
+          <label
+            style={{
+              display: "grid",
+              gap: 8,
+              fontWeight: 700,
+            }}
+          >
+            Desired Start Time
+            <select
+              value={appointmentTime}
+              onChange={(event) => {
+                setAppointmentTime(event.target.value);
+                setMessage("");
+                setSuccess(false);
+              }}
+              style={{
+                padding: "13px 14px",
+                fontSize: 17,
+                border: "1px solid #bbb",
+                borderRadius: 8,
+                background: "#ffffff",
+              }}
+            >
+              <option value="">Choose a start time</option>
+
+              {Array.from({ length: 48 }, (_, index) => {
+                const isSamuelFoodFansEarlyAccess = applicationId === 27;
+                const isOfficialOpeningDay =
+                  appointmentDate === "2026-08-18";
+
+                if (
+                  !isSamuelFoodFansEarlyAccess &&
+                  isOfficialOpeningDay &&
+                  index < 26
+                ) {
+                  return null;
                 }
-              ).format(start);
 
-              return (
-                <button
-                  key={choice.id}
-                  type="button"
-                  disabled={
-                    selectingMatchId !== null
-                  }
-                  onClick={() =>
-                    selectAppointment(choice.id)
-                  }
-                  style={{
-                    padding: "16px 18px",
-                    textAlign: "left",
-                    fontSize: 16,
-                    border: "1px solid #ccc",
-                    borderRadius: 8,
-                    cursor:
-                      selectingMatchId !== null
-                        ? "default"
-                        : "pointer",
-                  }}
-                >
-                  {selectingMatchId === choice.id
-                    ? "Scheduling..."
-                    : label}
-                </button>
-              );
-            })}
-          </div>
+                const hour24 = Math.floor(index / 2);
+                const minute = index % 2 === 0 ? "00" : "30";
+
+                const value =
+                  `${String(hour24).padStart(2, "0")}:${minute}`;
+
+                const hour12 =
+                  hour24 === 0
+                    ? 12
+                    : hour24 > 12
+                    ? hour24 - 12
+                    : hour24;
+
+                const period = hour24 < 12 ? "AM" : "PM";
+
+                return (
+                  <option key={value} value={value}>
+                    {hour12}:{minute} {period}
+                  </option>
+                );
+              })}
+            </select>
+          </label>
+        </div>
+
+        <p
+          style={{
+            marginTop: 20,
+            marginBottom: 0,
+            lineHeight: 1.6,
+            color: "#555",
+          }}
+        >
+          Your Personal Coach&apos;s calendar remains private.
+          EPEW checks only whether your requested appointment period
+          is available.
+        </p>
+
+        <button
+          type="button"
+          disabled={saving}
+          onClick={scheduleAppointment}
+          style={{
+            width: "100%",
+            marginTop: 28,
+            padding: "15px 24px",
+            fontSize: 17,
+            fontWeight: 800,
+            border: 0,
+            borderRadius: 10,
+            background: saving ? "#777" : "#10246f",
+            color: "#ffffff",
+            cursor: saving ? "default" : "pointer",
+          }}
+        >
+          {saving
+            ? "Checking Availability..."
+            : "Schedule My Appointment"}
+        </button>
+      </section>
+
+      {message && (
+        <section
+          style={{
+            marginTop: 24,
+            padding: 22,
+            borderRadius: 12,
+            border: success
+              ? "1px solid #078443"
+              : "1px solid #c58a00",
+            background: success
+              ? "#f1fff6"
+              : "#fffaf0",
+          }}
+        >
+          <h2
+            style={{
+              marginTop: 0,
+              marginBottom: 10,
+            }}
+          >
+            {success
+              ? "Your Appointment Is Confirmed"
+              : "Appointment Not Confirmed"}
+          </h2>
+
+          <p
+            style={{
+              margin: 0,
+              lineHeight: 1.7,
+              fontWeight: 600,
+            }}
+          >
+            {message}
+          </p>
+
+          {success ? (
+            <a
+              href="/entrepreneurs/dashboard"
+              style={{
+                display: "inline-flex",
+                marginTop: 18,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 10,
+                background: "#078443",
+                color: "#ffffff",
+                padding: "12px 20px",
+                fontWeight: 800,
+                textDecoration: "none",
+              }}
+            >
+              Return to My Dashboard
+            </a>
+          ) : (
+            <p
+              style={{
+                marginTop: 14,
+                marginBottom: 0,
+                lineHeight: 1.6,
+              }}
+            >
+              Please choose another date or time and try again.
+            </p>
+          )}
         </section>
       )}
     </main>
   );
 }
 
-
 export default function EntrepreneurAvailabilityPage() {
   return (
-    <Suspense fallback={<main style={{ padding: 40 }}>Loading availability...</main>}>
+    <Suspense
+      fallback={
+        <main style={{ padding: 40 }}>
+          Loading appointment scheduling...
+        </main>
+      }
+    >
       <EntrepreneurAvailabilityContent />
     </Suspense>
   );

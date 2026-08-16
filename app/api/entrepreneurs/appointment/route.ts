@@ -267,6 +267,22 @@ export async function GET() {
       };
     }
 
+    const canJoin =
+      ["scheduled", "ready_to_start", "in_progress"].includes(
+        meetingStatus
+      ) &&
+      Boolean(meeting.zoom_join_url) &&
+      recoveryStatus !== "active" &&
+      recoveryStatus !== "responded";
+
+    const canChange =
+      meetingStatus === "scheduled" &&
+      !recoveryStatus;
+
+    const canReschedule =
+      meetingStatus === "no_show" &&
+      recoveryStatus === "active";
+
     return NextResponse.json({
       success: true,
 
@@ -284,6 +300,26 @@ export async function GET() {
           meeting.meeting_provider ?? null,
         joinUrl:
           meeting.zoom_join_url ?? null,
+      },
+
+      controls: {
+        canJoin,
+        joinUrl:
+          canJoin
+            ? meeting.zoom_join_url ?? null
+            : null,
+
+        canChange,
+        changeHref:
+          canChange
+            ? `/entrepreneurs/availability?applicationId=${applicationId}`
+            : null,
+
+        canReschedule,
+        rescheduleHref:
+          canReschedule
+            ? `/entrepreneurs/availability?applicationId=${applicationId}`
+            : null,
       },
 
       coach: assignment

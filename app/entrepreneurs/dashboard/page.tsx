@@ -28,6 +28,14 @@ type AppointmentResponse = {
     rescheduledAt: string | null;
     closedAt: string | null;
   } | null;
+  controls?: {
+    canJoin: boolean;
+    joinUrl: string | null;
+    canChange: boolean;
+    changeHref: string | null;
+    canReschedule: boolean;
+    rescheduleHref: string | null;
+  };
   action: {
     type:
       | "join_meeting"
@@ -528,10 +536,17 @@ export default function EntrepreneurDashboardPage() {
           >
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex-1">
-                <div className="mb-3 flex flex-wrap items-center gap-3">
-                  <h2 className="text-2xl font-extrabold text-[#10246f] md:text-3xl">
-                    Your Appointment
-                  </h2>
+                <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center">
+                  <img
+                    src="/images/epew-ede-ibos-logo.png"
+                    alt="EPEW EDE IBOS Platform"
+                    className="h-auto w-full max-w-[150px]"
+                  />
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h2 className="text-2xl font-extrabold text-[#10246f] md:text-3xl">
+                      Your Appointment
+                    </h2>
 
                   {isNoShow && (
                     <span className="rounded-full bg-red-600 px-4 py-1 text-sm font-extrabold uppercase tracking-wide text-white">
@@ -550,6 +565,7 @@ export default function EntrepreneurDashboardPage() {
                       Rescheduling
                     </span>
                   )}
+                  </div>
                 </div>
 
                 {appointmentLoading ? (
@@ -634,33 +650,53 @@ export default function EntrepreneurDashboardPage() {
                 )}
               </div>
 
-              {!appointmentLoading &&
-                appointmentAction?.href &&
-                appointmentAction.type !== "join_meeting" && (
-                  <Link
-                    href={appointmentAction.href}
-                    className={`inline-flex shrink-0 items-center justify-center rounded-xl px-7 py-4 text-center text-lg font-extrabold text-white shadow transition ${
-                      isNoShow
-                        ? "bg-red-600 hover:bg-red-700"
-                        : "bg-[#10246f] hover:bg-green-700"
-                    }`}
-                  >
-                    {appointmentAction.label}
-                  </Link>
-                )}
+              {!appointmentLoading && (
+                <div className="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col">
+                  {appointment?.controls?.canJoin &&
+                    appointment.controls.joinUrl && (
+                      <a
+                        href={appointment.controls.joinUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center rounded-xl bg-green-700 px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-green-800"
+                      >
+                        Join Meeting
+                      </a>
+                    )}
 
-              {!appointmentLoading &&
-                appointmentAction?.type === "join_meeting" &&
-                appointmentAction.href && (
-                  <a
-                    href={appointmentAction.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex shrink-0 items-center justify-center rounded-xl bg-green-700 px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-green-800"
-                  >
-                    Join Meeting
-                  </a>
-                )}
+                  {appointment?.controls?.canChange &&
+                    appointment.controls.changeHref && (
+                      <Link
+                        href={appointment.controls.changeHref}
+                        className="inline-flex items-center justify-center rounded-xl bg-[#10246f] px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-blue-800"
+                      >
+                        Change Appointment
+                      </Link>
+                    )}
+
+                  {appointment?.controls?.canReschedule &&
+                    appointment.controls.rescheduleHref && (
+                      <Link
+                        href={appointment.controls.rescheduleHref}
+                        className="inline-flex items-center justify-center rounded-xl bg-red-600 px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-red-700"
+                      >
+                        Reschedule Appointment
+                      </Link>
+                    )}
+
+                  {!appointment?.controls?.canJoin &&
+                    !appointment?.controls?.canChange &&
+                    !appointment?.controls?.canReschedule &&
+                    appointmentAction?.href && (
+                      <Link
+                        href={appointmentAction.href}
+                        className="inline-flex items-center justify-center rounded-xl bg-[#10246f] px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-green-700"
+                      >
+                        {appointmentAction.label}
+                      </Link>
+                    )}
+                </div>
+              )}
             </div>
           </section>
 

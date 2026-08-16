@@ -4,6 +4,8 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { ZoomMeetingService } from "@/lib/zoom/ZoomMeetingService";
 import { sendCoachIntroductionEmail } from "@/lib/email/sendCoachIntroductionEmail";
 
+const MEETING_DURATION_MINUTES = 60;
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -26,26 +28,79 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     const applicationId = Number(body.applicationId);
-    const matchId = String(body.matchId ?? "").trim();
+    const requestedStartAt = String(
+      body.requestedStartAt ?? ""
+    ).trim();
 
     if (
       !Number.isInteger(applicationId) ||
       applicationId <= 0 ||
-      !matchId
+      !requestedStartAt
     ) {
       return NextResponse.json(
         {
           success: false,
-          message: "Application and appointment selection are required.",
+          message:
+            "Please choose the date and time you want for your appointment.",
         },
         { status: 400 }
       );
     }
 
+    const scheduledDate = new Date(requestedStartAt);
+
+    if (Number.isNaN(scheduledDate.getTime())) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "The selected appointment date or time is invalid.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (
+      scheduledDate.getMinutes() !== 0 &&
+      scheduledDate.getMinutes() !== 30
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Appointments must begin on the hour or half-hour. Please choose a time such as 1:00 PM or 1:30 PM.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const nowDate = new Date();
+
+    if (scheduledDate <= nowDate) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Please choose an appointment date and time in the future.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const scheduledEnd = new Date(
+      scheduledDate.getTime() +
+        MEETING_DURATION_MINUTES * 60 * 1000
+    );
+
+    // =====================================================
+    // Confirm the signed-in entrepreneur owns the application.
+    // =====================================================
+
     const { data: application, error: applicationError } =
       await supabaseAdmin
         .from("entrepreneur_applications")
-        .select("id, user_id, full_name, email, business_name")
+        .select(
+          "id, user_id, full_name, email, business_name"
+        )
         .eq("id", applicationId)
         .eq("user_id", user.id)
         .single();
@@ -60,82 +115,90 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { data: match, error: matchError } =
-      await supabaseAdmin
-        .from("epew_private_schedule_matches")
-        .select(
-          `
-          id,
-          availability_id,
-          application_id,
-          coach_assignment_id,
-          coach_id,
-          proposed_start_at,
-          reserved_until,
-          reservation_minutes,
-          status,
-          exposed_to_participant
-        `
-        )
-        .eq("id", matchId)
-        .eq("application_id", applicationId)
-        .eq("status", "available")
-        .eq("exposed_to_participant", true)
-        .single();
+    // =====================================================
+    // Temporary official Establishment Meeting opening.
+    //
+    // General scheduling opens:
+    // Tuesday, August 18, 2026 at 1:00 PM Eastern.
+    //
+    // Samuel Nelson / Food Fans Restaurant has temporary early scheduling access
+    // while general Establishment Meeting scheduling is not yet open.
+    // =====================================================
 
-    if (matchError || !match) {
-      return NextResponse.json(
-        {
-          success: false,
-          message:
-            "This appointment option is no longer available. Please choose another time.",
-        },
-        { status: 409 }
-      );
-    }
+    const isSamuelFoodFansEarlyAccess =
+      application.full_name?.trim().toLowerCase() ===
+        "samuel nelson" &&
+      application.business_name?.trim().toLowerCase() ===
+        "food fans restaurant";
 
-    const scheduledDate = new Date(match.proposed_start_at);
-    const scheduledEnd = new Date(match.reserved_until);
+    const officialSchedulingOpening =
+      new Date("2026-08-18T13:00:00-04:00");
 
     if (
-      Number.isNaN(scheduledDate.getTime()) ||
-      Number.isNaN(scheduledEnd.getTime()) ||
-      scheduledEnd <= scheduledDate
+      !isSamuelFoodFansEarlyAccess &&
+      scheduledDate < officialSchedulingOpening
     ) {
       return NextResponse.json(
         {
           success: false,
-          message: "The selected appointment time is invalid.",
+          message:
+            "Establishment Meeting appointments officially begin Tuesday, August 18, 2026 at 1:00 PM Eastern. Please choose Tuesday at 1:00 PM or later.",
         },
         { status: 400 }
       );
     }
 
+    // =====================================================
+    // Load the entrepreneur's current Personal Coach.
+    // =====================================================
+
     const { data: assignment, error: assignmentError } =
       await supabaseAdmin
         .from("coach_assignments")
-        .select("id, coach_id, coach_name, coach_email")
-        .eq("id", match.coach_assignment_id)
+        .select(
+          `
+            id,
+            coach_id,
+            coach_name,
+            coach_email,
+            assignment_status,
+            assigned_at
+          `
+        )
         .eq("application_id", applicationId)
-        .eq("coach_id", match.coach_id)
-        .single();
+        .not(
+          "assignment_status",
+          "in",
+          '("ended","declined","reassigned","cancelled","inactive","reassignment_required","completed")'
+        )
+        .order("assigned_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
     if (assignmentError || !assignment) {
       return NextResponse.json(
         {
           success: false,
-          message: "Your Personal Coach assignment could not be confirmed.",
+          message:
+            "Your Personal Coach assignment could not be confirmed.",
         },
         { status: 409 }
       );
     }
+
+    // =====================================================
+    // Load the current Establishment Meeting record.
+    // =====================================================
 
     const { data: meeting, error: meetingError } =
       await supabaseAdmin
         .from("epew_coach_meetings")
         .select("*")
         .eq("application_id", applicationId)
-        .eq("meeting_type", "entrepreneur_first_meeting")
+        .eq(
+          "meeting_type",
+          "entrepreneur_first_meeting"
+        )
         .order("created_at", { ascending: false })
         .limit(1)
         .single();
@@ -144,92 +207,115 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: "Your Establishment Meeting record could not be found.",
+          message:
+            "Your Establishment Meeting record could not be found.",
         },
         { status: 404 }
       );
     }
 
+    // =====================================================
+    // Check the requested 60-minute period privately.
+    //
+    // Example:
+    // Requested appointment: 3:00 PM - 4:00 PM
+    //
+    // Any other active meeting that begins after 2:00 PM
+    // and before 4:00 PM creates a scheduling conflict.
+    // =====================================================
+
     const conflictWindowStart = new Date(
-      scheduledDate.getTime() - 60 * 60 * 1000
+      scheduledDate.getTime() -
+        MEETING_DURATION_MINUTES * 60 * 1000
     );
 
-    const { data: conflictingMeetings, error: conflictError } =
-      await supabaseAdmin
-        .from("epew_coach_meetings")
-        .select("id, scheduled_at, meeting_status")
-        .eq("coach_id", match.coach_id)
-        .neq("id", meeting.id)
-        .not("scheduled_at", "is", null)
-        .in("meeting_status", [
-          "scheduled",
-          "ready_to_start",
-          "in_progress",
-        ])
-        .gte(
-          "scheduled_at",
-          conflictWindowStart.toISOString()
-        )
-        .lt(
-          "scheduled_at",
-          scheduledEnd.toISOString()
-        );
+    const {
+      data: conflictingMeetings,
+      error: conflictError,
+    } = await supabaseAdmin
+      .from("epew_coach_meetings")
+      .select("id, coach_id, scheduled_at, meeting_status")
+      .neq("id", meeting.id)
+      .not("scheduled_at", "is", null)
+      .in("meeting_status", [
+        "scheduled",
+        "ready_to_start",
+        "in_progress",
+      ])
+      .gte(
+        "scheduled_at",
+        conflictWindowStart.toISOString()
+      )
+      .lt("scheduled_at", scheduledEnd.toISOString());
 
     if (conflictError) {
       throw conflictError;
     }
 
-    if (conflictingMeetings && conflictingMeetings.length > 0) {
-      await supabaseAdmin
-        .from("epew_private_schedule_matches")
-        .update({
-          status: "conflict",
-          exposed_to_participant: false,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", match.id);
-
+    if (
+      conflictingMeetings &&
+      conflictingMeetings.length > 0
+    ) {
       return NextResponse.json(
         {
           success: false,
+          available: false,
           message:
-            "That appointment was just taken. Please choose another available time.",
+            "That date and time is not available. Please choose another date or time.",
         },
         { status: 409 }
       );
     }
+
+    // =====================================================
+    // The requested time is available.
+    // Create the Zoom meeting.
+    // =====================================================
 
     const zoomMeeting =
       await ZoomMeetingService.createEstablishmentMeeting({
         entrepreneurName: application.full_name,
         businessName: application.business_name,
         scheduledAt: scheduledDate.toISOString(),
-        durationMinutes: 60,
+        durationMinutes: MEETING_DURATION_MINUTES,
       });
 
     const now = new Date().toISOString();
+    const previousMeetingStatus =
+      meeting.meeting_status ?? null;
 
-    const { data: updatedMeeting, error: meetingUpdateError } =
-      await supabaseAdmin
-        .from("epew_coach_meetings")
-        .update({
-          scheduled_at: scheduledDate.toISOString(),
-          meeting_date: scheduledDate.toISOString(),
-          meeting_status: "scheduled",
-          meeting_provider: "zoom",
-          zoom_meeting_id: zoomMeeting.meetingId,
-          zoom_meeting_uuid: zoomMeeting.meetingUuid,
-          zoom_join_url: zoomMeeting.joinUrl,
-          zoom_meeting_status: "scheduled",
-          updated_at: now,
-        })
-        .eq("id", meeting.id)
-        .select("*")
-        .single();
+    // =====================================================
+    // Schedule the Establishment Meeting.
+    // =====================================================
+
+    const {
+      data: updatedMeeting,
+      error: meetingUpdateError,
+    } = await supabaseAdmin
+      .from("epew_coach_meetings")
+      .update({
+        coach_id: assignment.coach_id,
+        scheduled_at: scheduledDate.toISOString(),
+        meeting_date: scheduledDate.toISOString(),
+        meeting_status: "scheduled",
+        meeting_provider: "zoom",
+        zoom_meeting_id: zoomMeeting.meetingId,
+        zoom_meeting_uuid: zoomMeeting.meetingUuid,
+        zoom_join_url: zoomMeeting.joinUrl,
+        zoom_meeting_status: "scheduled",
+        updated_at: now,
+      })
+      .eq("id", meeting.id)
+      .select("*")
+      .single();
 
     if (meetingUpdateError) {
       throw meetingUpdateError;
     }
+
+    // =====================================================
+    // Store Zoom host credentials privately.
+    // =====================================================
 
     const { error: zoomSecretError } =
       await supabaseAdmin
@@ -250,15 +336,28 @@ export async function POST(request: NextRequest) {
         );
 
     if (zoomSecretError) {
-      throw zoomSecretError;
+      console.error(
+        "Zoom private secret storage warning:",
+        JSON.stringify({
+          code: zoomSecretError.code ?? null,
+          message: zoomSecretError.message ?? null,
+          details: zoomSecretError.details ?? null,
+          hint: zoomSecretError.hint ?? null,
+        })
+      );
     }
+
+    // =====================================================
+    // Update the Coach assignment.
+    // =====================================================
 
     const { error: assignmentUpdateError } =
       await supabaseAdmin
         .from("coach_assignments")
         .update({
           first_interview_status: "scheduled",
-          first_interview_date: scheduledDate.toISOString(),
+          first_interview_date:
+            scheduledDate.toISOString(),
         })
         .eq("id", assignment.id);
 
@@ -266,52 +365,26 @@ export async function POST(request: NextRequest) {
       throw assignmentUpdateError;
     }
 
-    const { error: matchSelectError } =
-      await supabaseAdmin
-        .from("epew_private_schedule_matches")
-        .update({
-          status: "scheduled",
-          selected_by_user_id: user.id,
-          selected_at: now,
-          updated_at: now,
-        })
-        .eq("id", match.id)
-        .eq("status", "available");
-
-    if (matchSelectError) {
-      throw matchSelectError;
-    }
-
-    await supabaseAdmin
-      .from("epew_private_schedule_matches")
-      .update({
-        status: "withdrawn",
-        exposed_to_participant: false,
-        updated_at: now,
-      })
-      .eq("availability_id", match.availability_id)
-      .neq("id", match.id)
-      .eq("status", "available");
-
-    await supabaseAdmin
-      .from("epew_participant_availability")
-      .update({
-        status: "scheduled",
-        scheduled_at: now,
-        updated_at: now,
-      })
-      .eq("id", match.availability_id);
+    // =====================================================
+    // If this appointment follows a no-show, close the
+    // recovery process as successfully rescheduled.
+    // =====================================================
 
     await supabaseAdmin
       .from("epew_no_show_recovery_cases")
       .update({
         status: "rescheduled",
-        next_required_action: "attend_rescheduled_meeting",
+        next_required_action:
+          "attend_rescheduled_meeting",
         rescheduled_at: now,
         updated_at: now,
       })
       .eq("application_id", applicationId)
       .in("status", ["active", "responded"]);
+
+    // =====================================================
+    // Prepare human-readable appointment information.
+    // =====================================================
 
     const proposedMeetingDate =
       new Intl.DateTimeFormat("en-US", {
@@ -330,6 +403,10 @@ export async function POST(request: NextRequest) {
         timeZoneName: "short",
       }).format(scheduledDate);
 
+    // =====================================================
+    // Send the appointment confirmation.
+    // =====================================================
+
     if (
       application.email &&
       updatedMeeting.zoom_join_url &&
@@ -339,11 +416,13 @@ export async function POST(request: NextRequest) {
         await sendCoachIntroductionEmail({
           applicationId,
           assignmentId: assignment.id,
-          zoomMeetingId: updatedMeeting.zoom_meeting_id,
+          zoomMeetingId:
+            updatedMeeting.zoom_meeting_id,
           entrepreneurEmail: application.email,
           entrepreneurName: application.full_name,
           businessName:
-            application.business_name ?? "your business",
+            application.business_name ??
+            "your business",
           coachName:
             assignment.coach_name ??
             "Your EPEW Personal Coach",
@@ -352,26 +431,39 @@ export async function POST(request: NextRequest) {
             "welcome@epew.us",
           proposedMeetingDate,
           proposedMeetingTime,
-          zoomJoinUrl: updatedMeeting.zoom_join_url,
+          zoomJoinUrl:
+            updatedMeeting.zoom_join_url,
         });
       } catch (emailError) {
         console.error(
-          "Rescheduled meeting confirmation email failed:",
+          "Appointment confirmation email failed:",
           emailError
         );
       }
     }
+
+    // =====================================================
+    // Permanent operational history.
+    // =====================================================
+
+    const wasNoShow =
+      previousMeetingStatus === "no_show";
 
     await supabaseAdmin
       .from("epew_operational_history")
       .insert({
         application_id: applicationId,
         entrepreneur_user_id: user.id,
-        event_type: "meeting_rescheduled",
-        event_name: "Establishment Meeting Rescheduled",
-        event_description:
-          "Entrepreneur selected a privately matched appointment and rescheduled the Establishment Meeting.",
-        previous_status: "no_show",
+        event_type: wasNoShow
+          ? "meeting_rescheduled"
+          : "meeting_scheduled",
+        event_name: wasNoShow
+          ? "Establishment Meeting Rescheduled"
+          : "Establishment Meeting Scheduled",
+        event_description: wasNoShow
+          ? "Entrepreneur selected the desired date and time. EPEW verified the requested 60-minute period was available and rescheduled the Establishment Meeting."
+          : "Entrepreneur selected the desired date and time. EPEW verified the requested 60-minute period was available and scheduled the Establishment Meeting.",
+        previous_status: previousMeetingStatus,
         new_status: "scheduled",
         occurred_at: now,
         actor_user_id: user.id,
@@ -381,42 +473,83 @@ export async function POST(request: NextRequest) {
         decision_made_by_user_id: user.id,
         decision_made_by_role: "entrepreneur",
         decision_made_by_type: "participant",
-        decision_made_by_name: application.full_name,
+        decision_made_by_name:
+          application.full_name,
         decision_organization: "EPEW",
         decision_reason:
-          "Entrepreneur selected one of the appointment times privately matched by EMCC.",
+          "Entrepreneur requested this exact appointment date and time. EPEW automatically verified that the 60-minute appointment period was available.",
         decision_at: now,
-        executed_by: "EMCC Private Scheduling Engine",
+        executed_by:
+          "EMCC Direct Scheduling Engine",
         recorded_by: "EPEW EDE / IBOS",
         source_system: "EMCC Scheduling Engine",
         communication_channel: "web",
         reference_type: "coach_meeting",
         reference_id: meeting.id,
         metadata: {
-          matchId: match.id,
-          availabilityId: match.availability_id,
-          coachId: match.coach_id,
+          schedulingMethod:
+            "participant_exact_date_time",
+          coachId: assignment.coach_id,
           coachAssignmentId: assignment.id,
-          scheduledAt: scheduledDate.toISOString(),
-          reservationMinutes: 60,
+          requestedStartAt:
+            scheduledDate.toISOString(),
+          scheduledAt:
+            scheduledDate.toISOString(),
+          reservedUntil:
+            scheduledEnd.toISOString(),
+          reservationMinutes:
+            MEETING_DURATION_MINUTES,
           meetingProvider: "zoom",
         },
       });
 
     return NextResponse.json({
       success: true,
+      available: true,
       message:
-        "Your Establishment Meeting has been rescheduled successfully.",
+        "Your requested appointment time is available and has been approved.",
       appointment: {
         scheduledAt: scheduledDate.toISOString(),
-        reservedUntil: scheduledEnd.toISOString(),
-        zoomJoinUrl: updatedMeeting.zoom_join_url,
+        reservedUntil:
+          scheduledEnd.toISOString(),
+        status: "scheduled",
+        coachName:
+          assignment.coach_name ??
+          "Your EPEW Personal Coach",
+        zoomJoinUrl:
+          updatedMeeting.zoom_join_url,
       },
     });
   } catch (error) {
+    const errorDetails =
+      error instanceof Error
+        ? {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+          }
+        : {
+            code:
+              typeof error === "object" && error !== null && "code" in error
+                ? String(error.code)
+                : null,
+            message:
+              typeof error === "object" && error !== null && "message" in error
+                ? String(error.message)
+                : String(error),
+            details:
+              typeof error === "object" && error !== null && "details" in error
+                ? String(error.details)
+                : null,
+            hint:
+              typeof error === "object" && error !== null && "hint" in error
+                ? String(error.hint)
+                : null,
+          };
+
     console.error(
-      "Entrepreneur private appointment selection error:",
-      error
+      "Entrepreneur direct appointment scheduling error:",
+      JSON.stringify(errorDetails)
     );
 
     return NextResponse.json(
@@ -425,7 +558,7 @@ export async function POST(request: NextRequest) {
         message:
           error instanceof Error
             ? error.message
-            : "Unable to schedule the selected appointment.",
+            : "Unable to schedule your appointment.",
       },
       { status: 500 }
     );
