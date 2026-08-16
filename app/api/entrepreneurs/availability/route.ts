@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { PrivateAvailabilityMatchingService } from "@/lib/services/scheduling/PrivateAvailabilityMatchingService";
 import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
@@ -380,6 +381,45 @@ export async function POST(request: NextRequest) {
       throw windowInsertError;
     }
 
+    const responseTimestamp = new Date().toISOString();
+
+    const { error: recoveryUpdateError } = await supabaseAdmin
+      .from("epew_no_show_recovery_cases")
+      .update({
+        status: "responded",
+        next_required_action: "select_matching_time",
+        updated_at: responseTimestamp,
+      })
+      .eq("application_id", applicationId)
+      .eq("status", "active");
+
+    if (recoveryUpdateError) {
+      console.error(
+        "Unable to stop active no-show recovery countdown:",
+        recoveryUpdateError
+      );
+    }
+
+    const { error: reminderCancelError } = await supabaseAdmin
+      .from("epew_communication_outbox")
+      .update({
+        status: "cancelled",
+        updated_at: responseTimestamp,
+      })
+      .eq("application_id", applicationId)
+      .eq("status", "pending")
+      .in("message_type", [
+        "establishment_meeting_recovery_reminder",
+        "application_closed_due_to_inactivity",
+      ]);
+
+    if (reminderCancelError) {
+      console.error(
+        "Unable to cancel pending no-show reminders:",
+        reminderCancelError
+      );
+    }
+
     const { error: historyError } =
       await supabaseAdmin
         .from("epew_operational_history")
@@ -439,12 +479,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const matchingResult =
+      await PrivateAvailabilityMatchingService.matchAvailability(
+        availabilityId
+      );
+
+    const { data: appointmentChoices, error: appointmentChoicesError } =
+      await supabaseAdmin
+        .from("epew_private_schedule_matches")
+        .select(
+          "id, proposed_start_at, reserved_until, reservation_minutes"
+        )
+        .eq("availability_id", availabilityId)
+        .eq("status", "available")
+        .eq("exposed_to_participant", true)
+        .order("proposed_start_at", { ascending: true })
+        .limit(12);
+
+    if (appointmentChoicesError) {
+      throw appointmentChoicesError;
+    }
+
     return NextResponse.json({
       success: true,
       message:
-        "Your availability has been submitted. EPEW will now compare it privately with your Personal Coach's schedule.",
+        matchingResult.matchCount > 0
+          ? "Your availability has been matched with your Personal Coach's private schedule."
+          : "Your availability has been submitted. EPEW will continue looking for a compatible appointment time.",
       availabilityId,
-      status: "submitted",
+      status:
+        matchingResult.matchCount > 0 ? "matched" : "submitted",
+      matchCount: matchingResult.matchCount,
+      appointmentChoices: appointmentChoices ?? [],
       windowStartDate,
       windowEndDate,
       windowCount: normalizedWindows.length,

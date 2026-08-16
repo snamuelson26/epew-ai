@@ -11,13 +11,23 @@ type DayAvailability = {
   until: string;
 };
 
+type AppointmentChoice = {
+  id: string;
+  proposed_start_at: string;
+  reserved_until: string;
+  reservation_minutes: number;
+};
+
 function EntrepreneurAvailabilityContent() {
   const searchParams = useSearchParams();
   const applicationId = Number(searchParams.get("applicationId"));
 
   const [days, setDays] = useState<DayAvailability[]>([]);
   const [saving, setSaving] = useState(false);
+  const [selectingMatchId, setSelectingMatchId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
+  const [appointmentChoices, setAppointmentChoices] =
+    useState<AppointmentChoice[]>([]);
 
   useEffect(() => {
     const items: DayAvailability[] = [];
@@ -108,13 +118,79 @@ function EntrepreneurAvailabilityContent() {
         return;
       }
 
+      setAppointmentChoices(result.appointmentChoices ?? []);
+
       setMessage(
-        "Thank you. Your availability has been submitted. EPEW will privately compare it with your Personal Coach's schedule and help you find the best appointment."
+        result.matchCount > 0
+          ? "We found appointment times that work for both you and your Personal Coach. Please choose one below."
+          : "Thank you. Your availability has been submitted. EPEW will continue looking for a compatible appointment time."
       );
     } catch {
       setMessage("Unable to submit your availability.");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function selectAppointment(matchId: string) {
+    if (!applicationId) {
+      setMessage("Application information is missing.");
+      return;
+    }
+
+    setSelectingMatchId(matchId);
+    setMessage("");
+
+    try {
+      const response = await fetch(
+        "/api/entrepreneurs/availability/select",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            applicationId,
+            matchId,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        setMessage(
+          result.message ||
+            "Unable to schedule this appointment."
+        );
+        return;
+      }
+
+      setAppointmentChoices([]);
+
+      const scheduledDate = new Date(
+        result.appointment.scheduledAt
+      );
+
+      const formatted = new Intl.DateTimeFormat("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        timeZoneName: "short",
+      }).format(scheduledDate);
+
+      setMessage(
+        `Your Establishment Meeting has been rescheduled for ${formatted}. A confirmation with your Zoom information has been sent to you.`
+      );
+    } catch {
+      setMessage(
+        "Unable to schedule this appointment."
+      );
+    } finally {
+      setSelectingMatchId(null);
     }
   }
 
@@ -228,6 +304,72 @@ function EntrepreneurAvailabilityContent() {
         <p style={{ marginTop: 20, fontWeight: 600 }}>
           {message}
         </p>
+      )}
+
+      {appointmentChoices.length > 0 && (
+        <section style={{ marginTop: 32 }}>
+          <h2>Matching Appointment Times</h2>
+
+          <p>
+            These times work with both your availability and your
+            Personal Coach&apos;s private schedule. Your Coach&apos;s full
+            calendar remains private.
+          </p>
+
+          <div
+            style={{
+              display: "grid",
+              gap: 12,
+              marginTop: 18,
+            }}
+          >
+            {appointmentChoices.map((choice) => {
+              const start = new Date(
+                choice.proposed_start_at
+              );
+
+              const label = new Intl.DateTimeFormat(
+                "en-US",
+                {
+                  weekday: "long",
+                  month: "long",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                  timeZoneName: "short",
+                }
+              ).format(start);
+
+              return (
+                <button
+                  key={choice.id}
+                  type="button"
+                  disabled={
+                    selectingMatchId !== null
+                  }
+                  onClick={() =>
+                    selectAppointment(choice.id)
+                  }
+                  style={{
+                    padding: "16px 18px",
+                    textAlign: "left",
+                    fontSize: 16,
+                    border: "1px solid #ccc",
+                    borderRadius: 8,
+                    cursor:
+                      selectingMatchId !== null
+                        ? "default"
+                        : "pointer",
+                  }}
+                >
+                  {selectingMatchId === choice.id
+                    ? "Scheduling..."
+                    : label}
+                </button>
+              );
+            })}
+          </div>
+        </section>
       )}
     </main>
   );
