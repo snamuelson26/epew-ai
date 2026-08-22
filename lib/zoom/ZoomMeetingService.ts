@@ -171,6 +171,8 @@ export class ZoomMeetingService {
             registrants_confirmation_email: false,
 
             registrants_email_notification: false,
+
+            use_pmi: false,
           },
         }),
         cache: "no-store",

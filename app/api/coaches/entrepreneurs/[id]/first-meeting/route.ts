@@ -4,8 +4,11 @@
 // =======================================================
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import {
+  authorizeEstablishmentMeetingAccess,
+  type AuthorizedEstablishmentMeetingContext,
+} from "@/lib/enterprise/establishment-meeting/authorizeEstablishmentMeetingAccess";
 import { ZoomMeetingService } from "@/lib/zoom/ZoomMeetingService";
 import { sendCoachIntroductionEmail } from "@/lib/email/sendCoachIntroductionEmail";
 
@@ -65,204 +68,24 @@ type MeetingUpdateRequest = {
   assessmentNotes?: Record<string, unknown>;
 };
 
-type AuthorizedCoachContext = {
-  userId: string;
-  email: string;
-  role: string;
-  coach: {
-    id: string;
-    full_name: string;
-    email: string | null;
-    status: string;
-  } | null;
-  isAdmin: boolean;
-};
+type AuthorizedCoachContext = AuthorizedEstablishmentMeetingContext;
 
-function normalizeRole(role: string | null | undefined) {
-  return role?.trim().toLowerCase() ?? "";
+function asStringArray(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.map((item) => String(item ?? "")).filter(Boolean)
+    : [];
 }
 
-function isCoachRole(role: string) {
-  return (
-    role === "coach" ||
-    role === "personal coach" ||
-    role === "personal_coach"
-  );
-}
-
-function isAdminRole(role: string) {
-  return role === "admin" || role === "administrator";
-}
-
-function scoreOrNull(value: unknown) {
+function scoreOrNull(value: unknown): number | null {
   if (value === null || value === undefined || value === "") {
     return null;
   }
 
-  const numberValue = Number(value);
+  const numericValue = Number(value);
 
-  if (
-    !Number.isFinite(numberValue) ||
-    numberValue < 0 ||
-    numberValue > 100
-  ) {
-    throw new Error(
-      "Meeting assessment scores must be between 0 and 100."
-    );
-  }
-
-  return Math.round(numberValue);
-}
-
-function asStringArray(value: unknown) {
-  if (!Array.isArray(value)) return [];
-
-  return value
-    .map((item) => String(item ?? "").trim())
-    .filter(Boolean);
-}
-
-async function authorizeCoachOrAdmin(): Promise<
-  | {
-      ok: true;
-      context: AuthorizedCoachContext;
-    }
-  | {
-      ok: false;
-      response: NextResponse;
-    }
-> {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    return {
-      ok: false,
-      response: NextResponse.json(
-        {
-          success: false,
-          message: "Authentication required.",
-        },
-        { status: 401 }
-      ),
-    };
-  }
-
-  const email = user.email?.trim().toLowerCase();
-
-  if (!email) {
-    return {
-      ok: false,
-      response: NextResponse.json(
-        {
-          success: false,
-          message:
-            "The authenticated account does not have an email address.",
-        },
-        { status: 400 }
-      ),
-    };
-  }
-
-  const { data: roleRows, error: roleError } =
-    await supabaseAdmin
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id);
-
-  if (roleError) {
-    throw roleError;
-  }
-
-  const roles = (roleRows ?? [])
-    .map((row) => normalizeRole(row.role))
-    .filter(Boolean);
-
-  const adminRole = roles.find(isAdminRole);
-  const coachRole = roles.find(isCoachRole);
-
-  if (!adminRole && !coachRole) {
-    return {
-      ok: false,
-      response: NextResponse.json(
-        {
-          success: false,
-          message:
-            "Coach or administrator access is required.",
-        },
-        { status: 403 }
-      ),
-    };
-  }
-
-  const isAdmin = Boolean(adminRole);
-
-  let coach: AuthorizedCoachContext["coach"] = null;
-
-  if (!isAdmin || coachRole) {
-    const {
-      data: coachRecord,
-      error: coachError,
-    } = await supabaseAdmin
-      .from("epew_coaches")
-      .select("id, full_name, email, status")
-      .ilike("email", email)
-      .maybeSingle();
-
-    if (coachError) {
-      throw coachError;
-    }
-
-    if (!isAdmin && !coachRecord) {
-      return {
-        ok: false,
-        response: NextResponse.json(
-          {
-            success: false,
-            message:
-              "No EPEW Coach profile is connected to this account.",
-          },
-          { status: 404 }
-        ),
-      };
-    }
-
-    if (
-      !isAdmin &&
-      coachRecord &&
-      coachRecord.status !== "active" &&
-      coachRecord.status !== "available"
-    ) {
-      return {
-        ok: false,
-        response: NextResponse.json(
-          {
-            success: false,
-            message:
-              "This Coach profile is not currently active or available.",
-          },
-          { status: 403 }
-        ),
-      };
-    }
-
-    coach = coachRecord ?? null;
-  }
-
-  return {
-    ok: true,
-    context: {
-      userId: user.id,
-      email,
-      role: adminRole ?? coachRole ?? "",
-      coach,
-      isAdmin,
-    },
-  };
+  return Number.isFinite(numericValue)
+    ? numericValue
+    : null;
 }
 
 async function loadApplication(applicationId: number) {
@@ -277,6 +100,8 @@ async function loadApplication(applicationId: number) {
       business_name,
       business_type,
       business_description,
+      highest_education_level,
+      professional_qualification,
       funding_request,
       questionnaire_answers,
       questionnaire_status,
@@ -441,8 +266,8 @@ async function loadMeeting(applicationId: number) {
 }
 
 function buildInitialPreparation(
-  application: Record<string, any>,
-  communication: Record<string, any> | null
+  application: Record<string, unknown>,
+  communication: Record<string, unknown> | null
 ) {
   const answers = Array.isArray(
     application.questionnaire_answers
@@ -515,6 +340,10 @@ function buildInitialPreparation(
         null,
       preferredCommunicationChannel:
         communication?.priority_channel ?? null,
+      highestEducationLevel:
+        application.highest_education_level ?? null,
+      professionalQualification:
+        application.professional_qualification ?? null,
     },
 
     businessSnapshot: {
@@ -542,7 +371,11 @@ function buildInitialPreparation(
           "The US in EPEW.US means Unity and Support. EPEW promotes unity, mutual support, entrepreneurship, participation, and community financial growth.",
       },
       instructions: [
-        "Do not ask the entrepreneur to repeat information already available unless clarification or verification is necessary.",
+        "Use the Entrepreneur Application, Questionnaire, communication preferences, uploaded records, and approved EPEW information as known background before asking questions.",
+        "Do not ask the entrepreneur to repeat information already available unless clarification, verification, or an update is genuinely necessary.",
+        "Education level, professional qualifications, licenses, certifications, specialized training, and other background information already collected by EPEW are known information. Do not ask the entrepreneur to restate them.",
+        "If business experience needs clarification, ask naturally and simply. Example in Haitian Creole: Ou te di ou gen eksperyans nan jesyon. Ki sa ou te konn jere?",
+        "Ask only questions that help understand or develop the entrepreneur's business. Avoid unnecessary personal or sensitive questioning.",
         "Identify missing, unclear, or contradictory information.",
         "Treat potential tasks as recommendations only until the Coach validates them.",
         "Do not promise funding or make final governance decisions.",
@@ -557,12 +390,18 @@ function buildInitialPreparation(
 }
 
 async function createMeetingIfNeeded(
-  application: Record<string, any>,
-  communication: Record<string, any> | null,
-  assignment: Record<string, any>,
+  application: Record<string, unknown>,
+  communication: Record<string, unknown> | null,
+  assignment: Record<string, unknown>,
   auth: AuthorizedCoachContext
 ) {
-  const existing = await loadMeeting(application.id);
+  const applicationId = Number(application.id);
+
+  if (!Number.isInteger(applicationId) || applicationId <= 0) {
+    throw new Error("Invalid entrepreneur application ID.");
+  }
+
+  const existing = await loadMeeting(applicationId);
 
   if (existing) {
     return existing;
@@ -665,7 +504,7 @@ export async function GET(
     }
 
     const authorization =
-      await authorizeCoachOrAdmin();
+      await authorizeEstablishmentMeetingAccess();
 
     if (!authorization.ok) {
       return authorization.response;
@@ -772,7 +611,7 @@ export async function PATCH(
     }
 
     const authorization =
-      await authorizeCoachOrAdmin();
+      await authorizeEstablishmentMeetingAccess();
 
     if (!authorization.ok) {
       return authorization.response;
@@ -899,17 +738,21 @@ export async function PATCH(
       }
 
       const meetingDurationMinutes = 60;
+      const meetingBufferMinutes = 10;
 
-      const scheduledEnd =
+      const meetingOccupancyMinutes =
+        meetingDurationMinutes + meetingBufferMinutes;
+
+      const conflictWindowEnd =
         new Date(
           scheduledDate.getTime() +
-            meetingDurationMinutes * 60 * 1000
+            meetingOccupancyMinutes * 60 * 1000
         );
 
       const conflictWindowStart =
         new Date(
           scheduledDate.getTime() -
-            meetingDurationMinutes * 60 * 1000
+            meetingOccupancyMinutes * 60 * 1000
         );
 
       const { data: conflictingMeetings, error: conflictError } =
@@ -930,7 +773,7 @@ export async function PATCH(
           )
           .lt(
             "scheduled_at",
-            scheduledEnd.toISOString()
+            conflictWindowEnd.toISOString()
           );
 
       if (conflictError) {
@@ -945,7 +788,7 @@ export async function PATCH(
           {
             success: false,
             message:
-              "This Coach already has another meeting that overlaps this time. Please choose the next available 5-minute time slot.",
+              "This Coach is not available for this time. EPEW requires a minimum 10-minute buffer after every 60-minute Coach meeting. Please choose the next available 5-minute time slot.",
           },
           { status: 409 }
         );
@@ -989,26 +832,19 @@ export async function PATCH(
 
       const {
         error: zoomSecretError,
-      } = await supabaseAdmin
-        .schema("emcc_private")
-        .from("zoom_meeting_secrets")
-        .upsert(
-          {
-            meeting_id: meeting.id,
-            zoom_host_url:
-              zoomMeeting.startUrl,
-            zoom_start_url:
-              zoomMeeting.startUrl,
-            zoom_passcode:
-              zoomMeeting.passcode,
-            rtms_access_context: {},
-            updated_at:
-              new Date().toISOString(),
-          },
-          {
-            onConflict: "meeting_id",
-          }
-        );
+      } = await supabaseAdmin.rpc(
+        "epew_store_zoom_meeting_secret",
+        {
+          p_meeting_id: meeting.id,
+          p_zoom_host_url:
+            zoomMeeting.startUrl,
+          p_zoom_start_url:
+            zoomMeeting.startUrl,
+          p_zoom_passcode:
+            zoomMeeting.passcode,
+          p_rtms_access_context: {},
+        }
+      );
 
       if (zoomSecretError) {
         throw zoomSecretError;
@@ -1016,9 +852,24 @@ export async function PATCH(
     }
 
     if (action === "start") {
+      if (!meeting.zoom_coach_joined_at) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "The Establishment Meeting cannot start because the Personal Coach has not joined the Zoom meeting.",
+            code: "COACH_NOT_PRESENT",
+          },
+          { status: 409 }
+        );
+      }
+
       updates.started_at =
         meeting.started_at ?? now;
       updates.meeting_status = "in_progress";
+      updates.coach_session_status = "active";
+      updates.coach_session_started_at =
+        meeting.coach_session_started_at ?? now;
     }
 
     if (
@@ -1183,8 +1034,112 @@ export async function PATCH(
     }
 
     if (body.followUpAt !== undefined) {
-      updates.follow_up_at =
-        body.followUpAt || null;
+      if (!body.followUpAt) {
+        updates.follow_up_at = null;
+      } else {
+        const followUpDate = new Date(body.followUpAt);
+
+        if (Number.isNaN(followUpDate.getTime())) {
+          return NextResponse.json(
+            {
+              success: false,
+              message:
+                "The continuation meeting date and time are invalid.",
+            },
+            { status: 400 }
+          );
+        }
+
+        const currentMeetingStart =
+          meeting.started_at
+            ? new Date(meeting.started_at)
+            : meeting.scheduled_at
+              ? new Date(meeting.scheduled_at)
+              : null;
+
+        if (currentMeetingStart) {
+          const earliestContinuation =
+            new Date(
+              currentMeetingStart.getTime() +
+                (60 + 10) * 60 * 1000
+            );
+
+          if (
+            followUpDate.getTime() <
+            earliestContinuation.getTime()
+          ) {
+            return NextResponse.json(
+              {
+                success: false,
+                message:
+                  `A continuation meeting cannot begin earlier than ${earliestContinuation.toLocaleString()} because EPEW requires a 10-minute buffer after the 60-minute meeting.`,
+              },
+              { status: 400 }
+            );
+          }
+        }
+
+        const continuationDurationMinutes = 60;
+        const continuationBufferMinutes = 10;
+        const continuationOccupancyMinutes =
+          continuationDurationMinutes + continuationBufferMinutes;
+
+        const continuationConflictWindowStart =
+          new Date(
+            followUpDate.getTime() -
+              continuationOccupancyMinutes * 60 * 1000
+          );
+
+        const continuationConflictWindowEnd =
+          new Date(
+            followUpDate.getTime() +
+              continuationOccupancyMinutes * 60 * 1000
+          );
+
+        const {
+          data: continuationConflicts,
+          error: continuationConflictError,
+        } = await supabaseAdmin
+          .from("epew_coach_meetings")
+          .select("id,scheduled_at,meeting_status")
+          .eq("coach_id", assignment.coach_id)
+          .neq("id", meeting.id)
+          .not("scheduled_at", "is", null)
+          .in("meeting_status", [
+            "scheduled",
+            "ready_to_start",
+            "in_progress",
+          ])
+          .gte(
+            "scheduled_at",
+            continuationConflictWindowStart.toISOString()
+          )
+          .lt(
+            "scheduled_at",
+            continuationConflictWindowEnd.toISOString()
+          );
+
+        if (continuationConflictError) {
+          throw continuationConflictError;
+        }
+
+        if (
+          continuationConflicts &&
+          continuationConflicts.length > 0
+        ) {
+          return NextResponse.json(
+            {
+              success: false,
+              message:
+                "The Coach is not available at this continuation time. Please choose the next available time after the required 10-minute meeting buffer.",
+            },
+            { status: 409 }
+          );
+        }
+
+        updates.follow_up_at =
+          followUpDate.toISOString();
+      }
     }
 
     if (

@@ -5,6 +5,9 @@ import { ZoomMeetingService } from "@/lib/zoom/ZoomMeetingService";
 import { sendCoachIntroductionEmail } from "@/lib/email/sendCoachIntroductionEmail";
 
 const MEETING_DURATION_MINUTES = 60;
+const MEETING_BUFFER_MINUTES = 10;
+const MEETING_OCCUPANCY_MINUTES =
+  MEETING_DURATION_MINUTES + MEETING_BUFFER_MINUTES;
 
 export async function POST(request: NextRequest) {
   try {
@@ -60,14 +63,14 @@ export async function POST(request: NextRequest) {
     }
 
     if (
-      scheduledDate.getMinutes() !== 0 &&
-      scheduledDate.getMinutes() !== 30
+      scheduledDate.getMinutes() % 5 !== 0 ||
+      scheduledDate.getSeconds() !== 0
     ) {
       return NextResponse.json(
         {
           success: false,
           message:
-            "Appointments must begin on the hour or half-hour. Please choose a time such as 1:00 PM or 1:30 PM.",
+            "Appointments must begin on a 5-minute scheduling interval.",
         },
         { status: 400 }
       );
@@ -226,7 +229,12 @@ export async function POST(request: NextRequest) {
 
     const conflictWindowStart = new Date(
       scheduledDate.getTime() -
-        MEETING_DURATION_MINUTES * 60 * 1000
+        MEETING_OCCUPANCY_MINUTES * 60 * 1000
+    );
+
+    const conflictWindowEnd = new Date(
+      scheduledDate.getTime() +
+        MEETING_OCCUPANCY_MINUTES * 60 * 1000
     );
 
     const {
@@ -246,7 +254,7 @@ export async function POST(request: NextRequest) {
         "scheduled_at",
         conflictWindowStart.toISOString()
       )
-      .lt("scheduled_at", scheduledEnd.toISOString());
+      .lt("scheduled_at", conflictWindowEnd.toISOString());
 
     if (conflictError) {
       throw conflictError;
@@ -318,22 +326,16 @@ export async function POST(request: NextRequest) {
     // =====================================================
 
     const { error: zoomSecretError } =
-      await supabaseAdmin
-        .schema("emcc_private")
-        .from("zoom_meeting_secrets")
-        .upsert(
-          {
-            meeting_id: meeting.id,
-            zoom_host_url: zoomMeeting.startUrl,
-            zoom_start_url: zoomMeeting.startUrl,
-            zoom_passcode: zoomMeeting.passcode,
-            rtms_access_context: {},
-            updated_at: now,
-          },
-          {
-            onConflict: "meeting_id",
-          }
-        );
+      await supabaseAdmin.rpc(
+        "epew_store_zoom_meeting_secret",
+        {
+          p_meeting_id: meeting.id,
+          p_zoom_host_url: zoomMeeting.startUrl,
+          p_zoom_start_url: zoomMeeting.startUrl,
+          p_zoom_passcode: zoomMeeting.passcode,
+          p_rtms_access_context: {},
+        }
+      );
 
     if (zoomSecretError) {
       console.error(
