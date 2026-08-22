@@ -205,18 +205,20 @@ async function processZoomEvent(
       await updateMeeting(
         zoomMeetingId,
         {
-          meeting_status:
-            "in_progress",
           zoom_meeting_status:
             "started",
-          started_at:
-            meeting.started_at ??
-            now,
-          coach_session_status:
-            "active",
-          coach_session_started_at:
-            meeting.coach_session_started_at ??
-            now,
+        }
+      );
+
+      await appendActionLog(
+        zoomMeetingId,
+        {
+          event:
+            "zoom_room_started",
+          actor:
+            "Zoom",
+          authority:
+            "Zoom Webhook",
         }
       );
       break;
@@ -228,26 +230,97 @@ async function processZoomEvent(
           zoom_meeting_status:
             "ended",
           coach_session_status:
-            "processing",
+            "post_processing",
           coach_session_ended_at:
             now,
         }
       );
       break;
 
-    case "meeting.participant_joined":
+    case "meeting.participant_joined": {
+      const participant =
+        payload.payload?.object
+          ?.participant ?? null;
+
+      const participantEmail =
+        typeof participant?.email === "string"
+          ? participant.email.trim().toLowerCase()
+          : "";
+
+      const { data: assignment } =
+        await supabaseAdmin
+          .from("coach_assignments")
+          .select("coach_email")
+          .eq("application_id", meeting.application_id)
+          .not(
+            "assignment_status",
+            "in",
+            '("ended","declined","reassigned","cancelled","inactive","reassignment_required","completed")'
+          )
+          .order("assigned_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+      const coachEmail =
+        assignment?.coach_email
+          ?.trim()
+          .toLowerCase() ?? "";
+
+      const isCoach =
+        Boolean(
+          participantEmail &&
+          coachEmail &&
+          participantEmail === coachEmail
+        );
+
+      if (isCoach) {
+        await updateMeeting(
+          zoomMeetingId,
+          {
+            zoom_coach_joined_at:
+              meeting.zoom_coach_joined_at ??
+              now,
+            coach_session_status:
+              "active",
+            coach_session_started_at:
+              meeting.coach_session_started_at ??
+              now,
+            meeting_status:
+              "in_progress",
+            started_at:
+              meeting.started_at ??
+              now,
+          }
+        );
+      } else {
+        await updateMeeting(
+          zoomMeetingId,
+          {
+            zoom_participant_joined_at:
+              meeting.zoom_participant_joined_at ??
+              now,
+          }
+        );
+      }
+
       await appendActionLog(
         zoomMeetingId,
         {
           type:
-            "participant_joined",
+            isCoach
+              ? "coach_joined"
+              : "participant_joined",
           event,
-          participant:
-            payload.payload?.object
-              ?.participant ?? null,
+          participant,
+          participantRole:
+            isCoach
+              ? "personal_coach"
+              : "entrepreneur",
         }
       );
+
       break;
+    }
 
     case "meeting.participant_left":
       await appendActionLog(
