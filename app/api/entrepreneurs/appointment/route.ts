@@ -171,6 +171,8 @@ export async function GET() {
         )
         .eq("application_id", applicationId)
         .eq("meeting_id", meeting.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
         .maybeSingle();
 
     if (recoveryError) {
@@ -197,6 +199,7 @@ export async function GET() {
         | "scheduling_in_progress"
         | "appointment_completed"
         | "recovery_closed"
+        | "choose_appointment"
         | "waiting_for_appointment";
       label: string;
       href: string | null;
@@ -234,6 +237,14 @@ export async function GET() {
         type: "appointment_completed",
         label: "Meeting Completed",
         href: null,
+      };
+    } else if (
+      meetingStatus === "ready_to_schedule"
+    ) {
+      action = {
+        type: "choose_appointment",
+        label: "Choose Appointment",
+        href: `/entrepreneurs/availability?applicationId=${applicationId}`,
       };
     } else if (
       [
@@ -293,9 +304,7 @@ export async function GET() {
         type: "Establishment Meeting",
         status: meeting.meeting_status,
         scheduledAt:
-          meeting.scheduled_at ??
-          meeting.meeting_date ??
-          null,
+          meeting.scheduled_at ?? null,
         provider:
           meeting.meeting_provider ?? null,
         joinUrl:
