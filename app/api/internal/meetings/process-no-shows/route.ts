@@ -51,9 +51,8 @@ async function processNoShows() {
         "is",
         null
       )
-      .neq(
-        "zoom_meeting_status",
-        "ended"
+      .or(
+        "zoom_meeting_status.is.null,zoom_meeting_status.neq.ended"
       )
       .limit(50);
 
