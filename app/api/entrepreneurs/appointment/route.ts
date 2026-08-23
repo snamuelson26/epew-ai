@@ -72,6 +72,7 @@ export async function GET() {
             coach_id,
             meeting_type,
             meeting_status,
+            zoom_meeting_status,
             meeting_provider,
             scheduled_at,
             meeting_date,
@@ -187,6 +188,13 @@ export async function GET() {
       ? String(recovery.status ?? "").toLowerCase()
       : null;
 
+    const zoomMeetingStatus = String(
+      meeting.zoom_meeting_status ?? ""
+    ).toLowerCase();
+
+    const zoomHasEnded =
+      zoomMeetingStatus === "ended";
+
     // =====================================================
     // Determine the entrepreneur-facing action.
     // =====================================================
@@ -194,6 +202,7 @@ export async function GET() {
     let action: {
       type:
         | "join_meeting"
+        | "meeting_in_progress"
         | "change_appointment"
         | "reschedule_appointment"
         | "scheduling_in_progress"
@@ -247,28 +256,28 @@ export async function GET() {
         href: `/entrepreneurs/availability?applicationId=${applicationId}`,
       };
     } else if (
-      [
-        "scheduled",
-        "ready_to_start",
-        "in_progress",
-      ].includes(meetingStatus)
+      meetingStatus === "in_progress" &&
+      !zoomHasEnded
     ) {
       action = {
-        type:
-          meetingStatus === "ready_to_start" ||
-          meetingStatus === "in_progress"
-            ? "join_meeting"
-            : "change_appointment",
-        label:
-          meetingStatus === "ready_to_start" ||
-          meetingStatus === "in_progress"
-            ? "Join Meeting"
-            : "Change Appointment",
-        href:
-          meetingStatus === "ready_to_start" ||
-          meetingStatus === "in_progress"
-            ? meeting.zoom_join_url ?? null
-            : `/entrepreneurs/availability?applicationId=${applicationId}`,
+        type: "meeting_in_progress",
+        label: "Meeting in Progress",
+        href: null,
+      };
+    } else if (
+      ["scheduled", "ready_to_start"].includes(meetingStatus) &&
+      !zoomHasEnded
+    ) {
+      action = {
+        type: "join_meeting",
+        label: "Join Meeting",
+        href: meeting.zoom_join_url ?? null,
+      };
+    } else if (zoomHasEnded) {
+      action = {
+        type: "waiting_for_appointment",
+        label: "Meeting Ended",
+        href: null,
       };
     } else {
       action = {
@@ -279,16 +288,18 @@ export async function GET() {
     }
 
     const canJoin =
-      ["scheduled", "ready_to_start", "in_progress"].includes(
+      ["scheduled", "ready_to_start"].includes(
         meetingStatus
       ) &&
+      !zoomHasEnded &&
       Boolean(meeting.zoom_join_url) &&
       recoveryStatus !== "active" &&
       recoveryStatus !== "responded";
 
-    const canChange =
-      meetingStatus === "scheduled" &&
-      !recoveryStatus;
+    // Entrepreneurs cannot independently change a normal
+    // scheduled appointment. Rescheduling is opened only
+    // through coach authorization or no-show recovery.
+    const canChange = false;
 
     const canReschedule =
       meetingStatus === "no_show" &&
@@ -303,6 +314,8 @@ export async function GET() {
         id: meeting.id,
         type: "Establishment Meeting",
         status: meeting.meeting_status,
+        zoomStatus:
+          meeting.zoom_meeting_status ?? null,
         scheduledAt:
           meeting.scheduled_at ?? null,
         provider:

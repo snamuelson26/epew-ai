@@ -231,6 +231,101 @@ export class ZoomMeetingService {
     };
   }
 
+
+  static async endMeeting(
+    meetingId: string
+  ): Promise<void> {
+    const accessToken =
+      await getAccessToken();
+
+    const response = await fetch(
+      `https://api.zoom.us/v2/meetings/${encodeURIComponent(
+        meetingId
+      )}/status`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization:
+            `Bearer ${accessToken}`,
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          action: "end",
+        }),
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      let details = "";
+
+      try {
+        details =
+          JSON.stringify(
+            await response.json()
+          );
+      } catch {
+        details =
+          await response.text();
+      }
+
+      throw new Error(
+        `Zoom meeting end failed (${response.status}): ${details}`
+      );
+    }
+
+    console.log(
+      `[EPEW Zoom Meeting Service] Meeting ${meetingId} ended.`
+    );
+  }
+
+
+
+  static async deleteMeeting(
+    meetingId: string
+  ): Promise<void> {
+    const accessToken =
+      await getAccessToken();
+
+    const response = await fetch(
+      `https://api.zoom.us/v2/meetings/${encodeURIComponent(
+        meetingId
+      )}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization:
+            `Bearer ${accessToken}`,
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      let details = "";
+
+      try {
+        details =
+          JSON.stringify(
+            await response.json()
+          );
+      } catch {
+        details =
+          await response.text();
+      }
+
+      throw new Error(
+        `Zoom meeting deletion failed (${response.status}): ${details}`
+      );
+    }
+
+    console.log(
+      `[EPEW Zoom Meeting Service] Meeting ${meetingId} deleted/cancelled.`
+    );
+  }
+
+
   static async startMeetingRtms(
     meetingId: string
   ): Promise<void> {

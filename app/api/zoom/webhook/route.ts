@@ -377,6 +377,38 @@ async function processZoomEvent(
             now,
         }
       );
+
+      await appendActionLog(
+        zoomMeetingId,
+        {
+          event: "zoom_room_ended",
+          actor: "Zoom",
+          authority: "Zoom Webhook",
+        }
+      );
+
+      /*
+       * An ended Zoom room must never remain entrepreneur-facing
+       * as Join Meeting or Meeting in Progress.
+       *
+       * The existing recovery processor determines whether an
+       * eligible unattended meeting has crossed the no-show
+       * threshold and should receive a rescheduling opportunity.
+       */
+      {
+        const { error: recoveryError } =
+          await supabaseAdmin.rpc(
+            "epew_process_establishment_meeting_no_shows"
+          );
+
+        if (recoveryError) {
+          console.error(
+            "[EPEW Zoom Webhook] Unable to process no-show recovery:",
+            recoveryError
+          );
+        }
+      }
+
       break;
 
     case "meeting.participant_joined": {
