@@ -103,6 +103,8 @@ function SupporterRegisterContent() {
   const searchParams = useSearchParams();
   const selectedBusinessId = searchParams.get("business_id") || "";
   const campaign = searchParams.get("campaign") || "";
+  const incomingReferrerCode =
+    (searchParams.get("ref") || "").trim().toUpperCase();
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -208,6 +210,46 @@ function SupporterRegisterContent() {
     const supporterId = generateSupporterId();
     let userId = "";
 
+    let referrerSupporterId: string | null = null;
+    let validatedReferrerCode: string | null = null;
+
+    if (incomingReferrerCode) {
+      try {
+        const referralResponse = await fetch(
+          "/api/supporters/referral/resolve",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              referrerCode: incomingReferrerCode,
+            }),
+          }
+        );
+
+        const referralResult = await referralResponse.json();
+
+        if (
+          referralResponse.ok &&
+          referralResult?.valid &&
+          referralResult?.referrerSupporterId
+        ) {
+          referrerSupporterId =
+            referralResult.referrerSupporterId;
+
+          validatedReferrerCode =
+            referralResult.referrerCode ||
+            incomingReferrerCode;
+        }
+      } catch (error) {
+        console.error(
+          "Unable to resolve supporter referral:",
+          error
+        );
+      }
+    }
+
     const { data: existingAuth } = await supabase.auth.signInWithPassword({
       email: cleanEmail,
       password,
@@ -256,6 +298,8 @@ function SupporterRegisterContent() {
         postal_code: zipCode.trim(),
         selected_business_id: selectedBusinessId || null,
         campaign_source: campaign || null,
+        referred_by_supporter_id: referrerSupporterId,
+        referrer_code: validatedReferrerCode,
         photo_url: photoUrl || "",
         status: "active",
       },
@@ -294,10 +338,16 @@ function SupporterRegisterContent() {
     );
 
     if (selectedBusinessId) {
+      const referralQuery = validatedReferrerCode
+        ? `?ref=${encodeURIComponent(validatedReferrerCode)}`
+        : "";
+
       window.location.href =
-        `/support/${selectedBusinessId}/participation-agreement`;
+        `/support/${selectedBusinessId}/participation-agreement${referralQuery}`;
     } else {
-      window.location.href = "/supporters/login";
+      window.location.href = validatedReferrerCode
+        ? `/supporters/login?ref=${encodeURIComponent(validatedReferrerCode)}`
+        : "/supporters/login";
     }
   }
 
