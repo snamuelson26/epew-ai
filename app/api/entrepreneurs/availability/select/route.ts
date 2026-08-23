@@ -311,6 +311,17 @@ export async function POST(request: NextRequest) {
         zoom_meeting_uuid: zoomMeeting.meetingUuid,
         zoom_join_url: zoomMeeting.joinUrl,
         zoom_meeting_status: "scheduled",
+
+        // A rescheduled appointment is a new meeting lifecycle.
+        // Clear all timestamps/state inherited from the prior Zoom cycle.
+        started_at: null,
+        completed_at: null,
+        zoom_participant_joined_at: null,
+        zoom_coach_joined_at: null,
+        coach_session_started_at: null,
+        coach_session_ended_at: null,
+        coach_session_status: "not_started",
+
         updated_at: now,
       })
       .eq("id", meeting.id)
