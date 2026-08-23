@@ -230,4 +230,59 @@ export class ZoomMeetingService {
       durationMinutes,
     };
   }
+
+  static async startMeetingRtms(
+    meetingId: string
+  ): Promise<void> {
+    const accessToken =
+      await getAccessToken();
+
+    const clientId =
+      requireEnv("ZOOM_CLIENT_ID");
+
+    const response = await fetch(
+      `https://api.zoom.us/v2/live_meetings/${encodeURIComponent(
+        meetingId
+      )}/rtms_app/status`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization:
+            `Bearer ${accessToken}`,
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          action: "start",
+          settings: {
+            client_id: clientId,
+          },
+        }),
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      let details = "";
+
+      try {
+        details =
+          JSON.stringify(
+            await response.json()
+          );
+      } catch {
+        details =
+          await response.text();
+      }
+
+      throw new Error(
+        `Zoom RTMS start failed (${response.status}): ${details}`
+      );
+    }
+
+    console.log(
+      `[EPEW Zoom Meeting Service] RTMS start requested for meeting ${meetingId}.`
+    );
+  }
+
 }

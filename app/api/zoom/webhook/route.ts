@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { ZoomMeetingService } from "@/lib/zoom/ZoomMeetingService";
 
 type ZoomWebhookPayload = {
   event?: string;
@@ -223,6 +224,46 @@ async function processZoomEvent(
             "Zoom Webhook",
         }
       );
+
+      try {
+        await ZoomMeetingService.startMeetingRtms(
+          zoomMeetingId
+        );
+
+        await appendActionLog(
+          zoomMeetingId,
+          {
+            event:
+              "zoom_rtms_start_requested",
+            actor:
+              "EPEW Zoom Meeting Service",
+            authority:
+              "EPEW Zoom RTMS",
+          }
+        );
+      } catch (error) {
+        console.error(
+          `[EPEW Zoom Webhook] Unable to start RTMS for meeting ${zoomMeetingId}:`,
+          error
+        );
+
+        await appendActionLog(
+          zoomMeetingId,
+          {
+            event:
+              "zoom_rtms_start_failed",
+            actor:
+              "EPEW Zoom Meeting Service",
+            authority:
+              "EPEW Zoom RTMS",
+            error:
+              error instanceof Error
+                ? error.message
+                : String(error),
+          }
+        );
+      }
+
       break;
 
     case "meeting.rtms_started": {
