@@ -8,6 +8,10 @@ type ZoomWebhookPayload = {
   payload?: {
     plainToken?: string;
     object?: Record<string, any>;
+    meeting_id?: string | number;
+    meeting_uuid?: string;
+    rtms_stream_id?: string;
+    server_urls?: string;
   };
 };
 
@@ -75,15 +79,13 @@ function verifyZoomSignature(
 function getMeetingId(
   payload: ZoomWebhookPayload
 ): string | null {
-  const object = payload.payload?.object;
-
-  if (!object) {
-    return null;
-  }
+  const eventPayload = payload.payload;
+  const object = eventPayload?.object;
 
   const meetingId =
-    object.id ??
-    object.meeting_id ??
+    object?.id ??
+    object?.meeting_id ??
+    eventPayload?.meeting_id ??
     null;
 
   if (
@@ -222,6 +224,105 @@ async function processZoomEvent(
         }
       );
       break;
+
+    case "meeting.rtms_started": {
+      const existingRuntimeContext =
+        meeting.meeting_runtime_context &&
+        typeof meeting.meeting_runtime_context === "object" &&
+        !Array.isArray(meeting.meeting_runtime_context)
+          ? meeting.meeting_runtime_context
+          : {};
+
+      await updateMeeting(
+        zoomMeetingId,
+        {
+          zoom_rtms_enabled: true,
+          zoom_rtms_session_id:
+            payload.payload?.rtms_stream_id ??
+            null,
+          zoom_live_transcript_status:
+            "starting",
+          meeting_runtime_context: {
+            ...existingRuntimeContext,
+            zoomRtms: {
+              status: "starting",
+              streamId:
+                payload.payload?.rtms_stream_id ??
+                null,
+              meetingUuid:
+                payload.payload?.meeting_uuid ??
+                null,
+              serverUrls:
+                payload.payload?.server_urls ??
+                "",
+              startedAt: now,
+            },
+          },
+        }
+      );
+
+      await appendActionLog(
+        zoomMeetingId,
+        {
+          type: "rtms_started",
+          event,
+          rtmsStreamId:
+            payload.payload?.rtms_stream_id ??
+            null,
+          meetingUuid:
+            payload.payload?.meeting_uuid ??
+            null,
+        }
+      );
+      break;
+    }
+
+    case "meeting.rtms_stopped": {
+      const existingRuntimeContext =
+        meeting.meeting_runtime_context &&
+        typeof meeting.meeting_runtime_context === "object" &&
+        !Array.isArray(meeting.meeting_runtime_context)
+          ? meeting.meeting_runtime_context
+          : {};
+
+      const existingZoomRtms =
+        existingRuntimeContext.zoomRtms &&
+        typeof existingRuntimeContext.zoomRtms === "object" &&
+        !Array.isArray(existingRuntimeContext.zoomRtms)
+          ? existingRuntimeContext.zoomRtms
+          : {};
+
+      await updateMeeting(
+        zoomMeetingId,
+        {
+          zoom_live_transcript_status:
+            "completed",
+          meeting_runtime_context: {
+            ...existingRuntimeContext,
+            zoomRtms: {
+              ...existingZoomRtms,
+              status: "stopped",
+              stoppedAt: now,
+            },
+          },
+        }
+      );
+
+      await appendActionLog(
+        zoomMeetingId,
+        {
+          type: "rtms_stopped",
+          event,
+          rtmsStreamId:
+            payload.payload?.rtms_stream_id ??
+            null,
+          meetingUuid:
+            payload.payload?.meeting_uuid ??
+            null,
+        }
+      );
+      break;
+    }
 
     case "meeting.ended":
       await updateMeeting(
