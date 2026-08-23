@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { LanguageProvider } from "@/app/components/enterprise/language";
 import { Analytics } from "@vercel/analytics/next";
+import EPEWVisitorTracker from "@/app/components/referrals/EPEWVisitorTracker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -79,6 +80,7 @@ export default function RootLayout({
         >
           {children}
         </LanguageProvider>
+        <EPEWVisitorTracker />
         <Analytics />
       </body>
     </html>
