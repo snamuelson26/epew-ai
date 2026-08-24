@@ -3,6 +3,13 @@ import WebSocket, {
   WebSocketServer,
 } from "ws";
 import { createClient } from "@supabase/supabase-js";
+import {
+  EstablishmentMeetingRuntimeService,
+} from "../../lib/services/establishment-meeting/EstablishmentMeetingRuntimeService";
+import type {
+  EstablishmentMeetingMessage,
+  EstablishmentMeetingStage,
+} from "../../lib/enterprise/establishment-meeting/EstablishmentMeetingCoach";
 
 function requireEnvironment(name: string) {
   const value = process.env[name]?.trim();
@@ -89,6 +96,7 @@ type VoiceConnectionState = {
   meetingId: string | null;
   language: string | null;
   openAiSocket: WebSocket | null;
+  processingTurn: boolean;
 };
 
 function parseApplicationId(
@@ -141,6 +149,222 @@ async function recordStreamStarted(
       error.message
     );
   }
+}
+
+
+const VALID_MEETING_STAGES =
+  new Set<EstablishmentMeetingStage>([
+    "opening",
+    "meeting_purpose",
+    "entrepreneur_discovery",
+    "epew_philosophy",
+    "business_discovery",
+    "document_assessment",
+    "meeting_2_readiness",
+    "coach_evaluation",
+    "development_plan",
+    "closing",
+  ]);
+
+function getMeetingStage(
+  value: unknown
+): EstablishmentMeetingStage {
+  if (
+    value &&
+    typeof value === "object" &&
+    !Array.isArray(value)
+  ) {
+    const stage = String(
+      (
+        value as {
+          stage?: unknown;
+        }
+      ).stage ?? ""
+    ).trim() as EstablishmentMeetingStage;
+
+    if (VALID_MEETING_STAGES.has(stage)) {
+      return stage;
+    }
+  }
+
+  return "opening";
+}
+
+function getMeetingConversation(
+  value: unknown
+): EstablishmentMeetingMessage[] {
+  if (
+    !value ||
+    typeof value !== "object" ||
+    Array.isArray(value)
+  ) {
+    return [];
+  }
+
+  const messages =
+    (
+      value as {
+        messages?: unknown;
+      }
+    ).messages;
+
+  if (!Array.isArray(messages)) {
+    return [];
+  }
+
+  return messages
+    .filter(
+      (
+        message
+      ): message is EstablishmentMeetingMessage =>
+        Boolean(
+          message &&
+          typeof message === "object" &&
+          !Array.isArray(message) &&
+          (
+            (message as EstablishmentMeetingMessage)
+              .role === "coach" ||
+            (message as EstablishmentMeetingMessage)
+              .role === "entrepreneur"
+          ) &&
+          typeof (
+            message as EstablishmentMeetingMessage
+          ).content === "string" &&
+          (
+            message as EstablishmentMeetingMessage
+          ).content.trim()
+        )
+    )
+    .map((message) => ({
+      role: message.role,
+      content: message.content.trim(),
+    }));
+}
+
+async function runEstablishmentMeetingTurn(
+  state: VoiceConnectionState,
+  transcript: string
+) {
+  if (
+    !state.applicationId ||
+    !state.meetingId
+  ) {
+    throw new Error(
+      "Realtime meeting turn is missing applicationId or meetingId."
+    );
+  }
+
+  const {
+    data: meeting,
+    error,
+  } = await supabase
+    .from("epew_coach_meetings")
+    .select(`
+      id,
+      application_id,
+      meeting_conversation_state
+    `)
+    .eq("id", state.meetingId)
+    .eq(
+      "application_id",
+      state.applicationId
+    )
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  if (!meeting) {
+    throw new Error(
+      "Realtime Establishment Meeting record was not found."
+    );
+  }
+
+  const stage =
+    getMeetingStage(
+      meeting.meeting_conversation_state
+    );
+
+  const savedConversation =
+    getMeetingConversation(
+      meeting.meeting_conversation_state
+    );
+
+  const conversation:
+    EstablishmentMeetingMessage[] = [
+      ...savedConversation,
+      {
+        role: "entrepreneur",
+        content: transcript,
+      },
+    ];
+
+  return EstablishmentMeetingRuntimeService
+    .runTurn({
+      applicationId:
+        state.applicationId,
+      meetingId:
+        state.meetingId,
+      stage,
+      conversation,
+      isAdmin: true,
+      stageNotes: {
+        communicationChannel:
+          "phone_realtime",
+        twilioCallSid:
+          state.callSid,
+        selectedLanguage:
+          state.language,
+      },
+    });
+}
+
+function speakApprovedMeetingText(
+  state: VoiceConnectionState,
+  text: string
+) {
+  if (
+    !state.openAiSocket ||
+    state.openAiSocket.readyState !==
+      WebSocket.OPEN
+  ) {
+    return;
+  }
+
+  /*
+   * Realtime is the voice renderer here,
+   * not the Meeting 1 decision-maker.
+   *
+   * The text has already been produced and
+   * persisted by the EPEW Establishment
+   * Meeting Engine.
+   */
+  state.openAiSocket.send(
+    JSON.stringify({
+      type: "response.create",
+      response: {
+        output_modalities: [
+          "audio",
+        ],
+        instructions: `
+Speak ONLY the following approved EPEW Personal Coach message.
+
+Do not answer it.
+Do not expand it.
+Do not add another question.
+Do not remove information.
+Do not change the meeting topic.
+Preserve the language of the approved message.
+Speak naturally, warmly, and conversationally.
+Use a calm pace with natural pauses.
+
+APPROVED MESSAGE:
+${text}
+        `.trim(),
+      },
+    })
+  );
 }
 
 function connectOpenAiRealtime(
@@ -205,8 +429,16 @@ function connectOpenAiRealtime(
                 format: {
                   type: "audio/pcmu",
                 },
+                noise_reduction: {
+                  type: "near_field",
+                },
+                transcription: {
+                  model: "gpt-transcribe",
+                },
                 turn_detection: {
                   type: "semantic_vad",
+                  create_response: false,
+                  interrupt_response: false,
                 },
               },
               output: {
@@ -217,28 +449,27 @@ function connectOpenAiRealtime(
               },
             },
             instructions: `
-You are Daniel Pierre, the EPEW Personal Coach.
+You are the realtime telephone voice layer for the EPEW Personal Coach.
 
-You are speaking with an EPEW entrepreneur by telephone.
+You do NOT independently conduct the business meeting.
+You do NOT invent coaching questions.
+You do NOT decide what topic comes next.
 
-Speak naturally, warmly, professionally, and patiently.
+The EPEW Establishment Meeting Engine decides the approved content.
 
-IMPORTANT VOICE RULES:
-- Speak at a calm, moderately slow pace.
-- Never rush the caller.
-- Use short conversational turns.
-- Ask only one main question at a time.
-- Pause naturally between ideas.
-- If the caller says they do not understand, apologize briefly, rephrase more simply, and slow down.
-- If the caller asks you to repeat something, repeat or simplify it instead of saying you are waiting.
-- If the caller speaks Haitian Creole, respond in natural Haitian Creole.
-- If the caller speaks English, Spanish, or French, continue in that language.
-- Respect the caller's selected language when provided.
-- Do not announce yourself as an AI system.
-- Do not invent personal biography, licenses, degrees, or employment history.
+Your responsibilities are:
+1. receive the entrepreneur's telephone audio;
+2. support accurate transcription;
+3. speak approved EPEW Coach text naturally.
 
-This realtime voice layer handles natural telephone conversation.
-The EPEW Establishment Meeting business rules and permanent meeting state remain controlled by the EPEW meeting system.
+When speaking approved text:
+- preserve its meaning and language;
+- sound warm, professional, patient, and human;
+- use natural pauses;
+- use a calm conversational pace;
+- do not add new content;
+- do not introduce unrelated business advice;
+- do not continue speaking after the approved message ends.
             `.trim(),
           },
         })
@@ -248,7 +479,7 @@ The EPEW Establishment Meeting business rules and permanent meeting state remain
 
   openAiSocket.on(
     "message",
-    (data) => {
+    async (data) => {
       try {
         const event =
           JSON.parse(
@@ -289,6 +520,59 @@ The EPEW Establishment Meeting business rules and permanent meeting state remain
             event.error ??
               event
           );
+          return;
+        }
+
+        if (
+          eventType ===
+          "conversation.item.input_audio_transcription.completed"
+        ) {
+          const transcript =
+            String(
+              event.transcript ?? ""
+            ).trim();
+
+          if (!transcript) {
+            return;
+          }
+
+          console.log(
+            "[EPEW Twilio Voice Worker] Entrepreneur speech turn transcribed."
+          );
+
+          if (state.processingTurn) {
+            console.log(
+              "[EPEW Twilio Voice Worker] Meeting turn already processing; duplicate transcript ignored."
+            );
+            return;
+          }
+
+          state.processingTurn = true;
+
+          try {
+            const result =
+              await runEstablishmentMeetingTurn(
+                state,
+                transcript
+              );
+
+            console.log(
+              `[EPEW Twilio Voice Worker] Approved Meeting 1 response ready. Response=${result.responseId}.`
+            );
+
+            speakApprovedMeetingText(
+              state,
+              result.message.content
+            );
+          } catch (error) {
+            console.error(
+              "[EPEW Twilio Voice Worker] Unable to process Establishment Meeting turn:",
+              error
+            );
+          } finally {
+            state.processingTurn = false;
+          }
+
           return;
         }
 
@@ -407,6 +691,7 @@ websocketServer.on(
         meetingId: null,
         language: null,
         openAiSocket: null,
+        processingTurn: false,
       };
 
     console.log(

@@ -7,6 +7,7 @@ import {
 
 export type EstablishmentMeetingRuntimeInput = {
   applicationId: number;
+  meetingId?: string | null;
   stage: EstablishmentMeetingStage;
   conversation?: EstablishmentMeetingMessage[];
   stageNotes?: Record<string, unknown>;
@@ -184,15 +185,27 @@ export class EstablishmentMeetingRuntimeService {
     return data;
   }
 
-  private static async loadMeeting(applicationId: number) {
-    const { data, error } = await supabaseAdmin
+  private static async loadMeeting(
+    applicationId: number,
+    meetingId?: string | null
+  ) {
+    let query = supabaseAdmin
       .from("epew_coach_meetings")
       .select("*")
       .eq("application_id", applicationId)
       .eq(
         "meeting_type",
         "entrepreneur_first_meeting"
-      )
+      );
+
+    const normalizedMeetingId =
+      String(meetingId ?? "").trim();
+
+    if (normalizedMeetingId) {
+      query = query.eq("id", normalizedMeetingId);
+    }
+
+    const { data, error } = await query
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -231,7 +244,8 @@ export class EstablishmentMeetingRuntimeService {
     }
 
     const meeting = await this.loadMeeting(
-      input.applicationId
+      input.applicationId,
+      input.meetingId ?? null
     );
 
     if (!meeting) {
