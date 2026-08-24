@@ -35,7 +35,8 @@ const openAiApiKey =
   requireEnvironment("OPENAI_API_KEY");
 
 const port = Number(
-  process.env.EPEW_TWILIO_VOICE_PORT ??
+  process.env.PORT ??
+    process.env.EPEW_TWILIO_VOICE_PORT ??
     "8787"
 );
 

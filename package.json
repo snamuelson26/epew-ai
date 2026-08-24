@@ -14,7 +14,8 @@
     "enterprise:translation:scan": "npm run translation:scan",
     "enterprise:translation:validate": "npm run translation:validate",
     "enterprise:translation:build": "npm run translation:build",
-    "enterprise:translation:certify": "npm run translation:certify"
+    "enterprise:translation:certify": "npm run translation:certify",
+    "voice:worker": "node --env-file=.env.local --import tsx worker/twilio-voice/index.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",
