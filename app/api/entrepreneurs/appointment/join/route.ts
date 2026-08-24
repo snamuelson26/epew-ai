@@ -47,7 +47,10 @@ export async function POST(request: NextRequest) {
           user_id,
           full_name,
           phone,
-          business_name
+          business_name,
+          assigned_coach_id,
+          assigned_coach_name,
+          coach_name
         `)
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
@@ -235,6 +238,80 @@ export async function POST(request: NextRequest) {
 
     if (updateError) {
       throw updateError;
+    }
+
+    /*
+     * Enterprise Voice Call History
+     *
+     * Twilio is the transport provider.
+     * epew_voice_calls is the permanent EPEW operational
+     * record of who was contacted, why, and by which agent.
+     *
+     * This write is intentionally idempotent on Call SID.
+     */
+    const assignedCoachName = String(
+      application.assigned_coach_name ??
+      application.coach_name ??
+      ""
+    ).trim();
+
+    const assignedCoachId = String(
+      application.assigned_coach_id ?? ""
+    ).trim();
+
+    const {
+      error: voiceHistoryError,
+    } = await supabaseAdmin
+      .from("epew_voice_calls")
+      .upsert(
+        {
+          twilio_call_sid: call.sid,
+          direction: "outbound",
+          from_number: fromNumber,
+          to_number: application.phone,
+          application_id: application.id,
+          meeting_id: meeting.id,
+          agent_role: "personal_coach",
+          agent_id:
+            assignedCoachId || null,
+          agent_name:
+            assignedCoachName || null,
+          department:
+            "entrepreneur_coaching",
+          purpose:
+            "establishment_meeting",
+          call_status:
+            call.status ?? "queued",
+          initiated_at: now,
+          verification_status:
+            "unverified",
+          metadata: {
+            provider: "twilio",
+            source:
+              "entrepreneur_appointment_join",
+            business_name:
+              application.business_name ?? null,
+            entrepreneur_name:
+              application.full_name ?? null,
+          },
+        },
+        {
+          onConflict: "twilio_call_sid",
+        }
+      );
+
+    if (voiceHistoryError) {
+      /*
+       * Do not tell the entrepreneur that the phone
+       * connection failed after Twilio has already
+       * successfully created the call.
+       *
+       * The operational error is logged for recovery.
+       */
+      console.error(
+        "Unable to record EPEW outbound voice history:",
+        voiceHistoryError
+      );
     }
 
     return NextResponse.json({

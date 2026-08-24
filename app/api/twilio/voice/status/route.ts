@@ -85,6 +85,46 @@ export async function POST(request: NextRequest) {
       throw error;
     }
 
+    if (callSid) {
+      const voiceUpdates: Record<string, unknown> = {
+        call_status: callStatus || null,
+      };
+
+      if (callStatus === "ringing") {
+        voiceUpdates.ringing_at = now;
+      }
+
+      if (callStatus === "in-progress") {
+        voiceUpdates.answered_at = now;
+      }
+
+      if (
+        [
+          "completed",
+          "busy",
+          "failed",
+          "no-answer",
+          "canceled",
+        ].includes(callStatus)
+      ) {
+        voiceUpdates.ended_at = now;
+      }
+
+      const {
+        error: voiceHistoryError,
+      } = await supabaseAdmin
+        .from("epew_voice_calls")
+        .update(voiceUpdates)
+        .eq("twilio_call_sid", callSid);
+
+      if (voiceHistoryError) {
+        console.error(
+          "Unable to update EPEW voice call history:",
+          voiceHistoryError
+        );
+      }
+    }
+
     return new NextResponse("OK", {
       status: 200,
       headers: {

@@ -87,6 +87,68 @@ export async function POST(request: NextRequest) {
       params.Digits ?? ""
     ).trim();
 
+    const callSid = String(
+      params.CallSid ?? ""
+    ).trim();
+
+    const calledNumber = normalizePhone(
+      String(params.To ?? "")
+    );
+
+    const callNow = new Date().toISOString();
+
+    /*
+     * Record the inbound call immediately.
+     *
+     * The same Twilio Call SID is used throughout
+     * Gather callbacks, so this remains idempotent.
+     */
+    if (callSid) {
+      const {
+        error: inboundHistoryError,
+      } = await supabaseAdmin
+        .from("epew_voice_calls")
+        .upsert(
+          {
+            twilio_call_sid: callSid,
+            direction: "inbound",
+            from_number:
+              callerPhone || null,
+            to_number:
+              calledNumber || null,
+            department:
+              "call_recovery",
+            purpose:
+              "callback_recovery",
+            call_status:
+              String(
+                params.CallStatus ?? "in-progress"
+              )
+                .trim()
+                .toLowerCase(),
+            initiated_at: callNow,
+            answered_at: callNow,
+            verification_status:
+              "unverified",
+            metadata: {
+              provider: "twilio",
+              source:
+                "epew_inbound_call_recovery",
+            },
+          },
+          {
+            onConflict: "twilio_call_sid",
+          }
+        );
+
+      if (inboundHistoryError) {
+        console.error(
+          "Unable to record EPEW inbound voice history:",
+          inboundHistoryError
+        );
+      }
+    }
+
     if (!callerPhone) {
       response.say(
         {
@@ -121,6 +183,49 @@ export async function POST(request: NextRequest) {
 
     if (applicationError) {
       throw applicationError;
+    }
+
+    if (application && callSid) {
+      const recognizedCoachName = String(
+        application.assigned_coach_name ??
+        application.coach_name ??
+        ""
+      ).trim();
+
+      const {
+        error: recognitionHistoryError,
+      } = await supabaseAdmin
+        .from("epew_voice_calls")
+        .update({
+          application_id:
+            application.id,
+          agent_role:
+            "personal_coach",
+          agent_name:
+            recognizedCoachName || null,
+          verification_status:
+            "caller_id_matched",
+          metadata: {
+            provider: "twilio",
+            source:
+              "epew_inbound_call_recovery",
+            entrepreneur_name:
+              application.full_name ?? null,
+            business_name:
+              application.business_name ?? null,
+          },
+        })
+        .eq(
+          "twilio_call_sid",
+          callSid
+        );
+
+      if (recognitionHistoryError) {
+        console.error(
+          "Unable to update recognized EPEW inbound caller:",
+          recognitionHistoryError
+        );
+      }
     }
 
     if (!application) {
@@ -246,6 +351,85 @@ export async function POST(request: NextRequest) {
       );
 
       return twimlResponse(response);
+    }
+
+    /*
+     * Find the permanent outbound call record.
+     *
+     * Older calls may predate epew_voice_calls,
+     * so failure to find one must not interrupt
+     * the recovery experience.
+     */
+    let originalVoiceCallId:
+      string | null = null;
+
+    const {
+      data: originalVoiceCall,
+      error: originalVoiceCallError,
+    } = await supabaseAdmin
+      .from("epew_voice_calls")
+      .select("id")
+      .eq(
+        "direction",
+        "outbound"
+      )
+      .eq(
+        "application_id",
+        application.id
+      )
+      .eq(
+        "meeting_id",
+        recentMeeting.id
+      )
+      .order(
+        "initiated_at",
+        {
+          ascending: false,
+        }
+      )
+      .limit(1)
+      .maybeSingle();
+
+    if (originalVoiceCallError) {
+      console.error(
+        "Unable to locate original EPEW outbound voice call:",
+        originalVoiceCallError
+      );
+    } else {
+      originalVoiceCallId =
+        originalVoiceCall?.id ?? null;
+    }
+
+    if (callSid) {
+      const {
+        error: confirmationHistoryError,
+      } = await supabaseAdmin
+        .from("epew_voice_calls")
+        .update({
+          application_id:
+            application.id,
+          meeting_id:
+            recentMeeting.id,
+          recovery_of_call_id:
+            originalVoiceCallId,
+          verification_status:
+            "confirmed",
+          call_status:
+            "in-progress",
+          answered_at:
+            callNow,
+        })
+        .eq(
+          "twilio_call_sid",
+          callSid
+        );
+
+      if (confirmationHistoryError) {
+        console.error(
+          "Unable to link EPEW return call to original call:",
+          confirmationHistoryError
+        );
+      }
     }
 
     const coachName =
