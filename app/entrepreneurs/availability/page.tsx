@@ -9,6 +9,9 @@ function EntrepreneurAvailabilityContent() {
 
   const [appointmentDate, setAppointmentDate] = useState("");
   const [appointmentTime, setAppointmentTime] = useState("");
+  const [meetingProvider, setMeetingProvider] =
+  useState<"phone" | "whatsapp" | "zoom">("phone");
+
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
@@ -87,10 +90,11 @@ function EntrepreneurAvailabilityContent() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            applicationId,
-            requestedStartAt: requestedDate.toISOString(),
-          }),
+         body: JSON.stringify({
+  applicationId,
+  requestedStartAt: requestedDate.toISOString(),
+  meetingProvider,
+}),
         }
       );
 
@@ -244,6 +248,51 @@ function EntrepreneurAvailabilityContent() {
           }}
         >
           <label
+  style={{
+    display: "grid",
+    gap: 8,
+    fontWeight: 700,
+  }}
+>
+  Meeting Method
+
+  <select
+    value={meetingProvider}
+    onChange={(event) => {
+      setMeetingProvider(
+        event.target.value as "phone" | "whatsapp" | "zoom"
+      );
+      setMessage("");
+      setSuccess(false);
+    }}
+    style={{
+      padding: "13px 14px",
+      fontSize: 17,
+      border: "1px solid #bbb",
+      borderRadius: 8,
+      background: "#ffffff",
+    }}
+  >
+    <option value="phone">Phone Call</option>
+    <option value="whatsapp">WhatsApp</option>
+    <option value="zoom">Zoom</option>
+  </select>
+
+  <span
+    style={{
+      fontWeight: 400,
+      color: "#666",
+      fontSize: 14,
+    }}
+  >
+    {meetingProvider === "phone"
+      ? "When you click Join Meeting, EPEW will call your registered phone number."
+      : meetingProvider === "whatsapp"
+      ? "EPEW will use your registered WhatsApp number for the meeting."
+      : "EPEW will provide a Zoom meeting link."}
+  </span>
+</label>
+          <label
             style={{
               display: "grid",
               gap: 8,
@@ -295,7 +344,7 @@ function EntrepreneurAvailabilityContent() {
             >
               <option value="">Choose a start time</option>
 
-              {Array.from({ length: 48 }, (_, index) => {
+              {Array.from({ length: 288 }, (_, index) => {
                 const isSamuelFoodFansEarlyAccess = applicationId === 27;
                 const isOfficialOpeningDay =
                   appointmentDate === "2026-08-18";
@@ -303,13 +352,14 @@ function EntrepreneurAvailabilityContent() {
                 if (
                   !isSamuelFoodFansEarlyAccess &&
                   isOfficialOpeningDay &&
-                  index < 26
+                  index < 156
                 ) {
                   return null;
                 }
 
-                const hour24 = Math.floor(index / 2);
-                const minute = index % 2 === 0 ? "00" : "30";
+                const totalMinutes = index * 5;
+                const hour24 = Math.floor(totalMinutes / 60);
+                const minute = String(totalMinutes % 60).padStart(2, "0");
 
                 const value =
                   `${String(hour24).padStart(2, "0")}:${minute}`;

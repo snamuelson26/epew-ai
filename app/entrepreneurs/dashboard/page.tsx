@@ -652,17 +652,74 @@ export default function EntrepreneurDashboardPage() {
 
               {!appointmentLoading && (
                 <div className="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col">
-                  {appointment?.controls?.canJoin &&
-                    appointment.controls.joinUrl && (
-                      <a
-                        href={appointment.controls.joinUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center rounded-xl bg-green-700 px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-green-800"
-                      >
-                        Join Meeting
-                      </a>
-                    )}
+                  {appointment?.controls?.canJoin && (
+  appointment.appointment?.provider === "phone" ? (
+    <button
+      type="button"
+      onClick={async () => {
+        try {
+          const response = await fetch(
+            "/api/entrepreneurs/appointment/join",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                meetingId: appointment.appointment?.id,
+              }),
+            }
+          );
+
+          const result = await response.json();
+
+          if (!response.ok || !result.success) {
+            window.alert(
+              result.message ||
+                "Unable to start your Phone Meeting."
+            );
+            return;
+          }
+
+          window.alert(
+            result.message ||
+              "Your phone is ringing. Answer the call to begin your meeting."
+          );
+        } catch (error) {
+          console.error(
+            "Unable to start Phone Meeting:",
+            error
+          );
+
+          window.alert(
+            "Unable to start your Phone Meeting."
+          );
+        }
+      }}
+      className="inline-flex items-center justify-center rounded-xl bg-green-700 px-5 py-3 font-bold text-white hover:bg-green-800"
+    >
+      Join Meeting
+    </button>
+  ) : appointment.appointment?.provider === "zoom" &&
+    appointment.controls.joinUrl ? (
+    <a
+      href={appointment.controls.joinUrl}
+      target="_blank"
+      rel="noreferrer"
+      className="inline-flex items-center justify-center rounded-xl bg-green-700 px-5 py-3 font-bold text-white hover:bg-green-800"
+    >
+      Join Meeting
+    </a>
+  ) : appointment.appointment?.provider === "whatsapp" ? (
+    <button
+      type="button"
+      disabled
+      className="inline-flex items-center justify-center rounded-xl bg-gray-300 px-5 py-3 font-bold text-gray-600 cursor-not-allowed"
+    >
+      WhatsApp Meeting
+    </button>
+  ) : null
+)}
 
                   {appointment?.controls?.canChange &&
                     appointment.controls.changeHref && (

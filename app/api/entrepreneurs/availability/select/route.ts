@@ -35,6 +35,28 @@ export async function POST(request: NextRequest) {
       body.requestedStartAt ?? ""
     ).trim();
 
+    const meetingProvider = String(
+      body.meetingProvider ?? "phone"
+    )
+      .trim()
+      .toLowerCase();
+
+    const allowedMeetingProviders = new Set([
+      "phone",
+      "whatsapp",
+      "zoom",
+    ]);
+
+    if (!allowedMeetingProviders.has(meetingProvider)) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Please choose a valid meeting method.",
+        },
+        { status: 400 }
+      );
+    }
+
     if (
       !Number.isInteger(applicationId) ||
       applicationId <= 0 ||
@@ -281,12 +303,14 @@ export async function POST(request: NextRequest) {
     // =====================================================
 
     const zoomMeeting =
-      await ZoomMeetingService.createEstablishmentMeeting({
-        entrepreneurName: application.full_name,
-        businessName: application.business_name,
-        scheduledAt: scheduledDate.toISOString(),
-        durationMinutes: MEETING_DURATION_MINUTES,
-      });
+      meetingProvider === "zoom"
+        ? await ZoomMeetingService.createEstablishmentMeeting({
+            entrepreneurName: application.full_name,
+            businessName: application.business_name,
+            scheduledAt: scheduledDate.toISOString(),
+            durationMinutes: MEETING_DURATION_MINUTES,
+          })
+        : null;
 
     const now = new Date().toISOString();
     const previousMeetingStatus =
@@ -306,11 +330,17 @@ export async function POST(request: NextRequest) {
         scheduled_at: scheduledDate.toISOString(),
         meeting_date: scheduledDate.toISOString(),
         meeting_status: "scheduled",
-        meeting_provider: "zoom",
-        zoom_meeting_id: zoomMeeting.meetingId,
-        zoom_meeting_uuid: zoomMeeting.meetingUuid,
-        zoom_join_url: zoomMeeting.joinUrl,
-        zoom_meeting_status: "scheduled",
+        meeting_provider: meetingProvider,
+        zoom_meeting_id:
+          zoomMeeting?.meetingId ?? null,
+        zoom_meeting_uuid:
+          zoomMeeting?.meetingUuid ?? null,
+        zoom_join_url:
+          zoomMeeting?.joinUrl ?? null,
+        zoom_meeting_status:
+          meetingProvider === "zoom"
+            ? "scheduled"
+            : null,
 
         // A rescheduled appointment is a new meeting lifecycle.
         // Clear all timestamps/state inherited from the prior Zoom cycle.
@@ -336,28 +366,30 @@ export async function POST(request: NextRequest) {
     // Store Zoom host credentials privately.
     // =====================================================
 
-    const { error: zoomSecretError } =
-      await supabaseAdmin.rpc(
-        "epew_store_zoom_meeting_secret",
-        {
-          p_meeting_id: meeting.id,
-          p_zoom_host_url: zoomMeeting.startUrl,
-          p_zoom_start_url: zoomMeeting.startUrl,
-          p_zoom_passcode: zoomMeeting.passcode,
-          p_rtms_access_context: {},
-        }
-      );
+    if (zoomMeeting) {
+      const { error: zoomSecretError } =
+        await supabaseAdmin.rpc(
+          "epew_store_zoom_meeting_secret",
+          {
+            p_meeting_id: meeting.id,
+            p_zoom_host_url: zoomMeeting.startUrl,
+            p_zoom_start_url: zoomMeeting.startUrl,
+            p_zoom_passcode: zoomMeeting.passcode,
+            p_rtms_access_context: {},
+          }
+        );
 
-    if (zoomSecretError) {
-      console.error(
-        "Zoom private secret storage warning:",
-        JSON.stringify({
-          code: zoomSecretError.code ?? null,
-          message: zoomSecretError.message ?? null,
-          details: zoomSecretError.details ?? null,
-          hint: zoomSecretError.hint ?? null,
-        })
-      );
+      if (zoomSecretError) {
+        console.error(
+          "Zoom private secret storage warning:",
+          JSON.stringify({
+            code: zoomSecretError.code ?? null,
+            message: zoomSecretError.message ?? null,
+            details: zoomSecretError.details ?? null,
+            hint: zoomSecretError.hint ?? null,
+          })
+        );
+      }
     }
 
     // =====================================================
@@ -512,7 +544,7 @@ export async function POST(request: NextRequest) {
             scheduledEnd.toISOString(),
           reservationMinutes:
             MEETING_DURATION_MINUTES,
-          meetingProvider: "zoom",
+          meetingProvider,
         },
       });
 

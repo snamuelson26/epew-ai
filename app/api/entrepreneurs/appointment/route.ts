@@ -195,6 +195,15 @@ export async function GET() {
     const zoomHasEnded =
       zoomMeetingStatus === "ended";
 
+    const meetingProvider = String(
+      meeting.meeting_provider ?? "zoom"
+    ).toLowerCase();
+
+    const providerHasEnded =
+      meetingProvider === "zoom"
+        ? zoomHasEnded
+        : false;
+
     // =====================================================
     // Determine the entrepreneur-facing action.
     // =====================================================
@@ -257,7 +266,7 @@ export async function GET() {
       };
     } else if (
       meetingStatus === "in_progress" &&
-      !zoomHasEnded
+      !providerHasEnded
     ) {
       action = {
         type: "meeting_in_progress",
@@ -266,14 +275,17 @@ export async function GET() {
       };
     } else if (
       ["scheduled", "ready_to_start"].includes(meetingStatus) &&
-      !zoomHasEnded
+      !providerHasEnded
     ) {
       action = {
         type: "join_meeting",
         label: "Join Meeting",
-        href: meeting.zoom_join_url ?? null,
+        href:
+          meetingProvider === "zoom"
+            ? meeting.zoom_join_url ?? null
+            : null,
       };
-    } else if (zoomHasEnded) {
+    } else if (providerHasEnded) {
       action = {
         type: "waiting_for_appointment",
         label: "Meeting Ended",
@@ -291,8 +303,15 @@ export async function GET() {
       ["scheduled", "ready_to_start"].includes(
         meetingStatus
       ) &&
-      !zoomHasEnded &&
-      Boolean(meeting.zoom_join_url) &&
+      !providerHasEnded &&
+      (
+        meetingProvider === "phone" ||
+        meetingProvider === "whatsapp" ||
+        (
+          meetingProvider === "zoom" &&
+          Boolean(meeting.zoom_join_url)
+        )
+      ) &&
       recoveryStatus !== "active" &&
       recoveryStatus !== "responded";
 
@@ -318,8 +337,7 @@ export async function GET() {
           meeting.zoom_meeting_status ?? null,
         scheduledAt:
           meeting.scheduled_at ?? null,
-        provider:
-          meeting.meeting_provider ?? null,
+        provider: meetingProvider,
         joinUrl:
           meeting.zoom_join_url ?? null,
       },
@@ -327,7 +345,7 @@ export async function GET() {
       controls: {
         canJoin,
         joinUrl:
-          canJoin
+          canJoin && meetingProvider === "zoom"
             ? meeting.zoom_join_url ?? null
             : null,
 
