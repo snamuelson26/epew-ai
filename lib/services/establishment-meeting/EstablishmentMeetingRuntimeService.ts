@@ -460,6 +460,12 @@ export class EstablishmentMeetingRuntimeService {
       !meeting.started_at ||
       meeting.meeting_status !== "in_progress"
     ) {
+      if (meetingProvider === "phone") {
+        throw new Error(
+          "The EPEW Establishment Meeting is not currently active by phone."
+        );
+      }
+
       throw new Error(
         "The EPEW Establishment Meeting is not currently active in Zoom."
       );
