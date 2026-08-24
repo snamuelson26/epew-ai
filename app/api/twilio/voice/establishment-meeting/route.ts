@@ -6,28 +6,6 @@ import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
-import {
-  EstablishmentMeetingRuntimeService,
-} from "@/lib/services/establishment-meeting/EstablishmentMeetingRuntimeService";
-
-import type {
-  EstablishmentMeetingMessage,
-  EstablishmentMeetingStage,
-} from "@/lib/enterprise/establishment-meeting/EstablishmentMeetingCoach";
-
-const VALID_STAGES = new Set<EstablishmentMeetingStage>([
-  "opening",
-  "meeting_purpose",
-  "entrepreneur_discovery",
-  "epew_philosophy",
-  "business_discovery",
-  "document_assessment",
-  "meeting_2_readiness",
-  "coach_evaluation",
-  "development_plan",
-  "closing",
-]);
-
 function twimlResponse(
   response: twilio.twiml.VoiceResponse,
   status = 200
@@ -43,109 +21,6 @@ function twimlResponse(
   );
 }
 
-function getSavedConversation(
-  value: unknown
-): EstablishmentMeetingMessage[] {
-  if (
-    !value ||
-    typeof value !== "object" ||
-    Array.isArray(value)
-  ) {
-    return [];
-  }
-
-  const state = value as {
-    messages?: unknown;
-  };
-
-  if (!Array.isArray(state.messages)) {
-    return [];
-  }
-
-  return state.messages
-    .filter(
-      (
-        message
-      ): message is EstablishmentMeetingMessage =>
-        Boolean(
-          message &&
-          typeof message === "object" &&
-          !Array.isArray(message) &&
-          (
-            (message as EstablishmentMeetingMessage)
-              .role === "coach" ||
-            (message as EstablishmentMeetingMessage)
-              .role === "entrepreneur"
-          ) &&
-          typeof (
-            message as EstablishmentMeetingMessage
-          ).content === "string" &&
-          (
-            message as EstablishmentMeetingMessage
-          ).content.trim()
-        )
-    )
-    .map((message) => ({
-      role: message.role,
-      content: message.content.trim(),
-    }));
-}
-
-function getSavedStage(
-  value: unknown
-): EstablishmentMeetingStage {
-  if (
-    value &&
-    typeof value === "object" &&
-    !Array.isArray(value)
-  ) {
-    const candidate = String(
-      (
-        value as {
-          stage?: unknown;
-        }
-      ).stage ?? ""
-    ).trim() as EstablishmentMeetingStage;
-
-    if (VALID_STAGES.has(candidate)) {
-      return candidate;
-    }
-  }
-
-  return "opening";
-}
-
-function speechLanguage(
-  preferredLanguage: unknown
-) {
-  const language = String(
-    preferredLanguage ?? ""
-  )
-    .trim()
-    .toLowerCase();
-
-  if (
-    language.includes("spanish") ||
-    language.includes("español")
-  ) {
-    return "es-US";
-  }
-
-  if (
-    language.includes("french") ||
-    language.includes("français")
-  ) {
-    return "fr-FR";
-  }
-
-  /*
-   * Haitian Creole speech recognition will be
-   * refined separately. Keep the current safe
-   * fallback until the selected Twilio STT model
-   * is confirmed for Kreyòl.
-   */
-  return "en-US";
-}
 
 export async function POST(
   request: NextRequest
@@ -184,17 +59,6 @@ export async function POST(
       ) ?? ""
     ).trim();
 
-    const turn = String(
-      url.searchParams.get("turn") ??
-        "initial"
-    )
-      .trim()
-      .toLowerCase();
-
-    const speechResult = String(
-      params.SpeechResult ?? ""
-    ).trim();
-
     if (!meetingId) {
       response.say(
         {
@@ -221,8 +85,7 @@ export async function POST(
         meeting_status,
         meeting_provider,
         started_at,
-        preferred_language,
-        meeting_conversation_state
+        preferred_language
       `)
       .eq("id", meetingId)
       .maybeSingle();
@@ -317,126 +180,58 @@ export async function POST(
       }
     }
 
-    let conversation =
-      getSavedConversation(
-        meeting.meeting_conversation_state
-      );
-
-    /*
-     * Twilio posts here with no SpeechResult
-     * when the speech Gather times out.
-     * Do not ask Daniel to generate another
-     * substantive turn until the entrepreneur
-     * actually speaks.
-     */
-    if (
-      turn === "listen" &&
-      !speechResult
-    ) {
-      const gather =
-        response.gather({
-          input: ["speech"],
-          action:
-            `${
-              process.env
-                .EPEW_PUBLIC_BASE_URL
-            }/api/twilio/voice/establishment-meeting?meetingId=${encodeURIComponent(
-              meeting.id
-            )}&turn=listen`,
-          method: "POST",
-          language:
-            speechLanguage(
-              meeting.preferred_language
-            ),
-          speechTimeout: "auto",
-          timeout: 8,
-          actionOnEmptyResult: true,
-        });
-
-      gather.say(
-        {
-          voice: "Polly.Gregory-Neural",
-          language: "en-US",
-        },
-        "I'm sorry, I may not have understood what you said. Please say it again. I will listen carefully and speak more slowly."
-      );
-
-      return twimlResponse(response);
-    }
-
-    if (speechResult) {
-      conversation = [
-        ...conversation,
-        {
-          role: "entrepreneur",
-          content: speechResult,
-        },
-      ];
-    }
-
-    const stage =
-      getSavedStage(
-        meeting.meeting_conversation_state
-      );
-
-    const result =
-      await EstablishmentMeetingRuntimeService.runTurn(
-        {
-          applicationId,
-          stage,
-          conversation,
-          isAdmin: true,
-          stageNotes: {
-            communicationChannel:
-              "phone",
-            twilioCallSid:
-              String(
-                params.CallSid ?? ""
-              ).trim() || null,
-          },
-        }
-      );
-
-    const publicBaseUrl =
+    const voiceWorkerUrl =
       process.env
-        .EPEW_PUBLIC_BASE_URL
-        ?.trim();
+        .EPEW_TWILIO_VOICE_WS_URL
+        ?.trim() ||
+      "wss://epew-twilio-voice.onrender.com/twilio-media";
 
-    if (!publicBaseUrl) {
-      throw new Error(
-        "EPEW_PUBLIC_BASE_URL is not configured."
-      );
-    }
+    const selectedLanguage =
+      String(
+        url.searchParams.get("lang") ??
+          meeting.preferred_language ??
+          "en"
+      ).trim();
 
     /*
-     * Daniel speaks his generated turn while
-     * Twilio simultaneously begins listening
-     * for the entrepreneur's natural response.
+     * Realtime phone meetings use a
+     * bidirectional Twilio Media Stream.
+     *
+     * Twilio sends the caller's μ-law audio
+     * to the EPEW voice worker and the worker
+     * sends Daniel's generated audio back into
+     * the same phone call.
      */
-    const gather =
-      response.gather({
-        input: ["speech"],
-        action:
-          `${publicBaseUrl}/api/twilio/voice/establishment-meeting?meetingId=${encodeURIComponent(
-            meeting.id
-          )}&turn=listen`,
-        method: "POST",
-        language:
-          speechLanguage(
-            meeting.preferred_language
-          ),
-        speechTimeout: "auto",
-        timeout: 8,
-        actionOnEmptyResult: true,
+    const connect =
+      response.connect();
+
+    const stream =
+      connect.stream({
+        url: voiceWorkerUrl,
       });
 
-    gather.say(
-      {
-        voice: "Polly.Gregory-Neural",
-        language: "en-US",
-      },
-      result.message.content
-    );
+    stream.parameter({
+      name: "applicationId",
+      value: String(applicationId),
+    });
+
+    stream.parameter({
+      name: "meetingId",
+      value: String(meeting.id),
+    });
+
+    stream.parameter({
+      name: "language",
+      value: selectedLanguage,
+    });
+
+    stream.parameter({
+      name: "callSid",
+      value:
+        String(
+          params.CallSid ?? ""
+        ).trim(),
+    });
 
     return twimlResponse(response);
   } catch (error) {
