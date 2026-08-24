@@ -143,23 +143,178 @@ async function recordStreamStarted(
 }
 
 function connectOpenAiRealtime(
-  state: VoiceConnectionState
+  state: VoiceConnectionState,
+  twilioSocket?: WebSocket
 ) {
-  /*
-   * Foundation only.
-   *
-   * The OpenAI realtime WebSocket connection,
-   * session configuration, audio forwarding,
-   * interruption handling, and Daniel/EPEW
-   * conversation instructions will be added
-   * after the Twilio WebSocket endpoint is
-   * proven locally.
-   */
-  void openAiApiKey;
-  void state;
+  if (!state.streamSid) {
+    console.error(
+      "[EPEW Twilio Voice Worker] Cannot start OpenAI realtime session without a Twilio stream SID."
+    );
+    return;
+  }
 
-  console.log(
-    "[EPEW Twilio Voice Worker] OpenAI realtime connection pending next phase."
+  const model =
+    process.env.OPENAI_REALTIME_MODEL?.trim() ||
+    "gpt-realtime-1.5";
+
+  const realtimeUrl =
+    `wss://api.openai.com/v1/realtime?model=${encodeURIComponent(
+      model
+    )}`;
+
+  const openAiSocket =
+    new WebSocket(
+      realtimeUrl,
+      {
+        headers: {
+          Authorization:
+            `Bearer ${openAiApiKey}`,
+        },
+      }
+    );
+
+  state.openAiSocket =
+    openAiSocket;
+
+  openAiSocket.on(
+    "open",
+    () => {
+      console.log(
+        `[EPEW Twilio Voice Worker] OpenAI realtime connected. Model=${model}.`
+      );
+
+      /*
+       * First integration step:
+       * establish the authenticated session and
+       * provide Daniel's voice behavior.
+       *
+       * We are not switching production calls
+       * to this worker yet.
+       */
+      openAiSocket.send(
+        JSON.stringify({
+          type: "session.update",
+          session: {
+            type: "realtime",
+            output_modalities: [
+              "audio",
+            ],
+            instructions: `
+You are Daniel Pierre, the EPEW Personal Coach.
+
+You are speaking with an EPEW entrepreneur by telephone.
+
+Speak naturally, warmly, professionally, and patiently.
+
+IMPORTANT VOICE RULES:
+- Speak at a calm, moderately slow pace.
+- Never rush the caller.
+- Use short conversational turns.
+- Ask only one main question at a time.
+- Pause naturally between ideas.
+- If the caller says they do not understand, apologize briefly, rephrase more simply, and slow down.
+- If the caller asks you to repeat something, repeat or simplify it instead of saying you are waiting.
+- If the caller speaks Haitian Creole, respond in natural Haitian Creole.
+- If the caller speaks English, Spanish, or French, continue in that language.
+- Respect the caller's selected language when provided.
+- Do not announce yourself as an AI system.
+- Do not invent personal biography, licenses, degrees, or employment history.
+
+This realtime voice layer handles natural telephone conversation.
+The EPEW Establishment Meeting business rules and permanent meeting state remain controlled by the EPEW meeting system.
+            `.trim(),
+          },
+        })
+      );
+    }
+  );
+
+  openAiSocket.on(
+    "message",
+    (data) => {
+      try {
+        const event =
+          JSON.parse(
+            data.toString()
+          ) as Record<string, any>;
+
+        const eventType =
+          String(
+            event.type ?? ""
+          );
+
+        if (
+          eventType ===
+          "session.created"
+        ) {
+          console.log(
+            "[EPEW Twilio Voice Worker] OpenAI realtime session created."
+          );
+          return;
+        }
+
+        if (
+          eventType ===
+          "session.updated"
+        ) {
+          console.log(
+            "[EPEW Twilio Voice Worker] OpenAI realtime session configured."
+          );
+          return;
+        }
+
+        if (
+          eventType ===
+          "error"
+        ) {
+          console.error(
+            "[EPEW Twilio Voice Worker] OpenAI realtime error:",
+            event.error ??
+              event
+          );
+          return;
+        }
+
+        /*
+         * Audio forwarding to Twilio will be
+         * added only after this authenticated
+         * realtime session is proven locally.
+         */
+        void twilioSocket;
+      } catch (error) {
+        console.error(
+          "[EPEW Twilio Voice Worker] Unable to process OpenAI realtime event:",
+          error
+        );
+      }
+    }
+  );
+
+  openAiSocket.on(
+    "error",
+    (error) => {
+      console.error(
+        "[EPEW Twilio Voice Worker] OpenAI realtime WebSocket error:",
+        error.message
+      );
+    }
+  );
+
+  openAiSocket.on(
+    "close",
+    (code, reason) => {
+      console.log(
+        `[EPEW Twilio Voice Worker] OpenAI realtime WebSocket closed. Code=${code}. Reason=${reason.toString() || "none"}.`
+      );
+
+      if (
+        state.openAiSocket ===
+        openAiSocket
+      ) {
+        state.openAiSocket =
+          null;
+      }
+    }
   );
 }
 
@@ -281,7 +436,8 @@ websocketServer.on(
             );
 
             connectOpenAiRealtime(
-              state
+              state,
+              twilioSocket
             );
 
             return;
