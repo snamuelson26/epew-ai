@@ -403,11 +403,13 @@ export async function POST(request: NextRequest) {
 
     if (!digits) {
       const gather = response.gather({
+        input: ["dtmf"],
         action:
           `${publicBaseUrl}/api/twilio/voice/inbound?step=confirm&lang=${language}`,
         method: "POST",
         numDigits: 1,
-        timeout: 7,
+        timeout: 10,
+        actionOnEmptyResult: true,
       });
 
       gather.say(
