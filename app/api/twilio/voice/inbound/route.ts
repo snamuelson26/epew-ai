@@ -152,6 +152,31 @@ export async function POST(request: NextRequest) {
       String(params.From ?? "")
     );
 
+    const callerDigits =
+      callerPhone.replace(/\D/g, "");
+
+    const nationalPhone =
+      callerDigits.length === 11 &&
+      callerDigits.startsWith("1")
+        ? callerDigits.slice(1)
+        : callerDigits;
+
+    const phoneLookupValues = Array.from(
+      new Set(
+        [
+          callerPhone,
+          callerDigits,
+          nationalPhone,
+          nationalPhone
+            ? `+1${nationalPhone}`
+            : "",
+          nationalPhone
+            ? `1${nationalPhone}`
+            : "",
+        ].filter(Boolean)
+      )
+    );
+
     const digits = String(
       params.Digits ?? ""
     ).trim();
@@ -323,7 +348,7 @@ export async function POST(request: NextRequest) {
         coach_name,
         assigned_coach_name
       `)
-      .eq("phone", callerPhone)
+      .in("phone", phoneLookupValues)
       .order("created_at", {
         ascending: false,
       })
