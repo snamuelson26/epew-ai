@@ -666,8 +666,14 @@ export async function POST(request: NextRequest) {
           voice: "Polly.Matthew",
           language: "en-US",
         },
-        "The meeting is still available. I will reconnect you now."
+        coachName
+          ? `Please hold while I connect you to your EPEW Personal Coach, ${coachName}.`
+          : "Please hold while I connect you to your EPEW Personal Coach."
       );
+
+      response.pause({
+        length: 4,
+      });
 
       response.redirect(
         {
