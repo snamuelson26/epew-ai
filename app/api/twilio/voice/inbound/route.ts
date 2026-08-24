@@ -57,6 +57,75 @@ function meetingLabel(meetingType: string | null) {
   return "your EPEW meeting";
 }
 
+type SupportedLanguage =
+  | "en"
+  | "ht"
+  | "es"
+  | "fr";
+
+function voiceForLanguage(language: SupportedLanguage) {
+  switch (language) {
+    case "ht":
+      return {
+        voice: "Polly.Joanna",
+        language: "en-US",
+      } as const;
+
+    case "es":
+      return {
+        voice: "Polly.Mia",
+        language: "es-MX",
+      } as const;
+
+    case "fr":
+      return {
+        voice: "Polly.Lea",
+        language: "fr-FR",
+      } as const;
+
+    default:
+      return {
+        voice: "Polly.Matthew",
+        language: "en-US",
+      } as const;
+  }
+}
+
+function languageFromDigit(
+  digit: string
+): SupportedLanguage | null {
+  switch (digit) {
+    case "1":
+      return "en";
+    case "2":
+      return "ht";
+    case "3":
+      return "es";
+    case "4":
+      return "fr";
+    default:
+      return null;
+  }
+}
+
+function confirmationPrompt(
+  language: SupportedLanguage
+) {
+  switch (language) {
+    case "ht":
+      return "Nou jwenn yon kont EPEW ki asosye ak nimewo telefòn sa a. Pou konfime se ou menm ki gen kont lan epi pou nou ka verifye kiyès ki te kontakte ou, peze 1.";
+
+    case "es":
+      return "Encontramos una cuenta de EPEW asociada con este número de teléfono. Para confirmar que usted es el titular de la cuenta y permitirnos verificar quién lo contactó recientemente, oprima 1.";
+
+    case "fr":
+      return "Nous avons trouvé un compte EPEW associé à ce numéro de téléphone. Pour confirmer que vous êtes le titulaire du compte et nous permettre de vérifier qui vous a récemment contacté, appuyez sur 1.";
+
+    default:
+      return "I found an EPEW account associated with the phone number you are calling from. To confirm that you are the account holder and allow me to check who recently contacted you, press 1.";
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const {
@@ -86,6 +155,20 @@ export async function POST(request: NextRequest) {
     const digits = String(
       params.Digits ?? ""
     ).trim();
+
+    const url = new URL(request.url);
+
+    const step = String(
+      url.searchParams.get("step") ?? "language"
+    )
+      .trim()
+      .toLowerCase();
+
+    const selectedLanguage = String(
+      url.searchParams.get("lang") ?? ""
+    )
+      .trim()
+      .toLowerCase() as SupportedLanguage;
 
     const callSid = String(
       params.CallSid ?? ""
@@ -160,6 +243,72 @@ export async function POST(request: NextRequest) {
 
       return twimlResponse(response);
     }
+
+    const publicBaseUrl =
+      requireEnvironment(
+        "EPEW_PUBLIC_BASE_URL"
+      );
+
+    if (step === "language") {
+      if (!digits) {
+        const gather = response.gather({
+          action:
+            `${publicBaseUrl}/api/twilio/voice/inbound?step=language`,
+          method: "POST",
+          numDigits: 1,
+          timeout: 8,
+        });
+
+        gather.say(
+          {
+            voice: "Polly.Matthew",
+            language: "en-US",
+          },
+          "Thank you for calling EPEW. For English, press 1. Pou Kreyòl, peze 2. Para español, oprima 3. Pour le français, appuyez sur 4."
+        );
+
+        response.say(
+          {
+            voice: "Polly.Matthew",
+            language: "en-US",
+          },
+          "We did not receive a language selection. Please call again."
+        );
+
+        return twimlResponse(response);
+      }
+
+      const language =
+        languageFromDigit(digits);
+
+      if (!language) {
+        response.say(
+          {
+            voice: "Polly.Matthew",
+            language: "en-US",
+          },
+          "That selection is not valid. Please call again and choose 1, 2, 3, or 4."
+        );
+
+        return twimlResponse(response);
+      }
+
+      response.redirect(
+        {
+          method: "POST",
+        },
+        `${publicBaseUrl}/api/twilio/voice/inbound?step=confirm&lang=${language}`
+      );
+
+      return twimlResponse(response);
+    }
+
+    const language: SupportedLanguage =
+      ["en", "ht", "es", "fr"].includes(
+        selectedLanguage
+      )
+        ? selectedLanguage
+        : "en";
 
     const {
       data: application,
@@ -253,33 +402,28 @@ export async function POST(request: NextRequest) {
     }
 
     if (!digits) {
-      const publicBaseUrl =
-        requireEnvironment(
-          "EPEW_PUBLIC_BASE_URL"
-        );
-
       const gather = response.gather({
         action:
-          `${publicBaseUrl}/api/twilio/voice/inbound`,
+          `${publicBaseUrl}/api/twilio/voice/inbound?step=confirm&lang=${language}`,
         method: "POST",
         numDigits: 1,
         timeout: 7,
       });
 
       gather.say(
-        {
-          voice: "Polly.Matthew",
-          language: "en-US",
-        },
-        "Thank you for calling EPEW. I am the EPEW Call Recovery Assistant. I found an EPEW account associated with the phone number you are calling from. To confirm that you are the account holder and allow me to check who recently contacted you, press 1."
+        voiceForLanguage(language),
+        confirmationPrompt(language)
       );
 
       response.say(
-        {
-          voice: "Polly.Matthew",
-          language: "en-US",
-        },
-        "I did not receive your confirmation. Please call again when you are ready."
+        voiceForLanguage(language),
+        language === "ht"
+          ? "Nou pa resevwa konfimasyon ou. Tanpri rele ankò lè ou pare."
+          : language === "es"
+          ? "No recibimos su confirmación. Por favor, vuelva a llamar cuando esté listo."
+          : language === "fr"
+          ? "Nous n'avons pas reçu votre confirmation. Veuillez rappeler lorsque vous serez prêt."
+          : "I did not receive your confirmation. Please call again when you are ready."
       );
 
       return twimlResponse(response);
@@ -287,11 +431,14 @@ export async function POST(request: NextRequest) {
 
     if (digits !== "1") {
       response.say(
-        {
-          voice: "Polly.Matthew",
-          language: "en-US",
-        },
-        "Your identity was not confirmed. For your privacy, I cannot provide information about EPEW calls associated with this account."
+        voiceForLanguage(language),
+        language === "ht"
+          ? "Idantite ou pa konfime. Pou pwoteje enfòmasyon ou, nou pa kapab bay detay sou apèl EPEW ki asosye ak kont sa a."
+          : language === "es"
+          ? "Su identidad no fue confirmada. Para proteger su privacidad, no podemos proporcionar información sobre llamadas de EPEW asociadas con esta cuenta."
+          : language === "fr"
+          ? "Votre identité n'a pas été confirmée. Pour protéger votre vie privée, nous ne pouvons pas fournir d'informations sur les appels EPEW associés à ce compte."
+          : "Your identity was not confirmed. For your privacy, I cannot provide information about EPEW calls associated with this account."
       );
 
       return twimlResponse(response);
