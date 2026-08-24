@@ -358,7 +358,7 @@ export async function POST(
           voice: "Polly.Gregory-Neural",
           language: "en-US",
         },
-        "I am still here. Please go ahead when you are ready."
+        "I'm sorry, I may not have understood what you said. Please say it again. I will listen carefully and speak more slowly."
       );
 
       return twimlResponse(response);
