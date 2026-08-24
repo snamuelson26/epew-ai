@@ -240,7 +240,33 @@ export class EstablishmentMeetingRuntimeService {
       );
     }
 
-    if (!meeting.zoom_coach_joined_at) {
+    const meetingProvider = String(
+      meeting.meeting_provider ?? "zoom"
+    )
+      .trim()
+      .toLowerCase();
+
+    if (meetingProvider === "phone") {
+      const phoneSessionActive = Boolean(
+        meeting.twilio_call_started_at ||
+        meeting.twilio_call_answered_at ||
+        ["queued", "ringing", "in-progress"].includes(
+          String(meeting.twilio_call_status ?? "")
+            .trim()
+            .toLowerCase()
+        )
+      );
+
+      if (!phoneSessionActive) {
+        throw new Error(
+          "The EPEW phone meeting has not started yet."
+        );
+      }
+    } else if (!meeting.zoom_coach_joined_at) {
+      /*
+       * Preserve the existing Zoom requirement for
+       * Zoom and legacy meeting records.
+       */
       throw new Error(
         "The EPEW Personal Coach has not joined the Zoom meeting yet."
       );
@@ -430,8 +456,14 @@ export class EstablishmentMeetingRuntimeService {
       },
     };
 
-    const meetingWasNotStarted =
-      !meeting.started_at;
+    if (
+      !meeting.started_at ||
+      meeting.meeting_status !== "in_progress"
+    ) {
+      throw new Error(
+        "The EPEW Establishment Meeting is not currently active in Zoom."
+      );
+    }
 
     const meetingUpdate: Record<
       string,
@@ -443,19 +475,6 @@ export class EstablishmentMeetingRuntimeService {
         runtimeContext,
       meeting_action_log: [
         ...existingActionLog,
-        ...(meetingWasNotStarted
-          ? [
-              {
-                event:
-                  "meeting_started_from_live_conversation",
-                actor:
-                  "EPEW Meeting Runtime",
-                authority:
-                  "EPEW Establishment Meeting Engine",
-                recordedAt: now,
-              },
-            ]
-          : []),
         {
           event:
             "personal_coach_conversation_saved",
@@ -470,17 +489,6 @@ export class EstablishmentMeetingRuntimeService {
         },
       ],
     };
-
-    if (meetingWasNotStarted) {
-      meetingUpdate.started_at = now;
-      meetingUpdate.meeting_status =
-        "in_progress";
-    } else if (
-      meeting.meeting_status !== "in_progress"
-    ) {
-      meetingUpdate.meeting_status =
-        "in_progress";
-    }
 
     const { error: persistenceError } =
       await supabaseAdmin
@@ -498,7 +506,7 @@ export class EstablishmentMeetingRuntimeService {
       responseId: result.responseId,
       conversationState,
       meetingStartedAt:
-        meeting.started_at ?? now,
+        meeting.started_at,
       meetingStatus: "in_progress",
     };
   }
