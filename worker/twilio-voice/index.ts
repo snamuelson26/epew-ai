@@ -199,6 +199,22 @@ function connectOpenAiRealtime(
             output_modalities: [
               "audio",
             ],
+            audio: {
+              input: {
+                format: {
+                  type: "audio/pcmu",
+                },
+                turn_detection: {
+                  type: "semantic_vad",
+                },
+              },
+              output: {
+                format: {
+                  type: "audio/pcmu",
+                },
+                voice: "marin",
+              },
+            },
             instructions: `
 You are Daniel Pierre, the EPEW Personal Coach.
 
@@ -275,12 +291,38 @@ The EPEW Establishment Meeting business rules and permanent meeting state remain
           return;
         }
 
-        /*
-         * Audio forwarding to Twilio will be
-         * added only after this authenticated
-         * realtime session is proven locally.
-         */
-        void twilioSocket;
+        if (
+          eventType ===
+          "response.output_audio.delta"
+        ) {
+          const delta =
+            typeof event.delta === "string"
+              ? event.delta
+              : "";
+
+          if (
+            !delta ||
+            !twilioSocket ||
+            twilioSocket.readyState !==
+              WebSocket.OPEN ||
+            !state.streamSid
+          ) {
+            return;
+          }
+
+          twilioSocket.send(
+            JSON.stringify({
+              event: "media",
+              streamSid:
+                state.streamSid,
+              media: {
+                payload: delta,
+              },
+            })
+          );
+
+          return;
+        }
       } catch (error) {
         console.error(
           "[EPEW Twilio Voice Worker] Unable to process OpenAI realtime event:",
@@ -456,13 +498,22 @@ websocketServer.on(
               return;
             }
 
-            /*
-             * Twilio sends base64-encoded
-             * 8 kHz μ-law audio here.
-             *
-             * Forwarding to OpenAI will be
-             * implemented in the next phase.
-             */
+            if (
+              !state.openAiSocket ||
+              state.openAiSocket.readyState !==
+                WebSocket.OPEN
+            ) {
+              return;
+            }
+
+            state.openAiSocket.send(
+              JSON.stringify({
+                type:
+                  "input_audio_buffer.append",
+                audio: payload,
+              })
+            );
+
             return;
           }
 
