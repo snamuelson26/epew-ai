@@ -284,12 +284,41 @@ export async function POST(request: NextRequest) {
           timeout: 8,
         });
 
+        /*
+         * Announce each language separately so
+         * one English voice does not attempt to
+         * pronounce all four languages.
+         */
         gather.say(
           {
             voice: "Polly.Matthew",
             language: "en-US",
           },
-          "Thank you for calling EPEW. For English, press 1. Pou Kreyòl, peze 2. Para español, oprima 3. Pour le français, appuyez sur 4."
+          "Welcome to E. P. E. W. Ekero Partners Empower Wealth. For English, press 1."
+        );
+
+        gather.say(
+          {
+            voice: "Polly.Joanna",
+            language: "en-US",
+          },
+          "Pou Kreyòl Ayisyen, peze de."
+        );
+
+        gather.say(
+          {
+            voice: "Polly.Mia",
+            language: "es-MX",
+          },
+          "Para español, oprima 3."
+        );
+
+        gather.say(
+          {
+            voice: "Polly.Lea",
+            language: "fr-FR",
+          },
+          "Pour le français, appuyez sur 4."
         );
 
         response.say(
