@@ -113,7 +113,7 @@ function confirmationPrompt(
 ) {
   switch (language) {
     case "ht":
-      return "Nou jwenn yon kont EPEW ki asosye ak nimewo telefòn sa a. Pou konfime se ou menm ki gen kont lan epi pou nou ka verifye kiyès ki te kontakte ou, peze 1.";
+      return "Mwen jwenn yon kont EPEW ki asosye ak nimewo telefòn ou rele la a. Pou konfime kont lan, e pou m ka jwenn kiyès ki te kontakte w, tanpri peze en.";
 
     case "es":
       return "Encontramos una cuenta de EPEW asociada con este número de teléfono. Para confirmar que usted es el titular de la cuenta y permitirnos verificar quién lo contactó recientemente, oprima 1.";
@@ -294,7 +294,7 @@ export async function POST(request: NextRequest) {
             voice: "Polly.Matthew",
             language: "en-US",
           },
-          "Welcome to E. P. E. W. Ekero Partners Empower Wealth. For English, press 1."
+          "Welcome to E. P. E. W., Ekero Partners Empower Wealth. For English, press 1."
         );
 
         gather.say(
