@@ -3,6 +3,11 @@ import {
 } from "@/lib/twilio/validateTwilioWebhook";
 
 import { NextRequest, NextResponse } from "next/server";
+import {
+  createCipheriv,
+  createHash,
+  randomBytes,
+} from "node:crypto";
 import twilio from "twilio";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { PhoneAvailabilitySchedulingService } from "@/lib/services/scheduling/PhoneAvailabilitySchedulingService";
@@ -30,6 +35,134 @@ function twimlResponse(
       "Content-Type": "text/xml",
     },
   });
+}
+
+function haitianTtsUrl(
+  publicBaseUrl: string,
+  text: string
+) {
+  const secret = requireEnvironment("TWILIO_AUTH_TOKEN");
+
+  if (!text || text.length > 1200) {
+    throw new Error("Invalid Haitian TTS text.");
+  }
+
+  const key = createHash("sha256")
+    .update(secret, "utf8")
+    .digest();
+
+  const iv = randomBytes(12);
+
+  const cipher = createCipheriv(
+    "aes-256-gcm",
+    key,
+    iv
+  );
+
+  const plaintext = JSON.stringify({
+    text,
+    exp: Date.now() + 10 * 60 * 1000,
+  });
+
+  const ciphertext = Buffer.concat([
+    cipher.update(plaintext, "utf8"),
+    cipher.final(),
+  ]);
+
+  const authTag = cipher.getAuthTag();
+
+  const payload = Buffer.concat([
+    iv,
+    authTag,
+    ciphertext,
+  ]).toString("base64url");
+
+  const params = new URLSearchParams({
+    payload,
+  });
+
+  return `${publicBaseUrl}/api/twilio/voice/haitian-tts?${params.toString()}`;
+}
+
+function formatHaitianAppointmentTime(iso: string) {
+  const date = new Date(iso);
+  const timeZone = "America/New_York";
+
+  const weekday = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    weekday: "short",
+  }).format(date);
+
+  const weekdays: Record<string, string> = {
+    Sun: "Dimanch",
+    Mon: "Lendi",
+    Tue: "Madi",
+    Wed: "Mèkredi",
+    Thu: "Jedi",
+    Fri: "Vandredi",
+    Sat: "Samdi",
+  };
+
+  const dateParts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    month: "numeric",
+    day: "numeric",
+  }).formatToParts(date);
+
+  const month = Number(
+    dateParts.find((part) => part.type === "month")?.value ?? "1"
+  );
+
+  const day = Number(
+    dateParts.find((part) => part.type === "day")?.value ?? "1"
+  );
+
+  const months = [
+    "",
+    "janvye",
+    "fevriye",
+    "mas",
+    "avril",
+    "me",
+    "jen",
+    "jiyè",
+    "out",
+    "septanm",
+    "oktòb",
+    "novanm",
+    "desanm",
+  ];
+
+  const timeParts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).formatToParts(date);
+
+  const hour = Number(
+    timeParts.find((part) => part.type === "hour")?.value ?? "12"
+  );
+
+  const minute =
+    timeParts.find((part) => part.type === "minute")?.value ?? "00";
+
+  const ampm =
+    timeParts.find((part) => part.type === "dayPeriod")?.value ?? "AM";
+
+  const period =
+    ampm === "AM"
+      ? "nan maten"
+      : hour === 12 || hour < 6
+      ? "nan apremidi"
+      : "nan aswè";
+
+  const spokenTime =
+    minute === "00"
+      ? `${hour} zè ${period}`
+      : `${hour} zè ${minute} ${period}`;
+
+  return `${weekdays[weekday]} ${day} ${months[month]}, ${spokenTime}`;
 }
 
 function normalizePhone(value: string) {
@@ -128,7 +261,7 @@ function confirmationPrompt(
 ) {
   switch (language) {
     case "ht":
-      return "Mwen jwenn yon kont EPE-W ki asosye ak nimewo telefòn ou rele ya. Pou konfime kont lan, e pou m ka jwenn kiyès ki te kontakte w, tanpri peze en.";
+      return "Mwen jwenn yon kont EPE W ki asosye ak nimewo telefòn ou rele ya. Pou konfime kont lan, e pou m ka jwenn kiyès ki te kontakte w, tanpri peze en.";
 
     case "es":
       return "Encontramos una cuenta de EPEW asociada con este número de teléfono. Para confirmar que usted es el titular de la cuenta y permitirnos verificar quién lo contactó recientemente, oprima 1.";
@@ -620,16 +753,23 @@ export async function POST(request: NextRequest) {
               actionOnEmptyResult: true,
             });
 
-          nameRetry.say(
-            voiceForLanguage(language),
-            language === "es"
-              ? "No pude escuchar su nombre. Por favor, diga su nombre y apellido."
-              : language === "fr"
-              ? "Je n'ai pas entendu votre nom. Veuillez dire votre prénom et votre nom de famille."
-              : language === "ht"
-              ? "Mwen pa tande non ou. Tanpri di non ak siyati ou."
-              : "I did not hear your name. Please say your first and last name."
-          );
+          if (language === "ht") {
+            nameRetry.play(
+              haitianTtsUrl(
+                publicBaseUrl,
+                "Mwen pa tande non ou. Tanpri di non ak siyati ou."
+              )
+            );
+          } else {
+            nameRetry.say(
+              voiceForLanguage(language),
+              language === "es"
+                ? "No pude escuchar su nombre. Por favor, diga su nombre y apellido."
+                : language === "fr"
+                ? "Je n'ai pas entendu votre nom. Veuillez dire votre prénom et votre nom de famille."
+                : "I did not hear your name. Please say your first and last name."
+            );
+          }
 
           return twimlResponse(response);
         }
@@ -667,16 +807,23 @@ export async function POST(request: NextRequest) {
             actionOnEmptyResult: true,
           });
 
-        nameConfirmation.say(
-          voiceForLanguage(language),
-          language === "es"
-            ? `Escuché ${spokenName}. Si el nombre es correcto, oprima el número 1. Para decir su nombre nuevamente, oprima el número 2.`
-            : language === "fr"
-            ? `J'ai entendu ${spokenName}. Si le nom est correct, appuyez sur le numéro 1. Pour répéter votre nom, appuyez sur le numéro 2.`
-            : language === "ht"
-            ? `Mwen tande ${spokenName}. Si non an kòrèk, peze nimewo 1. Pou di non ou ankò, peze nimewo 2.`
-            : `I heard ${spokenName}. If that name is correct, press number 1. To say your name again, press number 2.`
-        );
+        if (language === "ht") {
+          nameConfirmation.play(
+            haitianTtsUrl(
+              publicBaseUrl,
+              `Mwen tande ${spokenName}. Si non an kòrèk, peze nimewo 1. Pou di non ou ankò, peze nimewo 2.`
+            )
+          );
+        } else {
+          nameConfirmation.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? `Escuché ${spokenName}. Si el nombre es correcto, oprima el número 1. Para decir su nombre nuevamente, oprima el número 2.`
+              : language === "fr"
+              ? `J'ai entendu ${spokenName}. Si le nom est correct, appuyez sur le numéro 1. Pour répéter votre nom, appuyez sur le numéro 2.`
+              : `I heard ${spokenName}. If that name is correct, press number 1. To say your name again, press number 2.`
+          );
+        }
 
         return twimlResponse(response);
       }
@@ -728,16 +875,23 @@ export async function POST(request: NextRequest) {
               actionOnEmptyResult: true,
             });
 
-          phoneConfirmation.say(
-            voiceForLanguage(language),
-            language === "es"
-              ? "Gracias. Su nombre ha sido confirmado. ¿Desea utilizar el número de teléfono desde el cual está llamando como su número de contacto de EPEW? Para sí, oprima el número 1. Para proporcionar otro número, oprima el número 2."
-              : language === "fr"
-              ? "Merci. Votre nom est confirmé. Voulez-vous utiliser le numéro depuis lequel vous appelez comme numéro de contact EPEW ? Pour oui, appuyez sur le numéro 1. Pour fournir un autre numéro, appuyez sur le numéro 2."
-              : language === "ht"
-              ? "Mèsi. Nou konfime non ou. Èske ou vle itilize nimewo telefòn ou rele ak li a kòm nimewo kontak EPE-W ou? Pou wi, peze nimewo 1. Pou bay yon lòt nimewo, peze nimewo 2."
-              : "Thank you. Your name has been confirmed. Would you like to use the phone number you are calling from as your EPEW contact number? For yes, press number 1. To provide a different number, press number 2."
-          );
+          if (language === "ht") {
+            phoneConfirmation.play(
+              haitianTtsUrl(
+                publicBaseUrl,
+                "Mèsi. Nou konfime non ou. Èske ou vle itilize nimewo telefòn ou rele ak li a kòm nimewo kontak ou pou EPE W? Pou wi, peze nimewo 1. Pou bay yon lòt nimewo, peze nimewo 2."
+              )
+            );
+          } else {
+            phoneConfirmation.say(
+              voiceForLanguage(language),
+              language === "es"
+                ? "Gracias. Su nombre ha sido confirmado. ¿Desea utilizar el número de teléfono desde el cual está llamando como su número de contacto de EPEW? Para sí, oprima el número 1. Para proporcionar otro número, oprima el número 2."
+                : language === "fr"
+                ? "Merci. Votre nom est confirmé. Voulez-vous utiliser le numéro depuis lequel vous appelez comme numéro de contact EPEW ? Pour oui, appuyez sur le numéro 1. Pour fournir un autre numéro, appuyez sur le numéro 2."
+                : "Thank you. Your name has been confirmed. Would you like to use the phone number you are calling from as your EPEW contact number? For yes, press number 1. To provide a different number, press number 2."
+            );
+          }
 
           return twimlResponse(response);
         }
@@ -790,16 +944,23 @@ export async function POST(request: NextRequest) {
               actionOnEmptyResult: true,
             });
 
-          emailGather.say(
-            voiceForLanguage(language),
-            language === "es"
-              ? "Gracias. Ahora, por favor diga su dirección de correo electrónico lentamente."
-              : language === "fr"
-              ? "Merci. Maintenant, veuillez dire lentement votre adresse électronique."
-              : language === "ht"
-              ? "Mèsi. Kounye a, tanpri di adrès imel ou dousman."
-              : "Thank you. Now please say your email address slowly."
-          );
+          if (language === "ht") {
+            emailGather.play(
+              haitianTtsUrl(
+                publicBaseUrl,
+                "Mèsi. Kounye a, tanpri di adrès imel ou dousman."
+              )
+            );
+          } else {
+            emailGather.say(
+              voiceForLanguage(language),
+              language === "es"
+                ? "Gracias. Ahora, por favor diga su dirección de correo electrónico lentamente."
+                : language === "fr"
+                ? "Merci. Maintenant, veuillez dire lentement votre adresse électronique."
+                : "Thank you. Now please say your email address slowly."
+            );
+          }
 
           return twimlResponse(response);
         }
@@ -816,16 +977,23 @@ export async function POST(request: NextRequest) {
               actionOnEmptyResult: true,
             });
 
-          phoneGather.say(
-            voiceForLanguage(language),
-            language === "es"
-              ? "Por favor diga el número de teléfono que desea utilizar como su número de contacto de EPEW."
-              : language === "fr"
-              ? "Veuillez dire le numéro de téléphone que vous souhaitez utiliser comme numéro de contact EPEW."
-              : language === "ht"
-              ? "Tanpri di nimewo telefòn ou vle itilize kòm nimewo kontak EPE-W ou."
-              : "Please say the phone number you would like to use as your EPEW contact number."
-          );
+          if (language === "ht") {
+            phoneGather.play(
+              haitianTtsUrl(
+                publicBaseUrl,
+                "Tanpri di nimewo telefòn ou vle itilize kòm nimewo kontak ou pou EPE W."
+              )
+            );
+          } else {
+            phoneGather.say(
+              voiceForLanguage(language),
+              language === "es"
+                ? "Por favor diga el número de teléfono que desea utilizar como su número de contacto de EPEW."
+                : language === "fr"
+                ? "Veuillez dire le numéro de téléphone que vous souhaitez utiliser comme numéro de contact EPEW."
+                : "Please say the phone number you would like to use as your EPEW contact number."
+            );
+          }
 
           return twimlResponse(response);
         }
@@ -874,16 +1042,23 @@ export async function POST(request: NextRequest) {
               actionOnEmptyResult: true,
             });
 
-          retryPhoneGather.say(
-            voiceForLanguage(language),
-            language === "es"
-              ? "No pude confirmar ese número. Por favor diga el número de teléfono completo, incluyendo el código de área."
-              : language === "fr"
-              ? "Je n'ai pas pu confirmer ce numéro. Veuillez dire le numéro complet, y compris l'indicatif régional."
-              : language === "ht"
-              ? "Mwen pa t ka konfime nimewo sa a. Tanpri di nimewo telefòn konplè a, ansanm ak kòd zòn nan."
-              : "I could not confirm that number. Please say the complete phone number, including the area code."
-          );
+          if (language === "ht") {
+            retryPhoneGather.play(
+              haitianTtsUrl(
+                publicBaseUrl,
+                "Mwen pa t ka konfime nimewo sa a. Tanpri di nimewo telefòn konplè a, ansanm ak kòd zòn nan."
+              )
+            );
+          } else {
+            retryPhoneGather.say(
+              voiceForLanguage(language),
+              language === "es"
+                ? "No pude confirmar ese número. Por favor diga el número de teléfono completo, incluyendo el código de área."
+                : language === "fr"
+                ? "Je n'ai pas pu confirmer ce numéro. Veuillez dire le numéro complet, y compris l'indicatif régional."
+                : "I could not confirm that number. Please say the complete phone number, including the area code."
+            );
+          }
 
           return twimlResponse(response);
         }
@@ -926,16 +1101,23 @@ export async function POST(request: NextRequest) {
             .split("")
             .join(" ");
 
-        phoneVerifyGather.say(
-          voiceForLanguage(language),
-          language === "es"
-            ? `Escuché ${spokenDigits}. Si ese número es correcto, oprima el número 1. Para decirlo nuevamente, oprima el número 2.`
-            : language === "fr"
-            ? `J'ai entendu ${spokenDigits}. Si ce numéro est correct, appuyez sur le numéro 1. Pour le répéter, appuyez sur le numéro 2.`
-            : language === "ht"
-            ? `Mwen tande ${spokenDigits}. Si nimewo sa a kòrèk, peze nimewo 1. Pou di li ankò, peze nimewo 2.`
-            : `I heard ${spokenDigits}. If that number is correct, press number 1. To say it again, press number 2.`
-        );
+        if (language === "ht") {
+          phoneVerifyGather.play(
+            haitianTtsUrl(
+              publicBaseUrl,
+              `Mwen tande ${spokenDigits}. Si nimewo sa a kòrèk, peze nimewo 1. Pou di li ankò, peze nimewo 2.`
+            )
+          );
+        } else {
+          phoneVerifyGather.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? `Escuché ${spokenDigits}. Si ese número es correcto, oprima el número 1. Para decirlo nuevamente, oprima el número 2.`
+              : language === "fr"
+              ? `J'ai entendu ${spokenDigits}. Si ce numéro est correct, appuyez sur le numéro 1. Pour le répéter, appuyez sur le numéro 2.`
+              : `I heard ${spokenDigits}. If that number is correct, press number 1. To say it again, press number 2.`
+          );
+        }
 
         return twimlResponse(response);
       }
@@ -987,16 +1169,23 @@ export async function POST(request: NextRequest) {
               actionOnEmptyResult: true,
             });
 
-          emailGather.say(
-            voiceForLanguage(language),
-            language === "es"
-              ? "Gracias. Ahora, por favor diga su dirección de correo electrónico lentamente."
-              : language === "fr"
-              ? "Merci. Maintenant, veuillez dire lentement votre adresse électronique."
-              : language === "ht"
-              ? "Mèsi. Kounye a, tanpri di adrès imel ou dousman."
-              : "Thank you. Now please say your email address slowly."
-          );
+          if (language === "ht") {
+            emailGather.play(
+              haitianTtsUrl(
+                publicBaseUrl,
+                "Mèsi. Kounye a, tanpri di adrès imel ou dousman."
+              )
+            );
+          } else {
+            emailGather.say(
+              voiceForLanguage(language),
+              language === "es"
+                ? "Gracias. Ahora, por favor diga su dirección de correo electrónico lentamente."
+                : language === "fr"
+                ? "Merci. Maintenant, veuillez dire lentement votre adresse électronique."
+                : "Thank you. Now please say your email address slowly."
+            );
+          }
 
           return twimlResponse(response);
         }
@@ -1039,16 +1228,23 @@ export async function POST(request: NextRequest) {
               actionOnEmptyResult: true,
             });
 
-          retryEmailGather.say(
-            voiceForLanguage(language),
-            language === "es"
-              ? "No pude confirmar esa dirección de correo electrónico. Por favor, dígala lentamente. Por ejemplo, nombre arroba gmail punto com."
-              : language === "fr"
-              ? "Je n'ai pas pu confirmer cette adresse électronique. Veuillez la dire lentement. Par exemple, nom arobase gmail point com."
-              : language === "ht"
-              ? "Mwen pa t ka konfime adrès imel sa a. Tanpri di li dousman. Pa egzanp, non, at, gmail, dot com."
-              : "I could not confirm that email address. Please say it slowly. For example, name at gmail dot com."
-          );
+          if (language === "ht") {
+            retryEmailGather.play(
+              haitianTtsUrl(
+                publicBaseUrl,
+                "Mwen pa t ka konfime adrès imel sa a. Tanpri di li dousman. Pa egzanp, non, at, gmail, dot com."
+              )
+            );
+          } else {
+            retryEmailGather.say(
+              voiceForLanguage(language),
+              language === "es"
+                ? "No pude confirmar esa dirección de correo electrónico. Por favor, dígala lentamente. Por ejemplo, nombre arroba gmail punto com."
+                : language === "fr"
+                ? "Je n'ai pas pu confirmer cette adresse électronique. Veuillez la dire lentement. Par exemple, nom arobase gmail point com."
+                : "I could not confirm that email address. Please say it slowly. For example, name at gmail dot com."
+            );
+          }
 
           return twimlResponse(response);
         }
@@ -1093,16 +1289,23 @@ export async function POST(request: NextRequest) {
             .replace(/_/g, " underscore ")
             .replace(/-/g, " dash ");
 
-        emailVerifyGather.say(
-          voiceForLanguage(language),
-          language === "es"
-            ? `Escuché ${emailForSpeech}. Si esa dirección de correo electrónico es correcta, oprima el número 1. Para decirla nuevamente, oprima el número 2.`
-            : language === "fr"
-            ? `J'ai entendu ${emailForSpeech}. Si cette adresse électronique est correcte, appuyez sur le numéro 1. Pour la répéter, appuyez sur le numéro 2.`
-            : language === "ht"
-            ? `Mwen tande ${emailForSpeech}. Si adrès imel sa a kòrèk, peze nimewo 1. Pou di li ankò, peze nimewo 2.`
-            : `I heard ${emailForSpeech}. If that email address is correct, press number 1. To say it again, press number 2.`
-        );
+        if (language === "ht") {
+          emailVerifyGather.play(
+            haitianTtsUrl(
+              publicBaseUrl,
+              `Mwen tande ${emailForSpeech}. Si adrès imel sa a kòrèk, peze nimewo 1. Pou di li ankò, peze nimewo 2.`
+            )
+          );
+        } else {
+          emailVerifyGather.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? `Escuché ${emailForSpeech}. Si esa dirección de correo electrónico es correcta, oprima el número 1. Para decirla nuevamente, oprima el número 2.`
+              : language === "fr"
+              ? `J'ai entendu ${emailForSpeech}. Si cette adresse électronique est correcte, appuyez sur le numéro 1. Pour la répéter, appuyez sur le numéro 2.`
+              : `I heard ${emailForSpeech}. If that email address is correct, press number 1. To say it again, press number 2.`
+          );
+        }
 
         return twimlResponse(response);
       }
@@ -1156,185 +1359,23 @@ export async function POST(request: NextRequest) {
               actionOnEmptyResult: true,
             });
 
-          consentGather.say(
-            voiceForLanguage(language),
-            language === "es"
-              ? "Gracias. Su información de contacto ha sido confirmada. ¿Autoriza a EPEW a contactarle en el futuro con información sobre programas, oportunidades y servicios de EPEW? Para sí, oprima el número 1. Para no, oprima el número 2."
-              : language === "fr"
-              ? "Merci. Vos coordonnées ont été confirmées. Autorisez-vous EPEW à vous contacter à l'avenir au sujet des programmes, opportunités et services EPEW ? Pour oui, appuyez sur le numéro 1. Pour non, appuyez sur le numéro 2."
-              : language === "ht"
-              ? "Mèsi. Nou konfime enfòmasyon kontak ou. Èske ou bay EPE-W pèmisyon pou kontakte w alavni konsènan pwogram, opòtinite ak sèvis EPEW? Pou wi, peze nimewo 1. Pou non, peze nimewo 2."
-              : "Thank you. Your contact information has been confirmed. Do you give EPEW permission to contact you in the future about EPEW programs, opportunities, and services? For yes, press number 1. For no, press number 2."
-          );
-
-          return twimlResponse(response);
-        }
-
-        response.redirect(
-          {
-            method: "POST",
-          },
-          `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_email_confirm&lang=${language}`
-        );
-
-        return twimlResponse(response);
-      }
-
-      /*
-       * STEP: Capture the caller's email address.
-       */
-      if (step === "prospect_email") {
-        const spokenEmail = String(
-          params.SpeechResult ?? ""
-        ).trim();
-
-        const normalizedEmail =
-          normalizeSpokenEmail(spokenEmail);
-
-        const looksLikeEmail =
-          /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(
-            normalizedEmail
-          );
-
-        if (!spokenEmail || !looksLikeEmail) {
-          const retryEmailGather =
-            response.gather({
-              input: ["speech"],
-              action:
-                `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_email&lang=${language}`,
-              method: "POST",
-              timeout: 12,
-              speechTimeout: "auto",
-              actionOnEmptyResult: true,
-            });
-
-          retryEmailGather.say(
-            voiceForLanguage(language),
-            language === "es"
-              ? "No pude confirmar esa dirección de correo electrónico. Por favor, dígala lentamente. Por ejemplo, nombre arroba gmail punto com."
-              : language === "fr"
-              ? "Je n'ai pas pu confirmer cette adresse électronique. Veuillez la dire lentement. Par exemple, nom arobase gmail point com."
-              : language === "ht"
-              ? "Mwen pa t ka konfime adrès imel sa a. Tanpri di li dousman. Pa egzanp, non, at, gmail, dot com."
-              : "I could not confirm that email address. Please say it slowly. For example, name at gmail dot com."
-          );
-
-          return twimlResponse(response);
-        }
-
-        const {
-          error: emailUpdateError,
-        } = await supabaseAdmin
-          .from("epew_prospects")
-          .update({
-            email:
-              normalizedEmail,
-            email_verified:
-              false,
-            prospect_status:
-              "verification_pending",
-            last_contact_at:
-              callNow,
-            updated_at:
-              callNow,
-          })
-          .eq("id", prospect.id);
-
-        if (emailUpdateError) {
-          throw emailUpdateError;
-        }
-
-        const emailVerifyGather =
-          response.gather({
-            input: ["dtmf"],
-            action:
-              `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_email_confirm&lang=${language}`,
-            method: "POST",
-            numDigits: 1,
-            timeout: 10,
-            actionOnEmptyResult: true,
-          });
-
-        const emailForSpeech =
-          normalizedEmail
-            .replace("@", " at ")
-            .replace(/\./g, " dot ")
-            .replace(/_/g, " underscore ")
-            .replace(/-/g, " dash ");
-
-        emailVerifyGather.say(
-          voiceForLanguage(language),
-          language === "es"
-            ? `Escuché ${emailForSpeech}. Si esa dirección de correo electrónico es correcta, oprima el número 1. Para decirla nuevamente, oprima el número 2.`
-            : language === "fr"
-            ? `J'ai entendu ${emailForSpeech}. Si cette adresse électronique est correcte, appuyez sur le numéro 1. Pour la répéter, appuyez sur le numéro 2.`
-            : language === "ht"
-            ? `Mwen tande ${emailForSpeech}. Si adrès imel sa a kòrèk, peze nimewo 1. Pou di li ankò, peze nimewo 2.`
-            : `I heard ${emailForSpeech}. If that email address is correct, press number 1. To say it again, press number 2.`
-        );
-
-        return twimlResponse(response);
-      }
-
-      /*
-       * STEP: Verify the caller's email address.
-       */
-      if (step === "prospect_email_confirm") {
-        if (digits === "2") {
-          response.redirect(
-            {
-              method: "POST",
-            },
-            `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_email&lang=${language}`
-          );
-
-          return twimlResponse(response);
-        }
-
-        if (digits === "1") {
-          const {
-            error: emailVerifyError,
-          } = await supabaseAdmin
-            .from("epew_prospects")
-            .update({
-              email_verified:
-                true,
-              contact_information_verified:
-                true,
-              prospect_status:
-                "verified",
-              last_contact_at:
-                callNow,
-              updated_at:
-                callNow,
-            })
-            .eq("id", prospect.id);
-
-          if (emailVerifyError) {
-            throw emailVerifyError;
+          if (language === "ht") {
+            consentGather.play(
+              haitianTtsUrl(
+                publicBaseUrl,
+                "Mèsi. Nou konfime enfòmasyon kontak ou. Èske ou bay EPE W pèmisyon pou kontakte w alavni konsènan pwogram, opòtinite ak sèvis EPE W? Pou wi, peze nimewo 1. Pou non, peze nimewo 2."
+              )
+            );
+          } else {
+            consentGather.say(
+              voiceForLanguage(language),
+              language === "es"
+                ? "Gracias. Su información de contacto ha sido confirmada. ¿Autoriza a EPEW a contactarle en el futuro con información sobre programas, oportunidades y servicios de EPEW? Para sí, oprima el número 1. Para no, oprima el número 2."
+                : language === "fr"
+                ? "Merci. Vos coordonnées ont été confirmées. Autorisez-vous EPEW à vous contacter à l'avenir au sujet des programmes, opportunités et services EPEW ? Pour oui, appuyez sur le numéro 1. Pour non, appuyez sur le numéro 2."
+                : "Thank you. Your contact information has been confirmed. Do you give EPEW permission to contact you in the future about EPEW programs, opportunities, and services? For yes, press number 1. For no, press number 2."
+            );
           }
-
-          const consentGather =
-            response.gather({
-              input: ["dtmf"],
-              action:
-                `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_consent&lang=${language}`,
-              method: "POST",
-              numDigits: 1,
-              timeout: 10,
-              actionOnEmptyResult: true,
-            });
-
-          consentGather.say(
-            voiceForLanguage(language),
-            language === "es"
-              ? "Gracias. Su información de contacto ha sido confirmada. ¿Autoriza a EPEW a contactarle en el futuro con información sobre programas, oportunidades y servicios de EPEW? Para sí, oprima el número 1. Para no, oprima el número 2."
-              : language === "fr"
-              ? "Merci. Vos coordonnées ont été confirmées. Autorisez-vous EPEW à vous contacter à l'avenir au sujet des programmes, opportunités et services EPEW ? Pour oui, appuyez sur le numéro 1. Pour non, appuyez sur le numéro 2."
-              : language === "ht"
-              ? "Mèsi. Nou konfime enfòmasyon kontak ou. Èske ou bay EPE-W pèmisyon pou kontakte w alavni konsènan pwogram, opòtinite ak sèvis EPEW? Pou wi, peze nimewo 1. Pou non, peze nimewo 2."
-              : "Thank you. Your contact information has been confirmed. Do you give EPEW permission to contact you in the future about EPEW programs, opportunities, and services? For yes, press number 1. For no, press number 2."
-          );
 
           return twimlResponse(response);
         }
@@ -1365,16 +1406,23 @@ export async function POST(request: NextRequest) {
               actionOnEmptyResult: true,
             });
 
-          consentRetry.say(
-            voiceForLanguage(language),
-            language === "es"
-              ? "Para autorizar a EPEW a contactarle en el futuro, oprima el número 1. Para no autorizar futuros contactos, oprima el número 2."
-              : language === "fr"
-              ? "Pour autoriser EPEW à vous contacter à l'avenir, appuyez sur le numéro 1. Pour ne pas autoriser de futurs contacts, appuyez sur le numéro 2."
-              : language === "ht"
-              ? "Pou bay EPE-W pèmisyon pou kontakte w alavni, peze nimewo 1. Pou pa bay pèmisyon pou kontak alavni, peze nimewo 2."
-              : "To give EPEW permission to contact you in the future, press number 1. To decline future contact, press number 2."
-          );
+          if (language === "ht") {
+            consentRetry.play(
+              haitianTtsUrl(
+                publicBaseUrl,
+                "Pou bay EPE W pèmisyon pou kontakte w alavni, peze nimewo 1. Pou pa bay pèmisyon pou kontak alavni, peze nimewo 2."
+              )
+            );
+          } else {
+            consentRetry.say(
+              voiceForLanguage(language),
+              language === "es"
+                ? "Para autorizar a EPEW a contactarle en el futuro, oprima el número 1. Para no autorizar futuros contactos, oprima el número 2."
+                : language === "fr"
+                ? "Pour autoriser EPEW à vous contacter à l'avenir, appuyez sur le numéro 1. Pour ne pas autoriser de futurs contacts, appuyez sur le numéro 2."
+                : "To give EPEW permission to contact you in the future, press number 1. To decline future contact, press number 2."
+            );
+          }
 
           return twimlResponse(response);
         }
@@ -1419,16 +1467,23 @@ export async function POST(request: NextRequest) {
             actionOnEmptyResult: true,
           });
 
-        interestGather.say(
-          voiceForLanguage(language),
-          language === "es"
-            ? "Gracias. Ahora dígame cómo podemos ayudarle. Para información general sobre EPEW, oprima 1. Para convertirse en Emprendedor, oprima 2. Para convertirse en Supporter, oprima 3. Para asociarse con EPEW como Partner, oprima 4. Para convertirse en Vendor, oprima 5."
-            : language === "fr"
-            ? "Merci. Dites-nous maintenant comment nous pouvons vous aider. Pour des informations générales sur EPEW, appuyez sur 1. Pour devenir Entrepreneur, appuyez sur 2. Pour devenir Supporter, appuyez sur 3. Pour devenir Partner avec EPEW, appuyez sur 4. Pour devenir Vendor, appuyez sur 5."
-            : language === "ht"
-            ? "Mèsi. Kounye a, di nou kijan nou ka ede w. Pou enfòmasyon jeneral sou EPE-W, peze nimewo 1. Pou vin yon Antreprenè, peze nimewo 2. Pou vin yon Sipòtè, peze nimewo 3. Pou vin yon Patnè EPE-W, peze nimewo 4. Pou vin yon Vandè EPEW, peze nimewo 5."
-            : "Thank you. Now tell us how we can help you. For general information about EPEW, press 1. To become an Entrepreneur, press 2. To become a Supporter, press 3. To partner with EPEW, press 4. To become a Vendor, press 5."
-        );
+        if (language === "ht") {
+          interestGather.play(
+            haitianTtsUrl(
+              publicBaseUrl,
+              "Mèsi. Kounye a, di nou kijan nou ka ede w. Pou enfòmasyon jeneral sou EPE W, peze nimewo 1. Pou vin yon Antreprenè, peze nimewo 2. Pou vin yon Sipòtè, peze nimewo 3. Pou vin yon Patnè EPE W, peze nimewo 4. Pou vin yon Vandè EPE W, peze nimewo 5."
+            )
+          );
+        } else {
+          interestGather.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "Gracias. Ahora dígame cómo podemos ayudarle. Para información general sobre EPEW, oprima 1. Para convertirse en Emprendedor, oprima 2. Para convertirse en Supporter, oprima 3. Para asociarse con EPEW como Partner, oprima 4. Para convertirse en Vendor, oprima 5."
+              : language === "fr"
+              ? "Merci. Dites-nous maintenant comment nous pouvons vous aider. Pour des informations générales sur EPEW, appuyez sur 1. Pour devenir Entrepreneur, appuyez sur 2. Pour devenir Supporter, appuyez sur 3. Pour devenir Partner avec EPEW, appuyez sur 4. Pour devenir Vendor, appuyez sur 5."
+              : "Thank you. Now tell us how we can help you. For general information about EPEW, press 1. To become an Entrepreneur, press 2. To become a Supporter, press 3. To partner with EPEW, press 4. To become a Vendor, press 5."
+          );
+        }
 
         return twimlResponse(response);
       }
@@ -1467,16 +1522,23 @@ export async function POST(request: NextRequest) {
               actionOnEmptyResult: true,
             });
 
-          interestRetry.say(
-            voiceForLanguage(language),
-            language === "es"
-              ? "No recibí una selección válida. Oprima 1 para EPEW, 2 para Emprendedor, 3 para Supporter, 4 para Partner, o 5 para Vendor."
-              : language === "fr"
-              ? "Je n'ai pas reçu de sélection valide. Appuyez sur 1 pour EPEW, 2 pour Entrepreneur, 3 pour Supporter, 4 pour Partner, ou 5 pour Vendor."
-              : language === "ht"
-              ? "Mwen pa resevwa yon chwa ki valab. Peze nimewo 1 pou EPEW, 2 pou Antreprenè, 3 pou Sipòtè, 4 pou Patnè, oswa 5 pou Vandè."
-              : "I did not receive a valid selection. Press 1 for EPEW, 2 for Entrepreneur, 3 for Supporter, 4 for Partner, or 5 for Vendor."
-          );
+          if (language === "ht") {
+            interestRetry.play(
+              haitianTtsUrl(
+                publicBaseUrl,
+                "Mwen pa resevwa yon chwa ki valab. Peze nimewo 1 pou EPE W, nimewo 2 pou Antreprenè, nimewo 3 pou Sipòtè, nimewo 4 pou Patnè, oswa nimewo 5 pou Vandè."
+              )
+            );
+          } else {
+            interestRetry.say(
+              voiceForLanguage(language),
+              language === "es"
+                ? "No recibí una selección válida. Oprima 1 para EPEW, 2 para Emprendedor, 3 para Supporter, 4 para Partner, o 5 para Vendor."
+                : language === "fr"
+                ? "Je n'ai pas reçu de sélection valide. Appuyez sur 1 pour EPEW, 2 pour Entrepreneur, 3 pour Supporter, 4 pour Partner, ou 5 pour Vendor."
+                : "I did not receive a valid selection. Press 1 for EPEW, 2 for Entrepreneur, 3 for Supporter, 4 for Partner, or 5 for Vendor."
+            );
+          }
 
           return twimlResponse(response);
         }
@@ -1537,31 +1599,42 @@ export async function POST(request: NextRequest) {
           throw interestUpdateError;
         }
 
-        response.say(
-          voiceForLanguage(language),
-          language === "es"
-            ? "Gracias. Hemos registrado su interés. Un representante o sistema autorizado de EPEW podrá continuar ayudándole según la información que usted solicitó."
-            : language === "fr"
-            ? "Merci. Nous avons enregistré votre intérêt. Un représentant ou système autorisé d'EPEW pourra continuer à vous aider selon les informations que vous avez demandées."
-            : language === "ht"
-            ? "Mèsi. Nou anrejistre enterè ou. Yon reprezantan oswa yon sistèm EPE-W ki otorize kapab kontinye ede w selon enfòmasyon ou mande a."
-            : "Thank you. We have recorded your interest. An authorized EPEW representative or system can continue assisting you based on the information you requested."
-        );
+        if (language === "ht") {
+          response.play(
+            haitianTtsUrl(
+              publicBaseUrl,
+              "Mèsi. Nou anrejistre enterè w. EPE W kapab kontinye ede w selon enfòmasyon ou mande a."
+            )
+          );
+        } else {
+          response.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "Gracias. Hemos registrado su interés. Un representante o sistema autorizado de EPEW podrá continuar ayudándole según la información que usted solicitó."
+              : language === "fr"
+              ? "Merci. Nous avons enregistré votre intérêt. Un représentant ou système autorisé d'EPEW pourra continuer à vous aider selon les informations que vous avez demandées."
+              : "Thank you. We have recorded your interest. An authorized EPEW representative or system can continue assisting you based on the information you requested."
+          );
+        }
 
         response.pause({
           length: 1,
         });
 
-        response.say(
-          voiceForLanguage(language),
-          language === "es"
-            ? "Gracias por llamar a EPEW."
-            : language === "fr"
-            ? "Merci d'avoir appelé EPEW."
-            : language === "ht"
-            ? "Mèsi paske ou rele EPE-W."
-            : "Thank you for calling EPEW."
-        );
+        if (language === "ht") {
+          response.play(
+            `${publicBaseUrl}/audio/phone/ht-goodbye.mp3`
+          );
+        } else {
+          response.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "Gracias por llamar a EPEW."
+              : language === "fr"
+              ? "Merci d'avoir appelé EPEW."
+              : "Thank you for calling EPEW."
+          );
+        }
 
         return twimlResponse(response);
       }
@@ -1588,14 +1661,19 @@ export async function POST(request: NextRequest) {
           },
           "Welcome to EPEW. Ekero Partners Empower Wealth. I could not find an EPEW account associated with the phone number you are calling from. To better assist you now and in the future, please provide your name, phone number, and email address. Thank you. Please begin by saying your first and last name."
         );
+      } else if (language === "ht") {
+        nameGather.play(
+          haitianTtsUrl(
+            publicBaseUrl,
+            "Byenveni nan EPE W, Ekero Partners Empower Wealth. Mwen pa jwenn yon kont EPE W ki asosye ak nimewo telefòn ou rele ak li a. Pou nou ka ede w pi byen kounye a ak nan lavni, tanpri ban nou non ou, nimewo telefòn ou, ak adrès imel ou. Mèsi. Kòmanse pa di non ak siyati ou."
+          )
+        );
       } else {
         nameGather.say(
           voiceForLanguage(language),
           language === "es"
             ? "Bienvenido a EPEW, Ekero Partners Empower Wealth. No pude encontrar una cuenta de EPEW asociada con el número de teléfono desde el cual está llamando. Para poder ayudarle mejor ahora y en el futuro, le pediré su nombre, número de teléfono y correo electrónico. Gracias. Comience diciendo su nombre y apellido."
-            : language === "fr"
-            ? "Bienvenue chez EPEW, Ekero Partners Empower Wealth. Je n'ai trouvé aucun compte EPEW associé au numéro de téléphone depuis lequel vous appelez. Afin de mieux vous aider maintenant et à l'avenir, je vais vous demander votre nom, votre numéro de téléphone et votre adresse électronique. Merci. Commencez par dire votre prénom et votre nom de famille."
-            : "Byenveni nan EPE-W — Ekero Partners Empower Wealth. Mwen pa jwenn yon kont EPEW ki asosye ak nimewo telefòn ou rele ak li a. Pou nou ka ede w pi byen kounye a ak nan lavni, tanpri ban nou non ou, nimewo telefòn ou, ak adrès imel ou. Mèsi. Kòmanse pa di non ak siyati ou."
+            : "Bienvenue chez EPEW, Ekero Partners Empower Wealth. Je n'ai trouvé aucun compte EPEW associé au numéro de téléphone depuis lequel vous appelez. Afin de mieux vous aider maintenant et à l'avenir, je vais vous demander votre nom, votre numéro de téléphone et votre adresse électronique. Merci. Commencez par dire votre prénom et votre nom de famille."
         );
       }
 
@@ -1618,31 +1696,45 @@ export async function POST(request: NextRequest) {
           actionOnEmptyResult: true,
         });
 
-        retryGather.say(
-          voiceForLanguage(language),
-          language === "ht"
-            ? "Mwen pa tande disponiblite ou. Tanpri di m ki jou ak ki lè ou disponib."
-            : language === "es"
-            ? "No pude escuchar su disponibilidad. Por favor, dígame qué día y a qué hora está disponible."
-            : language === "fr"
-            ? "Je n'ai pas entendu vos disponibilités. Dites-moi quel jour et à quelle heure vous êtes disponible."
-            : "I did not hear your availability. Please tell me what day and time you are available."
-        );
+        if (language === "ht") {
+          retryGather.play(
+            haitianTtsUrl(
+              publicBaseUrl,
+              "Mwen pa tande ki lè ou disponib. Tanpri di m ki jou ak ki lè ou disponib."
+            )
+          );
+        } else {
+          retryGather.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "No pude escuchar su disponibilidad. Por favor, dígame qué día y a qué hora está disponible."
+              : language === "fr"
+              ? "Je n'ai pas entendu vos disponibilités. Dites-moi quel jour et à quelle heure vous êtes disponible."
+              : "I did not hear your availability. Please tell me what day and time you are available."
+          );
+        }
 
         return twimlResponse(response);
       }
 
       if (!application?.id) {
-        response.say(
-          voiceForLanguage(language),
-          language === "ht"
-            ? "Mwen pa kapab konfime kont antreprenè ou pou pran randevou a kounye a."
-            : language === "es"
-            ? "No puedo confirmar su cuenta de emprendedor para programar la cita en este momento."
-            : language === "fr"
-            ? "Je ne peux pas confirmer votre compte entrepreneur pour fixer le rendez-vous pour le moment."
-            : "I cannot confirm your entrepreneur account for scheduling right now."
-        );
+        if (language === "ht") {
+          response.play(
+            haitianTtsUrl(
+              publicBaseUrl,
+              "Mwen pa kapab konfime kont Antreprenè w la pou pran randevou a kounye a."
+            )
+          );
+        } else {
+          response.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "No puedo confirmar su cuenta de emprendedor para programar la cita en este momento."
+              : language === "fr"
+              ? "Je ne peux pas confirmer votre compte entrepreneur pour fixer le rendez-vous pour le moment."
+              : "I cannot confirm your entrepreneur account for scheduling right now."
+          );
+        }
 
         return twimlResponse(response);
       }
@@ -1667,10 +1759,19 @@ export async function POST(request: NextRequest) {
             actionOnEmptyResult: true,
           });
 
-          retryGather.say(
-            voiceForLanguage(language),
-            schedulingResult.message
-          );
+          if (language === "ht") {
+            retryGather.play(
+              haitianTtsUrl(
+                publicBaseUrl,
+                schedulingResult.message
+              )
+            );
+          } else {
+            retryGather.say(
+              voiceForLanguage(language),
+              schedulingResult.message
+            );
+          }
 
           return twimlResponse(response);
         }
@@ -1679,16 +1780,23 @@ export async function POST(request: NextRequest) {
           schedulingResult.status === "scheduling_review" ||
           schedulingResult.choices.length === 0
         ) {
-          response.say(
-            voiceForLanguage(language),
-            language === "ht"
-              ? "Mèsi. Mwen resevwa disponiblite ou. Mwen pa jwenn yon lè ki konfime touswit ak Konseye Pèsonèl ou. Epew ap revize orè a pou jwenn yon lè ki konpatib pou ou."
-              : language === "es"
-              ? "Gracias. He recibido su disponibilidad. No encontré de inmediato una hora confirmada con su Coach Personal. EPEW revisará el horario para encontrar una opción compatible."
-              : language === "fr"
-              ? "Merci. J'ai reçu vos disponibilités. Je n'ai pas trouvé immédiatement un horaire confirmé avec votre Coach Personnel. EPEW va revoir le calendrier afin de trouver une option compatible."
-              : "Thank you. I received your availability. I did not find an immediately confirmed time with your Personal Coach. EPEW will review the schedule to find a compatible appointment."
-          );
+          if (language === "ht") {
+            response.play(
+              haitianTtsUrl(
+                publicBaseUrl,
+                "Mèsi. Mwen resevwa lè ou disponib yo. Mwen pa jwenn yon lè ki konfime touswit ak Konseye Pèsonèl EPE W la. EPE W ap revize orè a pou jwenn yon lè ki bon pou w."
+              )
+            );
+          } else {
+            response.say(
+              voiceForLanguage(language),
+              language === "es"
+                ? "Gracias. He recibido su disponibilidad. No encontré de inmediato una hora confirmada con su Coach Personal. EPEW revisará el horario para encontrar una opción compatible."
+                : language === "fr"
+                ? "Merci. J'ai reçu vos disponibilités. Je n'ai pas trouvé immédiatement un horaire confirmé avec votre Coach Personnel. EPEW va revoir le calendrier afin de trouver une option compatible."
+                : "Thank you. I received your availability. I did not find an immediately confirmed time with your Personal Coach. EPEW will review the schedule to find a compatible appointment."
+            );
+          }
 
           return twimlResponse(response);
         }
@@ -1742,8 +1850,6 @@ export async function POST(request: NextRequest) {
               ? "fr-FR"
               : language === "es"
               ? "es-US"
-              : language === "ht"
-              ? "fr-HT"
               : "en-US",
             {
               timeZone: "America/New_York",
@@ -1758,8 +1864,6 @@ export async function POST(request: NextRequest) {
               ? "fr-FR"
               : language === "es"
               ? "es-US"
-              : language === "ht"
-              ? "fr-HT"
               : "en-US",
             {
               timeZone: "America/New_York",
@@ -1771,15 +1875,24 @@ export async function POST(request: NextRequest) {
           return `${dateText}, ${timeText}`;
         };
 
-        const choiceOne = formatChoice(
-          choices[0].proposedStartAt
-        );
+        const choiceOne =
+          language === "ht"
+            ? formatHaitianAppointmentTime(
+                choices[0].proposedStartAt
+              )
+            : formatChoice(
+                choices[0].proposedStartAt
+              );
 
         const choiceTwo =
           choices.length > 1
-            ? formatChoice(
-                choices[1].proposedStartAt
-              )
+            ? language === "ht"
+              ? formatHaitianAppointmentTime(
+                  choices[1].proposedStartAt
+                )
+              : formatChoice(
+                  choices[1].proposedStartAt
+                )
             : null;
 
         const choiceGather = response.gather({
@@ -1793,11 +1906,16 @@ export async function POST(request: NextRequest) {
         });
 
         if (language === "ht") {
-          choiceGather.say(
-            voiceForLanguage(language),
+          const haitianChoiceMessage =
             choiceTwo
               ? `Mwen jwenn de lè ki disponib. Opsyon nimewo 1 se ${choiceOne}. Opsyon nimewo 2 se ${choiceTwo}. Pou chwazi premye lè a, peze nimewo 1. Pou chwazi dezyèm lè a, peze nimewo 2.`
-              : `Mwen jwenn yon lè ki disponib. Lè a se ${choiceOne}. Pou chwazi lè sa a, peze nimewo 1.`
+              : `Mwen jwenn yon lè ki disponib. Lè a se ${choiceOne}. Pou chwazi lè sa a, peze nimewo 1.`;
+
+          choiceGather.play(
+            haitianTtsUrl(
+              publicBaseUrl,
+              haitianChoiceMessage
+            )
           );
         } else if (language === "es") {
           choiceGather.say(
@@ -1829,16 +1947,23 @@ export async function POST(request: NextRequest) {
           schedulingError
         );
 
-        response.say(
-          voiceForLanguage(language),
-          language === "ht"
-            ? "Mwen pa kapab fini rechèch randevou a kounye a. Epew ap konsève demann ou an pou nou ka ede w."
-            : language === "es"
-            ? "No puedo completar la búsqueda de su cita en este momento. EPEW conservará su solicitud para poder ayudarle."
-            : language === "fr"
-            ? "Je ne peux pas terminer la recherche de votre rendez-vous pour le moment. EPEW conservera votre demande afin de pouvoir vous aider."
-            : "I cannot complete the appointment search right now. EPEW will keep your request so we can assist you."
-        );
+        if (language === "ht") {
+          response.play(
+            haitianTtsUrl(
+              publicBaseUrl,
+              "Mwen pa kapab fini rechèch randevou a kounye a. EPE W ap konsève demann ou an pou nou ka ede w."
+            )
+          );
+        } else {
+          response.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "No puedo completar la búsqueda de su cita en este momento. EPEW conservará su solicitud para poder ayudarle."
+              : language === "fr"
+              ? "Je ne peux pas terminer la recherche de votre rendez-vous pour le moment. EPEW conservera votre demande afin de pouvoir vous aider."
+              : "I cannot complete the appointment search right now. EPEW will keep your request so we can assist you."
+          );
+        }
 
         return twimlResponse(response);
       }
@@ -1853,16 +1978,23 @@ export async function POST(request: NextRequest) {
           : -1;
 
       if (!application?.id) {
-        response.say(
-          voiceForLanguage(language),
-          language === "ht"
-            ? "Mwen pa kapab konfime kont ou pou pran randevou a."
-            : language === "es"
-            ? "No puedo confirmar su cuenta para programar la cita."
-            : language === "fr"
-            ? "Je ne peux pas confirmer votre compte pour fixer le rendez-vous."
-            : "I cannot confirm your account for scheduling."
-        );
+        if (language === "ht") {
+          response.play(
+            haitianTtsUrl(
+              publicBaseUrl,
+              "Mwen pa kapab konfime kont ou a pou pran randevou a."
+            )
+          );
+        } else {
+          response.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "No puedo confirmar su cuenta para programar la cita."
+              : language === "fr"
+              ? "Je ne peux pas confirmer votre compte pour fixer le rendez-vous."
+              : "I cannot confirm your account for scheduling."
+          );
+        }
 
         return twimlResponse(response);
       }
@@ -1987,24 +2119,34 @@ export async function POST(request: NextRequest) {
           actionOnEmptyResult: true,
         });
 
-        retryGather.say(
-          voiceForLanguage(language),
-          language === "ht"
-            ? schedulingChoices.length > 1
+        if (language === "ht") {
+          const haitianChoiceRetry =
+            schedulingChoices.length > 1
               ? "Tanpri peze nimewo 1 pou premye lè a, oswa nimewo 2 pou dezyèm lè a."
-              : "Tanpri peze nimewo 1 pou chwazi lè ki disponib la."
-            : language === "es"
-            ? schedulingChoices.length > 1
-              ? "Presione 1 para la primera opción o 2 para la segunda."
-              : "Presione 1 para elegir el horario disponible."
-            : language === "fr"
-            ? schedulingChoices.length > 1
-              ? "Appuyez sur 1 pour la première option ou sur 2 pour la deuxième."
-              : "Appuyez sur 1 pour choisir l'horaire disponible."
-            : schedulingChoices.length > 1
-            ? "Press 1 for the first appointment or 2 for the second appointment."
-            : "Press 1 to choose the available appointment."
-        );
+              : "Tanpri peze nimewo 1 pou chwazi lè ki disponib la.";
+
+          retryGather.play(
+            haitianTtsUrl(
+              publicBaseUrl,
+              haitianChoiceRetry
+            )
+          );
+        } else {
+          retryGather.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? schedulingChoices.length > 1
+                ? "Presione 1 para la primera opción o 2 para la segunda."
+                : "Presione 1 para elegir el horario disponible."
+              : language === "fr"
+              ? schedulingChoices.length > 1
+                ? "Appuyez sur 1 pour la première option ou sur 2 pour la deuxième."
+                : "Appuyez sur 1 pour choisir l'horaire disponible."
+              : schedulingChoices.length > 1
+              ? "Press 1 for the first appointment or 2 for the second appointment."
+              : "Press 1 to choose the available appointment."
+          );
+        }
 
         return twimlResponse(response);
       }
@@ -2027,8 +2169,6 @@ export async function POST(request: NextRequest) {
             ? "fr-FR"
             : language === "es"
             ? "es-US"
-            : language === "ht"
-            ? "fr-HT"
             : "en-US";
 
         const dateText =
@@ -2055,16 +2195,27 @@ export async function POST(request: NextRequest) {
             }
           ).format(appointmentDate);
 
-        response.say(
-          voiceForLanguage(language),
-          language === "ht"
-            ? `Randevou ou konfime pou ${dateText}, a ${timeText}. Reyinyon an ap fèt pa telefòn ak Konseye Pèsonèl Epew ou.`
-            : language === "es"
-            ? `Su cita está confirmada para ${dateText} a las ${timeText}. La reunión será por teléfono con su Coach Personal de EPEW.`
-            : language === "fr"
-            ? `Votre rendez-vous est confirmé pour ${dateText} à ${timeText}. La réunion aura lieu par téléphone avec votre Coach Personnel EPEW.`
-            : `Your appointment is confirmed for ${dateText} at ${timeText}. The meeting will be by phone with your EPEW Personal Coach.`
-        );
+        if (language === "ht") {
+          const haitianConfirmation =
+            `Randevou w konfime pou ${formatHaitianAppointmentTime(bookingResult.scheduledAt)}. ` +
+            `Reyinyon an ap fèt pa telefòn ak Konseye Pèsonèl EPE W la.`;
+
+          response.play(
+            haitianTtsUrl(
+              publicBaseUrl,
+              haitianConfirmation
+            )
+          );
+        } else {
+          response.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? `Su cita está confirmada para ${dateText} a las ${timeText}. La reunión será por teléfono con su Coach Personal de EPEW.`
+              : language === "fr"
+              ? `Votre rendez-vous est confirmé pour ${dateText} à ${timeText}. La réunion aura lieu par téléphone avec votre Coach Personnel EPEW.`
+              : `Your appointment is confirmed for ${dateText} at ${timeText}. The meeting will be by phone with your EPEW Personal Coach.`
+          );
+        }
 
         const memberMenuGather =
           response.gather({
@@ -2109,16 +2260,23 @@ export async function POST(request: NextRequest) {
           actionOnEmptyResult: true,
         });
 
-        retryGather.say(
-          voiceForLanguage(language),
-          language === "ht"
-            ? "Lè ou te chwazi a pa disponib ankò. Tanpri di m yon lòt jou ak lè ou disponib."
-            : language === "es"
-            ? "El horario que eligió ya no está disponible. Dígame otro día y horario en que esté disponible."
-            : language === "fr"
-            ? "L'horaire que vous avez choisi n'est plus disponible. Dites-moi un autre jour et une autre plage horaire."
-            : "The appointment you selected is no longer available. Please tell me another day and time when you are available."
-        );
+        if (language === "ht") {
+          retryGather.play(
+            haitianTtsUrl(
+              publicBaseUrl,
+              "Lè w te chwazi a pa disponib ankò. Tanpri di m yon lòt jou ak lè ou disponib."
+            )
+          );
+        } else {
+          retryGather.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "El horario que eligió ya no está disponible. Dígame otro día y horario en que esté disponible."
+              : language === "fr"
+              ? "L'horaire que vous avez choisi n'est plus disponible. Dites-moi un autre jour et une autre plage horaire."
+              : "The appointment you selected is no longer available. Please tell me another day and time when you are available."
+          );
+        }
 
         return twimlResponse(response);
       }
@@ -2228,31 +2386,45 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      response.say(
-        voiceForLanguage(language),
-        language === "ht"
-          ? "Nou pa resevwa konfimasyon ou. Tanpri rele ankò lè ou pare."
-          : language === "es"
-          ? "No recibimos su confirmación. Por favor, vuelva a llamar cuando esté listo."
-          : language === "fr"
-          ? "Nous n'avons pas reçu votre confirmation. Veuillez rappeler lorsque vous serez prêt."
-          : "I did not receive your confirmation. Please call again when you are ready."
-      );
+      if (language === "ht") {
+        response.play(
+          haitianTtsUrl(
+            publicBaseUrl,
+            "Nou pa resevwa konfimasyon ou. Tanpri rele ankò lè ou pare."
+          )
+        );
+      } else {
+        response.say(
+          voiceForLanguage(language),
+          language === "es"
+            ? "No recibimos su confirmación. Por favor, vuelva a llamar cuando esté listo."
+            : language === "fr"
+            ? "Nous n'avons pas reçu votre confirmation. Veuillez rappeler lorsque vous serez prêt."
+            : "I did not receive your confirmation. Please call again when you are ready."
+        );
+      }
 
       return twimlResponse(response);
     }
 
     if (digits !== "1") {
-      response.say(
-        voiceForLanguage(language),
-        language === "ht"
-          ? "Idantite ou pa konfime. Pou pwoteje enfòmasyon ou, nou pa kapab bay detay sou apèl EPE-W ki asosye ak kont sa a."
-          : language === "es"
-          ? "Su identidad no fue confirmada. Para proteger su privacidad, no podemos proporcionar información sobre llamadas de EPEW asociadas con esta cuenta."
-          : language === "fr"
-          ? "Votre identité n'a pas été confirmée. Pour protéger votre vie privée, nous ne pouvons pas fournir d'informations sur les appels EPEW associés à ce compte."
-          : "Your identity was not confirmed. For your privacy, I cannot provide information about EPEW calls associated with this account."
-      );
+      if (language === "ht") {
+        response.play(
+          haitianTtsUrl(
+            publicBaseUrl,
+            "Idantite ou pa konfime. Pou pwoteje enfòmasyon ou, nou pa kapab bay detay sou apèl EPE W ki asosye ak kont sa a."
+          )
+        );
+      } else {
+        response.say(
+          voiceForLanguage(language),
+          language === "es"
+            ? "Su identidad no fue confirmada. Para proteger su privacidad, no podemos proporcionar información sobre llamadas de EPEW asociadas con esta cuenta."
+            : language === "fr"
+            ? "Votre identité n'a pas été confirmée. Pour protéger votre vie privée, nous ne pouvons pas fournir d'informations sur les appels EPEW associés à ce compte."
+            : "Your identity was not confirmed. For your privacy, I cannot provide information about EPEW calls associated with this account."
+        );
+      }
 
       return twimlResponse(response);
     }
