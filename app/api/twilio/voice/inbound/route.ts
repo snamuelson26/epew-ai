@@ -297,12 +297,8 @@ export async function POST(request: NextRequest) {
           "Welcome to E. P. E. W., Ekero Partners Empower Wealth. For English, press 1."
         );
 
-        gather.say(
-          {
-            voice: "Polly.Joanna",
-            language: "en-US",
-          },
-          "Pou Kreyòl Ayisyen, peze de."
+        gather.play(
+          `${publicBaseUrl}/audio/phone/ht-language-selection.mp3`
         );
 
         gather.say(
@@ -466,10 +462,16 @@ export async function POST(request: NextRequest) {
         actionOnEmptyResult: true,
       });
 
-      gather.say(
-        voiceForLanguage(language),
-        confirmationPrompt(language)
-      );
+      if (language === "ht") {
+        gather.play(
+          `${publicBaseUrl}/audio/phone/ht-account-confirmation.mp3`
+        );
+      } else {
+        gather.say(
+          voiceForLanguage(language),
+          confirmationPrompt(language)
+        );
+      }
 
       response.say(
         voiceForLanguage(language),
@@ -690,15 +692,21 @@ export async function POST(request: NextRequest) {
         length: 1,
       });
 
-      response.say(
-        {
-          voice: "Polly.Matthew",
-          language: "en-US",
-        },
-        coachName
-          ? `Please hold while I connect you to your EPEW Personal Coach, ${coachName}.`
-          : "Please hold while I connect you to your EPEW Personal Coach."
-      );
+      if (language === "ht") {
+        response.play(
+          `${publicBaseUrl}/audio/phone/ht-connecting-coach.mp3`
+        );
+      } else {
+        response.say(
+          {
+            voice: "Polly.Matthew",
+            language: "en-US",
+          },
+          coachName
+            ? `Please hold while I connect you to your EPEW Personal Coach, ${coachName}.`
+            : "Please hold while I connect you to your EPEW Personal Coach."
+        );
+      }
 
       response.pause({
         length: 4,
