@@ -5,6 +5,8 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { PhoneAvailabilitySchedulingService } from "@/lib/services/scheduling/PhoneAvailabilitySchedulingService";
+import { PhoneAppointmentBookingService } from "@/lib/services/scheduling/PhoneAppointmentBookingService";
 
 function requireEnvironment(name: string) {
   const value = process.env[name]?.trim();
@@ -1630,41 +1632,496 @@ export async function POST(request: NextRequest) {
         return twimlResponse(response);
       }
 
-      if (callSid) {
-        const { error: availabilityHistoryError } =
-          await supabaseAdmin
-            .from("epew_voice_calls")
-            .update({
-              metadata: {
-                provider: "twilio",
-                source: "epew_inbound_call_recovery",
-                scheduling_requested: true,
-                spoken_availability: spokenAvailability,
-                preferred_language: language,
-              },
-            })
-            .eq("twilio_call_sid", callSid);
+      if (!application?.id) {
+        response.say(
+          voiceForLanguage(language),
+          language === "ht"
+            ? "Mwen pa kapab konfime kont antreprenè ou pou pran randevou a kounye a."
+            : language === "es"
+            ? "No puedo confirmar su cuenta de emprendedor para programar la cita en este momento."
+            : language === "fr"
+            ? "Je ne peux pas confirmer votre compte entrepreneur pour fixer le rendez-vous pour le moment."
+            : "I cannot confirm your entrepreneur account for scheduling right now."
+        );
 
-        if (availabilityHistoryError) {
-          console.error(
-            "Unable to record caller scheduling availability:",
-            availabilityHistoryError
+        return twimlResponse(response);
+      }
+
+      try {
+        const schedulingResult =
+          await PhoneAvailabilitySchedulingService.submitAvailability({
+            applicationId: application.id,
+            spokenAvailability,
+            language,
+            callSid,
+          });
+
+        if (!schedulingResult.success) {
+          const retryGather = response.gather({
+            input: ["speech"],
+            action:
+              `${publicBaseUrl}/api/twilio/voice/inbound?step=schedule_availability&lang=${language}`,
+            method: "POST",
+            timeout: 8,
+            speechTimeout: "auto",
+            actionOnEmptyResult: true,
+          });
+
+          retryGather.say(
+            voiceForLanguage(language),
+            schedulingResult.message
           );
+
+          return twimlResponse(response);
+        }
+
+        if (
+          schedulingResult.status === "scheduling_review" ||
+          schedulingResult.choices.length === 0
+        ) {
+          response.say(
+            voiceForLanguage(language),
+            language === "ht"
+              ? "Mèsi. Mwen resevwa disponiblite ou. Mwen pa jwenn yon lè ki konfime touswit ak Konseye Pèsonèl ou. Epew ap revize orè a pou jwenn yon lè ki konpatib pou ou."
+              : language === "es"
+              ? "Gracias. He recibido su disponibilidad. No encontré de inmediato una hora confirmada con su Coach Personal. EPEW revisará el horario para encontrar una opción compatible."
+              : language === "fr"
+              ? "Merci. J'ai reçu vos disponibilités. Je n'ai pas trouvé immédiatement un horaire confirmé avec votre Coach Personnel. EPEW va revoir le calendrier afin de trouver une option compatible."
+              : "Thank you. I received your availability. I did not find an immediately confirmed time with your Personal Coach. EPEW will review the schedule to find a compatible appointment."
+          );
+
+          return twimlResponse(response);
+        }
+
+        const choices = schedulingResult.choices.slice(0, 2);
+
+        if (callSid) {
+          const { data: existingVoiceCall } =
+            await supabaseAdmin
+              .from("epew_voice_calls")
+              .select("metadata")
+              .eq("twilio_call_sid", callSid)
+              .maybeSingle();
+
+          const existingMetadata =
+            existingVoiceCall?.metadata &&
+            typeof existingVoiceCall.metadata === "object"
+              ? existingVoiceCall.metadata
+              : {};
+
+          const { error: availabilityHistoryError } =
+            await supabaseAdmin
+              .from("epew_voice_calls")
+              .update({
+                metadata: {
+                  ...existingMetadata,
+                  provider: "twilio",
+                  source: "epew_inbound_call_recovery",
+                  scheduling_requested: true,
+                  spoken_availability: spokenAvailability,
+                  preferred_language: language,
+                  availability_id: schedulingResult.availabilityId,
+                  scheduling_choices: choices,
+                },
+              })
+              .eq("twilio_call_sid", callSid);
+
+          if (availabilityHistoryError) {
+            console.error(
+              "Unable to record caller scheduling choices:",
+              availabilityHistoryError
+            );
+          }
+        }
+
+        const formatChoice = (iso: string) => {
+          const date = new Date(iso);
+
+          const dateText = new Intl.DateTimeFormat(
+            language === "fr"
+              ? "fr-FR"
+              : language === "es"
+              ? "es-US"
+              : language === "ht"
+              ? "fr-HT"
+              : "en-US",
+            {
+              timeZone: "America/New_York",
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+            }
+          ).format(date);
+
+          const timeText = new Intl.DateTimeFormat(
+            language === "fr"
+              ? "fr-FR"
+              : language === "es"
+              ? "es-US"
+              : language === "ht"
+              ? "fr-HT"
+              : "en-US",
+            {
+              timeZone: "America/New_York",
+              hour: "numeric",
+              minute: "2-digit",
+            }
+          ).format(date);
+
+          return `${dateText}, ${timeText}`;
+        };
+
+        const choiceOne = formatChoice(
+          choices[0].proposedStartAt
+        );
+
+        const choiceTwo =
+          choices.length > 1
+            ? formatChoice(
+                choices[1].proposedStartAt
+              )
+            : null;
+
+        const choiceGather = response.gather({
+          input: ["dtmf"],
+          action:
+            `${publicBaseUrl}/api/twilio/voice/inbound?step=schedule_choice&lang=${language}`,
+          method: "POST",
+          numDigits: 1,
+          timeout: 12,
+          actionOnEmptyResult: true,
+        });
+
+        if (language === "ht") {
+          choiceGather.say(
+            voiceForLanguage(language),
+            choiceTwo
+              ? `Mwen jwenn de lè ki disponib. Opsyon nimewo 1 se ${choiceOne}. Opsyon nimewo 2 se ${choiceTwo}. Pou chwazi premye lè a, peze nimewo 1. Pou chwazi dezyèm lè a, peze nimewo 2.`
+              : `Mwen jwenn yon lè ki disponib. Lè a se ${choiceOne}. Pou chwazi lè sa a, peze nimewo 1.`
+          );
+        } else if (language === "es") {
+          choiceGather.say(
+            voiceForLanguage(language),
+            choiceTwo
+              ? `Encontré dos horarios disponibles. La opción 1 es ${choiceOne}. La opción 2 es ${choiceTwo}. Presione 1 para elegir la primera opción o 2 para elegir la segunda.`
+              : `Encontré un horario disponible. Es ${choiceOne}. Presione 1 para elegirlo.`
+          );
+        } else if (language === "fr") {
+          choiceGather.say(
+            voiceForLanguage(language),
+            choiceTwo
+              ? `J'ai trouvé deux horaires disponibles. L'option 1 est ${choiceOne}. L'option 2 est ${choiceTwo}. Appuyez sur 1 pour choisir la première option ou sur 2 pour choisir la deuxième.`
+              : `J'ai trouvé un horaire disponible. Il s'agit de ${choiceOne}. Appuyez sur 1 pour le choisir.`
+          );
+        } else {
+          choiceGather.say(
+            voiceForLanguage(language),
+            choiceTwo
+              ? `I found two available appointment times. Option 1 is ${choiceOne}. Option 2 is ${choiceTwo}. Press 1 for the first option or 2 for the second option.`
+              : `I found one available appointment time. It is ${choiceOne}. Press 1 to choose it.`
+          );
+        }
+
+        return twimlResponse(response);
+      } catch (schedulingError) {
+        console.error(
+          "Phone scheduling availability error:",
+          schedulingError
+        );
+
+        response.say(
+          voiceForLanguage(language),
+          language === "ht"
+            ? "Mwen pa kapab fini rechèch randevou a kounye a. Epew ap konsève demann ou an pou nou ka ede w."
+            : language === "es"
+            ? "No puedo completar la búsqueda de su cita en este momento. EPEW conservará su solicitud para poder ayudarle."
+            : language === "fr"
+            ? "Je ne peux pas terminer la recherche de votre rendez-vous pour le moment. EPEW conservera votre demande afin de pouvoir vous aider."
+            : "I cannot complete the appointment search right now. EPEW will keep your request so we can assist you."
+        );
+
+        return twimlResponse(response);
+      }
+    }
+
+    if (step === "schedule_choice") {
+      const selectedIndex =
+        digits === "1"
+          ? 0
+          : digits === "2"
+          ? 1
+          : -1;
+
+      if (!application?.id) {
+        response.say(
+          voiceForLanguage(language),
+          language === "ht"
+            ? "Mwen pa kapab konfime kont ou pou pran randevou a."
+            : language === "es"
+            ? "No puedo confirmar su cuenta para programar la cita."
+            : language === "fr"
+            ? "Je ne peux pas confirmer votre compte pour fixer le rendez-vous."
+            : "I cannot confirm your account for scheduling."
+        );
+
+        return twimlResponse(response);
+      }
+
+      const { data: voiceCallRecord } =
+        callSid
+          ? await supabaseAdmin
+              .from("epew_voice_calls")
+              .select("metadata")
+              .eq("twilio_call_sid", callSid)
+              .maybeSingle()
+          : { data: null };
+
+      const metadata =
+        voiceCallRecord?.metadata &&
+        typeof voiceCallRecord.metadata === "object"
+          ? voiceCallRecord.metadata
+          : {};
+
+      let schedulingChoices =
+        Array.isArray(
+          (metadata as Record<string, unknown>)
+            .scheduling_choices
+        )
+          ? (
+              (metadata as Record<string, unknown>)
+                .scheduling_choices as Array<{
+                  id?: string;
+                  proposedStartAt?: string;
+                }>
+            )
+          : [];
+
+      /*
+       * epew_private_schedule_matches is authoritative.
+       *
+       * Voice-call metadata is useful for continuity, but scheduling must
+       * still work if that metadata row was delayed, missing, or incomplete.
+       */
+      if (schedulingChoices.length === 0) {
+        const {
+          data: latestAvailability,
+          error: latestAvailabilityError,
+        } = await supabaseAdmin
+          .from("epew_participant_availability")
+          .select("id")
+          .eq("application_id", application.id)
+          .eq(
+            "meeting_type",
+            "entrepreneur_first_meeting"
+          )
+          .eq("status", "matched")
+          .order("created_at", {
+            ascending: false,
+          })
+          .limit(1)
+          .maybeSingle();
+
+        if (latestAvailabilityError) {
+          console.error(
+            "Unable to recover phone scheduling availability:",
+            latestAvailabilityError
+          );
+        }
+
+        if (latestAvailability?.id) {
+          const {
+            data: recoveredChoices,
+            error: recoveredChoicesError,
+          } = await supabaseAdmin
+            .from("epew_private_schedule_matches")
+            .select(
+              "id, proposed_start_at"
+            )
+            .eq(
+              "availability_id",
+              latestAvailability.id
+            )
+            .eq(
+              "application_id",
+              application.id
+            )
+            .eq("status", "available")
+            .eq(
+              "exposed_to_participant",
+              true
+            )
+            .order("proposed_start_at", {
+              ascending: true,
+            })
+            .limit(2);
+
+          if (recoveredChoicesError) {
+            console.error(
+              "Unable to recover phone scheduling choices:",
+              recoveredChoicesError
+            );
+          } else {
+            schedulingChoices =
+              (recoveredChoices ?? []).map(
+                (choice) => ({
+                  id: choice.id,
+                  proposedStartAt:
+                    choice.proposed_start_at,
+                })
+              );
+          }
         }
       }
 
-      response.say(
-        voiceForLanguage(language),
-        language === "ht"
-          ? "Mèsi. Mwen resevwa disponiblite ou. Mwen pral tcheke orè EPE-W la pou m jwenn de lè ki disponib pou ou."
-          : language === "es"
-          ? "Gracias. He recibido su disponibilidad. Voy a revisar el horario de EPEW para encontrar dos opciones disponibles para usted."
-          : language === "fr"
-          ? "Merci. J'ai reçu vos disponibilités. Je vais vérifier le calendrier EPEW afin de trouver deux options disponibles pour vous."
-          : "Thank you. I received your availability. I am going to check the EPEW schedule for two available choices."
-      );
+      if (
+        selectedIndex < 0 ||
+        !schedulingChoices[selectedIndex]?.id
+      ) {
+        const retryGather = response.gather({
+          input: ["dtmf"],
+          action:
+            `${publicBaseUrl}/api/twilio/voice/inbound?step=schedule_choice&lang=${language}`,
+          method: "POST",
+          numDigits: 1,
+          timeout: 10,
+          actionOnEmptyResult: true,
+        });
 
-      return twimlResponse(response);
+        retryGather.say(
+          voiceForLanguage(language),
+          language === "ht"
+            ? schedulingChoices.length > 1
+              ? "Tanpri peze nimewo 1 pou premye lè a, oswa nimewo 2 pou dezyèm lè a."
+              : "Tanpri peze nimewo 1 pou chwazi lè ki disponib la."
+            : language === "es"
+            ? schedulingChoices.length > 1
+              ? "Presione 1 para la primera opción o 2 para la segunda."
+              : "Presione 1 para elegir el horario disponible."
+            : language === "fr"
+            ? schedulingChoices.length > 1
+              ? "Appuyez sur 1 pour la première option ou sur 2 pour la deuxième."
+              : "Appuyez sur 1 pour choisir l'horaire disponible."
+            : schedulingChoices.length > 1
+            ? "Press 1 for the first appointment or 2 for the second appointment."
+            : "Press 1 to choose the available appointment."
+        );
+
+        return twimlResponse(response);
+      }
+
+      try {
+        const bookingResult =
+          await PhoneAppointmentBookingService.bookMatch({
+            applicationId: application.id,
+            matchId:
+              schedulingChoices[selectedIndex].id!,
+            callSid,
+            language,
+          });
+
+        const appointmentDate =
+          new Date(bookingResult.scheduledAt);
+
+        const dateLocale =
+          language === "fr"
+            ? "fr-FR"
+            : language === "es"
+            ? "es-US"
+            : language === "ht"
+            ? "fr-HT"
+            : "en-US";
+
+        const dateText =
+          new Intl.DateTimeFormat(
+            dateLocale,
+            {
+              timeZone:
+                "America/New_York",
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+            }
+          ).format(appointmentDate);
+
+        const timeText =
+          new Intl.DateTimeFormat(
+            dateLocale,
+            {
+              timeZone:
+                "America/New_York",
+              hour: "numeric",
+              minute: "2-digit",
+              timeZoneName: "short",
+            }
+          ).format(appointmentDate);
+
+        response.say(
+          voiceForLanguage(language),
+          language === "ht"
+            ? `Randevou ou konfime pou ${dateText}, a ${timeText}. Reyinyon an ap fèt pa telefòn ak Konseye Pèsonèl Epew ou.`
+            : language === "es"
+            ? `Su cita está confirmada para ${dateText} a las ${timeText}. La reunión será por teléfono con su Coach Personal de EPEW.`
+            : language === "fr"
+            ? `Votre rendez-vous est confirmé pour ${dateText} à ${timeText}. La réunion aura lieu par téléphone avec votre Coach Personnel EPEW.`
+            : `Your appointment is confirmed for ${dateText} at ${timeText}. The meeting will be by phone with your EPEW Personal Coach.`
+        );
+
+        const memberMenuGather =
+          response.gather({
+            input: ["dtmf"],
+            action:
+              `${publicBaseUrl}/api/twilio/voice/inbound?step=member_assistance&lang=${language}`,
+            method: "POST",
+            numDigits: 1,
+            timeout: 12,
+            actionOnEmptyResult: true,
+          });
+
+        if (language === "ht") {
+          memberMenuGather.play(
+            `${publicBaseUrl}/audio/phone/ht-member-assistance-menu.mp3`
+          );
+        } else {
+          memberMenuGather.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "¿Cómo más podemos ayudarle? Para información general sobre EPEW, presione 1. Para emprendedores, presione 2. Para partidarios, presione 3. Para socios, presione 4. Para vendedores, presione 5."
+              : language === "fr"
+              ? "Comment pouvons-nous encore vous aider ? Pour des informations générales sur EPEW, appuyez sur 1. Pour devenir entrepreneur, appuyez sur 2. Pour devenir supporter, appuyez sur 3. Pour devenir partenaire, appuyez sur 4. Pour devenir vendeur, appuyez sur 5."
+              : "How else can we help you? For general information about EPEW, press 1. To become an Entrepreneur, press 2. To become a Supporter, press 3. To become an EPEW Partner, press 4. To become an EPEW Vendor, press 5."
+          );
+        }
+
+        return twimlResponse(response);
+      } catch (bookingError) {
+        console.error(
+          "Phone appointment booking error:",
+          bookingError
+        );
+
+        const retryGather = response.gather({
+          input: ["speech"],
+          action:
+            `${publicBaseUrl}/api/twilio/voice/inbound?step=schedule_availability&lang=${language}`,
+          method: "POST",
+          timeout: 8,
+          speechTimeout: "auto",
+          actionOnEmptyResult: true,
+        });
+
+        retryGather.say(
+          voiceForLanguage(language),
+          language === "ht"
+            ? "Lè ou te chwazi a pa disponib ankò. Tanpri di m yon lòt jou ak lè ou disponib."
+            : language === "es"
+            ? "El horario que eligió ya no está disponible. Dígame otro día y horario en que esté disponible."
+            : language === "fr"
+            ? "L'horaire que vous avez choisi n'est plus disponible. Dites-moi un autre jour et une autre plage horaire."
+            : "The appointment you selected is no longer available. Please tell me another day and time when you are available."
+        );
+
+        return twimlResponse(response);
+      }
     }
 
     if (step === "schedule_offer") {
