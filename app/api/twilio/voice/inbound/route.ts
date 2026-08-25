@@ -126,6 +126,54 @@ function confirmationPrompt(
   }
 }
 
+function scheduleOfferPrompt(
+  language: SupportedLanguage
+) {
+  switch (language) {
+    case "es":
+      return "Nos alegra mucho que haya llamado a EPEW. Si necesita hablar con su Coach Personal, puede programar una cita desde su portal. Si desea, también puedo ayudarle a programar la cita ahora. ¿Desea que programe la cita por usted ahora? Para sí, oprima el número 1. Para no y terminar la llamada, oprima el número 2.";
+
+    case "fr":
+      return "Nous sommes très heureux que vous ayez appelé EPEW. Si vous avez besoin de parler avec votre Coach Personnel, vous pouvez prendre rendez-vous dans votre portail. Si vous le souhaitez, je peux aussi vous aider à prendre le rendez-vous maintenant. Voulez-vous que je prenne le rendez-vous pour vous maintenant ? Pour oui, appuyez sur le numéro 1. Pour non et terminer l'appel, appuyez sur le numéro 2.";
+
+    default:
+      return "We are very glad you called EPEW. If you need to speak with your Personal Coach, you can schedule an appointment through your portal. If you would like, I can also help schedule the appointment for you now. Would you like me to schedule the appointment for you now? For yes, press number 1. For no and to end the call, press number 2.";
+  }
+}
+
+function schedulingStartedPrompt(
+  language: SupportedLanguage
+) {
+  switch (language) {
+    case "ht":
+      return "Trè byen. Mwen pral ede w jwenn yon randevou ki bon pou ou.";
+
+    case "es":
+      return "Muy bien. Le ayudaré a encontrar una cita que funcione para usted.";
+
+    case "fr":
+      return "Très bien. Je vais vous aider à trouver un rendez-vous qui vous convient.";
+
+    default:
+      return "Very well. I will help you find an appointment that works for you.";
+  }
+}
+
+function goodbyePrompt(
+  language: SupportedLanguage
+) {
+  switch (language) {
+    case "es":
+      return "Gracias por llamar a EPEW. Estaremos encantados de ayudarle cuando nos necesite. Que tenga un buen día.";
+
+    case "fr":
+      return "Merci d'avoir appelé EPEW. Nous serons heureux de vous aider lorsque vous en aurez besoin. Bonne journée.";
+
+    default:
+      return "Thank you for calling EPEW. We will be happy to help whenever you need us. Have a wonderful day.";
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const {
@@ -451,6 +499,64 @@ export async function POST(request: NextRequest) {
       return twimlResponse(response);
     }
 
+    if (step === "schedule_offer") {
+      if (digits === "2") {
+        if (language === "ht") {
+          response.play(
+            `${publicBaseUrl}/audio/phone/ht-goodbye.mp3`
+          );
+        } else {
+          response.say(
+            voiceForLanguage(language),
+            goodbyePrompt(language)
+          );
+        }
+
+        return twimlResponse(response);
+      }
+
+      if (digits === "1") {
+        /*
+         * Phase 1:
+         * The caller accepted telephone scheduling.
+         *
+         * The next implementation step will connect this
+         * branch to the shared EMCC availability engine,
+         * collect availability, return two real choices,
+         * and schedule the selected appointment.
+         */
+        response.say(
+          voiceForLanguage(language),
+          schedulingStartedPrompt(language)
+        );
+
+        return twimlResponse(response);
+      }
+
+      const gather = response.gather({
+        input: ["dtmf"],
+        action:
+          `${publicBaseUrl}/api/twilio/voice/inbound?step=schedule_offer&lang=${language}`,
+        method: "POST",
+        numDigits: 1,
+        timeout: 10,
+        actionOnEmptyResult: true,
+      });
+
+      if (language === "ht") {
+        gather.play(
+          `${publicBaseUrl}/audio/phone/ht-no-meeting-schedule-offer.mp3`
+        );
+      } else {
+        gather.say(
+          voiceForLanguage(language),
+          scheduleOfferPrompt(language)
+        );
+      }
+
+      return twimlResponse(response);
+    }
+
     if (!digits) {
       const gather = response.gather({
         input: ["dtmf"],
@@ -547,13 +653,26 @@ export async function POST(request: NextRequest) {
     }
 
     if (!recentMeeting) {
-      response.say(
-        {
-          voice: "Polly.Matthew",
-          language: "en-US",
-        },
-        "Thank you. Your account has been confirmed. I could not find a recent EPEW phone call associated with this account."
-      );
+      const gather = response.gather({
+        input: ["dtmf"],
+        action:
+          `${publicBaseUrl}/api/twilio/voice/inbound?step=schedule_offer&lang=${language}`,
+        method: "POST",
+        numDigits: 1,
+        timeout: 10,
+        actionOnEmptyResult: true,
+      });
+
+      if (language === "ht") {
+        gather.play(
+          `${publicBaseUrl}/audio/phone/ht-no-meeting-schedule-offer.mp3`
+        );
+      } else {
+        gather.say(
+          voiceForLanguage(language),
+          scheduleOfferPrompt(language)
+        );
+      }
 
       return twimlResponse(response);
     }
@@ -648,22 +767,18 @@ export async function POST(request: NextRequest) {
       recentMeeting.meeting_type
     );
 
-    if (coachName) {
-      response.say(
-        {
-          voice: "Polly.Matthew",
-          language: "en-US",
-        },
-        `Thank you. I found the recent call. Your EPEW Personal Coach, ${coachName}, was trying to reach you regarding ${purpose}.`
-      );
-    } else {
-      response.say(
-        {
-          voice: "Polly.Matthew",
-          language: "en-US",
-        },
-        `Thank you. I found the recent call. An EPEW representative was trying to reach you regarding ${purpose}.`
-      );
+    if (language !== "ht") {
+      if (coachName) {
+        response.say(
+          voiceForLanguage(language),
+          `Thank you. I found the recent call. Your EPEW Personal Coach, ${coachName}, was trying to reach you regarding ${purpose}.`
+        );
+      } else {
+        response.say(
+          voiceForLanguage(language),
+          `Thank you. I found the recent call. An EPEW representative was trying to reach you regarding ${purpose}.`
+        );
+      }
     }
 
     const meetingStatus = String(
@@ -728,21 +843,26 @@ export async function POST(request: NextRequest) {
       length: 1,
     });
 
-    response.say(
-      {
-        voice: "Polly.Matthew",
-        language: "en-US",
-      },
-      "That call is no longer available for automatic reconnection."
-    );
+    const scheduleGather = response.gather({
+      input: ["dtmf"],
+      action:
+        `${publicBaseUrl}/api/twilio/voice/inbound?step=schedule_offer&lang=${language}`,
+      method: "POST",
+      numDigits: 1,
+      timeout: 10,
+      actionOnEmptyResult: true,
+    });
 
-    response.say(
-      {
-        voice: "Polly.Matthew",
-        language: "en-US",
-      },
-      "EPEW will need to arrange another connection with the person who contacted you."
-    );
+    if (language === "ht") {
+      scheduleGather.play(
+        `${publicBaseUrl}/audio/phone/ht-no-meeting-schedule-offer.mp3`
+      );
+    } else {
+      scheduleGather.say(
+        voiceForLanguage(language),
+        scheduleOfferPrompt(language)
+      );
+    }
 
     return twimlResponse(response);
   } catch (error) {
