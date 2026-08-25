@@ -34,6 +34,19 @@ function normalizePhone(value: string) {
   return value.replace(/[^\d+]/g, "").trim();
 }
 
+function normalizeSpokenEmail(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/\s+at\s+/g, "@")
+    .replace(/\s+dot\s+/g, ".")
+    .replace(/\s+period\s+/g, ".")
+    .replace(/\s+underscore\s+/g, "_")
+    .replace(/\s+dash\s+/g, "-")
+    .replace(/\s+hyphen\s+/g, "-")
+    .replace(/\s+/g, "");
+}
+
 function meetingLabel(meetingType: string | null) {
   const type = String(meetingType ?? "")
     .trim()
@@ -476,25 +489,1113 @@ export async function POST(request: NextRequest) {
     }
 
     if (!application) {
-      response.say(
-        {
-          voice: "Polly.Matthew",
-          language: "en-US",
-        },
-        "Thank you for calling EPEW. I am the EPEW Call Recovery Assistant. I could not automatically match this phone number to an EPEW account."
-      );
+      /*
+       * ========================================================
+       * NEW / PROSPECTIVE CALLER
+       * ========================================================
+       *
+       * A caller whose telephone number does not match an
+       * existing EPEW entrepreneur account enters the public
+       * prospect intake workflow instead of being disconnected.
+       *
+       * The same Twilio Call SID is used to recover the prospect
+       * record through subsequent Gather callbacks.
+       */
 
-      response.pause({
-        length: 1,
-      });
+      let prospect:
+        | {
+            id: string;
+            full_name: string | null;
+            caller_id_phone: string | null;
+            confirmed_phone: string | null;
+            email: string | null;
+            name_verified: boolean;
+            phone_verified: boolean;
+            email_verified: boolean;
+          }
+        | null = null;
 
-      response.say(
-        {
-          voice: "Polly.Matthew",
-          language: "en-US",
-        },
-        "For your privacy, I cannot provide information about recent EPEW calls until your identity is verified. Please call again from the phone number registered with your EPEW account or contact EPEW support."
-      );
+      if (callSid) {
+        const {
+          data: existingProspect,
+          error: existingProspectError,
+        } = await supabaseAdmin
+          .from("epew_prospects")
+          .select(`
+            id,
+            full_name,
+            caller_id_phone,
+            confirmed_phone,
+            email,
+            name_verified,
+            phone_verified,
+            email_verified
+          `)
+          .eq("latest_call_sid", callSid)
+          .order("created_at", {
+            ascending: false,
+          })
+          .limit(1)
+          .maybeSingle();
+
+        if (existingProspectError) {
+          throw existingProspectError;
+        }
+
+        prospect = existingProspect;
+      }
+
+      /*
+       * Create one prospect record for this inbound call.
+       */
+      if (!prospect) {
+        const {
+          data: createdProspect,
+          error: createProspectError,
+        } = await supabaseAdmin
+          .from("epew_prospects")
+          .insert({
+            caller_id_phone:
+              callerPhone || null,
+            preferred_language:
+              language,
+            source_channel:
+              "phone",
+            source_detail:
+              "inbound_epew_call",
+            prospect_status:
+              "collecting_contact_information",
+            first_call_sid:
+              callSid || null,
+            latest_call_sid:
+              callSid || null,
+            first_contact_at:
+              callNow,
+            last_contact_at:
+              callNow,
+            metadata: {
+              provider: "twilio",
+              source:
+                "epew_inbound_phone",
+            },
+          })
+          .select(`
+            id,
+            full_name,
+            caller_id_phone,
+            confirmed_phone,
+            email,
+            name_verified,
+            phone_verified,
+            email_verified
+          `)
+          .single();
+
+        if (createProspectError) {
+          throw createProspectError;
+        }
+
+        prospect = createdProspect;
+      }
+
+      /*
+       * STEP: Caller speaks their full name.
+       */
+      if (step === "prospect_name") {
+        const spokenName = String(
+          params.SpeechResult ?? ""
+        ).trim();
+
+        if (!spokenName) {
+          const nameRetry =
+            response.gather({
+              input: ["speech"],
+              action:
+                `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_name&lang=${language}`,
+              method: "POST",
+              timeout: 8,
+              speechTimeout: "auto",
+              actionOnEmptyResult: true,
+            });
+
+          nameRetry.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "No pude escuchar su nombre. Por favor, diga su nombre y apellido."
+              : language === "fr"
+              ? "Je n'ai pas entendu votre nom. Veuillez dire votre prénom et votre nom de famille."
+              : language === "ht"
+              ? "Mwen pa tande non ou. Tanpri di non ak siyati ou."
+              : "I did not hear your name. Please say your first and last name."
+          );
+
+          return twimlResponse(response);
+        }
+
+        const {
+          error: nameUpdateError,
+        } = await supabaseAdmin
+          .from("epew_prospects")
+          .update({
+            full_name:
+              spokenName,
+            name_verified:
+              false,
+            prospect_status:
+              "verification_pending",
+            last_contact_at:
+              callNow,
+            updated_at:
+              callNow,
+          })
+          .eq("id", prospect.id);
+
+        if (nameUpdateError) {
+          throw nameUpdateError;
+        }
+
+        const nameConfirmation =
+          response.gather({
+            input: ["dtmf"],
+            action:
+              `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_name_confirm&lang=${language}`,
+            method: "POST",
+            numDigits: 1,
+            timeout: 10,
+            actionOnEmptyResult: true,
+          });
+
+        nameConfirmation.say(
+          voiceForLanguage(language),
+          language === "es"
+            ? `Escuché ${spokenName}. Si el nombre es correcto, oprima el número 1. Para decir su nombre nuevamente, oprima el número 2.`
+            : language === "fr"
+            ? `J'ai entendu ${spokenName}. Si le nom est correct, appuyez sur le numéro 1. Pour répéter votre nom, appuyez sur le numéro 2.`
+            : language === "ht"
+            ? `Mwen tande ${spokenName}. Si non an kòrèk, peze nimewo 1. Pou di non ou ankò, peze nimewo 2.`
+            : `I heard ${spokenName}. If that name is correct, press number 1. To say your name again, press number 2.`
+        );
+
+        return twimlResponse(response);
+      }
+
+      /*
+       * STEP: Caller confirms or rejects recognized name.
+       */
+      if (step === "prospect_name_confirm") {
+        if (digits === "2") {
+          response.redirect(
+            {
+              method: "POST",
+            },
+            `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_name&lang=${language}`
+          );
+
+          return twimlResponse(response);
+        }
+
+        if (digits === "1") {
+          const {
+            error: verifiedNameError,
+          } = await supabaseAdmin
+            .from("epew_prospects")
+            .update({
+              name_verified:
+                true,
+              prospect_status:
+                "collecting_contact_information",
+              last_contact_at:
+                callNow,
+              updated_at:
+                callNow,
+            })
+            .eq("id", prospect.id);
+
+          if (verifiedNameError) {
+            throw verifiedNameError;
+          }
+
+          const phoneConfirmation =
+            response.gather({
+              input: ["dtmf"],
+              action:
+                `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_phone_confirm&lang=${language}`,
+              method: "POST",
+              numDigits: 1,
+              timeout: 10,
+              actionOnEmptyResult: true,
+            });
+
+          phoneConfirmation.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "Gracias. Su nombre ha sido confirmado. ¿Desea utilizar el número de teléfono desde el cual está llamando como su número de contacto de EPEW? Para sí, oprima el número 1. Para proporcionar otro número, oprima el número 2."
+              : language === "fr"
+              ? "Merci. Votre nom est confirmé. Voulez-vous utiliser le numéro depuis lequel vous appelez comme numéro de contact EPEW ? Pour oui, appuyez sur le numéro 1. Pour fournir un autre numéro, appuyez sur le numéro 2."
+              : language === "ht"
+              ? "Mèsi. Nou konfime non ou. Èske ou vle itilize nimewo telefòn ou rele ak li a kòm nimewo kontak EPEW ou? Pou wi, peze nimewo 1. Pou bay yon lòt nimewo, peze nimewo 2."
+              : "Thank you. Your name has been confirmed. Would you like to use the phone number you are calling from as your EPEW contact number? For yes, press number 1. To provide a different number, press number 2."
+          );
+
+          return twimlResponse(response);
+        }
+
+        response.redirect(
+          {
+            method: "POST",
+          },
+          `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_name_confirm&lang=${language}`
+        );
+
+        return twimlResponse(response);
+      }
+
+      /*
+       * STEP: Confirm or replace the caller-ID phone number.
+       */
+      if (step === "prospect_phone_confirm") {
+        if (digits === "1") {
+          const {
+            error: phoneConfirmError,
+          } = await supabaseAdmin
+            .from("epew_prospects")
+            .update({
+              confirmed_phone:
+                callerPhone,
+              phone_verified:
+                true,
+              prospect_status:
+                "collecting_contact_information",
+              last_contact_at:
+                callNow,
+              updated_at:
+                callNow,
+            })
+            .eq("id", prospect.id);
+
+          if (phoneConfirmError) {
+            throw phoneConfirmError;
+          }
+
+          const emailGather =
+            response.gather({
+              input: ["speech"],
+              action:
+                `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_email&lang=${language}`,
+              method: "POST",
+              timeout: 10,
+              speechTimeout: "auto",
+              actionOnEmptyResult: true,
+            });
+
+          emailGather.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "Gracias. Ahora, por favor diga su dirección de correo electrónico lentamente."
+              : language === "fr"
+              ? "Merci. Maintenant, veuillez dire lentement votre adresse électronique."
+              : language === "ht"
+              ? "Mèsi. Kounye a, tanpri di adrès imel ou dousman."
+              : "Thank you. Now please say your email address slowly."
+          );
+
+          return twimlResponse(response);
+        }
+
+        if (digits === "2") {
+          const phoneGather =
+            response.gather({
+              input: ["speech"],
+              action:
+                `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_phone_other&lang=${language}`,
+              method: "POST",
+              timeout: 10,
+              speechTimeout: "auto",
+              actionOnEmptyResult: true,
+            });
+
+          phoneGather.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "Por favor diga el número de teléfono que desea utilizar como su número de contacto de EPEW."
+              : language === "fr"
+              ? "Veuillez dire le numéro de téléphone que vous souhaitez utiliser comme numéro de contact EPEW."
+              : language === "ht"
+              ? "Tanpri di nimewo telefòn ou vle itilize kòm nimewo kontak EPEW ou."
+              : "Please say the phone number you would like to use as your EPEW contact number."
+          );
+
+          return twimlResponse(response);
+        }
+
+        response.redirect(
+          {
+            method: "POST",
+          },
+          `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_name_confirm&lang=${language}`
+        );
+
+        return twimlResponse(response);
+      }
+
+      /*
+       * STEP: Capture a different contact phone number.
+       */
+      if (step === "prospect_phone_other") {
+        const spokenPhone = String(
+          params.SpeechResult ?? ""
+        ).trim();
+
+        if (!spokenPhone) {
+          response.redirect(
+            {
+              method: "POST",
+            },
+            `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_phone_confirm&lang=${language}`
+          );
+
+          return twimlResponse(response);
+        }
+
+        const normalizedSpokenPhone =
+          spokenPhone.replace(/\D/g, "");
+
+        if (normalizedSpokenPhone.length < 10) {
+          const retryPhoneGather =
+            response.gather({
+              input: ["speech"],
+              action:
+                `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_phone_other&lang=${language}`,
+              method: "POST",
+              timeout: 10,
+              speechTimeout: "auto",
+              actionOnEmptyResult: true,
+            });
+
+          retryPhoneGather.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "No pude confirmar ese número. Por favor diga el número de teléfono completo, incluyendo el código de área."
+              : language === "fr"
+              ? "Je n'ai pas pu confirmer ce numéro. Veuillez dire le numéro complet, y compris l'indicatif régional."
+              : language === "ht"
+              ? "Mwen pa t ka konfime nimewo sa a. Tanpri di nimewo telefòn konplè a, ansanm ak kòd zòn nan."
+              : "I could not confirm that number. Please say the complete phone number, including the area code."
+          );
+
+          return twimlResponse(response);
+        }
+
+        const {
+          error: alternatePhoneError,
+        } = await supabaseAdmin
+          .from("epew_prospects")
+          .update({
+            confirmed_phone:
+              normalizedSpokenPhone,
+            phone_verified:
+              false,
+            prospect_status:
+              "verification_pending",
+            last_contact_at:
+              callNow,
+            updated_at:
+              callNow,
+          })
+          .eq("id", prospect.id);
+
+        if (alternatePhoneError) {
+          throw alternatePhoneError;
+        }
+
+        const phoneVerifyGather =
+          response.gather({
+            input: ["dtmf"],
+            action:
+              `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_phone_other_confirm&lang=${language}`,
+            method: "POST",
+            numDigits: 1,
+            timeout: 10,
+            actionOnEmptyResult: true,
+          });
+
+        const spokenDigits =
+          normalizedSpokenPhone
+            .split("")
+            .join(" ");
+
+        phoneVerifyGather.say(
+          voiceForLanguage(language),
+          language === "es"
+            ? `Escuché ${spokenDigits}. Si ese número es correcto, oprima el número 1. Para decirlo nuevamente, oprima el número 2.`
+            : language === "fr"
+            ? `J'ai entendu ${spokenDigits}. Si ce numéro est correct, appuyez sur le numéro 1. Pour le répéter, appuyez sur le numéro 2.`
+            : language === "ht"
+            ? `Mwen tande ${spokenDigits}. Si nimewo sa a kòrèk, peze nimewo 1. Pou di li ankò, peze nimewo 2.`
+            : `I heard ${spokenDigits}. If that number is correct, press number 1. To say it again, press number 2.`
+        );
+
+        return twimlResponse(response);
+      }
+
+      /*
+       * STEP: Verify the alternate phone number.
+       */
+      if (step === "prospect_phone_other_confirm") {
+        if (digits === "2") {
+          response.redirect(
+            {
+              method: "POST",
+            },
+            `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_phone_other&lang=${language}`
+          );
+
+          return twimlResponse(response);
+        }
+
+        if (digits === "1") {
+          const {
+            error: verifyPhoneError,
+          } = await supabaseAdmin
+            .from("epew_prospects")
+            .update({
+              phone_verified:
+                true,
+              prospect_status:
+                "collecting_contact_information",
+              last_contact_at:
+                callNow,
+              updated_at:
+                callNow,
+            })
+            .eq("id", prospect.id);
+
+          if (verifyPhoneError) {
+            throw verifyPhoneError;
+          }
+
+          const emailGather =
+            response.gather({
+              input: ["speech"],
+              action:
+                `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_email&lang=${language}`,
+              method: "POST",
+              timeout: 10,
+              speechTimeout: "auto",
+              actionOnEmptyResult: true,
+            });
+
+          emailGather.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "Gracias. Ahora, por favor diga su dirección de correo electrónico lentamente."
+              : language === "fr"
+              ? "Merci. Maintenant, veuillez dire lentement votre adresse électronique."
+              : language === "ht"
+              ? "Mèsi. Kounye a, tanpri di adrès imel ou dousman."
+              : "Thank you. Now please say your email address slowly."
+          );
+
+          return twimlResponse(response);
+        }
+
+        response.redirect(
+          {
+            method: "POST",
+          },
+          `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_phone_other_confirm&lang=${language}`
+        );
+
+        return twimlResponse(response);
+      }
+
+      /*
+       * STEP: Capture the caller's email address.
+       */
+      if (step === "prospect_email") {
+        const spokenEmail = String(
+          params.SpeechResult ?? ""
+        ).trim();
+
+        const normalizedEmail =
+          normalizeSpokenEmail(spokenEmail);
+
+        const looksLikeEmail =
+          /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(
+            normalizedEmail
+          );
+
+        if (!spokenEmail || !looksLikeEmail) {
+          const retryEmailGather =
+            response.gather({
+              input: ["speech"],
+              action:
+                `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_email&lang=${language}`,
+              method: "POST",
+              timeout: 12,
+              speechTimeout: "auto",
+              actionOnEmptyResult: true,
+            });
+
+          retryEmailGather.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "No pude confirmar esa dirección de correo electrónico. Por favor, dígala lentamente. Por ejemplo, nombre arroba gmail punto com."
+              : language === "fr"
+              ? "Je n'ai pas pu confirmer cette adresse électronique. Veuillez la dire lentement. Par exemple, nom arobase gmail point com."
+              : language === "ht"
+              ? "Mwen pa t ka konfime adrès imel sa a. Tanpri di li dousman. Pa egzanp, non, at, gmail, dot com."
+              : "I could not confirm that email address. Please say it slowly. For example, name at gmail dot com."
+          );
+
+          return twimlResponse(response);
+        }
+
+        const {
+          error: emailUpdateError,
+        } = await supabaseAdmin
+          .from("epew_prospects")
+          .update({
+            email:
+              normalizedEmail,
+            email_verified:
+              false,
+            prospect_status:
+              "verification_pending",
+            last_contact_at:
+              callNow,
+            updated_at:
+              callNow,
+          })
+          .eq("id", prospect.id);
+
+        if (emailUpdateError) {
+          throw emailUpdateError;
+        }
+
+        const emailVerifyGather =
+          response.gather({
+            input: ["dtmf"],
+            action:
+              `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_email_confirm&lang=${language}`,
+            method: "POST",
+            numDigits: 1,
+            timeout: 10,
+            actionOnEmptyResult: true,
+          });
+
+        const emailForSpeech =
+          normalizedEmail
+            .replace("@", " at ")
+            .replace(/\./g, " dot ")
+            .replace(/_/g, " underscore ")
+            .replace(/-/g, " dash ");
+
+        emailVerifyGather.say(
+          voiceForLanguage(language),
+          language === "es"
+            ? `Escuché ${emailForSpeech}. Si esa dirección de correo electrónico es correcta, oprima el número 1. Para decirla nuevamente, oprima el número 2.`
+            : language === "fr"
+            ? `J'ai entendu ${emailForSpeech}. Si cette adresse électronique est correcte, appuyez sur le numéro 1. Pour la répéter, appuyez sur le numéro 2.`
+            : language === "ht"
+            ? `Mwen tande ${emailForSpeech}. Si adrès imel sa a kòrèk, peze nimewo 1. Pou di li ankò, peze nimewo 2.`
+            : `I heard ${emailForSpeech}. If that email address is correct, press number 1. To say it again, press number 2.`
+        );
+
+        return twimlResponse(response);
+      }
+
+      /*
+       * STEP: Verify the caller's email address.
+       */
+      if (step === "prospect_email_confirm") {
+        if (digits === "2") {
+          response.redirect(
+            {
+              method: "POST",
+            },
+            `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_email&lang=${language}`
+          );
+
+          return twimlResponse(response);
+        }
+
+        if (digits === "1") {
+          const {
+            error: emailVerifyError,
+          } = await supabaseAdmin
+            .from("epew_prospects")
+            .update({
+              email_verified:
+                true,
+              contact_information_verified:
+                true,
+              prospect_status:
+                "verified",
+              last_contact_at:
+                callNow,
+              updated_at:
+                callNow,
+            })
+            .eq("id", prospect.id);
+
+          if (emailVerifyError) {
+            throw emailVerifyError;
+          }
+
+          const consentGather =
+            response.gather({
+              input: ["dtmf"],
+              action:
+                `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_consent&lang=${language}`,
+              method: "POST",
+              numDigits: 1,
+              timeout: 10,
+              actionOnEmptyResult: true,
+            });
+
+          consentGather.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "Gracias. Su información de contacto ha sido confirmada. ¿Autoriza a EPEW a contactarle en el futuro con información sobre programas, oportunidades y servicios de EPEW? Para sí, oprima el número 1. Para no, oprima el número 2."
+              : language === "fr"
+              ? "Merci. Vos coordonnées ont été confirmées. Autorisez-vous EPEW à vous contacter à l'avenir au sujet des programmes, opportunités et services EPEW ? Pour oui, appuyez sur le numéro 1. Pour non, appuyez sur le numéro 2."
+              : language === "ht"
+              ? "Mèsi. Nou konfime enfòmasyon kontak ou. Èske ou bay EPEW pèmisyon pou kontakte w alavni konsènan pwogram, opòtinite ak sèvis EPEW? Pou wi, peze nimewo 1. Pou non, peze nimewo 2."
+              : "Thank you. Your contact information has been confirmed. Do you give EPEW permission to contact you in the future about EPEW programs, opportunities, and services? For yes, press number 1. For no, press number 2."
+          );
+
+          return twimlResponse(response);
+        }
+
+        response.redirect(
+          {
+            method: "POST",
+          },
+          `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_email_confirm&lang=${language}`
+        );
+
+        return twimlResponse(response);
+      }
+
+      /*
+       * STEP: Capture the caller's email address.
+       */
+      if (step === "prospect_email") {
+        const spokenEmail = String(
+          params.SpeechResult ?? ""
+        ).trim();
+
+        const normalizedEmail =
+          normalizeSpokenEmail(spokenEmail);
+
+        const looksLikeEmail =
+          /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(
+            normalizedEmail
+          );
+
+        if (!spokenEmail || !looksLikeEmail) {
+          const retryEmailGather =
+            response.gather({
+              input: ["speech"],
+              action:
+                `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_email&lang=${language}`,
+              method: "POST",
+              timeout: 12,
+              speechTimeout: "auto",
+              actionOnEmptyResult: true,
+            });
+
+          retryEmailGather.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "No pude confirmar esa dirección de correo electrónico. Por favor, dígala lentamente. Por ejemplo, nombre arroba gmail punto com."
+              : language === "fr"
+              ? "Je n'ai pas pu confirmer cette adresse électronique. Veuillez la dire lentement. Par exemple, nom arobase gmail point com."
+              : language === "ht"
+              ? "Mwen pa t ka konfime adrès imel sa a. Tanpri di li dousman. Pa egzanp, non, at, gmail, dot com."
+              : "I could not confirm that email address. Please say it slowly. For example, name at gmail dot com."
+          );
+
+          return twimlResponse(response);
+        }
+
+        const {
+          error: emailUpdateError,
+        } = await supabaseAdmin
+          .from("epew_prospects")
+          .update({
+            email:
+              normalizedEmail,
+            email_verified:
+              false,
+            prospect_status:
+              "verification_pending",
+            last_contact_at:
+              callNow,
+            updated_at:
+              callNow,
+          })
+          .eq("id", prospect.id);
+
+        if (emailUpdateError) {
+          throw emailUpdateError;
+        }
+
+        const emailVerifyGather =
+          response.gather({
+            input: ["dtmf"],
+            action:
+              `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_email_confirm&lang=${language}`,
+            method: "POST",
+            numDigits: 1,
+            timeout: 10,
+            actionOnEmptyResult: true,
+          });
+
+        const emailForSpeech =
+          normalizedEmail
+            .replace("@", " at ")
+            .replace(/\./g, " dot ")
+            .replace(/_/g, " underscore ")
+            .replace(/-/g, " dash ");
+
+        emailVerifyGather.say(
+          voiceForLanguage(language),
+          language === "es"
+            ? `Escuché ${emailForSpeech}. Si esa dirección de correo electrónico es correcta, oprima el número 1. Para decirla nuevamente, oprima el número 2.`
+            : language === "fr"
+            ? `J'ai entendu ${emailForSpeech}. Si cette adresse électronique est correcte, appuyez sur le numéro 1. Pour la répéter, appuyez sur le numéro 2.`
+            : language === "ht"
+            ? `Mwen tande ${emailForSpeech}. Si adrès imel sa a kòrèk, peze nimewo 1. Pou di li ankò, peze nimewo 2.`
+            : `I heard ${emailForSpeech}. If that email address is correct, press number 1. To say it again, press number 2.`
+        );
+
+        return twimlResponse(response);
+      }
+
+      /*
+       * STEP: Verify the caller's email address.
+       */
+      if (step === "prospect_email_confirm") {
+        if (digits === "2") {
+          response.redirect(
+            {
+              method: "POST",
+            },
+            `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_email&lang=${language}`
+          );
+
+          return twimlResponse(response);
+        }
+
+        if (digits === "1") {
+          const {
+            error: emailVerifyError,
+          } = await supabaseAdmin
+            .from("epew_prospects")
+            .update({
+              email_verified:
+                true,
+              contact_information_verified:
+                true,
+              prospect_status:
+                "verified",
+              last_contact_at:
+                callNow,
+              updated_at:
+                callNow,
+            })
+            .eq("id", prospect.id);
+
+          if (emailVerifyError) {
+            throw emailVerifyError;
+          }
+
+          const consentGather =
+            response.gather({
+              input: ["dtmf"],
+              action:
+                `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_consent&lang=${language}`,
+              method: "POST",
+              numDigits: 1,
+              timeout: 10,
+              actionOnEmptyResult: true,
+            });
+
+          consentGather.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "Gracias. Su información de contacto ha sido confirmada. ¿Autoriza a EPEW a contactarle en el futuro con información sobre programas, oportunidades y servicios de EPEW? Para sí, oprima el número 1. Para no, oprima el número 2."
+              : language === "fr"
+              ? "Merci. Vos coordonnées ont été confirmées. Autorisez-vous EPEW à vous contacter à l'avenir au sujet des programmes, opportunités et services EPEW ? Pour oui, appuyez sur le numéro 1. Pour non, appuyez sur le numéro 2."
+              : language === "ht"
+              ? "Mèsi. Nou konfime enfòmasyon kontak ou. Èske ou bay EPEW pèmisyon pou kontakte w alavni konsènan pwogram, opòtinite ak sèvis EPEW? Pou wi, peze nimewo 1. Pou non, peze nimewo 2."
+              : "Thank you. Your contact information has been confirmed. Do you give EPEW permission to contact you in the future about EPEW programs, opportunities, and services? For yes, press number 1. For no, press number 2."
+          );
+
+          return twimlResponse(response);
+        }
+
+        response.redirect(
+          {
+            method: "POST",
+          },
+          `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_email_confirm&lang=${language}`
+        );
+
+        return twimlResponse(response);
+      }
+
+      /*
+       * STEP: Record future-contact consent.
+       */
+      if (step === "prospect_consent") {
+        if (digits !== "1" && digits !== "2") {
+          const consentRetry =
+            response.gather({
+              input: ["dtmf"],
+              action:
+                `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_consent&lang=${language}`,
+              method: "POST",
+              numDigits: 1,
+              timeout: 10,
+              actionOnEmptyResult: true,
+            });
+
+          consentRetry.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "Para autorizar a EPEW a contactarle en el futuro, oprima el número 1. Para no autorizar futuros contactos, oprima el número 2."
+              : language === "fr"
+              ? "Pour autoriser EPEW à vous contacter à l'avenir, appuyez sur le numéro 1. Pour ne pas autoriser de futurs contacts, appuyez sur le numéro 2."
+              : language === "ht"
+              ? "Pou bay EPEW pèmisyon pou kontakte w alavni, peze nimewo 1. Pou pa bay pèmisyon pou kontak alavni, peze nimewo 2."
+              : "To give EPEW permission to contact you in the future, press number 1. To decline future contact, press number 2."
+          );
+
+          return twimlResponse(response);
+        }
+
+        const consentGranted =
+          digits === "1";
+
+        const {
+          error: consentUpdateError,
+        } = await supabaseAdmin
+          .from("epew_prospects")
+          .update({
+            outreach_consent:
+              consentGranted,
+            outreach_consent_at:
+              callNow,
+            outreach_consent_channel:
+              "phone",
+            outreach_consent_source:
+              "inbound_voice_confirmation",
+            prospect_status:
+              "verified",
+            last_contact_at:
+              callNow,
+            updated_at:
+              callNow,
+          })
+          .eq("id", prospect.id);
+
+        if (consentUpdateError) {
+          throw consentUpdateError;
+        }
+
+        const interestGather =
+          response.gather({
+            input: ["dtmf"],
+            action:
+              `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_interest&lang=${language}`,
+            method: "POST",
+            numDigits: 1,
+            timeout: 12,
+            actionOnEmptyResult: true,
+          });
+
+        interestGather.say(
+          voiceForLanguage(language),
+          language === "es"
+            ? "Gracias. Ahora dígame cómo podemos ayudarle. Para información general sobre EPEW, oprima 1. Para convertirse en Emprendedor, oprima 2. Para convertirse en Supporter, oprima 3. Para asociarse con EPEW como Partner, oprima 4. Para convertirse en Vendor, oprima 5."
+            : language === "fr"
+            ? "Merci. Dites-nous maintenant comment nous pouvons vous aider. Pour des informations générales sur EPEW, appuyez sur 1. Pour devenir Entrepreneur, appuyez sur 2. Pour devenir Supporter, appuyez sur 3. Pour devenir Partner avec EPEW, appuyez sur 4. Pour devenir Vendor, appuyez sur 5."
+            : language === "ht"
+            ? "Mèsi. Kounye a, di nou kijan nou ka ede w. Pou enfòmasyon jeneral sou EPEW, peze nimewo 1. Pou vin yon Antreprenè, peze nimewo 2. Pou vin yon Sipòtè, peze nimewo 3. Pou vin yon Patnè EPEW, peze nimewo 4. Pou vin yon Vandè EPEW, peze nimewo 5."
+            : "Thank you. Now tell us how we can help you. For general information about EPEW, press 1. To become an Entrepreneur, press 2. To become a Supporter, press 3. To partner with EPEW, press 4. To become a Vendor, press 5."
+        );
+
+        return twimlResponse(response);
+      }
+
+      /*
+       * STEP: Save the caller's first public EPEW interest.
+       */
+      if (step === "prospect_interest") {
+        const interestByDigit: Record<
+          string,
+          | "general_epew"
+          | "entrepreneur"
+          | "supporter"
+          | "partner"
+          | "vendor"
+        > = {
+          "1": "general_epew",
+          "2": "entrepreneur",
+          "3": "supporter",
+          "4": "partner",
+          "5": "vendor",
+        };
+
+        const selectedInterest =
+          interestByDigit[digits];
+
+        if (!selectedInterest) {
+          const interestRetry =
+            response.gather({
+              input: ["dtmf"],
+              action:
+                `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_interest&lang=${language}`,
+              method: "POST",
+              numDigits: 1,
+              timeout: 12,
+              actionOnEmptyResult: true,
+            });
+
+          interestRetry.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "No recibí una selección válida. Oprima 1 para EPEW, 2 para Emprendedor, 3 para Supporter, 4 para Partner, o 5 para Vendor."
+              : language === "fr"
+              ? "Je n'ai pas reçu de sélection valide. Appuyez sur 1 pour EPEW, 2 pour Entrepreneur, 3 pour Supporter, 4 pour Partner, ou 5 pour Vendor."
+              : language === "ht"
+              ? "Mwen pa resevwa yon chwa ki valab. Peze nimewo 1 pou EPEW, 2 pou Antreprenè, 3 pou Sipòtè, 4 pou Patnè, oswa 5 pou Vandè."
+              : "I did not receive a valid selection. Press 1 for EPEW, 2 for Entrepreneur, 3 for Supporter, 4 for Partner, or 5 for Vendor."
+          );
+
+          return twimlResponse(response);
+        }
+
+        const {
+          data: currentProspect,
+          error: currentProspectError,
+        } = await supabaseAdmin
+          .from("epew_prospects")
+          .select(`
+            interests,
+            primary_interest
+          `)
+          .eq("id", prospect.id)
+          .single();
+
+        if (currentProspectError) {
+          throw currentProspectError;
+        }
+
+        const currentInterests =
+          Array.isArray(
+            currentProspect.interests
+          )
+            ? currentProspect.interests
+            : [];
+
+        const updatedInterests =
+          Array.from(
+            new Set([
+              ...currentInterests,
+              selectedInterest,
+            ])
+          );
+
+        const {
+          error: interestUpdateError,
+        } = await supabaseAdmin
+          .from("epew_prospects")
+          .update({
+            interests:
+              updatedInterests,
+            primary_interest:
+              currentProspect.primary_interest ??
+              selectedInterest,
+            prospect_status:
+              "engaged",
+            follow_up_required:
+              true,
+            last_contact_at:
+              callNow,
+            updated_at:
+              callNow,
+          })
+          .eq("id", prospect.id);
+
+        if (interestUpdateError) {
+          throw interestUpdateError;
+        }
+
+        response.say(
+          voiceForLanguage(language),
+          language === "es"
+            ? "Gracias. Hemos registrado su interés. Un representante o sistema autorizado de EPEW podrá continuar ayudándole según la información que usted solicitó."
+            : language === "fr"
+            ? "Merci. Nous avons enregistré votre intérêt. Un représentant ou système autorisé d'EPEW pourra continuer à vous aider selon les informations que vous avez demandées."
+            : language === "ht"
+            ? "Mèsi. Nou anrejistre enterè ou. Yon reprezantan oswa yon sistèm EPEW ki otorize kapab kontinye ede w selon enfòmasyon ou mande a."
+            : "Thank you. We have recorded your interest. An authorized EPEW representative or system can continue assisting you based on the information you requested."
+        );
+
+        response.pause({
+          length: 1,
+        });
+
+        response.say(
+          voiceForLanguage(language),
+          language === "es"
+            ? "Gracias por llamar a EPEW."
+            : language === "fr"
+            ? "Merci d'avoir appelé EPEW."
+            : language === "ht"
+            ? "Mèsi paske ou rele EPEW."
+            : "Thank you for calling EPEW."
+        );
+
+        return twimlResponse(response);
+      }
+
+      /*
+       * Initial entry into the new-caller workflow.
+       */
+      const nameGather =
+        response.gather({
+          input: ["speech"],
+          action:
+            `${publicBaseUrl}/api/twilio/voice/inbound?step=prospect_name&lang=${language}`,
+          method: "POST",
+          timeout: 8,
+          speechTimeout: "auto",
+          actionOnEmptyResult: true,
+        });
+
+      if (language === "en") {
+        nameGather.say(
+          {
+            voice: "Polly.Matthew",
+            language: "en-US",
+          },
+          "Welcome to EPEW. Ekero Partners Empower Wealth. I could not find an EPEW account associated with the phone number you are calling from. To better assist you now and in the future, please provide your name, phone number, and email address. Thank you. Please begin by saying your first and last name."
+        );
+      } else {
+        nameGather.say(
+          voiceForLanguage(language),
+          language === "es"
+            ? "Bienvenido a EPEW, Ekero Partners Empower Wealth. No pude encontrar una cuenta de EPEW asociada con el número de teléfono desde el cual está llamando. Para poder ayudarle mejor ahora y en el futuro, le pediré su nombre, número de teléfono y correo electrónico. Gracias. Comience diciendo su nombre y apellido."
+            : language === "fr"
+            ? "Bienvenue chez EPEW, Ekero Partners Empower Wealth. Je n'ai trouvé aucun compte EPEW associé au numéro de téléphone depuis lequel vous appelez. Afin de mieux vous aider maintenant et à l'avenir, je vais vous demander votre nom, votre numéro de téléphone et votre adresse électronique. Merci. Commencez par dire votre prénom et votre nom de famille."
+            : "Byenveni nan EPEW, Ekero Partners Empower Wealth. Mwen pa jwenn yon kont EPEW ki asosye ak nimewo telefòn ou rele ak li a. Pou nou ka ede w pi byen kounye a ak nan lavni, tanpri ban nou non ou, nimewo telefòn ou, ak adrès imel ou. Mèsi. Kòmanse pa di non ak siyati ou."
+        );
+      }
 
       return twimlResponse(response);
     }
