@@ -499,6 +499,73 @@ export async function POST(request: NextRequest) {
       return twimlResponse(response);
     }
 
+    if (step === "schedule_availability") {
+      const spokenAvailability = String(
+        params.SpeechResult ?? ""
+      ).trim();
+
+      if (!spokenAvailability) {
+        const retryGather = response.gather({
+          input: ["speech"],
+          action:
+            `${publicBaseUrl}/api/twilio/voice/inbound?step=schedule_availability&lang=${language}`,
+          method: "POST",
+          timeout: 8,
+          speechTimeout: "auto",
+          actionOnEmptyResult: true,
+        });
+
+        retryGather.say(
+          voiceForLanguage(language),
+          language === "ht"
+            ? "Mwen pa tande disponiblite ou. Tanpri di m ki jou ak ki lè ou disponib."
+            : language === "es"
+            ? "No pude escuchar su disponibilidad. Por favor, dígame qué día y a qué hora está disponible."
+            : language === "fr"
+            ? "Je n'ai pas entendu vos disponibilités. Dites-moi quel jour et à quelle heure vous êtes disponible."
+            : "I did not hear your availability. Please tell me what day and time you are available."
+        );
+
+        return twimlResponse(response);
+      }
+
+      if (callSid) {
+        const { error: availabilityHistoryError } =
+          await supabaseAdmin
+            .from("epew_voice_calls")
+            .update({
+              metadata: {
+                provider: "twilio",
+                source: "epew_inbound_call_recovery",
+                scheduling_requested: true,
+                spoken_availability: spokenAvailability,
+                preferred_language: language,
+              },
+            })
+            .eq("twilio_call_sid", callSid);
+
+        if (availabilityHistoryError) {
+          console.error(
+            "Unable to record caller scheduling availability:",
+            availabilityHistoryError
+          );
+        }
+      }
+
+      response.say(
+        voiceForLanguage(language),
+        language === "ht"
+          ? "Mèsi. Mwen resevwa disponiblite ou. Mwen pral tcheke orè EPEW la pou m jwenn de lè ki disponib pou ou."
+          : language === "es"
+          ? "Gracias. He recibido su disponibilidad. Voy a revisar el horario de EPEW para encontrar dos opciones disponibles para usted."
+          : language === "fr"
+          ? "Merci. J'ai reçu vos disponibilités. Je vais vérifier le calendrier EPEW afin de trouver deux options disponibles pour vous."
+          : "Thank you. I received your availability. I am going to check the EPEW schedule for two available choices."
+      );
+
+      return twimlResponse(response);
+    }
+
     if (step === "schedule_offer") {
       if (digits === "2") {
         if (language === "ht") {
@@ -516,18 +583,25 @@ export async function POST(request: NextRequest) {
       }
 
       if (digits === "1") {
-        /*
-         * Phase 1:
-         * The caller accepted telephone scheduling.
-         *
-         * The next implementation step will connect this
-         * branch to the shared EMCC availability engine,
-         * collect availability, return two real choices,
-         * and schedule the selected appointment.
-         */
-        response.say(
+        const availabilityGather = response.gather({
+          input: ["speech"],
+          action:
+            `${publicBaseUrl}/api/twilio/voice/inbound?step=schedule_availability&lang=${language}`,
+          method: "POST",
+          timeout: 8,
+          speechTimeout: "auto",
+          actionOnEmptyResult: true,
+        });
+
+        availabilityGather.say(
           voiceForLanguage(language),
-          schedulingStartedPrompt(language)
+          language === "ht"
+            ? "Trè byen. Mwen pral ede w jwenn yon randevou ki bon pou ou. Tanpri di m ki jou ak ki lè ou disponib pou pale ak Konseye Pèsonèl ou."
+            : language === "es"
+            ? "Muy bien. Le ayudaré a encontrar una cita que funcione para usted. Por favor, dígame qué día y a qué hora está disponible para hablar con su Coach Personal."
+            : language === "fr"
+            ? "Très bien. Je vais vous aider à trouver un rendez-vous qui vous convient. Dites-moi quel jour et à quelle heure vous êtes disponible pour parler avec votre Coach Personnel."
+            : "Very well. I will help you find an appointment that works for you. Please tell me what day and time you are available to speak with your Personal Coach."
         );
 
         return twimlResponse(response);
