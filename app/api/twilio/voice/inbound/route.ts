@@ -126,7 +126,7 @@ function confirmationPrompt(
 ) {
   switch (language) {
     case "ht":
-      return "Mwen jwenn yon kont EPEW ki asosye ak nimewo telefòn ou rele la a. Pou konfime kont lan, e pou m ka jwenn kiyès ki te kontakte w, tanpri peze en.";
+      return "Mwen jwenn yon kont EPE-W ki asosye ak nimewo telefòn ou rele ya. Pou konfime kont lan, e pou m ka jwenn kiyès ki te kontakte w, tanpri peze en.";
 
     case "es":
       return "Encontramos una cuenta de EPEW asociada con este número de teléfono. Para confirmar que usted es el titular de la cuenta y permitirnos verificar quién lo contactó recientemente, oprima 1.";
@@ -733,7 +733,7 @@ export async function POST(request: NextRequest) {
               : language === "fr"
               ? "Merci. Votre nom est confirmé. Voulez-vous utiliser le numéro depuis lequel vous appelez comme numéro de contact EPEW ? Pour oui, appuyez sur le numéro 1. Pour fournir un autre numéro, appuyez sur le numéro 2."
               : language === "ht"
-              ? "Mèsi. Nou konfime non ou. Èske ou vle itilize nimewo telefòn ou rele ak li a kòm nimewo kontak EPEW ou? Pou wi, peze nimewo 1. Pou bay yon lòt nimewo, peze nimewo 2."
+              ? "Mèsi. Nou konfime non ou. Èske ou vle itilize nimewo telefòn ou rele ak li a kòm nimewo kontak EPE-W ou? Pou wi, peze nimewo 1. Pou bay yon lòt nimewo, peze nimewo 2."
               : "Thank you. Your name has been confirmed. Would you like to use the phone number you are calling from as your EPEW contact number? For yes, press number 1. To provide a different number, press number 2."
           );
 
@@ -821,7 +821,7 @@ export async function POST(request: NextRequest) {
               : language === "fr"
               ? "Veuillez dire le numéro de téléphone que vous souhaitez utiliser comme numéro de contact EPEW."
               : language === "ht"
-              ? "Tanpri di nimewo telefòn ou vle itilize kòm nimewo kontak EPEW ou."
+              ? "Tanpri di nimewo telefòn ou vle itilize kòm nimewo kontak EPE-W ou."
               : "Please say the phone number you would like to use as your EPEW contact number."
           );
 
@@ -1161,7 +1161,7 @@ export async function POST(request: NextRequest) {
               : language === "fr"
               ? "Merci. Vos coordonnées ont été confirmées. Autorisez-vous EPEW à vous contacter à l'avenir au sujet des programmes, opportunités et services EPEW ? Pour oui, appuyez sur le numéro 1. Pour non, appuyez sur le numéro 2."
               : language === "ht"
-              ? "Mèsi. Nou konfime enfòmasyon kontak ou. Èske ou bay EPEW pèmisyon pou kontakte w alavni konsènan pwogram, opòtinite ak sèvis EPEW? Pou wi, peze nimewo 1. Pou non, peze nimewo 2."
+              ? "Mèsi. Nou konfime enfòmasyon kontak ou. Èske ou bay EPE-W pèmisyon pou kontakte w alavni konsènan pwogram, opòtinite ak sèvis EPEW? Pou wi, peze nimewo 1. Pou non, peze nimewo 2."
               : "Thank you. Your contact information has been confirmed. Do you give EPEW permission to contact you in the future about EPEW programs, opportunities, and services? For yes, press number 1. For no, press number 2."
           );
 
@@ -1330,7 +1330,7 @@ export async function POST(request: NextRequest) {
               : language === "fr"
               ? "Merci. Vos coordonnées ont été confirmées. Autorisez-vous EPEW à vous contacter à l'avenir au sujet des programmes, opportunités et services EPEW ? Pour oui, appuyez sur le numéro 1. Pour non, appuyez sur le numéro 2."
               : language === "ht"
-              ? "Mèsi. Nou konfime enfòmasyon kontak ou. Èske ou bay EPEW pèmisyon pou kontakte w alavni konsènan pwogram, opòtinite ak sèvis EPEW? Pou wi, peze nimewo 1. Pou non, peze nimewo 2."
+              ? "Mèsi. Nou konfime enfòmasyon kontak ou. Èske ou bay EPE-W pèmisyon pou kontakte w alavni konsènan pwogram, opòtinite ak sèvis EPEW? Pou wi, peze nimewo 1. Pou non, peze nimewo 2."
               : "Thank you. Your contact information has been confirmed. Do you give EPEW permission to contact you in the future about EPEW programs, opportunities, and services? For yes, press number 1. For no, press number 2."
           );
 
@@ -1370,7 +1370,7 @@ export async function POST(request: NextRequest) {
               : language === "fr"
               ? "Pour autoriser EPEW à vous contacter à l'avenir, appuyez sur le numéro 1. Pour ne pas autoriser de futurs contacts, appuyez sur le numéro 2."
               : language === "ht"
-              ? "Pou bay EPEW pèmisyon pou kontakte w alavni, peze nimewo 1. Pou pa bay pèmisyon pou kontak alavni, peze nimewo 2."
+              ? "Pou bay EPE-W pèmisyon pou kontakte w alavni, peze nimewo 1. Pou pa bay pèmisyon pou kontak alavni, peze nimewo 2."
               : "To give EPEW permission to contact you in the future, press number 1. To decline future contact, press number 2."
           );
 
@@ -1424,7 +1424,7 @@ export async function POST(request: NextRequest) {
             : language === "fr"
             ? "Merci. Dites-nous maintenant comment nous pouvons vous aider. Pour des informations générales sur EPEW, appuyez sur 1. Pour devenir Entrepreneur, appuyez sur 2. Pour devenir Supporter, appuyez sur 3. Pour devenir Partner avec EPEW, appuyez sur 4. Pour devenir Vendor, appuyez sur 5."
             : language === "ht"
-            ? "Mèsi. Kounye a, di nou kijan nou ka ede w. Pou enfòmasyon jeneral sou EPEW, peze nimewo 1. Pou vin yon Antreprenè, peze nimewo 2. Pou vin yon Sipòtè, peze nimewo 3. Pou vin yon Patnè EPEW, peze nimewo 4. Pou vin yon Vandè EPEW, peze nimewo 5."
+            ? "Mèsi. Kounye a, di nou kijan nou ka ede w. Pou enfòmasyon jeneral sou EPE-W, peze nimewo 1. Pou vin yon Antreprenè, peze nimewo 2. Pou vin yon Sipòtè, peze nimewo 3. Pou vin yon Patnè EPE-W, peze nimewo 4. Pou vin yon Vandè EPEW, peze nimewo 5."
             : "Thank you. Now tell us how we can help you. For general information about EPEW, press 1. To become an Entrepreneur, press 2. To become a Supporter, press 3. To partner with EPEW, press 4. To become a Vendor, press 5."
         );
 
@@ -1542,7 +1542,7 @@ export async function POST(request: NextRequest) {
             : language === "fr"
             ? "Merci. Nous avons enregistré votre intérêt. Un représentant ou système autorisé d'EPEW pourra continuer à vous aider selon les informations que vous avez demandées."
             : language === "ht"
-            ? "Mèsi. Nou anrejistre enterè ou. Yon reprezantan oswa yon sistèm EPEW ki otorize kapab kontinye ede w selon enfòmasyon ou mande a."
+            ? "Mèsi. Nou anrejistre enterè ou. Yon reprezantan oswa yon sistèm EPE-W ki otorize kapab kontinye ede w selon enfòmasyon ou mande a."
             : "Thank you. We have recorded your interest. An authorized EPEW representative or system can continue assisting you based on the information you requested."
         );
 
@@ -1557,7 +1557,7 @@ export async function POST(request: NextRequest) {
             : language === "fr"
             ? "Merci d'avoir appelé EPEW."
             : language === "ht"
-            ? "Mèsi paske ou rele EPEW."
+            ? "Mèsi paske ou rele EPE-W."
             : "Thank you for calling EPEW."
         );
 
@@ -1593,7 +1593,7 @@ export async function POST(request: NextRequest) {
             ? "Bienvenido a EPEW, Ekero Partners Empower Wealth. No pude encontrar una cuenta de EPEW asociada con el número de teléfono desde el cual está llamando. Para poder ayudarle mejor ahora y en el futuro, le pediré su nombre, número de teléfono y correo electrónico. Gracias. Comience diciendo su nombre y apellido."
             : language === "fr"
             ? "Bienvenue chez EPEW, Ekero Partners Empower Wealth. Je n'ai trouvé aucun compte EPEW associé au numéro de téléphone depuis lequel vous appelez. Afin de mieux vous aider maintenant et à l'avenir, je vais vous demander votre nom, votre numéro de téléphone et votre adresse électronique. Merci. Commencez par dire votre prénom et votre nom de famille."
-            : "Byenveni nan EPEW, Ekero Partners Empower Wealth. Mwen pa jwenn yon kont EPEW ki asosye ak nimewo telefòn ou rele ak li a. Pou nou ka ede w pi byen kounye a ak nan lavni, tanpri ban nou non ou, nimewo telefòn ou, ak adrès imel ou. Mèsi. Kòmanse pa di non ak siyati ou."
+            : "Byenveni nan EPE-W — Ekero Partners Empower Wealth. Mwen pa jwenn yon kont EPEW ki asosye ak nimewo telefòn ou rele ak li a. Pou nou ka ede w pi byen kounye a ak nan lavni, tanpri ban nou non ou, nimewo telefòn ou, ak adrès imel ou. Mèsi. Kòmanse pa di non ak siyati ou."
         );
       }
 
@@ -1656,7 +1656,7 @@ export async function POST(request: NextRequest) {
       response.say(
         voiceForLanguage(language),
         language === "ht"
-          ? "Mèsi. Mwen resevwa disponiblite ou. Mwen pral tcheke orè EPEW la pou m jwenn de lè ki disponib pou ou."
+          ? "Mèsi. Mwen resevwa disponiblite ou. Mwen pral tcheke orè EPE-W la pou m jwenn de lè ki disponib pou ou."
           : language === "es"
           ? "Gracias. He recibido su disponibilidad. Voy a revisar el horario de EPEW para encontrar dos opciones disponibles para usted."
           : language === "fr"
@@ -1670,15 +1670,28 @@ export async function POST(request: NextRequest) {
     if (step === "schedule_offer") {
       if (digits === "2") {
         if (language === "ht") {
-          response.play(
-            `${publicBaseUrl}/audio/phone/ht-goodbye.mp3`
+          const memberMenuGather =
+            response.gather({
+              input: ["dtmf"],
+              action:
+                `${publicBaseUrl}/api/twilio/voice/inbound?step=member_assistance&lang=${language}`,
+              method: "POST",
+              numDigits: 1,
+              timeout: 12,
+              actionOnEmptyResult: true,
+            });
+
+          memberMenuGather.play(
+            `${publicBaseUrl}/audio/phone/ht-member-assistance-menu.mp3`
           );
-        } else {
-          response.say(
-            voiceForLanguage(language),
-            goodbyePrompt(language)
-          );
+
+          return twimlResponse(response);
         }
+
+        response.say(
+          voiceForLanguage(language),
+          goodbyePrompt(language)
+        );
 
         return twimlResponse(response);
       }
@@ -1694,16 +1707,20 @@ export async function POST(request: NextRequest) {
           actionOnEmptyResult: true,
         });
 
-        availabilityGather.say(
-          voiceForLanguage(language),
-          language === "ht"
-            ? "Trè byen. Mwen pral ede w jwenn yon randevou ki bon pou ou. Tanpri di m ki jou ak ki lè ou disponib pou pale ak Konseye Pèsonèl ou."
-            : language === "es"
-            ? "Muy bien. Le ayudaré a encontrar una cita que funcione para usted. Por favor, dígame qué día y a qué hora está disponible para hablar con su Coach Personal."
-            : language === "fr"
-            ? "Très bien. Je vais vous aider à trouver un rendez-vous qui vous convient. Dites-moi quel jour et à quelle heure vous êtes disponible pour parler avec votre Coach Personnel."
-            : "Very well. I will help you find an appointment that works for you. Please tell me what day and time you are available to speak with your Personal Coach."
-        );
+        if (language === "ht") {
+          availabilityGather.play(
+            `${publicBaseUrl}/audio/phone/ht-schedule-availability.mp3`
+          );
+        } else {
+          availabilityGather.say(
+            voiceForLanguage(language),
+            language === "es"
+              ? "Muy bien. Le ayudaré a encontrar una cita que funcione para usted. Por favor, dígame qué día y a qué hora está disponible para hablar con su Coach Personal."
+              : language === "fr"
+              ? "Très bien. Je vais vous aider à trouver un rendez-vous qui vous convient. Dites-moi quel jour et à quelle heure vous êtes disponible pour parler avec votre Coach Personnel."
+              : "Very well. I will help you find an appointment that works for you. Please tell me what day and time you are available to speak with your Personal Coach."
+          );
+        }
 
         return twimlResponse(response);
       }
@@ -1772,7 +1789,7 @@ export async function POST(request: NextRequest) {
       response.say(
         voiceForLanguage(language),
         language === "ht"
-          ? "Idantite ou pa konfime. Pou pwoteje enfòmasyon ou, nou pa kapab bay detay sou apèl EPEW ki asosye ak kont sa a."
+          ? "Idantite ou pa konfime. Pou pwoteje enfòmasyon ou, nou pa kapab bay detay sou apèl EPE-W ki asosye ak kont sa a."
           : language === "es"
           ? "Su identidad no fue confirmada. Para proteger su privacidad, no podemos proporcionar información sobre llamadas de EPEW asociadas con esta cuenta."
           : language === "fr"
