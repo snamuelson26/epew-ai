@@ -385,6 +385,16 @@ export async function POST(request: NextRequest) {
       .trim()
       .toLowerCase();
 
+    const schedulingAttemptRaw = Number(
+      url.searchParams.get("attempt") ?? "0"
+    );
+
+    const schedulingAttempt =
+      Number.isFinite(schedulingAttemptRaw) &&
+      schedulingAttemptRaw >= 0
+        ? Math.floor(schedulingAttemptRaw)
+        : 0;
+
     const selectedLanguage = String(
       url.searchParams.get("lang") ?? ""
     )
@@ -1686,10 +1696,62 @@ export async function POST(request: NextRequest) {
       ).trim();
 
       if (!spokenAvailability) {
+        if (schedulingAttempt >= 2) {
+          if (callSid) {
+            const { data: existingVoiceCall } =
+              await supabaseAdmin
+                .from("epew_voice_calls")
+                .select("metadata")
+                .eq("twilio_call_sid", callSid)
+                .maybeSingle();
+
+            const existingMetadata =
+              existingVoiceCall?.metadata &&
+              typeof existingVoiceCall.metadata === "object"
+                ? existingVoiceCall.metadata
+                : {};
+
+            await supabaseAdmin
+              .from("epew_voice_calls")
+              .update({
+                metadata: {
+                  ...existingMetadata,
+                  scheduling_requested: true,
+                  scheduling_review_required: true,
+                  scheduling_failure_reason:
+                    "availability_not_heard_after_three_attempts",
+                  scheduling_attempts:
+                    schedulingAttempt + 1,
+                },
+              })
+              .eq("twilio_call_sid", callSid);
+          }
+
+          if (language === "ht") {
+            response.play(
+              haitianTtsUrl(
+                publicBaseUrl,
+                "Mwen gen difikilte pou m konprann lè ou disponib la. Mwen pap mande w menm kestyon an ankò. EPE W ap konsève demann ou an pou nou ka ede w pran randevou a."
+              )
+            );
+          } else {
+            response.say(
+              voiceForLanguage(language),
+              language === "es"
+                ? "Estoy teniendo dificultades para entender su disponibilidad. No le pediré que repita la misma información nuevamente. EPEW conservará su solicitud para ayudarle a programar la cita."
+                : language === "fr"
+                ? "J'ai de la difficulté à comprendre vos disponibilités. Je ne vais pas vous demander de répéter encore la même information. EPEW conservera votre demande afin de vous aider à fixer le rendez-vous."
+                : "I am having difficulty understanding your availability. I will not ask you to repeat the same information again. EPEW will keep your request so we can help schedule your appointment."
+            );
+          }
+
+          return twimlResponse(response);
+        }
+
         const retryGather = response.gather({
           input: ["speech"],
           action:
-            `${publicBaseUrl}/api/twilio/voice/inbound?step=schedule_availability&lang=${language}`,
+            `${publicBaseUrl}/api/twilio/voice/inbound?step=schedule_availability&lang=${language}&attempt=${schedulingAttempt + 1}`,
           method: "POST",
           timeout: 8,
           speechTimeout: "auto",
@@ -1749,10 +1811,64 @@ export async function POST(request: NextRequest) {
           });
 
         if (!schedulingResult.success) {
+          if (schedulingAttempt >= 2) {
+            if (callSid) {
+              const { data: existingVoiceCall } =
+                await supabaseAdmin
+                  .from("epew_voice_calls")
+                  .select("metadata")
+                  .eq("twilio_call_sid", callSid)
+                  .maybeSingle();
+
+              const existingMetadata =
+                existingVoiceCall?.metadata &&
+                typeof existingVoiceCall.metadata === "object"
+                  ? existingVoiceCall.metadata
+                  : {};
+
+              await supabaseAdmin
+                .from("epew_voice_calls")
+                .update({
+                  metadata: {
+                    ...existingMetadata,
+                    scheduling_requested: true,
+                    scheduling_review_required: true,
+                    scheduling_failure_reason:
+                      "availability_needs_clarification_after_three_attempts",
+                    scheduling_attempts:
+                      schedulingAttempt + 1,
+                    last_spoken_availability:
+                      spokenAvailability,
+                  },
+                })
+                .eq("twilio_call_sid", callSid);
+            }
+
+            if (language === "ht") {
+              response.play(
+                haitianTtsUrl(
+                  publicBaseUrl,
+                  "Mwen gen difikilte pou m konprann lè ou disponib la. Mwen pap mande w menm kestyon an ankò. EPE W ap konsève demann ou an pou nou ka ede w pran randevou a."
+                )
+              );
+            } else {
+              response.say(
+                voiceForLanguage(language),
+                language === "es"
+                  ? "Estoy teniendo dificultades para entender su disponibilidad. No le pediré que repita la misma información nuevamente. EPEW conservará su solicitud para ayudarle a programar la cita."
+                  : language === "fr"
+                  ? "J'ai de la difficulté à comprendre vos disponibilités. Je ne vais pas vous demander de répéter encore la même information. EPEW conservera votre demande afin de vous aider à fixer le rendez-vous."
+                  : "I am having difficulty understanding your availability. I will not ask you to repeat the same information again. EPEW will keep your request so we can help schedule your appointment."
+              );
+            }
+
+            return twimlResponse(response);
+          }
+
           const retryGather = response.gather({
             input: ["speech"],
             action:
-              `${publicBaseUrl}/api/twilio/voice/inbound?step=schedule_availability&lang=${language}`,
+              `${publicBaseUrl}/api/twilio/voice/inbound?step=schedule_availability&lang=${language}&attempt=${schedulingAttempt + 1}`,
             method: "POST",
             timeout: 8,
             speechTimeout: "auto",

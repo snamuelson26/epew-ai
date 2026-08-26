@@ -97,6 +97,26 @@ function clarificationMessage(language: SupportedLanguage) {
   }
 }
 
+function normalizeAvailabilityForModel(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/\bdimanche\b|\bdimanch\b/g, " Sunday ")
+    .replace(/\blundi\b|\blendi\b/g, " Monday ")
+    .replace(/\bmardi\b|\bmadi\b/g, " Tuesday ")
+    .replace(/\bmercredi\b|\bmèkredi\b|\bmekredi\b/g, " Wednesday ")
+    .replace(/\bjeudi\b|\bjedi\b/g, " Thursday ")
+    .replace(/\bvendredi\b|\bvandredi\b/g, " Friday ")
+    .replace(/\bsamedi\b|\bsamdi\b/g, " Saturday ")
+    .replace(/\bentre\b|\bant\b/g, " between ")
+    .replace(/\bnan apremidi\b|\bdans l['’]après-midi\b|\bde l['’]après-midi\b/g, " PM ")
+    .replace(/\bnan maten\b|\bdans la matinée\b|\bdu matin\b/g, " AM ")
+    .replace(/\bnan aswè\b|\bdans la soirée\b|\bdu soir\b/g, " PM ")
+    .replace(/\bheures?\b|\bzè\b/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 async function parseAvailability(
   spokenAvailability: string,
   language: SupportedLanguage
@@ -109,6 +129,9 @@ async function parseAvailability(
   const lastAllowedDate = addCalendarDays(today, 6);
 
   const client = getOpenAIClient();
+
+  const normalizedSpeech =
+    normalizeAvailabilityForModel(spokenAvailability);
 
   const response = await client.responses.create({
     model: "gpt-5-mini",
@@ -128,19 +151,41 @@ Rules:
 - Return only availability explicitly supported by what the caller said.
 - Never invent a day or time.
 - Resolve relative expressions such as tomorrow, Tuesday, next Friday, morning, afternoon, and evening using the dates above.
+- Haitian callers commonly mix Haitian Creole and French in the same sentence. This is valid and must NOT cause clarification by itself.
+- Treat these weekday equivalents as identical:
+  lundi/lendi = Monday
+  mardi/madi = Tuesday
+  mercredi/mèkredi = Wednesday
+  jeudi/jedi = Thursday
+  vendredi/vandredi = Friday
+  samedi/samdi = Saturday
+  dimanche/dimanch = Sunday
+- Treat "ant" and "entre" as "between".
+- Treat "nan apremidi" as PM, "nan maten" as AM, and "nan aswè" as PM.
+- French words such as heure, heures, entre, jeudi, mercredi, mardi and Haitian words in the same statement are normal code-switching.
+- Examples that ARE sufficiently precise:
+  "mercredi entre 3 heures et 5 heures nan apremidi" = Wednesday 15:00 to 17:00.
+  "Madi ant 2 zè ak 5 zè nan apremidi" = Tuesday 14:00 to 17:00.
+  "jeudi entre 3 heures à 6 heures PM" = Thursday 15:00 to 18:00.
+  "Lendi ant 1 zè ak 5 zè nan apremidi" = Monday 13:00 to 17:00, provided that Monday is within the allowed date range.
+- Do not reject a statement merely because grammar or transcription is imperfect if the intended weekday and time range are clear.
 - Every window must be within ${today} through ${lastAllowedDate}, inclusive.
 - Maximum 3 calendar days.
 - A usable window must be at least 60 minutes.
 - Use 24-hour HH:MM format.
 - If the caller provides one exact appointment time instead of a range, create a 60-minute window beginning at that exact time.
+- If a time range such as 3 to 5 has no AM/PM, morning/afternoon/evening, or other reliable context, clarification may still be required.
 - If the statement is too ambiguous to safely determine both a date and time, return needsClarification=true.
 - Do not translate names or add facts.`,
       },
       {
         role: "user",
         content:
-          `Language: ${language}
-Spoken availability: ${spokenAvailability}`,
+          `Language selected by caller: ${language}
+Original spoken availability: ${spokenAvailability}
+Normalized scheduling hints: ${normalizedSpeech}
+
+Use the original statement as the source of truth. The normalized line only helps resolve multilingual weekday and time expressions.`,
       },
     ],
     text: {
