@@ -5,6 +5,9 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import {
+  getEstablishmentMeetingStartWindow,
+} from "@/lib/enterprise/establishment-meeting/EstablishmentMeetingTiming";
 
 function twimlResponse(
   response: twilio.twiml.VoiceResponse,
@@ -84,6 +87,7 @@ export async function POST(
         application_id,
         meeting_status,
         meeting_provider,
+        scheduled_at,
         started_at,
         preferred_language
       `)
@@ -122,6 +126,28 @@ export async function POST(
           language: "en-US",
         },
         "This meeting is not scheduled as a phone meeting."
+      );
+
+      return twimlResponse(
+        response,
+        409
+      );
+    }
+
+    const startWindow =
+      getEstablishmentMeetingStartWindow(
+        meeting.scheduled_at
+      );
+
+    if (!startWindow.isWithinStartWindow) {
+      response.say(
+        {
+          voice: "Polly.Gregory-Neural",
+          language: "en-US",
+        },
+        startWindow.isTooEarly
+          ? "This EPEW meeting is scheduled for a later time."
+          : "This EPEW meeting is no longer within the allowed start window."
       );
 
       return twimlResponse(

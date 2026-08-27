@@ -3,6 +3,9 @@ import twilio from "twilio";
 
 import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import {
+  getEstablishmentMeetingStartWindow,
+} from "@/lib/enterprise/establishment-meeting/EstablishmentMeetingTiming";
 
 function requireEnvironment(name: string) {
   const value = process.env[name]?.trim();
@@ -152,6 +155,23 @@ export async function POST(request: NextRequest) {
           success: false,
           message:
             "This Phone Meeting is not currently available to join.",
+        },
+        { status: 409 }
+      );
+    }
+
+    const startWindow =
+      getEstablishmentMeetingStartWindow(
+        meeting.scheduled_at
+      );
+
+    if (!startWindow.isWithinStartWindow) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: startWindow.isTooEarly
+            ? "Your Phone Meeting is scheduled for a later time."
+            : "This Phone Meeting is no longer within the allowed start window.",
         },
         { status: 409 }
       );

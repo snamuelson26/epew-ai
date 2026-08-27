@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import {
+  getEstablishmentMeetingStartWindow,
+} from "@/lib/enterprise/establishment-meeting/EstablishmentMeetingTiming";
 
 export async function GET() {
   try {
@@ -204,6 +207,22 @@ export async function GET() {
         ? zoomHasEnded
         : false;
 
+    const startWindow =
+      getEstablishmentMeetingStartWindow(
+        meeting.scheduled_at
+      );
+
+    /*
+     * Defensive lifecycle normalization:
+     * a future appointment must never appear entrepreneur-facing
+     * as already in progress.
+     */
+    const entrepreneurFacingMeetingStatus =
+      meetingStatus === "in_progress" &&
+      startWindow.isTooEarly
+        ? "scheduled"
+        : meetingStatus;
+
     // =====================================================
     // Determine the entrepreneur-facing action.
     // =====================================================
@@ -224,7 +243,7 @@ export async function GET() {
     };
 
     if (
-      meetingStatus === "no_show" &&
+      entrepreneurFacingMeetingStatus === "no_show" &&
       recoveryStatus === "active"
     ) {
       action = {
@@ -249,7 +268,7 @@ export async function GET() {
         href: null,
       };
     } else if (
-      meetingStatus === "completed"
+      entrepreneurFacingMeetingStatus === "completed"
     ) {
       action = {
         type: "appointment_completed",
@@ -257,7 +276,7 @@ export async function GET() {
         href: null,
       };
     } else if (
-      meetingStatus === "ready_to_schedule"
+      entrepreneurFacingMeetingStatus === "ready_to_schedule"
     ) {
       action = {
         type: "choose_appointment",
@@ -265,7 +284,7 @@ export async function GET() {
         href: `/entrepreneurs/availability?applicationId=${applicationId}`,
       };
     } else if (
-      meetingStatus === "in_progress" &&
+      entrepreneurFacingMeetingStatus === "in_progress" &&
       !providerHasEnded
     ) {
       action = {
@@ -274,7 +293,10 @@ export async function GET() {
         href: null,
       };
     } else if (
-      ["scheduled", "ready_to_start"].includes(meetingStatus) &&
+      ["scheduled", "ready_to_start"].includes(
+        entrepreneurFacingMeetingStatus
+      ) &&
+      startWindow.isWithinStartWindow &&
       !providerHasEnded
     ) {
       action = {
@@ -301,8 +323,9 @@ export async function GET() {
 
     const canJoin =
       ["scheduled", "ready_to_start"].includes(
-        meetingStatus
+        entrepreneurFacingMeetingStatus
       ) &&
+      startWindow.isWithinStartWindow &&
       !providerHasEnded &&
       (
         meetingProvider === "phone" ||
@@ -315,13 +338,16 @@ export async function GET() {
       recoveryStatus !== "active" &&
       recoveryStatus !== "responded";
 
-    // Entrepreneurs cannot independently change a normal
-    // scheduled appointment. Rescheduling is opened only
-    // through coach authorization or no-show recovery.
-    const canChange = false;
+    const canChange =
+      entrepreneurFacingMeetingStatus === "scheduled" &&
+      startWindow.isTooEarly &&
+      (
+        !recoveryStatus ||
+        recoveryStatus === "rescheduled"
+      );
 
     const canReschedule =
-      meetingStatus === "no_show" &&
+      entrepreneurFacingMeetingStatus === "no_show" &&
       recoveryStatus === "active";
 
     return NextResponse.json({
@@ -332,7 +358,7 @@ export async function GET() {
       appointment: {
         id: meeting.id,
         type: "Establishment Meeting",
-        status: meeting.meeting_status,
+        status: entrepreneurFacingMeetingStatus,
         zoomStatus:
           meeting.zoom_meeting_status ?? null,
         scheduledAt:
