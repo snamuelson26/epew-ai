@@ -257,6 +257,13 @@ export class PhoneAppointmentBookingService {
 
         started_at: null,
         completed_at: null,
+
+        twilio_call_sid: null,
+        twilio_call_status: null,
+        twilio_call_started_at: null,
+        twilio_call_answered_at: null,
+        twilio_call_ended_at: null,
+
         zoom_participant_joined_at: null,
         zoom_coach_joined_at: null,
         coach_session_started_at: null,
