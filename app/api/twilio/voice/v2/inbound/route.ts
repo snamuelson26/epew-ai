@@ -33,6 +33,10 @@ import {
   PhoneAppointmentBookingService,
 } from "@/lib/services/scheduling/PhoneAppointmentBookingService";
 
+import {
+  Segment01Handler,
+} from "@/lib/twilio/voice-v2/segments/segment-01/Segment01Handler";
+
 function requireEnvironment(name: string) {
   const value = process.env[name]?.trim();
 
@@ -61,23 +65,6 @@ function normalizePhone(value: string) {
   return String(value ?? "")
     .replace(/[^\d+]/g, "")
     .trim();
-}
-
-function languageFromDigit(
-  digit: string
-): VoiceLanguage | null {
-  switch (digit) {
-    case "1":
-      return "en";
-    case "2":
-      return "ht";
-    case "3":
-      return "es";
-    case "4":
-      return "fr";
-    default:
-      return null;
-  }
 }
 
 function voiceForLanguage(
@@ -245,6 +232,26 @@ function returnToMenuPrompt(
 export async function POST(
   request: NextRequest
 ) {
+  const requestedStep = String(
+    new URL(request.url).searchParams.get("step") ??
+      "language"
+  )
+    .trim()
+    .toLowerCase();
+
+  /*
+   * =========================================================
+   * SEGMENT #1 — CALL ENTRY & CORE VOICE FOUNDATION
+   * =========================================================
+   *
+   * Segment #1 owns the initial call and every language
+   * selection callback. It returns only after handing the
+   * session to Segment #2 at state identify_caller.
+   */
+  if (requestedStep === "language") {
+    return Segment01Handler.handle(request);
+  }
+
   try {
     const {
       valid,
@@ -317,109 +324,6 @@ export async function POST(
         callSid,
         callerPhone,
       });
-
-    /*
-     * =========================================================
-     * STEP 1 — LANGUAGE
-     * =========================================================
-     */
-    if (step === "language") {
-      if (!digits) {
-        const gather = response.gather({
-          input: ["dtmf"],
-          action:
-            `${publicBaseUrl}/api/twilio/voice/v2/inbound?step=language&attempt=${attempt}`,
-          method: "POST",
-          numDigits: 1,
-          timeout: 8,
-          actionOnEmptyResult: true,
-        });
-
-        gather.say(
-          {
-            voice: "Polly.Matthew",
-            language: "en-US",
-          },
-          "Welcome to E. P. E. W. For English, press 1."
-        );
-
-        gather.play(
-          approvedHaitianAudioUrl(
-            publicBaseUrl,
-            "languageSelection"
-          )
-        );
-
-        gather.say(
-          {
-            voice: "Polly.Mia",
-            language: "es-MX",
-          },
-          "Para español, oprima 3."
-        );
-
-        gather.say(
-          {
-            voice: "Polly.Lea",
-            language: "fr-FR",
-          },
-          "Pour le français, appuyez sur 4."
-        );
-
-        return twimlResponse(response);
-      }
-
-      const language =
-        languageFromDigit(digits);
-
-      if (!language) {
-        if (attempt >= 1) {
-          await VoiceSessionEngine.transition(
-            callSid,
-            "recovery"
-          );
-
-          response.say(
-            {
-              voice: "Polly.Matthew",
-              language: "en-US",
-            },
-            "I was unable to confirm your language selection. Please call EPEW again when you are ready."
-          );
-
-          return twimlResponse(response);
-        }
-
-        response.redirect(
-          {
-            method: "POST",
-          },
-          `${publicBaseUrl}/api/twilio/voice/v2/inbound?step=language&attempt=${
-            attempt + 1
-          }`
-        );
-
-        return twimlResponse(response);
-      }
-
-      await VoiceSessionEngine.transition(
-        callSid,
-        "identify_caller",
-        {
-          language,
-          callerPhone,
-        }
-      );
-
-      response.redirect(
-        {
-          method: "POST",
-        },
-        `${publicBaseUrl}/api/twilio/voice/v2/inbound?step=identify`
-      );
-
-      return twimlResponse(response);
-    }
 
     const language =
       session.language ?? "en";
