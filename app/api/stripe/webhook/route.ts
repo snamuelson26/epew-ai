@@ -5,6 +5,7 @@ import { ENGINES } from "@/lib/enterprise/core/constants";
 import { financialEngine } from "@/lib/enterprise/financial/financialEngine";
 import { contributionFromCheckoutSession } from "@/lib/enterprise/financial/webhookProcessor";
 import { processAnnualSupportCheckout } from "@/lib/enterprise/supporters/AnnualSupportPaymentService";
+import { processSmartSupportSelection } from "@/lib/enterprise/supporters/SmartSupportSelectionService";
 
 export async function POST(req: Request) {
   const body = await req.text();
@@ -51,9 +52,35 @@ export async function POST(req: Request) {
           session.metadata?.support_flow || "";
 
         if (supportFlow === "annual_one_time") {
-          await processAnnualSupportCheckout(
-            session
-          );
+          const annualResult =
+            await processAnnualSupportCheckout(
+              session
+            );
+
+          /*
+           * EPEW-selected support should normally be matched
+           * immediately after Stripe confirms payment.
+           *
+           * The 48-hour deadline remains the maximum fulfillment
+           * window, while the daily processor acts as a recovery
+           * mechanism if this immediate attempt cannot complete.
+           */
+          if (
+            annualResult.selectionMethod ===
+              "epew_selected" &&
+            annualResult.selectionCaseId
+          ) {
+            try {
+              await processSmartSupportSelection(
+                annualResult.selectionCaseId
+              );
+            } catch (selectionError) {
+              console.error(
+                "Immediate EPEW Smart Selection failed; daily recovery processor will retry:",
+                selectionError
+              );
+            }
+          }
         } else {
           const contribution =
             contributionFromCheckoutSession(session);

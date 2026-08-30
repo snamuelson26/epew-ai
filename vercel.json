@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/internal/supporters/process-smart-selection",
-      "schedule": "0 * * * *"
+      "schedule": "0 2 * * *"
     }
   ]
 }
