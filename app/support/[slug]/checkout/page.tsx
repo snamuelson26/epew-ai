@@ -4,31 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
-type ContributionFrequency = "weekly" | "monthly" | "annual";
-
 const FUNDING_GOAL = 100_000;
 const TOTAL_UNITS_AVAILABLE = 20;
-const ANNUAL_COMMITMENT_PER_UNIT = 5_200;
-
-const PAYMENT_PLANS = {
-  weekly: {
-    title: "Weekly",
-    amountPerUnit: 100,
-    description: "Automatic billing every week",
-  },
-
-  monthly: {
-    title: "Monthly",
-    amountPerUnit: 433.34,
-    description: "Automatic billing every month",
-  },
-
-  annual: {
-    title: "Annual",
-    amountPerUnit: 5_200,
-    description: "Automatic billing every year",
-  },
-} as const;
+const ANNUAL_SUPPORT_PER_UNIT = 5_200;
+const PARTICIPATION_BENEFIT_RATE = 8;
 
 export default function SupportCheckoutPage() {
   const params = useParams();
@@ -43,13 +22,18 @@ export default function SupportCheckoutPage() {
 
   const [units, setUnits] = useState(1);
 
-  const [frequency, setFrequency] =
-    useState<ContributionFrequency>("weekly");
+  const [referrerName, setReferrerName] =
+    useState("");
+
+  const [referrerBusinessName, setReferrerBusinessName] =
+    useState("");
 
   const [acknowledged, setAcknowledged] =
     useState(false);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] =
+    useState(true);
+
   const [submitting, setSubmitting] =
     useState(false);
 
@@ -58,7 +42,7 @@ export default function SupportCheckoutPage() {
 
   useEffect(() => {
     if (businessId) {
-      loadCheckout();
+      void loadCheckout();
     }
   }, [businessId]);
 
@@ -132,8 +116,9 @@ export default function SupportCheckoutPage() {
 
       if (!businessData) {
         setBusiness(null);
-        setErrorMessage("Business not found.");
-        setLoading(false);
+        setErrorMessage(
+          "Business not found."
+        );
 
         return;
       }
@@ -145,7 +130,11 @@ export default function SupportCheckoutPage() {
           ? error.message
           : "Unable to load the checkout page.";
 
-      console.error("Checkout load error:", error);
+      console.error(
+        "Annual support checkout load error:",
+        error
+      );
+
       setErrorMessage(message);
     } finally {
       setLoading(false);
@@ -153,81 +142,84 @@ export default function SupportCheckoutPage() {
   }
 
   const businessName =
-    business?.business_name || "Business";
+    business?.business_name ||
+    "Business";
 
   const entrepreneurName =
     business?.full_name ||
     business?.name ||
-    "Entrepreneur";
+    "EPEW Entrepreneur";
 
   const unitsAvailable =
     Number(business?.units_required || 0) > 0
       ? Number(business.units_required)
       : TOTAL_UNITS_AVAILABLE;
 
-  const unitsSupported = Math.max(
-    Number(business?.units_supported || 0),
-    0
-  );
+  const unitsSupported =
+    Math.max(
+      Number(
+        business?.units_supported || 0
+      ),
+      0
+    );
 
-  const unitsRemaining = Math.max(
-    unitsAvailable - unitsSupported,
-    0
-  );
+  const unitsRemaining =
+    Math.max(
+      unitsAvailable - unitsSupported,
+      0
+    );
 
   useEffect(() => {
-    if (unitsRemaining > 0 && units > unitsRemaining) {
+    if (
+      unitsRemaining > 0 &&
+      units > unitsRemaining
+    ) {
       setUnits(unitsRemaining);
     }
   }, [unitsRemaining, units]);
 
-  const selectedPlan =
-    PAYMENT_PLANS[frequency];
-
-  const todayCharge = useMemo(() => {
-    return Number(
-      (
-        selectedPlan.amountPerUnit *
-        Math.max(units, 0)
-      ).toFixed(2)
-    );
-  }, [
-    selectedPlan.amountPerUnit,
-    units,
-  ]);
-
-  const annualCommitment = useMemo(() => {
-    return (
-      Math.max(units, 0) *
-      ANNUAL_COMMITMENT_PER_UNIT
-    );
-  }, [units]);
+  const totalAnnualSupport =
+    useMemo(() => {
+      return (
+        Math.max(units, 0) *
+        ANNUAL_SUPPORT_PER_UNIT
+      );
+    }, [units]);
 
   const unitsRemainingAfterSelection =
-    Math.max(unitsRemaining - units, 0);
+    Math.max(
+      unitsRemaining - units,
+      0
+    );
 
   const totalUnitsAfterSelection =
     unitsSupported + units;
 
-  const annualCommitmentAfterSelection =
+  const supportTotalAfterSelection =
     totalUnitsAfterSelection *
-    ANNUAL_COMMITMENT_PER_UNIT;
+    ANNUAL_SUPPORT_PER_UNIT;
 
   const fundingProgressAfterSelection =
     Math.min(
-      (annualCommitmentAfterSelection /
-        FUNDING_GOAL) *
-        100,
+      (
+        supportTotalAfterSelection /
+        FUNDING_GOAL
+      ) * 100,
       100
     );
 
-  function formatCurrency(amount: number) {
-    return amount.toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
+  function formatCurrency(
+    amount: number
+  ) {
+    return amount.toLocaleString(
+      "en-US",
+      {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }
+    );
   }
 
   async function continueToStripeCheckout() {
@@ -264,7 +256,9 @@ export default function SupportCheckoutPage() {
     ) {
       setErrorMessage(
         `Please select between 1 and ${unitsRemaining} available unit${
-          unitsRemaining === 1 ? "" : "s"
+          unitsRemaining === 1
+            ? ""
+            : "s"
         }.`
       );
 
@@ -273,7 +267,7 @@ export default function SupportCheckoutPage() {
 
     if (!acknowledged) {
       setErrorMessage(
-        "Please accept the EPEW Participation Agreement and recurring-payment authorization."
+        "Please review and accept the EPEW annual participation terms before continuing."
       );
 
       return;
@@ -282,48 +276,66 @@ export default function SupportCheckoutPage() {
     setSubmitting(true);
 
     try {
-      const response = await fetch(
-        "/api/stripe/create-checkout-session",
-        {
-          method: "POST",
+      const response =
+        await fetch(
+          "/api/supporters/annual-support/checkout",
+          {
+            method: "POST",
 
-          headers: {
-            "Content-Type": "application/json",
-          },
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
 
-          body: JSON.stringify({
-            entrepreneurId: String(business.id),
+            body: JSON.stringify({
+              supporterId:
+                supporter.id,
 
-            entrepreneurName,
+              units,
 
-            businessId:
-              business.public_business_id ||
-              businessId,
+              selectionMethod:
+                "self_selected",
 
-            businessName,
+              allocationPreference:
+                "one_business",
 
-            supporterId: supporter.id,
+              selectedEntrepreneurId:
+                String(business.id),
 
-            units,
+              referrerName:
+                referrerName.trim() ||
+                undefined,
 
-            frequency,
-          }),
-        }
-      );
+              referredBusinessName:
+                referrerBusinessName.trim() ||
+                undefined,
+
+              referralSource:
+                referrerName.trim() ||
+                referrerBusinessName.trim()
+                  ? "supporter_entered"
+                  : undefined,
+            }),
+          }
+        );
 
       const responseText =
         await response.text();
 
       let result: {
-        url?: string;
+        checkoutUrl?: string;
+        sessionId?: string;
+        supportIntentId?: string;
         error?: string;
-        unitsRemaining?: number;
       } = {};
 
       try {
-        result = responseText
-          ? JSON.parse(responseText)
-          : {};
+        result =
+          responseText
+            ? JSON.parse(
+                responseText
+              )
+            : {};
       } catch {
         throw new Error(
           "The checkout server returned an invalid response."
@@ -333,17 +345,18 @@ export default function SupportCheckoutPage() {
       if (!response.ok) {
         throw new Error(
           result.error ||
-            "Unable to create the Stripe checkout session."
+            "Unable to create the annual support checkout."
         );
       }
 
-      if (!result.url) {
+      if (!result.checkoutUrl) {
         throw new Error(
           "Stripe did not return a secure checkout URL."
         );
       }
 
-      window.location.href = result.url;
+      window.location.href =
+        result.checkoutUrl;
     } catch (error) {
       const message =
         error instanceof Error
@@ -351,7 +364,7 @@ export default function SupportCheckoutPage() {
           : "Unable to open Stripe Checkout.";
 
       console.error(
-        "Stripe checkout error:",
+        "Annual Stripe checkout error:",
         error
       );
 
@@ -364,7 +377,7 @@ export default function SupportCheckoutPage() {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#f5f7fb] p-8">
         <h1 className="text-4xl font-extrabold text-[#06245c]">
-          Loading EPEW Stripe Checkout...
+          Loading EPEW Annual Support...
         </h1>
       </main>
     );
@@ -404,7 +417,7 @@ export default function SupportCheckoutPage() {
       <section className="mx-auto max-w-6xl">
         <div className="rounded-[2rem] bg-white p-10 shadow-2xl">
           <p className="text-lg font-black uppercase tracking-[0.35em] text-green-700">
-            EPEW Secure Stripe Checkout
+            EPEW Annual Support
           </p>
 
           <h1 className="mt-4 text-5xl font-extrabold">
@@ -427,12 +440,12 @@ export default function SupportCheckoutPage() {
           <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_1.2fr]">
             <section className="rounded-3xl bg-[#f5f7fb] p-8">
               <h2 className="text-3xl font-extrabold">
-                Business Funding
+                Business Support
               </h2>
 
               <div className="mt-7 space-y-5">
                 <DetailRow
-                  label="Funding Goal"
+                  label="Annual Funding Goal"
                   value={formatCurrency(
                     FUNDING_GOAL
                   )}
@@ -456,32 +469,35 @@ export default function SupportCheckoutPage() {
 
               <div className="mt-8 rounded-3xl border-l-8 border-green-600 bg-green-50 p-6">
                 <h3 className="text-2xl font-extrabold">
-                  Official EPEW Unit Standard
+                  EPEW Annual Support Unit
                 </h3>
 
-                <p className="mt-4 text-lg text-gray-700">
-                  One support unit represents a
-                  complete annual commitment of:
+                <p className="mt-4 text-lg leading-relaxed text-gray-700">
+                  One EPEW Support Unit represents
+                  one full year of support.
                 </p>
 
-                <p className="mt-4 text-4xl font-black text-green-700">
-                  $5,200.00
+                <p className="mt-4 text-5xl font-black text-green-700">
+                  $5,200
                 </p>
 
-                <div className="mt-5 space-y-2 text-lg text-gray-700">
-                  <p>
-                    Weekly:{" "}
-                    <strong>$100.00</strong>
+                <p className="mt-2 text-lg font-bold text-gray-700">
+                  per unit — one-time payment
+                </p>
+
+                <div className="mt-6 rounded-2xl bg-white p-5">
+                  <p className="text-lg font-bold text-gray-700">
+                    Annual participation benefit
                   </p>
 
-                  <p>
-                    Monthly:{" "}
-                    <strong>$433.34</strong>
+                  <p className="mt-2 text-3xl font-black text-[#06245c]">
+                    Up to {PARTICIPATION_BENEFIT_RATE}%
                   </p>
 
-                  <p>
-                    Annual:{" "}
-                    <strong>$5,200.00</strong>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                    Participation benefits are
+                    subject to EPEW program terms
+                    and are not guaranteed.
                   </p>
                 </div>
               </div>
@@ -489,182 +505,202 @@ export default function SupportCheckoutPage() {
 
             <section className="rounded-3xl bg-[#f5f7fb] p-8">
               <h2 className="text-3xl font-extrabold">
-                Choose Your Participation
+                Choose Your Annual Support
               </h2>
 
-              <div className="mt-7 grid gap-4 md:grid-cols-3">
-                {(
-                  Object.keys(
-                    PAYMENT_PLANS
-                  ) as ContributionFrequency[]
-                ).map((planKey) => {
-                  const plan =
-                    PAYMENT_PLANS[planKey];
-
-                  const selected =
-                    frequency === planKey;
-
-                  return (
-                    <button
-                      key={planKey}
-                      type="button"
-                      onClick={() => {
-                        setFrequency(planKey);
-                        setErrorMessage("");
-                      }}
-                      className={`rounded-2xl border-2 p-5 text-left transition ${
-                        selected
-                          ? "border-[#06245c] bg-[#06245c] text-white shadow-lg"
-                          : "border-gray-200 bg-white text-[#06245c] hover:border-green-600"
-                      }`}
-                    >
-                      <span className="block text-xl font-black">
-                        {plan.title}
-                      </span>
-
-                      <span
-                        className={`mt-3 block text-2xl font-black ${
-                          selected
-                            ? "text-lime-300"
-                            : "text-green-700"
-                        }`}
-                      >
-                        {formatCurrency(
-                          plan.amountPerUnit
-                        )}
-                      </span>
-
-                      <span className="mt-2 block text-sm">
-                        Per unit
-                      </span>
-
-                      <span className="mt-3 block text-sm font-bold">
-                        {plan.description}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+              <p className="mt-3 text-lg leading-relaxed text-gray-700">
+                Select how many annual Support
+                Units you would like to provide
+                for this business.
+              </p>
 
               <div className="mt-8">
                 <label
                   htmlFor="units"
                   className="text-lg font-black"
                 >
-                  Number of Units
+                  Number of Support Units
                 </label>
 
                 {unitsRemaining > 0 ? (
                   <select
                     id="units"
                     value={units}
-                    onChange={(event) => {
+                    onChange={(
+                      event
+                    ) => {
                       setUnits(
                         Number(
-                          event.target.value
+                          event.target
+                            .value
                         )
                       );
 
-                      setErrorMessage("");
+                      setErrorMessage(
+                        ""
+                      );
                     }}
                     className="mt-3 w-full rounded-2xl border-2 border-gray-300 bg-white p-4 text-xl font-bold outline-none focus:border-green-600"
                   >
                     {Array.from(
                       {
-                        length: unitsRemaining,
+                        length:
+                          unitsRemaining,
                       },
-                      (_, index) => index + 1
-                    ).map((unitOption) => (
-                      <option
-                        key={unitOption}
-                        value={unitOption}
-                      >
-                        {unitOption} Unit
-                        {unitOption === 1
-                          ? ""
-                          : "s"}
-                      </option>
-                    ))}
+                      (_, index) =>
+                        index + 1
+                    ).map(
+                      (
+                        unitOption
+                      ) => (
+                        <option
+                          key={
+                            unitOption
+                          }
+                          value={
+                            unitOption
+                          }
+                        >
+                          {
+                            unitOption
+                          }{" "}
+                          Unit
+                          {unitOption ===
+                          1
+                            ? ""
+                            : "s"}{" "}
+                          —{" "}
+                          {formatCurrency(
+                            unitOption *
+                              ANNUAL_SUPPORT_PER_UNIT
+                          )}
+                        </option>
+                      )
+                    )}
                   </select>
                 ) : (
                   <div className="mt-3 rounded-2xl bg-red-50 p-5 font-bold text-red-700">
-                    No units remain available.
+                    No units remain
+                    available.
                   </div>
                 )}
               </div>
 
               <div className="mt-8 rounded-3xl bg-white p-7 shadow">
                 <h3 className="text-2xl font-extrabold">
-                  Enterprise Financial Summary
+                  Your Annual Support
                 </h3>
 
                 <div className="mt-6 space-y-4">
                   <DetailRow
-                    label="Funding Goal"
-                    value={formatCurrency(
-                      FUNDING_GOAL
-                    )}
-                  />
-
-                  <DetailRow
-                    label="Units Selected"
+                    label="Support Units"
                     value={units.toString()}
                   />
 
                   <DetailRow
-                    label="Annual Commitment"
+                    label="Price Per Unit"
                     value={formatCurrency(
-                      annualCommitment
+                      ANNUAL_SUPPORT_PER_UNIT
                     )}
                   />
 
                   <DetailRow
-                    label="Payment Frequency"
-                    value={
-                      selectedPlan.title
-                    }
+                    label="Payment"
+                    value="One-Time Annual Payment"
                   />
 
                   <DetailRow
-                    label="Today's Charge"
+                    label="Support Term"
+                    value="1 Year"
+                  />
+
+                  <DetailRow
+                    label="Annual Participation Benefit"
+                    value={`Up to ${PARTICIPATION_BENEFIT_RATE}%`}
+                  />
+
+                  <DetailRow
+                    label="Total Due Today"
                     value={formatCurrency(
-                      todayCharge
+                      totalAnnualSupport
                     )}
                   />
 
                   <DetailRow
-                    label="Units Remaining After Selection"
+                    label="Units Remaining After Support"
                     value={unitsRemainingAfterSelection.toString()}
                   />
 
                   <DetailRow
-                    label="Funding Progress After Selection"
+                    label="Funding Progress After Support"
                     value={`${fundingProgressAfterSelection.toFixed(
                       2
                     )}%`}
                   />
-
-                  <DetailRow
-                    label="Automatic Renewal"
-                    value="Enabled"
-                  />
                 </div>
               </div>
 
-              <div className="mt-8 rounded-3xl border-2 border-yellow-400 bg-yellow-50 p-6 text-yellow-900">
+              <div className="mt-8 rounded-3xl border-2 border-blue-200 bg-blue-50 p-6">
                 <h3 className="text-xl font-extrabold">
-                  Recurring Payment Authorization
+                  Were You Referred to EPEW?
                 </h3>
 
-                <p className="mt-4 leading-relaxed">
-                  Weekly, Monthly, and Annual
-                  participation plans are automatic
-                  recurring subscriptions. Your
-                  selected payment method will be
-                  charged according to the selected
-                  schedule and will renew
-                  automatically unless canceled in
-                  accordance with EPEW policies.
+                <p className="mt-2 leading-relaxed text-gray-700">
+                  This information is optional.
+                  If someone referred you, please
+                  tell us who they are and their
+                  business name if you know it.
+                </p>
+
+                <label className="mt-6 block font-bold">
+                  Name of the Person Who
+                  Referred You
+                </label>
+
+                <input
+                  type="text"
+                  value={referrerName}
+                  onChange={(event) =>
+                    setReferrerName(
+                      event.target.value
+                    )
+                  }
+                  placeholder="Optional"
+                  className="mt-2 w-full rounded-2xl border-2 border-gray-300 bg-white p-4 text-lg outline-none focus:border-green-600"
+                />
+
+                <label className="mt-5 block font-bold">
+                  Referrer&apos;s Business Name
+                </label>
+
+                <input
+                  type="text"
+                  value={
+                    referrerBusinessName
+                  }
+                  onChange={(event) =>
+                    setReferrerBusinessName(
+                      event.target.value
+                    )
+                  }
+                  placeholder="Optional"
+                  className="mt-2 w-full rounded-2xl border-2 border-gray-300 bg-white p-4 text-lg outline-none focus:border-green-600"
+                />
+              </div>
+
+              <div className="mt-8 rounded-3xl border-2 border-green-300 bg-green-50 p-6">
+                <h3 className="text-xl font-extrabold">
+                  One-Time Annual Payment
+                </h3>
+
+                <p className="mt-4 leading-relaxed text-gray-700">
+                  Your selected Support Units
+                  will be paid in one payment for
+                  the full one-year support
+                  period. There is no weekly or
+                  monthly billing and no
+                  automatic renewal for this
+                  support.
                 </p>
               </div>
 
@@ -674,22 +710,28 @@ export default function SupportCheckoutPage() {
                   checked={acknowledged}
                   onChange={(event) => {
                     setAcknowledged(
-                      event.target.checked
+                      event.target
+                        .checked
                     );
 
-                    setErrorMessage("");
+                    setErrorMessage(
+                      ""
+                    );
                   }}
                   className="mt-1 h-6 w-6"
                 />
 
                 <span className="leading-relaxed text-gray-700">
-                  I have read and agree to the EPEW
-                  Participation Agreement and
-                  recurring-payment authorization. I
-                  understand that participation is not
-                  an investment, bank deposit,
-                  security, or guaranteed financial
-                  product.
+                  I have reviewed and agree
+                  to the EPEW Participation
+                  Agreement. I understand that
+                  this is a one-time annual
+                  support payment, that
+                  participation benefits are
+                  not guaranteed, and that
+                  participation is not a bank
+                  deposit or guaranteed
+                  financial product.
                 </span>
               </label>
 
@@ -706,12 +748,14 @@ export default function SupportCheckoutPage() {
                 className="mt-8 w-full rounded-2xl bg-green-700 py-5 text-2xl font-black text-white shadow-lg transition hover:bg-[#06245c] disabled:cursor-not-allowed disabled:bg-gray-400"
               >
                 {submitting
-                  ? "Opening Secure Stripe Checkout..."
-                  : "Continue to Secure Payment"}
+                  ? "Opening Secure Payment..."
+                  : `Continue to Payment — ${formatCurrency(
+                      totalAnnualSupport
+                    )}`}
               </button>
 
               <p className="mt-5 text-center text-sm font-semibold text-gray-500">
-                Secure recurring payments are
+                Secure one-time payment is
                 processed by Stripe.
               </p>
             </section>

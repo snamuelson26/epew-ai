@@ -1,5 +1,5 @@
 export interface Supporter {
-  id: number;
+  id: string;
   user_id?: string;
 
   supporter_id?: string;

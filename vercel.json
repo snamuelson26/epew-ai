@@ -3,6 +3,10 @@
     {
       "path": "/api/internal/communications/process-outbox",
       "schedule": "20 19 * * *"
+    },
+    {
+      "path": "/api/internal/supporters/process-smart-selection",
+      "schedule": "0 * * * *"
     }
   ]
 }

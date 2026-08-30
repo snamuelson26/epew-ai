@@ -11,6 +11,7 @@ import JourneyTimeline from "./components/JourneyTimeline";
 import Invitations from "./components/Invitations";
 import Newsroom from "./components/Newsroom";
 import EntrepreneurPortfolio from "./components/EntrepreneurPortfolio";
+import AnnualSupportStatus from "./components/AnnualSupportStatus";
 import SupportingInformation from "./components/SupportingInformation";
 import SupporterMessage from "./components/SupporterMessage";
 import Legacy from "./components/Legacy";
@@ -225,6 +226,8 @@ export default function SupporterDashboardPage() {
       <Invitations />
 
       <Newsroom />
+
+      <AnnualSupportStatus />
 
       <EntrepreneurPortfolio commitments={commitments} />
 

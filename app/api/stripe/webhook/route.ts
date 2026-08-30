@@ -4,6 +4,7 @@ import { createEnterpriseContext } from "@/lib/enterprise/core/context";
 import { ENGINES } from "@/lib/enterprise/core/constants";
 import { financialEngine } from "@/lib/enterprise/financial/financialEngine";
 import { contributionFromCheckoutSession } from "@/lib/enterprise/financial/webhookProcessor";
+import { processAnnualSupportCheckout } from "@/lib/enterprise/supporters/AnnualSupportPaymentService";
 
 export async function POST(req: Request) {
   const body = await req.text();
@@ -46,16 +47,28 @@ export async function POST(req: Request) {
           },
         });
 
-        const contribution =
-          contributionFromCheckoutSession(session);
+        const supportFlow =
+          session.metadata?.support_flow || "";
 
-        const result = await financialEngine.run(
-          context,
-          contribution
-        );
+        if (supportFlow === "annual_one_time") {
+          await processAnnualSupportCheckout(
+            session
+          );
+        } else {
+          const contribution =
+            contributionFromCheckoutSession(session);
 
-        if (!result.success) {
-          throw new Error(result.message);
+          const result =
+            await financialEngine.run(
+              context,
+              contribution
+            );
+
+          if (!result.success) {
+            throw new Error(
+              result.message
+            );
+          }
         }
 
         break;

@@ -55,6 +55,13 @@ export default function Hero({
             </a>
 
             <a
+              href="/supporters/annual-support"
+              className="rounded-2xl bg-green-600 px-8 py-4 text-xl font-black text-white shadow-lg hover:bg-green-500"
+            >
+              Let EPEW Choose for Me
+            </a>
+
+            <a
               href="/supporters/messages"
               className="rounded-2xl bg-lime-300 px-8 py-4 text-xl font-black text-[#06245c] shadow-lg hover:bg-white"
             >
