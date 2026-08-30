@@ -1627,7 +1627,14 @@ export async function POST(
         return twimlResponse(response);
       }
 
-      if (language === "ht") {
+      if (language === "ht" && digits === "1") {
+        response.play(
+          approvedHaitianAudioUrl(
+            publicBaseUrl,
+            "memberAssistanceSupporter"
+          )
+        );
+      } else if (language === "ht") {
         response.play(
           haitianDynamicTtsUrl(
             publicBaseUrl,

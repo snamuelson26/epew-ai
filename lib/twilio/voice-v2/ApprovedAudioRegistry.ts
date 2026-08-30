@@ -19,6 +19,8 @@ export const ApprovedAudioRegistry = {
 
     memberAssistanceMenu:
       `${PHONE_AUDIO_BASE}/ht-member-assistance-menu.mp3`,
+    memberAssistanceSupporter:
+      `${PHONE_AUDIO_BASE}/ht-member-assistance-supporter.mp3`,
 
     memberAssistanceFollowup:
       `${PHONE_AUDIO_BASE}/ht-member-assistance-followup.mp3`,
