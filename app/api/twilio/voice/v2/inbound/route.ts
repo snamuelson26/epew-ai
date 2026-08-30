@@ -1627,10 +1627,19 @@ export async function POST(
         return twimlResponse(response);
       }
 
-      response.say(
-        voiceForLanguage(language),
-        assistanceResponse
-      );
+      if (language === "ht") {
+        response.play(
+          haitianDynamicTtsUrl(
+            publicBaseUrl,
+            assistanceResponse
+          )
+        );
+      } else {
+        response.say(
+          voiceForLanguage(language),
+          assistanceResponse
+        );
+      }
 
       await VoiceSessionEngine.transition(
         callSid,
@@ -1670,7 +1679,12 @@ export async function POST(
     }
 
     if (step === "member_assistance_followup") {
-      if (digits === "1") {
+      const returnToSubjects =
+        language === "ht"
+          ? digits === "9"
+          : digits === "1";
+
+      if (returnToSubjects) {
         await VoiceSessionEngine.transition(
           callSid,
           "member_assistance"
