@@ -503,6 +503,7 @@ export async function POST(req: Request) {
         mode: "payment",
 
         payment_method_types: [
+          "us_bank_account",
           "card",
         ],
 

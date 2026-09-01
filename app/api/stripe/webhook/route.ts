@@ -37,7 +37,8 @@ export async function POST(req: Request) {
 
   try {
     switch (event.type) {
-      case "checkout.session.completed": {
+      case "checkout.session.completed":
+      case "checkout.session.async_payment_succeeded": {
         const session: any = event.data.object;
 
         const context = createEnterpriseContext({
@@ -97,6 +98,24 @@ export async function POST(req: Request) {
             );
           }
         }
+
+        break;
+      }
+
+      case "checkout.session.async_payment_failed": {
+        const session: any = event.data.object;
+
+        console.error(
+          "EPEW ACH payment failed:",
+          {
+            stripeEventId: event.id,
+            checkoutSessionId: session.id,
+            supportIntentId:
+              session.metadata?.support_intent_id || null,
+            supporterId:
+              session.metadata?.supporter_id || null,
+          }
+        );
 
         break;
       }
