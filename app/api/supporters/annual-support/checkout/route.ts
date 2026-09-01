@@ -215,6 +215,8 @@ export async function POST(req: Request) {
       );
     }
 
+    let selectedPublicBusinessId = "";
+
     /*
      * If the supporter chooses the business directly,
      * confirm the entrepreneur application exists.
@@ -232,7 +234,7 @@ export async function POST(req: Request) {
       } = await supabaseAdmin
         .from("entrepreneurs")
         .select(
-          "id,business_name,status,qualified,marketplace_visibility,units_required,units_supported,funding_status"
+          "id,public_business_id,business_name,status,qualified,marketplace_visibility,units_required,units_supported,funding_status,meeting_1_status,meeting_2_status,meeting_3_status,campaign_status,campaign_authorized_at"
         )
         .eq(
           "id",
@@ -262,6 +264,30 @@ export async function POST(req: Request) {
               "The selected business could not be found.",
           },
           { status: 404 }
+        );
+      }
+
+      selectedPublicBusinessId =
+        selectedEntrepreneur.public_business_id || "";
+
+      const campaignAuthorized =
+        selectedEntrepreneur.qualified === true &&
+        selectedEntrepreneur.marketplace_visibility === true &&
+        selectedEntrepreneur.meeting_1_status === "completed" &&
+        selectedEntrepreneur.meeting_2_status === "completed" &&
+        ["active", "completed"].includes(
+          selectedEntrepreneur.meeting_3_status || ""
+        ) &&
+        selectedEntrepreneur.campaign_status === "Campaign Active" &&
+        Boolean(selectedEntrepreneur.campaign_authorized_at);
+
+      if (!campaignAuthorized) {
+        return NextResponse.json(
+          {
+            error:
+              "This business has not yet been authorized to accept EPEW support.",
+          },
+          { status: 403 }
         );
       }
 
@@ -395,9 +421,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const siteUrl =
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "http://localhost:3000";
+    const siteUrl = new URL(req.url).origin;
 
     const metadata: Record<
       string,
@@ -526,8 +550,12 @@ export async function POST(req: Request) {
           `?session_id={CHECKOUT_SESSION_ID}`,
 
         cancel_url:
-          `${siteUrl}/supporters/support` +
-          `?cancelled=true`,
+          selectionMethod === "self_selected" &&
+          selectedPublicBusinessId
+            ? `${siteUrl}/support/${encodeURIComponent(
+                selectedPublicBusinessId
+              )}/checkout?cancelled=true`
+            : `${siteUrl}/supporters/support?cancelled=true`,
       });
 
     if (!session.url) {

@@ -1,19 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 import Hero from "./components/Hero";
-import ImpactSummary from "./components/ImpactSummary";
-import CommunityImpact from "./components/CommunityImpact";
-import EntrepreneurCohort from "./components/EntrepreneurCohort";
-import JourneyTimeline from "./components/JourneyTimeline";
-import Invitations from "./components/Invitations";
-import Newsroom from "./components/Newsroom";
 import EntrepreneurPortfolio from "./components/EntrepreneurPortfolio";
 import AnnualSupportStatus from "./components/AnnualSupportStatus";
-import SupportingInformation from "./components/SupportingInformation";
-import SupporterMessage from "./components/SupporterMessage";
 import Legacy from "./components/Legacy";
 
 import { SupportCommitment, Supporter } from "./components/types";
@@ -23,6 +15,8 @@ export default function SupporterDashboardPage() {
   const [supporter, setSupporter] = useState<Supporter | null>(null);
   const [projection, setProjection] = useState<any>(null);
   const [commitments, setCommitments] = useState<SupportCommitment[]>([]);
+  const [selectedBusiness, setSelectedBusiness] =
+    useState<any>(null);
 
   useEffect(() => {
     loadSupporterDashboard();
@@ -50,11 +44,48 @@ export default function SupporterDashboardPage() {
       setSupporter(null);
       setProjection(null);
       setCommitments([]);
+      setSelectedBusiness(null);
       setLoading(false);
       return;
     }
 
     setSupporter(supporterData);
+
+    if (supporterData.selected_business_id) {
+      try {
+        const response = await fetch(
+          `/api/public/businesses/${encodeURIComponent(
+            supporterData.selected_business_id
+          )}`,
+          {
+            cache: "no-store",
+          }
+        );
+
+        const result =
+          await response.json();
+
+        if (
+          response.ok &&
+          result?.business
+        ) {
+          setSelectedBusiness(
+            result.business
+          );
+        } else {
+          setSelectedBusiness(null);
+        }
+      } catch (error) {
+        console.error(
+          "Unable to load selected entrepreneur:",
+          error
+        );
+
+        setSelectedBusiness(null);
+      }
+    } else {
+      setSelectedBusiness(null);
+    }
 
     const { data: projectionData, error: projectionError } = await supabase
       .from("supporter_projections")
@@ -89,73 +120,6 @@ export default function SupporterDashboardPage() {
     await supabase.auth.signOut();
     window.location.href = "/supporters/login";
   }
-
-  const dashboardStats = useMemo(() => {
-    const totalUnits = Number(projection?.total_units || 0);
-
-    const totalContributions = Number(
-      projection?.total_contributions || 0
-    );
-
-    const businessesSupported = Number(
-      projection?.businesses_supported || 0
-    );
-
-    const entrepreneursEmpowered = businessesSupported;
-
-    const activeCommitments = Number(
-      projection?.active_commitments || 0
-    );
-
-    const benefitsAvailable = commitments.reduce(
-      (sum, item) => sum + Number(item.benefits_available || 0),
-      0
-    );
-
-    const businessesOpened = commitments.filter(
-      (item) =>
-        item.business_status === "Business Opened" ||
-        item.business_status === "Operating"
-    ).length;
-
-    const communitiesStrengthened = new Set(
-      commitments
-        .map((item) => item.community || item.country)
-        .filter(Boolean)
-    ).size;
-
-    const jobsCreated = commitments.reduce(
-      (sum, item) => sum + Number(item.jobs_created || 0),
-      0
-    );
-
-    const quarterlyReportsReceived = commitments.reduce(
-      (sum, item) => sum + Number(item.quarterly_reports_count || 0),
-      0
-    );
-
-    const grandOpeningsCelebrated = commitments.filter(
-      (item) => item.grand_opening_date
-    ).length;
-
-    const primaryParticipationType =
-      commitments[0]?.support_type || "weekly";
-
-    return {
-      totalUnits,
-      totalContributions,
-      activeCommitments,
-      benefitsAvailable,
-      businessesSupported,
-      entrepreneursEmpowered,
-      businessesOpened,
-      communitiesStrengthened,
-      jobsCreated,
-      quarterlyReportsReceived,
-      grandOpeningsCelebrated,
-      primaryParticipationType,
-    };
-  }, [projection, commitments]);
 
   if (loading) {
     return (
@@ -193,57 +157,27 @@ export default function SupporterDashboardPage() {
 
   return (
     <main className="min-h-screen bg-[#f5f7fb] p-8 text-[#06245c]">
-      <Hero supporter={supporter} onLogout={handleLogout} />
+      <section className="mb-10">
+        <Hero
+          supporter={supporter}
+          onLogout={handleLogout}
+        />
+      </section>
 
-      <ImpactSummary
-        entrepreneursEmpowered={dashboardStats.entrepreneursEmpowered}
-        businessesSupported={dashboardStats.businessesSupported}
-        businessesOpened={dashboardStats.businessesOpened}
-        communitiesStrengthened={dashboardStats.communitiesStrengthened}
-        jobsCreated={dashboardStats.jobsCreated}
-        grandOpeningsCelebrated={dashboardStats.grandOpeningsCelebrated}
-        quarterlyReportsReceived={dashboardStats.quarterlyReportsReceived}
-        participationBenefitsAvailable={dashboardStats.benefitsAvailable}
-      />
+      <section className="mb-10">
+        <EntrepreneurPortfolio
+          commitments={commitments}
+          selectedBusiness={selectedBusiness}
+        />
+      </section>
 
-      <CommunityImpact
-        entrepreneurGroup={50}
-        communities={Math.max(dashboardStats.communitiesStrengthened, 8)}
-        countries={3}
-        jobsCreated={Math.max(dashboardStats.jobsCreated, 50)}
-      />
+      <section className="mb-10">
+        <AnnualSupportStatus />
+      </section>
 
-      <EntrepreneurCohort
-        cohortYear={new Date().getFullYear()}
-        entrepreneurGroup={50}
-        qualified={18}
-        annualMeetingDate="To Be Announced"
-        fundingStatus="Preparing Annual Meeting"
-      />
-
-      <JourneyTimeline currentStage="Annual Meeting" />
-
-      <Invitations />
-
-      <Newsroom />
-
-      <AnnualSupportStatus />
-
-      <EntrepreneurPortfolio commitments={commitments} />
-
-      <SupportingInformation
-        totalUnits={dashboardStats.totalUnits}
-        totalContributions={dashboardStats.totalContributions}
-        benefitsAvailable={dashboardStats.benefitsAvailable}
-        paymentStatus="Current"
-      />
-
-      <SupporterMessage
-        participationType={dashboardStats.primaryParticipationType}
-        nextPaymentDate="To Be Scheduled"
-      />
-
-      <Legacy />
+      <section>
+        <Legacy />
+      </section>
     </main>
   );
 }
