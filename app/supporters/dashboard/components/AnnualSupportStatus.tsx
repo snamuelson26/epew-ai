@@ -193,16 +193,16 @@ export default function AnnualSupportStatus() {
       {allocations.length > 0 && (
         <div className="rounded-3xl bg-white p-10 shadow-2xl">
           <p className="text-lg font-black uppercase tracking-[0.2em] text-green-700">
-            Your Annual Support
+            Supporter Financial Record
           </p>
 
           <h2 className="mt-2 text-5xl font-extrabold text-[#06245c]">
-            Meet the Entrepreneurs You Are Supporting
+            My Support
           </h2>
 
           <p className="mt-4 max-w-4xl text-2xl leading-relaxed text-gray-700">
-            EPEW has connected your annual support with
-            these entrepreneurs and businesses.
+            View your active EPEW support units, supported amounts,
+            support terms, and participation benefit information.
           </p>
 
           <div className="mt-10 grid gap-8 xl:grid-cols-2">
@@ -242,6 +242,23 @@ function AllocationCard({
     entrepreneur?.public_business_id ||
     null;
 
+  const supportStartDate =
+    allocation.allocated_at
+      ? new Date(allocation.allocated_at)
+      : null;
+
+  const supportEndDate =
+    supportStartDate
+      ? new Date(supportStartDate)
+      : null;
+
+  if (supportEndDate) {
+    supportEndDate.setMonth(
+      supportEndDate.getMonth() +
+        Number(allocation.support_term_months || 12)
+    );
+  }
+
   return (
     <article className="rounded-3xl border border-gray-200 bg-[#f5f7fb] p-8 shadow-lg">
       <div className="flex items-start gap-5">
@@ -268,46 +285,73 @@ function AllocationCard({
         </div>
       </div>
 
-      <div className="mt-7 grid gap-4 sm:grid-cols-2">
+      <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <InfoBox
-          label="Support Units"
-          value={String(
-            allocation.units
-          )}
+          label="Units Supported"
+          value={String(allocation.units)}
         />
 
         <InfoBox
-          label="Annual Support"
+          label="Supported Amount"
           value={formatCurrency(
-            Number(
-              allocation.allocated_amount ||
-                0
-            )
+            Number(allocation.allocated_amount || 0)
           )}
         />
 
         <InfoBox
-          label="Support Term"
-          value={`${allocation.support_term_months} Months`}
+          label="Status"
+          value={formatAllocationStatus(allocation.status)}
+        />
+
+        <InfoBox
+          label="Payment Frequency"
+          value="Annual"
         />
 
         <InfoBox
           label="Participation Benefit"
           value={`Up to ${Number(
-            allocation.participation_benefit_rate ||
-              0
+            allocation.participation_benefit_rate || 0
           )}%`}
+        />
+
+        <InfoBox
+          label="Support Term"
+          value={`${allocation.support_term_months || 12} Months`}
+        />
+
+        <InfoBox
+          label="Start Date"
+          value={
+            supportStartDate
+              ? formatDate(supportStartDate)
+              : "Pending"
+          }
+        />
+
+        <InfoBox
+          label="End Date"
+          value={
+            supportEndDate
+              ? formatDate(supportEndDate)
+              : "Pending"
+          }
+        />
+
+        <InfoBox
+          label="EPEW Support Reference"
+          value={allocation.support_intent_id}
         />
       </div>
 
       <div className="mt-7 rounded-2xl bg-green-50 p-5">
         <p className="font-black text-green-800">
-          EPEW Match Completed
+          Support Record Active
         </p>
 
         <p className="mt-2 leading-relaxed text-gray-700">
-          Your annual support has been connected
-          with this qualified EPEW business.
+          This record represents support that has been received
+          and allocated through the EPEW system.
         </p>
       </div>
 
@@ -341,6 +385,43 @@ function InfoBox({
       </p>
     </div>
   );
+}
+
+function formatDate(
+  date: Date
+) {
+  if (Number.isNaN(date.getTime())) {
+    return "Pending";
+  }
+
+  return date.toLocaleDateString(
+    "en-US",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }
+  );
+}
+
+function formatAllocationStatus(
+  status: string
+) {
+  switch (status) {
+    case "active":
+      return "Active";
+
+    case "completed":
+      return "Completed";
+
+    case "pending":
+      return "Pending";
+
+    default:
+      return status
+        ? status.replaceAll("_", " ")
+        : "Active";
+  }
 }
 
 function formatCurrency(
