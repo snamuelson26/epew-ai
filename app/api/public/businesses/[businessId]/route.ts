@@ -16,6 +16,23 @@ export async function GET(
     const publicBusinessId =
       String(businessId || "").trim();
 
+    const supabaseProjectRef =
+      (() => {
+        try {
+          const host = new URL(
+            process.env.NEXT_PUBLIC_SUPABASE_URL || ""
+          ).hostname;
+          return host.split(".")[0] || "unknown";
+        } catch {
+          return "unknown";
+        }
+      })();
+
+    console.log(
+      "Public business Supabase project:",
+      supabaseProjectRef
+    );
+
     if (!publicBusinessId) {
       return NextResponse.json(
         {
