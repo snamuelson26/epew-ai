@@ -4,15 +4,22 @@ import { SupportCommitment } from "./types";
 
 interface Props {
   commitments: SupportCommitment[];
+  selectedBusiness?: any;
 }
 
-export default function EntrepreneurPortfolio({ commitments }: Props) {
-  if (commitments.length === 0) {
+export default function EntrepreneurPortfolio({
+  commitments,
+  selectedBusiness,
+}: Props) {
+  if (
+    commitments.length === 0 &&
+    !selectedBusiness
+  ) {
     return (
       <section className="mb-10">
         <div className="rounded-3xl bg-white p-10 text-center shadow-2xl">
           <h2 className="text-5xl font-extrabold text-[#06245c]">
-            My Supported Entrepreneurs
+            My Entrepreneurs
           </h2>
 
           <p className="mx-auto mt-5 max-w-4xl text-2xl leading-relaxed text-gray-700">
@@ -36,21 +43,134 @@ export default function EntrepreneurPortfolio({ commitments }: Props) {
     <section className="mb-10">
       <div className="rounded-3xl bg-white p-10 shadow-2xl">
         <h2 className="text-5xl font-extrabold text-[#06245c]">
-          My Supported Entrepreneurs
+          My Entrepreneurs
         </h2>
 
         <p className="mt-4 text-2xl leading-relaxed text-gray-700">
-          These are the entrepreneurs and businesses directly connected to your
-          participation units.
+          View entrepreneurs you selected to support and businesses already
+          connected to your EPEW participation.
         </p>
 
         <div className="mt-10 grid gap-8 xl:grid-cols-2">
+          {selectedBusiness ? (
+            <SelectedBusinessCard
+              business={selectedBusiness}
+            />
+          ) : null}
+
           {commitments.map((item) => (
-            <PortfolioCard key={item.id} item={item} />
+            <PortfolioCard
+              key={item.id}
+              item={item}
+            />
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function SelectedBusinessCard({
+  business,
+}: {
+  business: any;
+}) {
+  const businessId =
+    business.public_business_id || "";
+
+  const businessName =
+    business.business_name ||
+    "Business";
+
+  const entrepreneurName =
+    business.full_name ||
+    "EPEW Entrepreneur";
+
+  const entrepreneurPhoto =
+    business.entrepreneur_photo ||
+    business.entrepreneur_photo_url ||
+    business.photo_url ||
+    "";
+
+  const businessLogo =
+    business.business_logo ||
+    business.business_logo_url ||
+    business.logo_url ||
+    "";
+
+  return (
+    <div className="rounded-3xl border-2 border-green-300 bg-green-50 p-8 shadow-lg">
+      <div className="mb-6 inline-flex rounded-full bg-green-700 px-5 py-2 text-sm font-black uppercase tracking-wider text-white">
+        Ready to Support
+      </div>
+
+      <div className="flex flex-col gap-6 md:flex-row md:items-center">
+        <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-3xl bg-[#06245c] text-6xl text-white shadow-lg">
+          {entrepreneurPhoto ? (
+            <img
+              src={entrepreneurPhoto}
+              alt={entrepreneurName}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            "👤"
+          )}
+        </div>
+
+        <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-3xl bg-white text-6xl shadow-lg">
+          {businessLogo ? (
+            <img
+              src={businessLogo}
+              alt={businessName}
+              className="h-full w-full object-contain p-3"
+            />
+          ) : (
+            "🏢"
+          )}
+        </div>
+
+        <div className="flex-1">
+          <h3 className="text-4xl font-black text-[#06245c]">
+            {businessName}
+          </h3>
+
+          <p className="mt-2 text-xl font-black text-green-700">
+            Business ID: {businessId}
+          </p>
+
+          <p className="mt-2 text-2xl text-gray-700">
+            {entrepreneurName}
+          </p>
+
+          <p className="mt-1 text-lg font-bold uppercase tracking-wide text-gray-500">
+            Selected Entrepreneur
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-8 rounded-2xl bg-white p-5">
+        <p className="text-lg leading-relaxed text-gray-700">
+          You selected this entrepreneur for support. Review the business and
+          choose your Support Units when you are ready.
+        </p>
+      </div>
+
+      <div className="mt-8 flex flex-wrap gap-4">
+        <a
+          href={`/support/${businessId}/checkout`}
+          className="rounded-2xl bg-green-700 px-8 py-4 text-xl font-black text-white hover:bg-[#06245c]"
+        >
+          Support This Entrepreneur
+        </a>
+
+        <a
+          href={`/business/${businessId}`}
+          className="rounded-2xl border-2 border-[#06245c] px-8 py-4 text-xl font-black text-[#06245c] hover:bg-[#06245c] hover:text-white"
+        >
+          View This Business
+        </a>
+      </div>
+    </div>
   );
 }
 
