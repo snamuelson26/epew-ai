@@ -100,12 +100,24 @@ export default function SupportEntrepreneurPage() {
                 Business ID: {businessId}
               </p>
 
+              {business.business_logo ? (
+                <div className="mx-auto mb-8 flex h-32 w-32 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-lg">
+                  <img
+                    src={business.business_logo}
+                    alt={`${businessName} logo`}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+              ) : null}
+
               <div className="mx-auto flex h-36 w-36 items-center justify-center overflow-hidden rounded-full bg-[#06245c] text-6xl text-white shadow-lg">
-                {business.entrepreneur_photo_url ||
+                {business.entrepreneur_photo ||
+                business.entrepreneur_photo_url ||
                 business.photo_url ||
                 business.profile_photo_url ? (
                   <img
                     src={
+                      business.entrepreneur_photo ||
                       business.entrepreneur_photo_url ||
                       business.photo_url ||
                       business.profile_photo_url
@@ -127,6 +139,15 @@ export default function SupportEntrepreneurPage() {
               <p className="text-2xl text-gray-600">
                 {city}, {state} • {category}
               </p>
+
+              <div className="mx-auto mt-8 max-w-md rounded-2xl bg-green-50 p-6 shadow">
+                <p className="text-lg font-bold uppercase tracking-wide text-green-800">
+                  Qualification
+                </p>
+                <p className="mt-2 text-4xl font-black text-[#06245c]">
+                  $100,000.00
+                </p>
+              </div>
             </div>
 
             <p className="mb-12 text-2xl leading-relaxed text-gray-700">
@@ -144,8 +165,8 @@ export default function SupportEntrepreneurPage() {
 </div>
 
             <p className="mx-auto mt-10 max-w-4xl rounded-2xl bg-white p-5 text-lg font-bold text-red-700 shadow">
-              Participation is not an investment. Participation benefits are not
-              guaranteed and depend on business performance and EPEW policies.
+              Participation is not an investment. Participation benefits depend on
+              business performance and EPEW policies and regulations.
             </p>
           </div>
         </div>
