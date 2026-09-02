@@ -14,6 +14,8 @@ export default function SupporterLayout({
   const router = useRouter();
 
   const [supporter, setSupporter] = useState<any>(null);
+  const [hasSupportedEntrepreneur, setHasSupportedEntrepreneur] =
+    useState(false);
 
   const publicPages = [
     "/supporters",
@@ -54,6 +56,34 @@ export default function SupporterLayout({
     }
 
     setSupporter(data);
+
+    try {
+      const response = await fetch(
+        "/api/supporters/annual-support/dashboard",
+        {
+          method: "GET",
+          cache: "no-store",
+        }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+
+        setHasSupportedEntrepreneur(
+          Array.isArray(result?.allocations) &&
+            result.allocations.length > 0
+        );
+      } else {
+        setHasSupportedEntrepreneur(false);
+      }
+    } catch (error) {
+      console.error(
+        "Unable to determine supporter allocation status:",
+        error
+      );
+
+      setHasSupportedEntrepreneur(false);
+    }
   }
 
   async function handleLogout() {
@@ -72,41 +102,27 @@ export default function SupporterLayout({
       href: "/supporters/dashboard",
     },
     {
-      title: "🚀 Available Entrepreneurs",
-      href: "/supporters/entrepreneurs",
-    },
-    {
-      title: "💰 Contribution Plans",
-      href: "/supporters/contribution-plans",
-    },
-    {
-      title: "📈 Impact Center",
-      href: "/supporters/impact-center",
-    },
-    {
-      title: "📊 Reports",
-      href: "/supporters/reports",
-    },
-    {
-      title: "💬 Messages",
+      title: "💬 Communication",
       href: "/supporters/messages",
     },
-    {
-      title: "💳 Payment Center",
-      href: "/supporters/payment-center",
-    },
-    {
-      title: "🔔 Notifications",
-      href: "/supporters/notifications",
-    },
-    {
-      title: "🗓️ Quarterly Reports",
-      href: "/supporters/quarterly-reports",
-    },
-    {
-      title: "🌟 Success Stories",
-      href: "/supporters/success-stories",
-    },
+
+    ...(hasSupportedEntrepreneur
+      ? [
+          {
+            title: "💳 Financial Center",
+            href: "/supporters/payment-center",
+          },
+          {
+            title: "🔔 Notifications",
+            href: "/supporters/notifications",
+          },
+          {
+            title: "🌟 Success Stories",
+            href: "/supporters/success-stories",
+          },
+        ]
+      : []),
+
     {
       title: "⚙️ Settings",
       href: "/supporters/settings",
@@ -126,35 +142,15 @@ export default function SupporterLayout({
           </h1>
         </div>
 
-        {/* PROFILE SECTION */}
-        <div className="flex flex-col items-center mb-12">
-
-          {supporter?.photo_url ? (
+        {/* EPEW-EDE-IBOS LOGO */}
+        <div className="mb-10 flex justify-center">
+          <div className="flex w-full items-center justify-center rounded-3xl bg-white p-5 shadow-xl">
             <img
-              src={supporter.photo_url}
-              alt={supporter.full_name}
-              className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-xl"
+              src="/images/epew-ede-ibos-logo.png"
+              alt="EPEW-EDE-IBOS"
+              className="max-h-28 w-auto object-contain"
             />
-          ) : (
-            <div className="w-28 h-28 rounded-full bg-blue-800 flex items-center justify-center text-3xl font-bold">
-              SN
-            </div>
-          )}
-
-          <h2 className="mt-4 text-2xl font-bold text-center">
-            {supporter?.full_name || "Supporter"}
-          </h2>
-
-          <p className="text-sm text-gray-300 text-center mt-2">
-            {supporter?.email}
-          </p>
-
-          <div className="mt-4 bg-green-600 px-5 py-3 rounded-2xl shadow-lg">
-            <p className="text-sm font-bold">
-              {supporter?.supporter_id}
-            </p>
           </div>
-
         </div>
 
         {/* MENU */}
