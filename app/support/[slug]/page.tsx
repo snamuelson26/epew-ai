@@ -189,7 +189,9 @@ export default function SupportEntrepreneurPage() {
               </p>
 
               <Link
-                href={`/support/${businessId}/checkout`}
+                href={`/supporters/login?next=${encodeURIComponent(
+                `/support/${businessId}/checkout`
+              )}`}
                 className="mt-7 inline-block w-full rounded-2xl bg-green-700 px-8 py-5 text-xl font-black text-white shadow-lg transition hover:bg-green-800 sm:w-auto"
               >
                 Support This Entrepreneur
