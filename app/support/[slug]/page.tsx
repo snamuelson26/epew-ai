@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 
 export default function SupportEntrepreneurPage() {
   const params = useParams();
@@ -23,26 +22,34 @@ export default function SupportEntrepreneurPage() {
     setLoading(true);
     setMessage("");
 
-    const { data, error } = await supabase
-      .from("entrepreneurs")
-      .select("*")
-      .eq("public_business_id", businessId)
-      .maybeSingle();
+    try {
+      const response = await fetch(
+        `/api/public/businesses/${encodeURIComponent(businessId)}`,
+        {
+          cache: "no-store",
+        }
+      );
 
-    if (error) {
-      setMessage(error.message);
+      const payload = await response.json();
+
+      if (!response.ok || !payload?.business) {
+        setMessage(
+          payload?.error || "Business not found."
+        );
+        setLoading(false);
+        return;
+      }
+
+      setBusiness(payload.business);
+    } catch (error) {
+      console.error(
+        "Support page business lookup error:",
+        error
+      );
+      setMessage("Unable to load this business.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    if (!data) {
-      setMessage("Business not found.");
-      setLoading(false);
-      return;
-    }
-
-    setBusiness(data);
-    setLoading(false);
   }
 
   if (loading) {
