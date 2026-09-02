@@ -82,8 +82,13 @@ export default function SupportEntrepreneurPage() {
       <section className="px-8 py-24">
         <div className="mx-auto max-w-6xl">
           <div className="rounded-3xl bg-white p-14 text-center shadow-2xl">
-            <div className="mb-8 inline-flex rounded-full bg-lime-300 px-8 py-4 text-2xl font-black text-[#06245c] shadow-lg">
-              ⭐ EPEW Qualified Entrepreneur
+            <div className="mb-8 inline-flex flex-col items-center rounded-3xl bg-lime-300 px-10 py-5 text-[#06245c] shadow-lg">
+              <span className="text-2xl font-black">
+                ⭐ EPEW Qualified Entrepreneur
+              </span>
+              <span className="mt-2 text-4xl font-black">
+                $100,000.00
+              </span>
             </div>
 
             <h1 className="mb-8 text-6xl font-extrabold">
@@ -140,14 +145,6 @@ export default function SupportEntrepreneurPage() {
                 {city}, {state} • {category}
               </p>
 
-              <div className="mx-auto mt-8 max-w-md rounded-2xl bg-green-50 p-6 shadow">
-                <p className="text-lg font-bold uppercase tracking-wide text-green-800">
-                  Qualification
-                </p>
-                <p className="mt-2 text-4xl font-black text-[#06245c]">
-                  $100,000.00
-                </p>
-              </div>
             </div>
 
             <p className="mb-12 text-2xl leading-relaxed text-gray-700">
