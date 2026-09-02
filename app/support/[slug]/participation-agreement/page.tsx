@@ -229,6 +229,51 @@ export default function ParticipationAgreementPage() {
                 procedures used by the Supporter and Entrepreneur.
               </p>
 
+              <h3 className="pt-4 text-2xl font-bold text-[#06245c]">
+                EPEW Mediation and Support Role
+              </h3>
+
+              <p>
+                If circumstances arise in which the Entrepreneur is unable to
+                fulfill an obligation under this Agreement, EPEW may serve as a
+                neutral mediator and administrative facilitator between the
+                Entrepreneur and the Supporter.
+              </p>
+
+              <p>
+                EPEW will assist the parties with communication, review of the
+                circumstances, and identification of a reasonable resolution
+                consistent with applicable EPEW policies and regulations.
+              </p>
+
+              <p className="font-bold">
+                EPEW is not responsible for restitution, repayment,
+                reimbursement, or satisfaction of any financial obligation owed
+                by the Entrepreneur to the Supporter.
+              </p>
+
+              <p>
+                The Entrepreneur remains responsible for fulfilling the
+                Entrepreneur&apos;s obligations under this Agreement. EPEW
+                mediation or assistance does not transfer those obligations to
+                EPEW.
+              </p>
+
+              <p>
+                EPEW will continue providing available coaching, business
+                development assistance, administrative support, and ecosystem
+                resources intended to help the Entrepreneur improve the
+                business&apos;s opportunity for success.
+              </p>
+
+              <p>
+                EPEW also works to help Entrepreneurs and Supporters strengthen
+                their financial position, expand economic opportunities, and
+                pursue long-term wealth growth through entrepreneurship,
+                support, and collaboration. No particular wealth increase or
+                financial outcome is guaranteed.
+              </p>
+
               <p>
                 The Supporter understands that participation is voluntary
                 support and that participation benefits depend on the
