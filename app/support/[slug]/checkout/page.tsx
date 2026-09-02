@@ -150,6 +150,19 @@ export default function SupportCheckoutPage() {
     business?.name ||
     "EPEW Entrepreneur";
 
+  const entrepreneurPhoto =
+    business?.entrepreneur_photo ||
+    business?.entrepreneur_photo_url ||
+    business?.photo_url ||
+    business?.profile_photo_url ||
+    "";
+
+  const businessLogo =
+    business?.business_logo ||
+    business?.business_logo_url ||
+    business?.logo_url ||
+    "";
+
   const unitsAvailable =
     Number(business?.units_required || 0) > 0
       ? Number(business.units_required)
@@ -413,375 +426,341 @@ export default function SupportCheckoutPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f7fb] p-8 text-[#06245c]">
-      <section className="mx-auto max-w-6xl">
-        <div className="rounded-[2rem] bg-white p-10 shadow-2xl">
-          <p className="text-lg font-black uppercase tracking-[0.35em] text-green-700">
-            EPEW Annual Support
-          </p>
+    <main className="min-h-screen bg-[#f3f6fa] px-4 py-8 text-[#06245c] md:py-12">
+      <section className="mx-auto max-w-4xl">
+        <div className="overflow-hidden rounded-[2rem] bg-white shadow-2xl">
 
-          <h1 className="mt-4 text-5xl font-extrabold">
-            Support {businessName}
-          </h1>
+          {/* EPEW HEADER */}
+          <div className="bg-[#06245c] px-6 py-8 text-center text-white md:px-10">
+            <p className="text-sm font-black uppercase tracking-[0.35em] text-lime-300 md:text-base">
+              EPEW Annual Support
+            </p>
 
-          <p className="mt-4 text-2xl text-gray-700">
-            Entrepreneur:{" "}
-            <span className="font-black">
-              {entrepreneurName}
-            </span>
-          </p>
+            <div className="mt-6 flex items-center justify-center gap-5 md:gap-8">
 
-          {errorMessage && (
-            <div className="mt-7 rounded-2xl border-2 border-red-500 bg-red-50 p-5 text-lg font-bold text-red-700">
-              {errorMessage}
+              {entrepreneurPhoto ? (
+                <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-white shadow-xl md:h-36 md:w-36">
+                  <img
+                    src={entrepreneurPhoto}
+                    alt={entrepreneurName}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              ) : null}
+
+              {businessLogo ? (
+                <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-3xl bg-white p-3 shadow-xl md:h-36 md:w-36">
+                  <img
+                    src={businessLogo}
+                    alt={`${businessName} logo`}
+                    className="max-h-full max-w-full object-contain"
+                  />
+                </div>
+              ) : null}
+
             </div>
-          )}
 
-          <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_1.2fr]">
-            <section className="rounded-3xl bg-[#f5f7fb] p-8">
-              <h2 className="text-3xl font-extrabold">
-                Business Support
-              </h2>
+            <h1 className="mt-6 text-3xl font-black md:text-5xl">
+              Support {businessName}
+            </h1>
 
-              <div className="mt-7 space-y-5">
-                <DetailRow
-                  label="Annual Funding Goal"
-                  value={formatCurrency(
-                    FUNDING_GOAL
-                  )}
-                />
+            <p className="mt-2 text-lg text-blue-100 md:text-xl">
+              Entrepreneur:{" "}
+              <span className="font-black text-white">
+                {entrepreneurName}
+              </span>
+            </p>
+          </div>
 
-                <DetailRow
-                  label="Units Available"
-                  value={unitsAvailable.toString()}
-                />
+          <div className="px-5 py-7 md:px-10 md:py-10">
 
-                <DetailRow
-                  label="Units Supported"
-                  value={unitsSupported.toString()}
-                />
-
-                <DetailRow
-                  label="Units Remaining"
-                  value={unitsRemaining.toString()}
-                />
+            {errorMessage && (
+              <div className="mb-7 rounded-2xl border-2 border-red-300 bg-red-50 p-5 text-center font-bold text-red-700">
+                {errorMessage}
               </div>
+            )}
 
-              <div className="mt-8 rounded-3xl border-l-8 border-green-600 bg-green-50 p-6">
-                <h3 className="text-2xl font-extrabold">
-                  EPEW Annual Support Unit
-                </h3>
+            {/* SUPPORT SNAPSHOT */}
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
 
-                <p className="mt-4 text-lg leading-relaxed text-gray-700">
-                  One EPEW Support Unit represents
-                  one full year of support.
+              <div className="rounded-2xl bg-[#f5f7fb] p-4 text-center">
+                <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
+                  Funding Goal
                 </p>
 
-                <p className="mt-4 text-5xl font-black text-green-700">
+                <p className="mt-2 text-xl font-black md:text-2xl">
+                  $100,000
+                </p>
+              </div>
+
+              <div className="rounded-2xl bg-[#f5f7fb] p-4 text-center">
+                <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
+                  Units Available
+                </p>
+
+                <p className="mt-2 text-xl font-black md:text-2xl">
+                  {unitsAvailable}
+                </p>
+              </div>
+
+              <div className="rounded-2xl bg-[#f5f7fb] p-4 text-center">
+                <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
+                  Unit Price
+                </p>
+
+                <p className="mt-2 text-xl font-black md:text-2xl">
                   $5,200
                 </p>
+              </div>
 
-                <p className="mt-2 text-lg font-bold text-gray-700">
-                  per unit — one-time payment
+              <div className="rounded-2xl bg-green-50 p-4 text-center">
+                <p className="text-xs font-bold uppercase tracking-wide text-green-700">
+                  Participation Benefit
                 </p>
 
-                <div className="mt-6 rounded-2xl bg-white p-5">
-                  <p className="text-lg font-bold text-gray-700">
-                    Annual participation benefit
-                  </p>
-
-                  <p className="mt-2 text-3xl font-black text-[#06245c]">
-                    Up to {PARTICIPATION_BENEFIT_RATE}%
-                  </p>
-
-                  <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                    Participation benefits are
-                    subject to EPEW program terms
-                    and are not guaranteed.
-                  </p>
-                </div>
+                <p className="mt-2 text-xl font-black text-green-700 md:text-2xl">
+                  Up to {PARTICIPATION_BENEFIT_RATE}%
+                </p>
               </div>
-            </section>
 
-            <section className="rounded-3xl bg-[#f5f7fb] p-8">
-              <h2 className="text-3xl font-extrabold">
-                Choose Your Annual Support
-              </h2>
+            </div>
 
-              <p className="mt-3 text-lg leading-relaxed text-gray-700">
-                Select how many annual Support
-                Units you would like to provide
-                for this business.
-              </p>
+            {/* CHOOSE SUPPORT */}
+            <section className="mt-8 rounded-3xl border border-gray-200 bg-white p-6 shadow-lg md:p-8">
 
-              <div className="mt-8">
-                <label
-                  htmlFor="units"
-                  className="text-lg font-black"
-                >
-                  Number of Support Units
-                </label>
+              <div className="text-center">
+                <p className="text-sm font-black uppercase tracking-[0.22em] text-green-700">
+                  Choose Your Support
+                </p>
 
+                <h2 className="mt-2 text-3xl font-black md:text-4xl">
+                  Annual Support Units
+                </h2>
+
+                <p className="mx-auto mt-3 max-w-xl leading-relaxed text-gray-600">
+                  Select the number of annual support units you would like to provide for this business.
+                </p>
+              </div>
+
+              <div className="mx-auto mt-7 max-w-xl">
                 {unitsRemaining > 0 ? (
                   <select
                     id="units"
                     value={units}
-                    onChange={(
-                      event
-                    ) => {
+                    onChange={(event) => {
                       setUnits(
-                        Number(
-                          event.target
-                            .value
-                        )
+                        Number(event.target.value)
                       );
 
-                      setErrorMessage(
-                        ""
-                      );
+                      setErrorMessage("");
                     }}
-                    className="mt-3 w-full rounded-2xl border-2 border-gray-300 bg-white p-4 text-xl font-bold outline-none focus:border-green-600"
+                    className="w-full rounded-2xl border-2 border-gray-300 bg-white p-4 text-center text-xl font-black outline-none transition focus:border-green-600"
                   >
                     {Array.from(
-                      {
-                        length:
-                          unitsRemaining,
-                      },
-                      (_, index) =>
-                        index + 1
-                    ).map(
-                      (
-                        unitOption
-                      ) => (
-                        <option
-                          key={
-                            unitOption
-                          }
-                          value={
-                            unitOption
-                          }
-                        >
-                          {
-                            unitOption
-                          }{" "}
-                          Unit
-                          {unitOption ===
-                          1
-                            ? ""
-                            : "s"}{" "}
-                          —{" "}
-                          {formatCurrency(
-                            unitOption *
-                              ANNUAL_SUPPORT_PER_UNIT
-                          )}
-                        </option>
-                      )
-                    )}
+                      { length: unitsRemaining },
+                      (_, index) => index + 1
+                    ).map((unitOption) => (
+                      <option
+                        key={unitOption}
+                        value={unitOption}
+                      >
+                        {unitOption} Unit
+                        {unitOption === 1 ? "" : "s"}
+                        {" — "}
+                        {formatCurrency(
+                          unitOption *
+                            ANNUAL_SUPPORT_PER_UNIT
+                        )}
+                      </option>
+                    ))}
                   </select>
                 ) : (
-                  <div className="mt-3 rounded-2xl bg-red-50 p-5 font-bold text-red-700">
-                    No units remain
-                    available.
+                  <div className="rounded-2xl bg-red-50 p-5 text-center font-bold text-red-700">
+                    No units remain available.
                   </div>
                 )}
               </div>
 
-              <div className="mt-8 rounded-3xl bg-white p-7 shadow">
-                <h3 className="text-2xl font-extrabold">
-                  Your Annual Support
-                </h3>
+              {/* TOTAL */}
+              <div className="mx-auto mt-7 max-w-xl rounded-3xl bg-[#06245c] px-6 py-7 text-center text-white shadow-lg">
 
-                <div className="mt-6 space-y-4">
-                  <DetailRow
-                    label="Support Units"
-                    value={units.toString()}
-                  />
+                <p className="text-sm font-bold uppercase tracking-wider text-blue-200">
+                  Total Support Today
+                </p>
 
-                  <DetailRow
-                    label="Price Per Unit"
-                    value={formatCurrency(
-                      ANNUAL_SUPPORT_PER_UNIT
-                    )}
-                  />
+                <p className="mt-2 text-4xl font-black md:text-5xl">
+                  {formatCurrency(
+                    totalAnnualSupport
+                  )}
+                </p>
 
-                  <DetailRow
-                    label="Payment"
-                    value="One-Time Annual Payment"
-                  />
+                <p className="mt-3 text-blue-100">
+                  {units} annual support unit
+                  {units === 1 ? "" : "s"} • One-time payment
+                </p>
 
-                  <DetailRow
-                    label="Support Term"
-                    value="1 Year"
-                  />
+              </div>
 
-                  <DetailRow
-                    label="Annual Participation Benefit"
-                    value={`Up to ${PARTICIPATION_BENEFIT_RATE}%`}
-                  />
+              <div className="mx-auto mt-6 grid max-w-xl grid-cols-2 gap-4">
 
-                  <DetailRow
-                    label="Total Due Today"
-                    value={formatCurrency(
-                      totalAnnualSupport
-                    )}
-                  />
+                <div className="rounded-2xl bg-[#f5f7fb] p-4 text-center">
+                  <p className="text-xs font-bold uppercase text-gray-500">
+                    Units Remaining
+                  </p>
 
-                  <DetailRow
-                    label="Units Remaining After Support"
-                    value={unitsRemainingAfterSelection.toString()}
-                  />
+                  <p className="mt-1 text-2xl font-black">
+                    {unitsRemainingAfterSelection}
+                  </p>
+                </div>
 
-                  <DetailRow
-                    label="Funding Progress After Support"
-                    value={`${fundingProgressAfterSelection.toFixed(
+                <div className="rounded-2xl bg-[#f5f7fb] p-4 text-center">
+                  <p className="text-xs font-bold uppercase text-gray-500">
+                    Funding Progress
+                  </p>
+
+                  <p className="mt-1 text-2xl font-black">
+                    {fundingProgressAfterSelection.toFixed(
                       2
-                    )}%`}
+                    )}%
+                  </p>
+                </div>
+
+              </div>
+
+              <div className="mx-auto mt-4 max-w-xl overflow-hidden rounded-full bg-gray-200">
+                <div
+                  className="h-3 rounded-full bg-green-600 transition-all"
+                  style={{
+                    width: `${fundingProgressAfterSelection}%`,
+                  }}
+                />
+              </div>
+
+            </section>
+
+            {/* OPTIONAL REFERRAL */}
+            <section className="mt-7 rounded-3xl border border-blue-200 bg-blue-50 p-6 md:p-7">
+
+              <h3 className="text-xl font-black">
+                Were You Referred to EPEW?
+              </h3>
+
+              <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                Optional — complete this only if someone referred you.
+              </p>
+
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
+
+                <div>
+                  <label
+                    htmlFor="referrerName"
+                    className="block text-sm font-bold"
+                  >
+                    Referrer&apos;s Name
+                  </label>
+
+                  <input
+                    id="referrerName"
+                    type="text"
+                    value={referrerName}
+                    onChange={(event) =>
+                      setReferrerName(
+                        event.target.value
+                      )
+                    }
+                    placeholder="Optional"
+                    className="mt-2 w-full rounded-2xl border border-gray-300 bg-white p-4 outline-none focus:border-green-600"
                   />
                 </div>
+
+                <div>
+                  <label
+                    htmlFor="referrerBusinessName"
+                    className="block text-sm font-bold"
+                  >
+                    Referrer&apos;s Business
+                  </label>
+
+                  <input
+                    id="referrerBusinessName"
+                    type="text"
+                    value={
+                      referrerBusinessName
+                    }
+                    onChange={(event) =>
+                      setReferrerBusinessName(
+                        event.target.value
+                      )
+                    }
+                    placeholder="Optional"
+                    className="mt-2 w-full rounded-2xl border border-gray-300 bg-white p-4 outline-none focus:border-green-600"
+                  />
+                </div>
+
               </div>
-
-              <div className="mt-8 rounded-3xl border-2 border-blue-200 bg-blue-50 p-6">
-                <h3 className="text-xl font-extrabold">
-                  Were You Referred to EPEW?
-                </h3>
-
-                <p className="mt-2 leading-relaxed text-gray-700">
-                  This information is optional.
-                  If someone referred you, please
-                  tell us who they are and their
-                  business name if you know it.
-                </p>
-
-                <label className="mt-6 block font-bold">
-                  Name of the Person Who
-                  Referred You
-                </label>
-
-                <input
-                  type="text"
-                  value={referrerName}
-                  onChange={(event) =>
-                    setReferrerName(
-                      event.target.value
-                    )
-                  }
-                  placeholder="Optional"
-                  className="mt-2 w-full rounded-2xl border-2 border-gray-300 bg-white p-4 text-lg outline-none focus:border-green-600"
-                />
-
-                <label className="mt-5 block font-bold">
-                  Referrer&apos;s Business Name
-                </label>
-
-                <input
-                  type="text"
-                  value={
-                    referrerBusinessName
-                  }
-                  onChange={(event) =>
-                    setReferrerBusinessName(
-                      event.target.value
-                    )
-                  }
-                  placeholder="Optional"
-                  className="mt-2 w-full rounded-2xl border-2 border-gray-300 bg-white p-4 text-lg outline-none focus:border-green-600"
-                />
-              </div>
-
-              <div className="mt-8 rounded-3xl border-2 border-green-300 bg-green-50 p-6">
-                <h3 className="text-xl font-extrabold">
-                  One-Time Annual Payment
-                </h3>
-
-                <p className="mt-4 leading-relaxed text-gray-700">
-                  Your selected Support Units
-                  will be paid in one payment for
-                  the full one-year support
-                  period. There is no weekly or
-                  monthly billing and no
-                  automatic renewal for this
-                  support.
-                </p>
-              </div>
-
-              <label className="mt-7 flex cursor-pointer items-start gap-4 rounded-2xl border-2 border-gray-200 bg-white p-5">
-                <input
-                  type="checkbox"
-                  checked={acknowledged}
-                  onChange={(event) => {
-                    setAcknowledged(
-                      event.target
-                        .checked
-                    );
-
-                    setErrorMessage(
-                      ""
-                    );
-                  }}
-                  className="mt-1 h-6 w-6"
-                />
-
-                <span className="leading-relaxed text-gray-700">
-                  I have reviewed and agree
-                  to the EPEW Participation
-                  Agreement. I understand that
-                  this is a one-time annual
-                  support payment, that
-                  participation benefits are
-                  not guaranteed, and that
-                  participation is not a bank
-                  deposit or guaranteed
-                  financial product.
-                </span>
-              </label>
-
-              <button
-                type="button"
-                onClick={
-                  continueToStripeCheckout
-                }
-                disabled={
-                  submitting ||
-                  !acknowledged ||
-                  unitsRemaining < 1
-                }
-                className="mt-8 w-full rounded-2xl bg-green-700 py-5 text-2xl font-black text-white shadow-lg transition hover:bg-[#06245c] disabled:cursor-not-allowed disabled:bg-gray-400"
-              >
-                {submitting
-                  ? "Opening Secure Payment..."
-                  : `Continue to Payment — ${formatCurrency(
-                      totalAnnualSupport
-                    )}`}
-              </button>
-
-              <p className="mt-5 text-center text-sm font-semibold text-gray-500">
-                Secure one-time payment is
-                processed by Stripe.
-              </p>
             </section>
+
+            {/* PAYMENT INFORMATION */}
+            <div className="mt-7 rounded-3xl border border-green-200 bg-green-50 p-6 text-center">
+
+              <h3 className="text-xl font-black">
+                One-Time Annual Payment
+              </h3>
+
+              <p className="mx-auto mt-2 max-w-2xl leading-relaxed text-gray-700">
+                Your selected Support Units are paid in one payment for the full one-year support period. There is no weekly or monthly billing and no automatic renewal for this support.
+              </p>
+
+            </div>
+
+            {/* AGREEMENT */}
+            <label className="mt-7 flex cursor-pointer items-start gap-4 rounded-3xl border-2 border-gray-200 bg-white p-6 shadow-sm">
+
+              <input
+                type="checkbox"
+                checked={acknowledged}
+                onChange={(event) => {
+                  setAcknowledged(
+                    event.target.checked
+                  );
+
+                  setErrorMessage("");
+                }}
+                className="mt-1 h-6 w-6 shrink-0"
+              />
+
+              <span className="leading-relaxed text-gray-700">
+                I have reviewed and agree to the EPEW Participation Agreement. I understand that this is a one-time annual support payment. My participation is voluntary support. Participation benefits depend on business performance and EPEW policies and regulations. I understand that participation is not a bank deposit or guaranteed financial product.
+              </span>
+
+            </label>
+
+            {/* PAYMENT BUTTON */}
+            <button
+              type="button"
+              onClick={continueToStripeCheckout}
+              disabled={
+                submitting ||
+                !acknowledged ||
+                unitsRemaining < 1
+              }
+              className="mt-7 w-full rounded-2xl bg-green-700 px-6 py-5 text-xl font-black text-white shadow-xl transition hover:bg-[#06245c] disabled:cursor-not-allowed disabled:bg-gray-400 md:text-2xl"
+            >
+              {submitting
+                ? "Opening Secure Payment..."
+                : `Continue to Payment — ${formatCurrency(
+                    totalAnnualSupport
+                  )}`}
+            </button>
+
+            <p className="mt-4 text-center text-sm font-semibold text-gray-500">
+              Secure payment is processed by Stripe.
+            </p>
+
           </div>
         </div>
       </section>
     </main>
   );
-}
 
-function DetailRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex flex-col justify-between gap-2 border-b border-gray-200 pb-4 sm:flex-row">
-      <span className="font-bold text-gray-600">
-        {label}
-      </span>
-
-      <span className="text-lg font-black text-[#06245c]">
-        {value}
-      </span>
-    </div>
-  );
 }
