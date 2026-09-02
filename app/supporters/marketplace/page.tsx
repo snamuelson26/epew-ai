@@ -49,34 +49,15 @@ export default function SupporterMarketplacePage() {
     setLoading(false);
   }
 
-  const visibleEntrepreneurs = useMemo(
-    () =>
-      entrepreneurs.filter((business) => {
-        const publicBusinessId = String(
-          business.public_business_id || ""
-        ).toUpperCase();
-
-        const businessName = String(
-          business.business_name || ""
-        ).toLowerCase();
-
-        return (
-          publicBusinessId !== "FFR-001" &&
-          businessName !== "food fans restaurant"
-        );
-      }),
-    [entrepreneurs]
-  );
-
   const categories = useMemo(() => {
-    const list = visibleEntrepreneurs
+    const list = entrepreneurs
       .map((item) => item.business_category)
       .filter(Boolean);
 
     return ["All", ...Array.from(new Set(list))];
-  }, [visibleEntrepreneurs]);
+  }, [entrepreneurs]);
 
-  const businesses = visibleEntrepreneurs.filter((business) => {
+  const businesses = entrepreneurs.filter((business) => {
     const matchesCategory =
       category === "All" || business.business_category === category;
 
@@ -98,17 +79,17 @@ export default function SupporterMarketplacePage() {
     return matchesCategory && matchesSearch;
   });
 
-  const qualifiedEntrepreneurs = visibleEntrepreneurs.length;
-  const businessesSeekingSupport = visibleEntrepreneurs.length;
+  const qualifiedEntrepreneurs = entrepreneurs.length;
+  const businessesSeekingSupport = entrepreneurs.length;
 
-  const weeklySupportersNeeded = visibleEntrepreneurs.reduce((total, business) => {
+  const weeklySupportersNeeded = entrepreneurs.reduce((total, business) => {
     const required = Number(business.units_required || 20);
     const supported = Number(business.units_supported || 0);
 
     return total + Math.max(required - supported, 0);
   }, 0);
 
-  const newEntrepreneursThisWeek = visibleEntrepreneurs.filter((business) => {
+  const newEntrepreneursThisWeek = entrepreneurs.filter((business) => {
     if (!business.created_at) return false;
 
     const createdDate = new Date(business.created_at);
