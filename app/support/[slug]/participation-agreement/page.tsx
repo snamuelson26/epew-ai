@@ -32,11 +32,12 @@ export default function ParticipationAgreementPage() {
   }
 
   const weeklyUnitAmount = 100;
+  const monthlyUnitAmount = 433.34;
   const weeksPerYear = 52;
 
   const weeklyTotal = units * weeklyUnitAmount;
   const annualTotal = weeklyTotal * weeksPerYear;
-  const monthlyTotal = annualTotal / 12;
+  const monthlyTotal = units * monthlyUnitAmount;
 
   const selectedPaymentAmount =
     frequency === "weekly"
@@ -104,8 +105,10 @@ export default function ParticipationAgreementPage() {
               <h2 className="mb-6 text-4xl font-bold">Participation Units</h2>
 
               <p className="mb-6 text-xl font-semibold text-gray-700">
-                You may change the number of units and select the payment
-                frequency before submitting your participation request.
+                Select the number of participation units and your preferred
+                payment option before submitting your participation request.
+                Each participation unit represents a $5,200 annual support
+                commitment.
               </p>
 
               <label className="mb-3 block text-2xl font-bold">
@@ -172,20 +175,20 @@ export default function ParticipationAgreementPage() {
                 </h3>
 
                 <p className="mb-4 text-2xl leading-relaxed text-gray-700">
-                  Weekly or monthly automatic participation may be considered
-                  for up to a 6% annual participation benefit based on business
-                  performance, program structure, and ecosystem conditions.
+                  Weekly or monthly participation may qualify for an annual
+                  participation benefit of up to 6%, depending on business
+                  performance and applicable EPEW policies and regulations.
                 </p>
 
                 <p className="text-2xl font-bold leading-relaxed text-green-700">
-                  Annual one-time participation may be considered for up to a 7%
-                  annual participation benefit consideration.
+                  A participation unit paid in full through the annual one-time
+                  payment option may qualify for an annual participation benefit
+                  of up to 8%, depending on business performance and applicable
+                  EPEW policies and regulations.
                 </p>
 
                 <p className="mt-5 text-xl leading-relaxed text-gray-600">
-                  Participation benefits are not guaranteed and depend on
-                  entrepreneur performance, business activity, and program
-                  conditions.
+                  Participation benefits are not guaranteed.
                 </p>
               </div>
             </div>
@@ -196,34 +199,53 @@ export default function ParticipationAgreementPage() {
               </h2>
 
               <p>
-                This Agreement is made through the platform operated by Ekero
-                Partners Empower Wealth (EPEW).
+                This Supporter–Entrepreneur Participation Agreement is entered
+                into directly between the Supporter and the Entrepreneur
+                identified in this Agreement.
               </p>
 
               <p>
-                EPEW acts solely as a platform organizer, entrepreneur
-                development coordinator, and administrative support system.
+                The Supporter voluntarily agrees to provide financial support
+                to the Entrepreneur&apos;s business according to the
+                participation option, number of units, payment schedule, and
+                other terms selected in this Agreement.
               </p>
 
               <p>
-                The purpose of this Agreement is to allow the Supporter to
-                participate in the Entrepreneur’s community participation
-                campaign through the EPEW platform.
+                The Entrepreneur agrees to participate in the EPEW
+                Entrepreneur Development Ecosystem and to operate the supported
+                business in accordance with applicable program requirements,
+                reporting obligations, and business responsibilities.
+              </p>
+
+              <p className="font-bold text-[#06245c]">
+                EPEW is not a party to this Agreement.
               </p>
 
               <p>
-                EPEW is not a lender, bank, broker-dealer, financial investor,
-                financial advisor, or public securities exchange.
+                EPEW provides the platform, administrative services, program
+                administration, payment-processing coordination, recordkeeping,
+                entrepreneur development services, and applicable policies and
+                procedures used by the Supporter and Entrepreneur.
               </p>
 
               <p>
-                Participation decisions are made voluntarily and independently by
-                the Supporter.
+                The Supporter understands that participation is voluntary
+                support and that participation benefits depend on the
+                performance of the supported business and applicable EPEW
+                policies and regulations.
               </p>
 
               <p>
-                EPEW does not guarantee profitability, business success,
-                repayment, financial return, or participation outcome.
+                The Entrepreneur does not guarantee a particular business
+                result, participation benefit, repayment outcome, or level of
+                profitability.
+              </p>
+
+              <p>
+                The Supporter acknowledges that business activity involves risk
+                and independently chooses whether to provide support to the
+                Entrepreneur.
               </p>
             </div>
 
@@ -256,8 +278,9 @@ export default function ParticipationAgreementPage() {
               <label className="flex items-start gap-4 text-2xl leading-relaxed text-gray-700">
                 <input type="checkbox" required className="mt-1 h-6 w-6" />
                 <span>
-                  I understand that EPEW does not guarantee business success,
-                  repayment, financial return, or participation outcome.
+                  I understand that participation benefits are not guaranteed
+                  and depend on the performance of the supported business and
+                  applicable EPEW policies and regulations.
                 </span>
               </label>
             </div>
