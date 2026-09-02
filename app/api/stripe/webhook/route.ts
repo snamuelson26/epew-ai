@@ -53,6 +53,21 @@ export async function POST(req: Request) {
           session.metadata?.support_flow || "";
 
         if (supportFlow === "annual_one_time") {
+          if (session.payment_status !== "paid") {
+            console.log(
+              "Annual support payment pending; waiting for Stripe settlement:",
+              {
+                stripeEventId: event.id,
+                stripeEventType: event.type,
+                checkoutSessionId: session.id,
+                paymentStatus: session.payment_status,
+                supportIntentId:
+                  session.metadata?.support_intent_id || null,
+              }
+            );
+            break;
+          }
+
           const annualResult =
             await processAnnualSupportCheckout(
               session

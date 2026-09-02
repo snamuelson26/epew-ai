@@ -234,7 +234,7 @@ export async function POST(req: Request) {
       } = await supabaseAdmin
         .from("entrepreneurs")
         .select(
-          "id,public_business_id,business_name,status,qualified,marketplace_visibility,units_required,units_supported,funding_status,meeting_1_status,meeting_2_status,meeting_3_status,campaign_status,campaign_authorized_at"
+          "id,public_business_id,business_name,status,qualified,marketplace_visibility,units_required,units_supported,funding_status,campaign_status"
         )
         .eq(
           "id",
@@ -273,13 +273,7 @@ export async function POST(req: Request) {
       const campaignAuthorized =
         selectedEntrepreneur.qualified === true &&
         selectedEntrepreneur.marketplace_visibility === true &&
-        selectedEntrepreneur.meeting_1_status === "completed" &&
-        selectedEntrepreneur.meeting_2_status === "completed" &&
-        ["active", "completed"].includes(
-          selectedEntrepreneur.meeting_3_status || ""
-        ) &&
-        selectedEntrepreneur.campaign_status === "Campaign Active" &&
-        Boolean(selectedEntrepreneur.campaign_authorized_at);
+        selectedEntrepreneur.campaign_status === "Campaign Active";
 
       if (!campaignAuthorized) {
         return NextResponse.json(

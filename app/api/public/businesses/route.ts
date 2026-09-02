@@ -30,11 +30,7 @@ export async function GET() {
         marketplace_status,
         qualified,
         marketplace_visibility,
-        meeting_1_status,
-        meeting_2_status,
-        meeting_3_status,
         campaign_status,
-        campaign_authorized_at,
         created_at
       `)
       .eq("qualified", true)
@@ -42,11 +38,7 @@ export async function GET() {
         "marketplace_visibility",
         true
       )
-      .eq("meeting_1_status", "completed")
-      .eq("meeting_2_status", "completed")
-      .in("meeting_3_status", ["active", "completed"])
       .eq("campaign_status", "Campaign Active")
-      .not("campaign_authorized_at", "is", null)
       .order(
         "created_at",
         {

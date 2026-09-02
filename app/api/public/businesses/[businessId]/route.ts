@@ -16,23 +16,6 @@ export async function GET(
     const publicBusinessId =
       String(businessId || "").trim();
 
-    const supabaseProjectRef =
-      (() => {
-        try {
-          const host = new URL(
-            process.env.NEXT_PUBLIC_SUPABASE_URL || ""
-          ).hostname;
-          return host.split(".")[0] || "unknown";
-        } catch {
-          return "unknown";
-        }
-      })();
-
-    console.log(
-      "Public business Supabase project:",
-      supabaseProjectRef
-    );
-
     if (!publicBusinessId) {
       return NextResponse.json(
         {
@@ -68,11 +51,7 @@ export async function GET(
         qualified,
         marketplace_visibility,
         marketplace_status,
-        meeting_1_status,
-        meeting_2_status,
-        meeting_3_status,
-        campaign_status,
-        campaign_authorized_at
+        campaign_status
       `)
       .eq(
         "public_business_id",
@@ -83,11 +62,7 @@ export async function GET(
         "marketplace_visibility",
         true
       )
-      .eq("meeting_1_status", "completed")
-      .eq("meeting_2_status", "completed")
-      .in("meeting_3_status", ["active", "completed"])
       .eq("campaign_status", "Campaign Active")
-      .not("campaign_authorized_at", "is", null)
       .maybeSingle();
 
     if (error) {
