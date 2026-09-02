@@ -49,15 +49,34 @@ export default function SupporterMarketplacePage() {
     setLoading(false);
   }
 
+  const visibleEntrepreneurs = useMemo(
+    () =>
+      entrepreneurs.filter((business) => {
+        const publicBusinessId = String(
+          business.public_business_id || ""
+        ).toUpperCase();
+
+        const businessName = String(
+          business.business_name || ""
+        ).toLowerCase();
+
+        return (
+          publicBusinessId !== "FFR-001" &&
+          businessName !== "food fans restaurant"
+        );
+      }),
+    [entrepreneurs]
+  );
+
   const categories = useMemo(() => {
-    const list = entrepreneurs
+    const list = visibleEntrepreneurs
       .map((item) => item.business_category)
       .filter(Boolean);
 
     return ["All", ...Array.from(new Set(list))];
-  }, [entrepreneurs]);
+  }, [visibleEntrepreneurs]);
 
-  const businesses = entrepreneurs.filter((business) => {
+  const businesses = visibleEntrepreneurs.filter((business) => {
     const matchesCategory =
       category === "All" || business.business_category === category;
 
@@ -79,17 +98,17 @@ export default function SupporterMarketplacePage() {
     return matchesCategory && matchesSearch;
   });
 
-  const qualifiedEntrepreneurs = entrepreneurs.length;
-  const businessesSeekingSupport = entrepreneurs.length;
+  const qualifiedEntrepreneurs = visibleEntrepreneurs.length;
+  const businessesSeekingSupport = visibleEntrepreneurs.length;
 
-  const weeklySupportersNeeded = entrepreneurs.reduce((total, business) => {
+  const weeklySupportersNeeded = visibleEntrepreneurs.reduce((total, business) => {
     const required = Number(business.units_required || 20);
     const supported = Number(business.units_supported || 0);
 
     return total + Math.max(required - supported, 0);
   }, 0);
 
-  const newEntrepreneursThisWeek = entrepreneurs.filter((business) => {
+  const newEntrepreneursThisWeek = visibleEntrepreneurs.filter((business) => {
     if (!business.created_at) return false;
 
     const createdDate = new Date(business.created_at);
@@ -102,6 +121,19 @@ export default function SupporterMarketplacePage() {
   }).length;
 
   const newBusinessesAddedThisWeek = newEntrepreneursThisWeek;
+
+  const dailyMarketplaceMessages = [
+    "A new week of entrepreneurship and community support begins with EPEW.",
+    "Supporters are discovering qualified entrepreneurs across the EPEW ecosystem.",
+    "EPEW continues preparing entrepreneurs to become business owners and community builders.",
+    "Qualified businesses are being prepared to connect with supporters throughout the ecosystem.",
+    "Every qualified entrepreneur represents a new opportunity for business and community growth.",
+    "Support and collaboration can help qualified entrepreneurs move closer to business ownership.",
+    "Explore qualified entrepreneurs and discover where your support can make an impact.",
+  ];
+
+  const dailyMarketplaceMessage =
+    dailyMarketplaceMessages[new Date().getDay()];
 
   if (loading) {
     return (
@@ -145,10 +177,23 @@ export default function SupporterMarketplacePage() {
               Development Ecosystem.
             </p>
 
-            <p className="mx-auto mt-8 max-w-4xl rounded-2xl bg-white p-5 text-lg font-bold text-red-700">
-              Participation is not an investment. Participation benefits are not
-              guaranteed.
+            <p className="mx-auto mt-8 max-w-5xl rounded-2xl bg-white p-5 text-lg font-bold text-[#06245c]">
+              Participation is voluntary support. Participation benefits depend
+              on business performance and EPEW policies and regulations.
             </p>
+
+            <p className="mx-auto mt-6 max-w-5xl text-2xl font-bold leading-relaxed text-lime-300">
+              Your support may provide an annual participation benefit of up to
+              8%. EPEW can help you explore qualified businesses based on
+              established qualification criteria.
+            </p>
+
+            <a
+              href="#marketplace-businesses"
+              className="mt-8 inline-block rounded-2xl bg-lime-300 px-10 py-5 text-2xl font-black text-[#06245c] shadow-xl transition hover:bg-white"
+            >
+              Support Now
+            </a>
           </div>
         </section>
 
@@ -162,6 +207,10 @@ export default function SupporterMarketplacePage() {
               EPEW is an active, growing entrepreneurship ecosystem where
               qualified entrepreneurs are prepared, presented, and connected
               with community supporters.
+            </p>
+
+            <p className="mx-auto mt-5 max-w-4xl rounded-2xl bg-green-50 px-6 py-4 text-xl font-bold text-green-800">
+              {dailyMarketplaceMessage}
             </p>
           </div>
 
@@ -216,7 +265,10 @@ export default function SupporterMarketplacePage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-8 pb-24">
+        <section
+          id="marketplace-businesses"
+          className="mx-auto max-w-7xl px-8 pb-24"
+        >
           <div className="grid grid-cols-1 gap-12">
             {businesses.length === 0 ? (
               <div className="rounded-3xl bg-white p-12 text-center shadow-xl">
@@ -243,8 +295,8 @@ export default function SupporterMarketplacePage() {
 
         <section className="bg-[#06245c] px-8 py-16 text-center text-white">
           <p className="mx-auto max-w-5xl text-3xl font-extrabold leading-relaxed">
-            Support an entrepreneur. Strengthen a community. Help build lasting
-            prosperity through the EPEW ecosystem.
+            Foster entrepreneurship, community development, and personal growth
+            through support and collaboration.
           </p>
         </section>
       </main>
