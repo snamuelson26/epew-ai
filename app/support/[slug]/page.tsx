@@ -49,7 +49,7 @@ export default function SupportEntrepreneurPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#f5f7fb] p-8 text-[#06245c]">
+      <main className="min-h-screen bg-[#f4f7fb] p-8 text-[#06245c]">
         <p className="text-center text-xl font-bold">
           Loading...
         </p>
@@ -59,11 +59,12 @@ export default function SupportEntrepreneurPage() {
 
   if (!business) {
     return (
-      <main className="min-h-screen bg-[#f5f7fb] p-8 text-[#06245c]">
+      <main className="min-h-screen bg-[#f4f7fb] p-8 text-[#06245c]">
         <div className="mx-auto max-w-2xl rounded-3xl bg-white p-10 text-center shadow-xl">
           <h1 className="text-3xl font-extrabold">
             Support Page
           </h1>
+
           <p className="mt-4 text-xl text-gray-700">
             {message}
           </p>
@@ -106,88 +107,104 @@ export default function SupportEntrepreneurPage() {
     .toUpperCase();
 
   return (
-    <main className="min-h-screen bg-[#f5f7fb] px-5 py-10 text-[#06245c]">
+    <main className="min-h-screen bg-[#f4f7fb] px-4 py-10 text-[#06245c]">
       <div className="mx-auto max-w-3xl">
 
-        <section className="rounded-3xl bg-white px-6 py-10 text-center shadow-xl md:px-12">
+        <section className="overflow-hidden rounded-[32px] bg-white shadow-2xl">
 
-          <div className="mx-auto mb-10 inline-flex flex-col items-center rounded-3xl bg-lime-300 px-10 py-5 shadow-lg">
-            <span className="text-xl font-black md:text-2xl">
-              ⭐ EPEW Qualified Entrepreneur
-            </span>
+          <div className="bg-[#06245c] px-6 py-9 text-center text-white">
+            <div className="inline-flex flex-col items-center rounded-3xl bg-lime-300 px-9 py-4 text-[#06245c] shadow-lg">
+              <span className="text-xl font-black md:text-2xl">
+                ⭐ EPEW Qualified Entrepreneur
+              </span>
 
-            <span className="mt-2 text-3xl font-black md:text-4xl">
-              $100,000.00
-            </span>
+              <span className="mt-1 text-3xl font-black md:text-4xl">
+                $100,000.00
+              </span>
+            </div>
           </div>
 
-          <p className="mb-8 text-sm font-black uppercase tracking-wider text-green-700">
-            Business ID: {businessId}
-          </p>
+          <div className="px-5 py-8 md:px-10">
 
-          <div className="mb-8 flex items-center justify-center gap-6">
+            <p className="mb-6 text-center text-sm font-black uppercase tracking-wider text-green-700">
+              Business ID: {businessId}
+            </p>
 
-            <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-[#06245c] text-3xl font-black text-white shadow-lg">
-              {photo && !photoError ? (
-                <img
-                  src={photo}
-                  alt={entrepreneurName}
-                  className="h-full w-full object-cover"
-                  onError={() => setPhotoError(true)}
-                />
-              ) : (
-                initials
-              )}
+            <div className="mx-auto max-w-2xl rounded-[28px] border border-gray-200 bg-[#f8fafc] p-6 shadow-lg md:p-8">
+
+              <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
+
+                <div className="flex h-36 w-36 shrink-0 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-[#06245c] text-4xl font-black text-white shadow-xl">
+                  {photo && !photoError ? (
+                    <img
+                      src={photo}
+                      alt={entrepreneurName}
+                      className="h-full w-full object-cover"
+                      onError={() => setPhotoError(true)}
+                    />
+                  ) : (
+                    initials
+                  )}
+                </div>
+
+                <div className="flex h-36 w-36 shrink-0 items-center justify-center overflow-hidden rounded-3xl border border-gray-200 bg-white p-3 shadow-xl">
+                  {logo && !logoError ? (
+                    <img
+                      src={logo}
+                      alt={`${businessName} logo`}
+                      className="h-full w-full object-contain"
+                      onError={() => setLogoError(true)}
+                    />
+                  ) : (
+                    <span className="text-center text-sm font-bold text-gray-500">
+                      {businessName}
+                    </span>
+                  )}
+                </div>
+
+              </div>
+
+              <div className="mt-7 text-center">
+                <h1 className="text-3xl font-black md:text-4xl">
+                  {businessName}
+                </h1>
+
+                <p className="mt-2 text-xl font-semibold text-gray-700">
+                  {entrepreneurName}
+                </p>
+
+                <p className="mt-2 text-base text-gray-600 md:text-lg">
+                  {location}
+                  {location && category ? " • " : ""}
+                  {category}
+                </p>
+              </div>
+
             </div>
 
-            {logo && !logoError ? (
-              <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-2xl bg-white p-2 shadow-lg">
-                <img
-                  src={logo}
-                  alt={`${businessName} logo`}
-                  className="h-full w-full object-contain"
-                  onError={() => setLogoError(true)}
-                />
-              </div>
-            ) : null}
+            <div className="mx-auto mt-8 max-w-xl text-center">
+              <p className="text-lg leading-relaxed text-gray-700 md:text-xl">
+                Support this entrepreneur through EPEW&apos;s
+                structured community participation program.
+              </p>
+
+              <Link
+                href={`/support/${businessId}/checkout`}
+                className="mt-7 inline-block w-full rounded-2xl bg-green-700 px-8 py-5 text-xl font-black text-white shadow-lg transition hover:bg-green-800 sm:w-auto"
+              >
+                Support This Entrepreneur
+              </Link>
+            </div>
+
+            <div className="mx-auto mt-8 max-w-2xl rounded-2xl border border-amber-200 bg-amber-50 px-6 py-5 text-center shadow-sm">
+              <p className="text-base font-bold leading-relaxed text-[#7a4b00]">
+                Your participation is voluntary support.
+                Participation benefits depend on business performance
+                and EPEW policies and regulations.
+              </p>
+            </div>
+
           </div>
-
-          <h1 className="text-4xl font-extrabold md:text-5xl">
-            {businessName}
-          </h1>
-
-          <p className="mt-3 text-2xl text-gray-700">
-            {entrepreneurName}
-          </p>
-
-          <p className="mt-3 text-lg text-gray-600">
-            {location}
-            {location && category ? " • " : ""}
-            {category}
-          </p>
-
-          <div className="mx-auto my-10 h-px max-w-xl bg-gray-200" />
-
-          <p className="mx-auto max-w-xl text-xl leading-relaxed text-gray-700">
-            Support this entrepreneur through EPEW&apos;s
-            structured community participation program.
-          </p>
-
-          <div className="mt-10">
-            <Link
-              href={`/support/${businessId}/checkout`}
-              className="inline-block rounded-2xl bg-green-700 px-10 py-5 text-xl font-black text-white shadow-lg transition hover:bg-green-800"
-            >
-              Support This Entrepreneur
-            </Link>
-          </div>
-
-          <p className="mx-auto mt-10 max-w-2xl rounded-2xl border border-gray-200 bg-gray-50 p-5 text-base font-bold leading-relaxed text-red-700">
-            Participation is not an investment. Participation
-            benefits depend on business performance and EPEW
-            policies and regulations.
-          </p>
-
         </section>
 
       </div>
