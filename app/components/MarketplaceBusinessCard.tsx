@@ -36,7 +36,7 @@ const supportUrl = `/support/${businessId}`;
       ? Math.min(Math.round((unitsSupported / unitsRequired) * 100), 100)
       : 0;
 
-  const fundingGoal = Number(business.funding_goal ?? 100000);
+  const qualificationAmount = 100000;
 
   return (
     <div className="overflow-hidden rounded-[2rem] bg-white shadow-2xl ring-1 ring-gray-200">
@@ -150,8 +150,13 @@ const supportUrl = `/support/${businessId}`;
           <InfoBox title="Business Category" value={category} />
 
           <InfoBox
-            title="Business Funding Goal"
-            value={`$${fundingGoal.toLocaleString()}`}
+            title="Qualification Amount"
+            value={qualificationAmount.toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           />
 
           <InfoBox
