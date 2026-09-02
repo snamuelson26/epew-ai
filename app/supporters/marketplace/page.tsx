@@ -1,19 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabase";
 
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import MarketplaceBusinessCard from "../../components/MarketplaceBusinessCard";
 
 export default function SupporterMarketplacePage() {
   const [entrepreneurs, setEntrepreneurs] = useState<any[]>([]);
-  const [supporter, setSupporter] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
 
   useEffect(() => {
     loadMarketplace();
@@ -21,20 +16,6 @@ export default function SupporterMarketplacePage() {
 
   async function loadMarketplace() {
     setLoading(true);
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-  const { data } = await supabase
-    .from("supporters")
-    .select("*")
-    .or(`user_id.eq.${user.id},email.eq.${user.email}`)
-    .maybeSingle();
-
-  setSupporter(data);
-}
 
     const { data, error } = await supabase
       .from("entrepreneurs")
@@ -49,37 +30,6 @@ export default function SupporterMarketplacePage() {
     setLoading(false);
   }
 
-  const categories = useMemo(() => {
-    const list = entrepreneurs
-      .map((item) => item.business_category)
-      .filter(Boolean);
-
-    return ["All", ...Array.from(new Set(list))];
-  }, [entrepreneurs]);
-
-  const businesses = entrepreneurs.filter((business) => {
-    const matchesCategory =
-      category === "All" || business.business_category === category;
-
-    const searchText = `
-      ${business.business_name || ""}
-      ${business.full_name || ""}
-      ${business.name || ""}
-      ${business.product_or_service || ""}
-      ${business.business_description || ""}
-      ${business.business_category || ""}
-      ${business.city || ""}
-      ${business.state || ""}
-      ${business.country || ""}
-    `.toLowerCase();
-
-    const matchesSearch =
-      search.trim() === "" || searchText.includes(search.toLowerCase());
-
-    return matchesCategory && matchesSearch;
-  });
-
-  const qualifiedEntrepreneurs = entrepreneurs.length;
   const businessesSeekingSupport = entrepreneurs.length;
 
   const weeklySupportersNeeded = entrepreneurs.reduce((total, business) => {
@@ -170,7 +120,7 @@ export default function SupporterMarketplacePage() {
             </p>
 
             <a
-              href="#marketplace-businesses"
+              href="/supporters/entrepreneurs"
               className="mt-8 inline-block rounded-2xl bg-lime-300 px-10 py-5 text-2xl font-black text-[#06245c] shadow-xl transition hover:bg-white"
             >
               Support Now
@@ -219,58 +169,6 @@ export default function SupporterMarketplacePage() {
               title="Weekly Supporters Needed"
               value={weeklySupportersNeeded}
             />
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-7xl px-8 pb-10">
-          <div className="grid gap-6 rounded-3xl bg-white p-8 shadow-xl md:grid-cols-2">
-            <input
-              type="text"
-              placeholder="Search by business, entrepreneur, category, city, or state..."
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              className="rounded-xl border border-[#06245c] p-4 text-lg outline-none focus:ring-2 focus:ring-green-400"
-            />
-
-            <select
-              value={category}
-              onChange={(event) => setCategory(event.target.value)}
-              className="rounded-xl border border-[#06245c] p-4 text-lg outline-none focus:ring-2 focus:ring-green-400"
-            >
-              {categories.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-          </div>
-        </section>
-
-        <section
-          id="marketplace-businesses"
-          className="mx-auto max-w-7xl px-8 pb-24"
-        >
-          <div className="grid grid-cols-1 gap-12">
-            {businesses.length === 0 ? (
-              <div className="rounded-3xl bg-white p-12 text-center shadow-xl">
-                <h2 className="text-4xl font-extrabold text-[#06245c]">
-                  No businesses match your current search.
-                </h2>
-
-                <p className="mt-5 text-2xl text-gray-700">
-                  Try adjusting your search terms or filters to discover other
-                  qualified entrepreneurs in the EPEW Marketplace.
-                </p>
-              </div>
-            ) : (
-              businesses.map((business) => (
-                <MarketplaceBusinessCard
-                  key={business.id}
-                  business={business}
-                  supporter={supporter}
-                />
-              ))
-            )}
           </div>
         </section>
 
