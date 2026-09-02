@@ -148,7 +148,7 @@ export default function SupporterLayout({
             <img
               src="/images/epew-ede-ibos-logo.png"
               alt="EPEW-EDE-IBOS"
-              className="max-h-28 w-auto object-contain"
+              className="max-h-40 w-auto object-contain"
             />
           </div>
         </div>
@@ -170,16 +170,6 @@ export default function SupporterLayout({
             </Link>
           ))}
 
-        </div>
-
-        {/* LOGOUT */}
-        <div className="pt-8">
-          <button
-            onClick={handleLogout}
-            className="w-full bg-red-600 hover:bg-red-700 py-4 rounded-2xl text-xl font-bold transition"
-          >
-            🚪 Logout
-          </button>
         </div>
 
       </div>
