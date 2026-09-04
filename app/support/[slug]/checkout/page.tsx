@@ -158,6 +158,28 @@ export default function SupportCheckoutPage() {
   const supportReturnPath = `/support/${businessId}/checkout`;
   const encodedSupportReturnPath = encodeURIComponent(supportReturnPath);
 
+  useEffect(() => {
+    try {
+      if (
+        window.sessionStorage.getItem(
+          `epew_supporter_entrepreneur_agreement:${supportReturnPath}`
+        ) === "accepted"
+      ) {
+        setEntrepreneurAgreementAccepted(true);
+      }
+
+      if (
+        window.sessionStorage.getItem(
+          `epew_supporter_platform_agreement:${supportReturnPath}`
+        ) === "accepted"
+      ) {
+        setEpewAgreementAccepted(true);
+      }
+    } catch {
+      // The supporter may still accept directly on this transaction page.
+    }
+  }, [supportReturnPath]);
+
   function formatCurrency(amount: number) {
     return amount.toLocaleString("en-US", {
       style: "currency",
@@ -562,8 +584,6 @@ export default function SupportCheckoutPage() {
                 </p>
                 <a
                   href={`/supporters/supporter-entrepreneur-participation-agreement?returnTo=${encodedSupportReturnPath}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="mt-3 inline-block font-black text-blue-700 underline underline-offset-4 hover:text-green-700"
                 >
                   Open Supporter–Entrepreneur Participation Agreement
@@ -594,8 +614,6 @@ export default function SupportCheckoutPage() {
                 </p>
                 <a
                   href={`/supporters/platform-participation-agreement?returnTo=${encodedSupportReturnPath}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="mt-3 inline-block font-black text-blue-700 underline underline-offset-4 hover:text-green-700"
                 >
                   Open EPEW Supporter Platform Participation Agreement
