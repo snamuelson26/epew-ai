@@ -132,7 +132,7 @@ export default function SupporterPlatformParticipationAgreementPage() {
         </section>
 
         <section className="px-4 py-5 sm:px-6 sm:py-7 md:p-12">
-          <div className="space-y-7 text-base leading-relaxed text-slate-700 sm:text-lg md:max-h-[1100px] md:overflow-y-auto md:rounded-3xl md:border md:border-slate-200 md:bg-[#f8fafc] md:p-10 md:text-xl">
+          <div className="space-y-7 rounded-2xl border border-slate-200 bg-[#f8fafc] p-4 text-base leading-relaxed text-slate-700 sm:p-6 sm:text-lg md:rounded-3xl md:p-10 md:text-xl">
             {copy.sections.map((section) => (
               <section key={section.title}>
                 <h2 className="mb-3 text-2xl font-black text-[#06245c] sm:text-3xl md:mb-4">
