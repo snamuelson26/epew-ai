@@ -1,11 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useLocale } from "@/app/components/enterprise/language";
 
 export type EpewLanguage = "en" | "ht" | "fr" | "es";
-
-const STORAGE_KEY = "epew-language";
-const EVENT_NAME = "epew-language-change";
 
 export const languageNames: Record<EpewLanguage, string> = {
   en: "English",
@@ -14,35 +11,17 @@ export const languageNames: Record<EpewLanguage, string> = {
   es: "Español",
 };
 
-function normalizeLanguage(value: string | null): EpewLanguage {
-  return value === "ht" || value === "fr" || value === "es" ? value : "en";
-}
-
 export function useEpewLanguage() {
-  const [language, setLanguageState] = useState<EpewLanguage>("en");
-
-  useEffect(() => {
-    setLanguageState(normalizeLanguage(window.localStorage.getItem(STORAGE_KEY)));
-
-    const sync = () =>
-      setLanguageState(normalizeLanguage(window.localStorage.getItem(STORAGE_KEY)));
-
-    window.addEventListener("storage", sync);
-    window.addEventListener(EVENT_NAME, sync);
-    return () => {
-      window.removeEventListener("storage", sync);
-      window.removeEventListener(EVENT_NAME, sync);
-    };
-  }, []);
+  const { locale, setLocale } = useLocale();
 
   function setLanguage(next: EpewLanguage) {
-    window.localStorage.setItem(STORAGE_KEY, next);
-    document.documentElement.lang = next === "ht" ? "ht" : next;
-    setLanguageState(next);
-    window.dispatchEvent(new Event(EVENT_NAME));
+    void setLocale(next);
   }
 
-  return { language, setLanguage };
+  return {
+    language: locale as EpewLanguage,
+    setLanguage,
+  };
 }
 
 export function LanguageSelector({ className = "" }: { className?: string }) {
