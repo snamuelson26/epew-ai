@@ -106,6 +106,10 @@ export default function SupportEntrepreneurPage() {
     .slice(0, 2)
     .toUpperCase();
 
+  const loginHref = `/supporters/login?business_id=${encodeURIComponent(
+    businessId
+  )}&next=${encodeURIComponent(`/support/${businessId}/checkout`)}`;
+
   return (
     <main className="min-h-screen bg-[#f4f7fb] px-4 py-10 text-[#06245c]">
       <div className="mx-auto max-w-3xl">
@@ -189,9 +193,7 @@ export default function SupportEntrepreneurPage() {
               </p>
 
               <Link
-                href={`/supporters/login?next=${encodeURIComponent(
-                `/support/${businessId}/checkout`
-              )}`}
+                href={loginHref}
                 className="mt-7 inline-block w-full rounded-2xl bg-green-700 px-8 py-5 text-xl font-black text-white shadow-lg transition hover:bg-green-800 sm:w-auto"
               >
                 Support This Entrepreneur
