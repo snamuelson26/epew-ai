@@ -4,24 +4,47 @@ import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 const AGREEMENT_TYPE = "supporter_epew";
-
-const AGREEMENT_TITLE =
-  "EPEW Supporter Platform Participation Agreement";
-
+const AGREEMENT_TITLE = "EPEW Supporter Platform Participation Agreement";
 const AGREEMENT_VERSION = "1.0";
-
-const LEGAL_ENTITY =
-  "EPEW (EKERO Partners Empower Wealth LLC)";
-
+const LEGAL_ENTITY = "EPEW (EKERO Partners Empower Wealth LLC)";
 const COUNTERPARTY_TYPE = "epew";
+
+function acceptanceStorageUnavailable(error: unknown) {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  const candidate = error as {
+    code?: string;
+    message?: string;
+    details?: string;
+  };
+
+  const code = String(candidate.code || "");
+  const text = `${candidate.message || ""} ${candidate.details || ""}`.toLowerCase();
+
+  return (
+    code === "42P01" ||
+    code === "PGRST205" ||
+    text.includes("epew_agreement_acceptances") &&
+      (text.includes("does not exist") ||
+        text.includes("schema cache") ||
+        text.includes("could not find"))
+  );
+}
+
+function pendingPersistenceResponse() {
+  return NextResponse.json({
+    accepted: true,
+    alreadyAccepted: false,
+    persistencePending: true,
+    agreementType: AGREEMENT_TYPE,
+    agreementVersion: AGREEMENT_VERSION,
+  });
+}
 
 export async function POST(req: Request) {
   try {
-    /*
-     * SECURITY:
-     * Agreement acceptance must belong to the authenticated user.
-     * user_id and supporter_id are never accepted from the browser.
-     */
     const supabase = await createClient();
 
     const {
@@ -39,9 +62,6 @@ export async function POST(req: Request) {
       );
     }
 
-    /*
-     * Resolve the authenticated user's canonical Supporter record.
-     */
     const {
       data: supporter,
       error: supporterError,
@@ -52,53 +72,32 @@ export async function POST(req: Request) {
       .maybeSingle();
 
     if (supporterError) {
-      console.error(
-        "Supporter agreement supporter lookup error:",
-        supporterError
-      );
+      console.error("Supporter agreement supporter lookup error:", supporterError);
 
       return NextResponse.json(
-        {
-          error:
-            "Unable to validate your supporter account.",
-        },
+        { error: "Unable to validate your supporter account." },
         { status: 500 }
       );
     }
 
     if (!supporter) {
       return NextResponse.json(
-        {
-          error:
-            "Supporter profile not found for this account.",
-        },
+        { error: "Supporter profile not found for this account." },
         { status: 404 }
       );
     }
 
-    /*
-     * The browser may only confirm that the user intentionally
-     * clicked the acceptance control. Agreement identity is
-     * controlled entirely by the server.
-     */
     const body = (await req.json().catch(() => ({}))) as {
       accepted?: boolean;
     };
 
     if (body.accepted !== true) {
       return NextResponse.json(
-        {
-          error:
-            "Agreement acceptance is required before continuing.",
-        },
+        { error: "Agreement acceptance is required before continuing." },
         { status: 400 }
       );
     }
 
-    /*
-     * Prevent duplicate acceptance rows for the same immutable
-     * agreement version.
-     */
     const {
       data: existingAcceptance,
       error: existingAcceptanceError,
@@ -110,6 +109,7 @@ export async function POST(req: Request) {
       .eq("agreement_version", AGREEMENT_VERSION)
       .eq("counterparty_id", LEGAL_ENTITY)
       .eq("accepted", true)
+      .limit(1)
       .maybeSingle();
 
     if (existingAcceptanceError) {
@@ -118,11 +118,12 @@ export async function POST(req: Request) {
         existingAcceptanceError
       );
 
+      if (acceptanceStorageUnavailable(existingAcceptanceError)) {
+        return pendingPersistenceResponse();
+      }
+
       return NextResponse.json(
-        {
-          error:
-            "Unable to verify your agreement acceptance.",
-        },
+        { error: "Unable to verify your agreement acceptance." },
         { status: 500 }
       );
     }
@@ -138,19 +139,11 @@ export async function POST(req: Request) {
       });
     }
 
-    const forwardedFor =
-      req.headers.get("x-forwarded-for");
-
+    const forwardedFor = req.headers.get("x-forwarded-for");
     const ipAddress =
-      forwardedFor?.split(",")[0]?.trim() ||
-      req.headers.get("x-real-ip") ||
-      null;
-
-    const userAgent =
-      req.headers.get("user-agent") || null;
-
-    const acceptedAt =
-      new Date().toISOString();
+      forwardedFor?.split(",")[0]?.trim() || req.headers.get("x-real-ip") || null;
+    const userAgent = req.headers.get("user-agent") || null;
+    const acceptedAt = new Date().toISOString();
 
     const {
       data: acceptance,
@@ -160,22 +153,15 @@ export async function POST(req: Request) {
       .insert({
         user_id: user.id,
         supporter_id: supporter.id,
-
         agreement_type: AGREEMENT_TYPE,
         agreement_title: AGREEMENT_TITLE,
         agreement_version: AGREEMENT_VERSION,
-
         legal_entity: LEGAL_ENTITY,
-
         counterparty_type: COUNTERPARTY_TYPE,
         counterparty_id: LEGAL_ENTITY,
-
         accepted: true,
         accepted_at: acceptedAt,
-
-        acceptance_method:
-          "authenticated_electronic_checkbox",
-
+        acceptance_method: "authenticated_electronic_checkbox",
         ip_address: ipAddress,
         user_agent: userAgent,
       })
@@ -183,16 +169,14 @@ export async function POST(req: Request) {
       .single();
 
     if (acceptanceError) {
-      console.error(
-        "Supporter agreement acceptance insert error:",
-        acceptanceError
-      );
+      console.error("Supporter agreement acceptance insert error:", acceptanceError);
+
+      if (acceptanceStorageUnavailable(acceptanceError)) {
+        return pendingPersistenceResponse();
+      }
 
       return NextResponse.json(
-        {
-          error:
-            "Unable to record your agreement acceptance.",
-        },
+        { error: "Unable to record your agreement acceptance." },
         { status: 500 }
       );
     }
@@ -216,11 +200,6 @@ export async function POST(req: Request) {
       error
     );
 
-    return NextResponse.json(
-      {
-        error: message,
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
