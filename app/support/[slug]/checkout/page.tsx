@@ -566,11 +566,6 @@ export default function SupportCheckoutPage() {
                       >
                         {unitOption} Unit
                         {unitOption === 1 ? "" : "s"}
-                        {" — "}
-                        {formatCurrency(
-                          unitOption *
-                            ANNUAL_SUPPORT_PER_UNIT
-                        )}
                       </option>
                     ))}
                   </select>
