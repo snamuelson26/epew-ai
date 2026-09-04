@@ -155,6 +155,9 @@ export default function SupportCheckoutPage() {
     100
   );
 
+  const supportReturnPath = `/support/${businessId}/checkout`;
+  const encodedSupportReturnPath = encodeURIComponent(supportReturnPath);
+
   function formatCurrency(amount: number) {
     return amount.toLocaleString("en-US", {
       style: "currency",
@@ -227,9 +230,7 @@ export default function SupportCheckoutPage() {
       try {
         agreementResult = agreementText ? JSON.parse(agreementText) : {};
       } catch {
-        throw new Error(
-          "The agreement server returned an invalid response."
-        );
+        throw new Error("The agreement server returned an invalid response.");
       }
 
       if (!agreementResponse.ok) {
@@ -411,6 +412,18 @@ export default function SupportCheckoutPage() {
               </div>
             </div>
 
+            <div className="mt-6 rounded-3xl border-2 border-amber-300 bg-amber-50 p-6 text-center">
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-amber-800">
+                Support Options for This Entrepreneur
+              </p>
+              <p className="mt-2 text-2xl font-black text-[#06245c]">
+                Annual Paid-in-Full Support Only
+              </p>
+              <p className="mx-auto mt-2 max-w-2xl font-semibold text-gray-700">
+                This entrepreneur does not accept Weekly or Monthly support. Only full Annual Support Units are available for this support transaction.
+              </p>
+            </div>
+
             <section className="mt-8 rounded-3xl border border-gray-200 bg-white p-6 shadow-lg md:p-8">
               <div className="text-center">
                 <p className="text-sm font-black uppercase tracking-[0.22em] text-green-700">
@@ -548,7 +561,7 @@ export default function SupportCheckoutPage() {
                   Review the approved Supporter–Entrepreneur agreement before accepting.
                 </p>
                 <a
-                  href="/supporters/supporter-entrepreneur-participation-agreement"
+                  href={`/supporters/supporter-entrepreneur-participation-agreement?returnTo=${encodedSupportReturnPath}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-3 inline-block font-black text-blue-700 underline underline-offset-4 hover:text-green-700"
@@ -580,7 +593,7 @@ export default function SupportCheckoutPage() {
                   Review the agreement between you and EPEW before accepting.
                 </p>
                 <a
-                  href="/supporters/platform-participation-agreement"
+                  href={`/supporters/platform-participation-agreement?returnTo=${encodedSupportReturnPath}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-3 inline-block font-black text-blue-700 underline underline-offset-4 hover:text-green-700"
