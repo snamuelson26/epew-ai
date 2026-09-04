@@ -544,9 +544,15 @@ export default function BusinessWelcomePage() {
                 <p>✅ Attend the Grand Opening.</p>
                 <p>✅ Receive your Digital Founding Supporter Certificate.</p>
                 <p>
-                  ✅ Participation benefits may be up to{" "}
-                  <strong>6% annually</strong>, subject to business performance
-                  and EPEW policies.
+                  ✅ <strong>Up to 8% annual participation benefit</strong> for supporters
+                  who support one or more full $5,200 units in a single payment.
+                </p>
+                <p>
+                  ✅ <strong>Up to 6% annual participation benefit</strong> for supporters
+                  who support a $5,200 unit through weekly or monthly payments.
+                </p>
+                <p className="text-base text-gray-600">
+                  Participation benefits are subject to business performance and EPEW policies.
                 </p>
               </div>
             </div>
