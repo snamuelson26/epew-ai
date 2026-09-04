@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { SupportedLocale } from "@/app/components/enterprise/language";
 import { getSupporterEntrepreneurAgreementCopy } from "@/app/supporters/agreements/AgreementTranslations";
 
@@ -14,11 +14,7 @@ const LANGUAGE_OPTIONS: Array<{ code: SupportedLocale; label: string }> = [
 
 const ACCEPTANCE_COPY: Record<
   SupportedLocale,
-  {
-    checkbox: string;
-    error: string;
-    acceptReturn: string;
-  }
+  { checkbox: string; error: string; acceptReturn: string }
 > = {
   en: {
     checkbox:
@@ -60,14 +56,18 @@ function safeReturnPath(value: string | null) {
 
 export default function SupporterEntrepreneurParticipationAgreementPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [locale, setLocale] = useState<SupportedLocale>("en");
   const [accepted, setAccepted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [returnTo, setReturnTo] = useState("/supporters/marketplace");
+
+  useEffect(() => {
+    const returnParam = new URLSearchParams(window.location.search).get("returnTo");
+    setReturnTo(safeReturnPath(returnParam));
+  }, []);
 
   const copy = getSupporterEntrepreneurAgreementCopy(locale);
   const acceptanceCopy = ACCEPTANCE_COPY[locale];
-  const returnTo = safeReturnPath(searchParams.get("returnTo"));
 
   function acceptAndReturn() {
     setErrorMessage("");
@@ -114,9 +114,7 @@ export default function SupporterEntrepreneurParticipationAgreementPage() {
           <p className="text-sm font-black uppercase tracking-[0.3em] text-lime-300 md:text-base">
             {copy.eyebrow}
           </p>
-          <h1 className="mt-4 text-4xl font-black md:text-5xl">
-            {copy.title}
-          </h1>
+          <h1 className="mt-4 text-4xl font-black md:text-5xl">{copy.title}</h1>
         </div>
 
         <div className="space-y-8 px-6 py-10 text-lg leading-relaxed text-gray-700 md:px-10">
@@ -131,7 +129,6 @@ export default function SupporterEntrepreneurParticipationAgreementPage() {
                   {paragraph}
                 </p>
               ))}
-
               {section.bullets && (
                 <ul className="mt-4 list-disc space-y-2 pl-7">
                   {section.bullets.map((bullet) => (
@@ -174,7 +171,6 @@ export default function SupporterEntrepreneurParticipationAgreementPage() {
             >
               ← {copy.returnButton}
             </button>
-
             <button
               type="button"
               onClick={acceptAndReturn}
