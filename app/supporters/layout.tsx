@@ -78,32 +78,40 @@ export default function SupporterLayout({ children }: { children: ReactNode }) {
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#f5f7fb]">
-      <div className="w-80 bg-[#06245c] text-white flex flex-col p-8">
-        <div className="mb-6 text-center">
-          <h1 className="text-4xl font-extrabold">{t.title}</h1>
-        </div>
+    <div className="min-h-screen bg-[#f5f7fb] md:flex">
+      <aside className="w-full bg-[#06245c] px-4 py-5 text-white md:flex md:min-h-screen md:w-80 md:shrink-0 md:flex-col md:p-8">
+        <div className="flex items-center justify-between gap-3 md:block">
+          <div className="min-w-0 md:mb-6 md:text-center">
+            <h1 className="text-2xl font-extrabold sm:text-3xl md:text-4xl">{t.title}</h1>
+          </div>
 
-        <div className="mb-6">
-          <LanguageSelector />
-        </div>
-
-        <div className="mb-10 flex justify-center">
-          <div className="flex w-full items-center justify-center rounded-3xl bg-white p-5 shadow-xl">
-            <img src="/images/epew-ede-ibos-logo.png" alt="EPEW-EDE-IBOS" className="max-h-40 w-auto object-contain" />
+          <div className="w-44 shrink-0 md:mb-6 md:w-auto">
+            <LanguageSelector />
           </div>
         </div>
 
-        <div className="space-y-3 flex-1 overflow-y-auto">
+        <div className="mt-4 flex justify-center md:mb-10 md:mt-0">
+          <div className="flex w-28 items-center justify-center rounded-2xl bg-white p-2 shadow-lg sm:w-32 md:w-full md:rounded-3xl md:p-5 md:shadow-xl">
+            <img src="/images/epew-ede-ibos-logo.png" alt="EPEW-EDE-IBOS" className="max-h-20 w-auto object-contain md:max-h-40" />
+          </div>
+        </div>
+
+        <nav className="mt-4 grid grid-cols-2 gap-2 md:mt-0 md:flex-1 md:grid-cols-1 md:space-y-3 md:overflow-y-auto">
           {menu.map((item) => (
-            <Link key={item.href} href={item.href} className={`block px-5 py-4 rounded-2xl text-lg font-bold transition ${pathname === item.href ? "bg-green-600" : "hover:bg-blue-800"}`}>
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`block rounded-xl px-3 py-3 text-center text-sm font-bold transition sm:text-base md:rounded-2xl md:px-5 md:py-4 md:text-left md:text-lg ${pathname === item.href ? "bg-green-600" : "bg-white/10 hover:bg-blue-800 md:bg-transparent"}`}
+            >
               {item.title}
             </Link>
           ))}
-        </div>
-      </div>
+        </nav>
+      </aside>
 
-      <div className="flex-1 p-8 overflow-auto">{children}</div>
+      <main className="w-full min-w-0 px-3 py-4 sm:px-5 sm:py-6 md:flex-1 md:p-8">
+        {children}
+      </main>
     </div>
   );
 }
