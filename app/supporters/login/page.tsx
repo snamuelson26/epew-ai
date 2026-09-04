@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -25,15 +25,47 @@ export default function SupporterLoginPage() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [businessId, setBusinessId] = useState("");
+  const [nextPath, setNextPath] = useState("");
+  const [referrerCode, setReferrerCode] = useState("");
 
   useEffect(() => {
     void loadNamespaces([NAMESPACE]);
+
+    const search = new URLSearchParams(window.location.search);
+    const incomingBusinessId = (search.get("business_id") || "").trim();
+    const incomingNext = (search.get("next") || "").trim();
+    const incomingRef = (search.get("ref") || "").trim();
+
+    let resolvedBusinessId = incomingBusinessId;
+
+    if (!resolvedBusinessId && incomingNext) {
+      const match = incomingNext.match(/^\/support\/([^/]+)(?:\/|$)/);
+      if (match?.[1]) {
+        resolvedBusinessId = decodeURIComponent(match[1]);
+      }
+    }
+
+    setBusinessId(resolvedBusinessId);
+    setNextPath(incomingNext);
+    setReferrerCode(incomingRef);
   }, [loadNamespaces]);
 
   const translate = (key: string) =>
     t(key, {
       namespace: NAMESPACE,
     });
+
+  const registerHref = useMemo(() => {
+    const params = new URLSearchParams();
+
+    if (businessId) params.set("business_id", businessId);
+    if (nextPath) params.set("next", nextPath);
+    if (referrerCode) params.set("ref", referrerCode);
+
+    const query = params.toString();
+    return query ? `/supporters/register?${query}` : "/supporters/register";
+  }, [businessId, nextPath, referrerCode]);
 
   async function handleLogin(
     event: React.FormEvent<HTMLFormElement>,
@@ -90,9 +122,27 @@ export default function SupporterLoginPage() {
         return;
       }
 
-      router.push(
-        "/supporters/dashboard",
-      );
+      if (businessId && supporter.selected_business_id !== businessId) {
+        const { error: businessUpdateError } = await supabase
+          .from("supporters")
+          .update({ selected_business_id: businessId })
+          .eq("id", supporter.id);
+
+        if (businessUpdateError) {
+          console.error(
+            "Unable to preserve selected business on supporter login:",
+            businessUpdateError,
+          );
+        }
+      }
+
+      if (nextPath.startsWith("/") && !nextPath.startsWith("//")) {
+        router.push(nextPath);
+      } else {
+        router.push(
+          "/supporters/dashboard",
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -141,7 +191,7 @@ export default function SupporterLoginPage() {
           </Link>
 
           <Link
-            href="/supporters/register"
+            href={registerHref}
             className="block text-lg font-bold text-green-700 transition hover:underline"
           >
             {translate(
