@@ -25,6 +25,8 @@ export default function SupporterLoginPage() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [emailNotConfirmed, setEmailNotConfirmed] = useState(false);
   const [businessId, setBusinessId] = useState("");
   const [nextPath, setNextPath] = useState("");
   const [referrerCode, setReferrerCode] = useState("");
@@ -67,6 +69,39 @@ export default function SupporterLoginPage() {
     return query ? `/supporters/register?${query}` : "/supporters/register";
   }, [businessId, nextPath, referrerCode]);
 
+  async function resendConfirmation() {
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (!cleanEmail) {
+      setMessage("Please enter your email address first.");
+      return;
+    }
+
+    setResending(true);
+    setMessage("");
+
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: cleanEmail,
+        options: {
+          emailRedirectTo: `${window.location.origin}/supporters/login`,
+        },
+      });
+
+      if (error) {
+        setMessage(error.message);
+        return;
+      }
+
+      setMessage(
+        "A new confirmation email has been sent. Please open it, confirm your email address, then return here to sign in.",
+      );
+    } finally {
+      setResending(false);
+    }
+  }
+
   async function handleLogin(
     event: React.FormEvent<HTMLFormElement>,
   ) {
@@ -74,6 +109,7 @@ export default function SupporterLoginPage() {
 
     setLoading(true);
     setMessage("");
+    setEmailNotConfirmed(false);
 
     try {
       const cleanEmail =
@@ -86,7 +122,19 @@ export default function SupporterLoginPage() {
         });
 
       if (error) {
-        setMessage(error.message);
+        const isEmailNotConfirmed =
+          error.code === "email_not_confirmed" ||
+          error.message.toLowerCase().includes("email not confirmed");
+
+        if (isEmailNotConfirmed) {
+          setEmailNotConfirmed(true);
+          setMessage(
+            "Your email address has not been confirmed yet. Please check your email for the EPEW confirmation link, or use the button below to resend it.",
+          );
+        } else {
+          setMessage(error.message);
+        }
+
         return;
       }
 
@@ -178,21 +226,35 @@ export default function SupporterLoginPage() {
       )}
       loading={loading}
       message={message}
-      onEmailChange={setEmail}
+      onEmailChange={(value) => {
+        setEmail(value);
+        setEmailNotConfirmed(false);
+      }}
       onPasswordChange={setPassword}
       onSubmit={handleLogin}
       footer={
         <div className="space-y-4">
+          {emailNotConfirmed ? (
+            <button
+              type="button"
+              onClick={resendConfirmation}
+              disabled={resending}
+              className="w-full rounded-xl bg-green-700 px-4 py-3 text-base font-bold text-white transition hover:bg-[#06245c] disabled:cursor-not-allowed disabled:opacity-60 sm:text-lg"
+            >
+              {resending ? "Sending Confirmation Email..." : "Resend Confirmation Email"}
+            </button>
+          ) : null}
+
           <Link
             href="/supporters/forgot-password"
-            className="block text-lg font-bold text-[#06245c] transition hover:underline"
+            className="block text-base font-bold text-[#06245c] transition hover:underline sm:text-lg"
           >
             Forgot Password?
           </Link>
 
           <Link
             href={registerHref}
-            className="block text-lg font-bold text-green-700 transition hover:underline"
+            className="block text-base font-bold text-green-700 transition hover:underline sm:text-lg"
           >
             {translate(
               "supporter.createAccount",
