@@ -19,26 +19,13 @@ export default function SupportCheckoutPage() {
 
   const [business, setBusiness] = useState<any>(null);
   const [supporter, setSupporter] = useState<any>(null);
-
   const [units, setUnits] = useState(1);
-
-  const [referrerName, setReferrerName] =
-    useState("");
-
-  const [referrerBusinessName, setReferrerBusinessName] =
-    useState("");
-
-  const [acknowledged, setAcknowledged] =
-    useState(false);
-
-  const [loading, setLoading] =
-    useState(true);
-
-  const [submitting, setSubmitting] =
-    useState(false);
-
-  const [errorMessage, setErrorMessage] =
-    useState("");
+  const [referrerName, setReferrerName] = useState("");
+  const [referrerBusinessName, setReferrerBusinessName] = useState("");
+  const [acknowledged, setAcknowledged] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (businessId) {
@@ -57,14 +44,8 @@ export default function SupportCheckoutPage() {
       } = await supabase.auth.getUser();
 
       if (userError || !user) {
-        const nextPath = encodeURIComponent(
-          `/support/${businessId}/checkout`
-        );
-
-        router.push(
-          `/supporters/login?next=${nextPath}`
-        );
-
+        const nextPath = encodeURIComponent(`/support/${businessId}/checkout`);
+        router.push(`/supporters/login?next=${nextPath}`);
         return;
       }
 
@@ -74,9 +55,7 @@ export default function SupportCheckoutPage() {
       } = await supabase
         .from("supporters")
         .select("*")
-        .or(
-          `user_id.eq.${user.id},email.eq.${user.email}`
-        )
+        .or(`user_id.eq.${user.id},email.eq.${user.email}`)
         .maybeSingle();
 
       if (supporterError) {
@@ -86,14 +65,10 @@ export default function SupportCheckoutPage() {
       }
 
       if (!supporterData) {
-        const nextPath = encodeURIComponent(
-          `/support/${businessId}/checkout`
-        );
-
+        const nextPath = encodeURIComponent(`/support/${businessId}/checkout`);
         router.push(
           `/supporters/register?business_id=${businessId}&next=${nextPath}`
         );
-
         return;
       }
 
@@ -109,17 +84,12 @@ export default function SupportCheckoutPage() {
         .maybeSingle();
 
       if (businessError) {
-        throw new Error(
-          `Unable to load business: ${businessError.message}`
-        );
+        throw new Error(`Unable to load business: ${businessError.message}`);
       }
 
       if (!businessData) {
         setBusiness(null);
-        setErrorMessage(
-          "Business not found."
-        );
-
+        setErrorMessage("Business not found.");
         return;
       }
 
@@ -130,25 +100,17 @@ export default function SupportCheckoutPage() {
           ? error.message
           : "Unable to load the checkout page.";
 
-      console.error(
-        "Annual support checkout load error:",
-        error
-      );
-
+      console.error("Annual support checkout load error:", error);
       setErrorMessage(message);
     } finally {
       setLoading(false);
     }
   }
 
-  const businessName =
-    business?.business_name ||
-    "Business";
+  const businessName = business?.business_name || "Business";
 
   const entrepreneurName =
-    business?.full_name ||
-    business?.name ||
-    "EPEW Entrepreneur";
+    business?.full_name || business?.name || "EPEW Entrepreneur";
 
   const entrepreneurPhoto =
     business?.entrepreneur_photo ||
@@ -168,89 +130,48 @@ export default function SupportCheckoutPage() {
       ? Number(business.units_required)
       : TOTAL_UNITS_AVAILABLE;
 
-  const unitsSupported =
-    Math.max(
-      Number(
-        business?.units_supported || 0
-      ),
-      0
-    );
-
-  const unitsRemaining =
-    Math.max(
-      unitsAvailable - unitsSupported,
-      0
-    );
+  const unitsSupported = Math.max(Number(business?.units_supported || 0), 0);
+  const unitsRemaining = Math.max(unitsAvailable - unitsSupported, 0);
 
   useEffect(() => {
-    if (
-      unitsRemaining > 0 &&
-      units > unitsRemaining
-    ) {
+    if (unitsRemaining > 0 && units > unitsRemaining) {
       setUnits(unitsRemaining);
     }
   }, [unitsRemaining, units]);
 
-  const totalAnnualSupport =
-    useMemo(() => {
-      return (
-        Math.max(units, 0) *
-        ANNUAL_SUPPORT_PER_UNIT
-      );
-    }, [units]);
+  const totalAnnualSupport = useMemo(() => {
+    return Math.max(units, 0) * ANNUAL_SUPPORT_PER_UNIT;
+  }, [units]);
 
-  const unitsRemainingAfterSelection =
-    Math.max(
-      unitsRemaining - units,
-      0
-    );
-
-  const totalUnitsAfterSelection =
-    unitsSupported + units;
-
+  const unitsRemainingAfterSelection = Math.max(unitsRemaining - units, 0);
+  const totalUnitsAfterSelection = unitsSupported + units;
   const supportTotalAfterSelection =
-    totalUnitsAfterSelection *
-    ANNUAL_SUPPORT_PER_UNIT;
+    totalUnitsAfterSelection * ANNUAL_SUPPORT_PER_UNIT;
 
-  const fundingProgressAfterSelection =
-    Math.min(
-      (
-        supportTotalAfterSelection /
-        FUNDING_GOAL
-      ) * 100,
-      100
-    );
+  const fundingProgressAfterSelection = Math.min(
+    (supportTotalAfterSelection / FUNDING_GOAL) * 100,
+    100
+  );
 
-  function formatCurrency(
-    amount: number
-  ) {
-    return amount.toLocaleString(
-      "en-US",
-      {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }
-    );
+  function formatCurrency(amount: number) {
+    return amount.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
   }
 
   async function continueToStripeCheckout() {
     setErrorMessage("");
 
     if (!business) {
-      setErrorMessage(
-        "The selected business could not be found."
-      );
-
+      setErrorMessage("The selected business could not be found.");
       return;
     }
 
     if (!supporter) {
-      setErrorMessage(
-        "Your supporter profile could not be found."
-      );
-
+      setErrorMessage("Your supporter profile could not be found.");
       return;
     }
 
@@ -258,82 +179,49 @@ export default function SupportCheckoutPage() {
       setErrorMessage(
         "All available units for this entrepreneur have already been supported."
       );
-
       return;
     }
 
-    if (
-      !Number.isInteger(units) ||
-      units < 1 ||
-      units > unitsRemaining
-    ) {
+    if (!Number.isInteger(units) || units < 1 || units > unitsRemaining) {
       setErrorMessage(
         `Please select between 1 and ${unitsRemaining} available unit${
-          unitsRemaining === 1
-            ? ""
-            : "s"
+          unitsRemaining === 1 ? "" : "s"
         }.`
       );
-
       return;
     }
 
     if (!acknowledged) {
       setErrorMessage(
-        "Please review and accept the EPEW annual participation terms before continuing."
+        "Please review and accept the Supporter–Entrepreneur Participation Agreement before continuing."
       );
-
       return;
     }
 
     setSubmitting(true);
 
     try {
-      const response =
-        await fetch(
-          "/api/supporters/annual-support/checkout",
-          {
-            method: "POST",
+      const response = await fetch("/api/supporters/annual-support/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          supporterId: supporter.id,
+          units,
+          selectionMethod: "self_selected",
+          allocationPreference: "one_business",
+          selectedEntrepreneurId: String(business.id),
+          referrerName: referrerName.trim() || undefined,
+          referredBusinessName: referrerBusinessName.trim() || undefined,
+          referralSource:
+            referrerName.trim() || referrerBusinessName.trim()
+              ? "supporter_entered"
+              : undefined,
+        }),
+      });
 
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-
-            body: JSON.stringify({
-              supporterId:
-                supporter.id,
-
-              units,
-
-              selectionMethod:
-                "self_selected",
-
-              allocationPreference:
-                "one_business",
-
-              selectedEntrepreneurId:
-                String(business.id),
-
-              referrerName:
-                referrerName.trim() ||
-                undefined,
-
-              referredBusinessName:
-                referrerBusinessName.trim() ||
-                undefined,
-
-              referralSource:
-                referrerName.trim() ||
-                referrerBusinessName.trim()
-                  ? "supporter_entered"
-                  : undefined,
-            }),
-          }
-        );
-
-      const responseText =
-        await response.text();
+      const responseText = await response.text();
 
       let result: {
         checkoutUrl?: string;
@@ -343,44 +231,29 @@ export default function SupportCheckoutPage() {
       } = {};
 
       try {
-        result =
-          responseText
-            ? JSON.parse(
-                responseText
-              )
-            : {};
+        result = responseText ? JSON.parse(responseText) : {};
       } catch {
-        throw new Error(
-          "The checkout server returned an invalid response."
-        );
+        throw new Error("The checkout server returned an invalid response.");
       }
 
       if (!response.ok) {
         throw new Error(
-          result.error ||
-            "Unable to create the annual support checkout."
+          result.error || "Unable to create the annual support checkout."
         );
       }
 
       if (!result.checkoutUrl) {
-        throw new Error(
-          "Stripe did not return a secure checkout URL."
-        );
+        throw new Error("Stripe did not return a secure checkout URL.");
       }
 
-      window.location.href =
-        result.checkoutUrl;
+      window.location.href = result.checkoutUrl;
     } catch (error) {
       const message =
         error instanceof Error
           ? error.message
           : "Unable to open Stripe Checkout.";
 
-      console.error(
-        "Annual Stripe checkout error:",
-        error
-      );
-
+      console.error("Annual Stripe checkout error:", error);
       setErrorMessage(message);
       setSubmitting(false);
     }
@@ -400,22 +273,15 @@ export default function SupportCheckoutPage() {
     return (
       <main className="min-h-screen bg-[#f5f7fb] p-8 text-[#06245c]">
         <section className="mx-auto max-w-4xl rounded-3xl bg-white p-10 text-center shadow-xl">
-          <h1 className="text-4xl font-extrabold">
-            Business Not Found
-          </h1>
+          <h1 className="text-4xl font-extrabold">Business Not Found</h1>
 
           <p className="mt-5 text-xl text-gray-700">
-            {errorMessage ||
-              "The selected business could not be found."}
+            {errorMessage || "The selected business could not be found."}
           </p>
 
           <button
             type="button"
-            onClick={() =>
-              router.push(
-                "/supporters/marketplace"
-              )
-            }
+            onClick={() => router.push("/supporters/marketplace")}
             className="mt-8 rounded-2xl bg-[#06245c] px-8 py-4 text-xl font-bold text-white"
           >
             Return to Marketplace
@@ -429,15 +295,12 @@ export default function SupportCheckoutPage() {
     <main className="min-h-screen bg-[#f3f6fa] px-4 py-8 text-[#06245c] md:py-12">
       <section className="mx-auto max-w-4xl">
         <div className="overflow-hidden rounded-[2rem] bg-white shadow-2xl">
-
-          {/* EPEW HEADER */}
           <div className="bg-[#06245c] px-6 py-8 text-center text-white md:px-10">
             <p className="text-sm font-black uppercase tracking-[0.35em] text-lime-300 md:text-base">
               EPEW Annual Support
             </p>
 
             <div className="mt-6 flex items-center justify-center gap-5 md:gap-8">
-
               {entrepreneurPhoto ? (
                 <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-white shadow-xl md:h-36 md:w-36">
                   <img
@@ -457,7 +320,6 @@ export default function SupportCheckoutPage() {
                   />
                 </div>
               ) : null}
-
             </div>
 
             <h1 className="mt-6 text-3xl font-black md:text-5xl">
@@ -466,38 +328,29 @@ export default function SupportCheckoutPage() {
 
             <p className="mt-2 text-lg text-blue-100 md:text-xl">
               Entrepreneur:{" "}
-              <span className="font-black text-white">
-                {entrepreneurName}
-              </span>
+              <span className="font-black text-white">{entrepreneurName}</span>
             </p>
           </div>
 
           <div className="px-5 py-7 md:px-10 md:py-10">
-
             {errorMessage && (
               <div className="mb-7 rounded-2xl border-2 border-red-300 bg-red-50 p-5 text-center font-bold text-red-700">
                 {errorMessage}
               </div>
             )}
 
-            {/* SUPPORT SNAPSHOT */}
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-
               <div className="rounded-2xl bg-[#f5f7fb] p-4 text-center">
                 <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
                   Funding Goal
                 </p>
-
-                <p className="mt-2 text-xl font-black md:text-2xl">
-                  $100,000
-                </p>
+                <p className="mt-2 text-xl font-black md:text-2xl">$100,000</p>
               </div>
 
               <div className="rounded-2xl bg-[#f5f7fb] p-4 text-center">
                 <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
                   Units Available
                 </p>
-
                 <p className="mt-2 text-xl font-black md:text-2xl">
                   {unitsAvailable}
                 </p>
@@ -507,27 +360,20 @@ export default function SupportCheckoutPage() {
                 <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
                   Unit Price
                 </p>
-
-                <p className="mt-2 text-xl font-black md:text-2xl">
-                  $5,200
-                </p>
+                <p className="mt-2 text-xl font-black md:text-2xl">$5,200</p>
               </div>
 
               <div className="rounded-2xl bg-green-50 p-4 text-center">
                 <p className="text-xs font-bold uppercase tracking-wide text-green-700">
                   Participation Benefit
                 </p>
-
                 <p className="mt-2 text-xl font-black text-green-700 md:text-2xl">
                   Up to {PARTICIPATION_BENEFIT_RATE}%
                 </p>
               </div>
-
             </div>
 
-            {/* CHOOSE SUPPORT */}
             <section className="mt-8 rounded-3xl border border-gray-200 bg-white p-6 shadow-lg md:p-8">
-
               <div className="text-center">
                 <p className="text-sm font-black uppercase tracking-[0.22em] text-green-700">
                   Choose Your Support
@@ -548,10 +394,7 @@ export default function SupportCheckoutPage() {
                     id="units"
                     value={units}
                     onChange={(event) => {
-                      setUnits(
-                        Number(event.target.value)
-                      );
-
+                      setUnits(Number(event.target.value));
                       setErrorMessage("");
                     }}
                     className="w-full rounded-2xl border-2 border-gray-300 bg-white p-4 text-center text-xl font-black outline-none transition focus:border-green-600"
@@ -560,12 +403,8 @@ export default function SupportCheckoutPage() {
                       { length: unitsRemaining },
                       (_, index) => index + 1
                     ).map((unitOption) => (
-                      <option
-                        key={unitOption}
-                        value={unitOption}
-                      >
-                        {unitOption} Unit
-                        {unitOption === 1 ? "" : "s"}
+                      <option key={unitOption} value={unitOption}>
+                        {unitOption} Unit{unitOption === 1 ? "" : "s"}
                       </option>
                     ))}
                   </select>
@@ -576,33 +415,23 @@ export default function SupportCheckoutPage() {
                 )}
               </div>
 
-              {/* TOTAL */}
               <div className="mx-auto mt-7 max-w-xl rounded-3xl bg-[#06245c] px-6 py-7 text-center text-white shadow-lg">
-
                 <p className="text-sm font-bold uppercase tracking-wider text-blue-200">
                   Total Support Today
                 </p>
-
                 <p className="mt-2 text-4xl font-black md:text-5xl">
-                  {formatCurrency(
-                    totalAnnualSupport
-                  )}
+                  {formatCurrency(totalAnnualSupport)}
                 </p>
-
                 <p className="mt-3 text-blue-100">
-                  {units} annual support unit
-                  {units === 1 ? "" : "s"} • One-time payment
+                  {units} annual support unit{units === 1 ? "" : "s"} • One-time payment
                 </p>
-
               </div>
 
               <div className="mx-auto mt-6 grid max-w-xl grid-cols-2 gap-4">
-
                 <div className="rounded-2xl bg-[#f5f7fb] p-4 text-center">
                   <p className="text-xs font-bold uppercase text-gray-500">
                     Units Remaining
                   </p>
-
                   <p className="mt-1 text-2xl font-black">
                     {unitsRemainingAfterSelection}
                   </p>
@@ -612,57 +441,36 @@ export default function SupportCheckoutPage() {
                   <p className="text-xs font-bold uppercase text-gray-500">
                     Funding Progress
                   </p>
-
                   <p className="mt-1 text-2xl font-black">
-                    {fundingProgressAfterSelection.toFixed(
-                      2
-                    )}%
+                    {fundingProgressAfterSelection.toFixed(2)}%
                   </p>
                 </div>
-
               </div>
 
               <div className="mx-auto mt-4 max-w-xl overflow-hidden rounded-full bg-gray-200">
                 <div
                   className="h-3 rounded-full bg-green-600 transition-all"
-                  style={{
-                    width: `${fundingProgressAfterSelection}%`,
-                  }}
+                  style={{ width: `${fundingProgressAfterSelection}%` }}
                 />
               </div>
-
             </section>
 
-            {/* OPTIONAL REFERRAL */}
             <section className="mt-7 rounded-3xl border border-blue-200 bg-blue-50 p-6 md:p-7">
-
-              <h3 className="text-xl font-black">
-                Were You Referred to EPEW?
-              </h3>
-
+              <h3 className="text-xl font-black">Were You Referred to EPEW?</h3>
               <p className="mt-2 text-sm leading-relaxed text-gray-600">
                 Optional — complete this only if someone referred you.
               </p>
 
               <div className="mt-5 grid gap-4 md:grid-cols-2">
-
                 <div>
-                  <label
-                    htmlFor="referrerName"
-                    className="block text-sm font-bold"
-                  >
+                  <label htmlFor="referrerName" className="block text-sm font-bold">
                     Referrer&apos;s Name
                   </label>
-
                   <input
                     id="referrerName"
                     type="text"
                     value={referrerName}
-                    onChange={(event) =>
-                      setReferrerName(
-                        event.target.value
-                      )
-                    }
+                    onChange={(event) => setReferrerName(event.target.value)}
                     placeholder="Optional"
                     className="mt-2 w-full rounded-2xl border border-gray-300 bg-white p-4 outline-none focus:border-green-600"
                   />
@@ -675,87 +483,76 @@ export default function SupportCheckoutPage() {
                   >
                     Referrer&apos;s Business
                   </label>
-
                   <input
                     id="referrerBusinessName"
                     type="text"
-                    value={
-                      referrerBusinessName
-                    }
+                    value={referrerBusinessName}
                     onChange={(event) =>
-                      setReferrerBusinessName(
-                        event.target.value
-                      )
+                      setReferrerBusinessName(event.target.value)
                     }
                     placeholder="Optional"
                     className="mt-2 w-full rounded-2xl border border-gray-300 bg-white p-4 outline-none focus:border-green-600"
                   />
                 </div>
-
               </div>
             </section>
 
-            {/* PAYMENT INFORMATION */}
             <div className="mt-7 rounded-3xl border border-green-200 bg-green-50 p-6 text-center">
-
-              <h3 className="text-xl font-black">
-                One-Time Annual Payment
-              </h3>
-
+              <h3 className="text-xl font-black">One-Time Annual Payment</h3>
               <p className="mx-auto mt-2 max-w-2xl leading-relaxed text-gray-700">
                 Your selected Support Units are paid in one payment for the full one-year support period. There is no weekly or monthly billing and no automatic renewal for this support.
               </p>
-
             </div>
 
-            {/* AGREEMENT */}
-            <label className="mt-7 flex cursor-pointer items-start gap-4 rounded-3xl border-2 border-gray-200 bg-white p-6 shadow-sm">
+            <div className="mt-7 rounded-3xl border-2 border-gray-200 bg-white p-6 shadow-sm">
+              <div className="mb-5 rounded-2xl bg-blue-50 p-5 text-center">
+                <p className="font-black text-[#06245c]">
+                  Review the approved agreement before accepting.
+                </p>
+                <a
+                  href="/supporters/supporter-entrepreneur-participation-agreement"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-block font-black text-blue-700 underline underline-offset-4 hover:text-green-700"
+                >
+                  Open Supporter–Entrepreneur Participation Agreement
+                </a>
+              </div>
 
-              <input
-                type="checkbox"
-                checked={acknowledged}
-                onChange={(event) => {
-                  setAcknowledged(
-                    event.target.checked
-                  );
+              <label className="flex cursor-pointer items-start gap-4">
+                <input
+                  type="checkbox"
+                  checked={acknowledged}
+                  onChange={(event) => {
+                    setAcknowledged(event.target.checked);
+                    setErrorMessage("");
+                  }}
+                  className="mt-1 h-6 w-6 shrink-0"
+                />
 
-                  setErrorMessage("");
-                }}
-                className="mt-1 h-6 w-6 shrink-0"
-              />
+                <span className="leading-relaxed text-gray-700">
+                  I have reviewed and agree to the Supporter–Entrepreneur Participation Agreement. I understand that I am selecting {units} full annual Support Unit{units === 1 ? "" : "s"} at $5,200 per unit as a one-time payment, with an annual participation benefit of up to 8%. Participation benefits are not guaranteed and depend on applicable program terms and business performance.
+                </span>
+              </label>
+            </div>
 
-              <span className="leading-relaxed text-gray-700">
-                I have reviewed and agree to the EPEW Participation Agreement. I understand that this is a one-time annual support payment. My participation is voluntary support. Participation benefits depend on business performance and EPEW policies and regulations. I understand that participation is not a bank deposit or guaranteed financial product.
-              </span>
-
-            </label>
-
-            {/* PAYMENT BUTTON */}
             <button
               type="button"
               onClick={continueToStripeCheckout}
-              disabled={
-                submitting ||
-                !acknowledged ||
-                unitsRemaining < 1
-              }
+              disabled={submitting || !acknowledged || unitsRemaining < 1}
               className="mt-7 w-full rounded-2xl bg-green-700 px-6 py-5 text-xl font-black text-white shadow-xl transition hover:bg-[#06245c] disabled:cursor-not-allowed disabled:bg-gray-400 md:text-2xl"
             >
               {submitting
                 ? "Opening Secure Payment..."
-                : `Continue to Payment — ${formatCurrency(
-                    totalAnnualSupport
-                  )}`}
+                : `Continue to Payment — ${formatCurrency(totalAnnualSupport)}`}
             </button>
 
             <p className="mt-4 text-center text-sm font-semibold text-gray-500">
               Secure payment is processed by Stripe.
             </p>
-
           </div>
         </div>
       </section>
     </main>
   );
-
 }
