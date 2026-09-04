@@ -1,124 +1,13 @@
 "use client";
 
-export default function Legacy() {
-  return (
-    <section className="mb-10">
-      <div className="overflow-hidden rounded-3xl bg-gradient-to-r from-[#06245c] via-[#0b3b91] to-green-700 p-12 text-white shadow-2xl">
+import { useEpewLanguage } from "@/app/components/EpewLanguage";
 
-        <div className="max-w-5xl mx-auto text-center">
+const copy = {
+  en: { mine:"My Legacy", intro:"Since joining the EPEW Entrepreneur Development Ecosystem, you have become part of something much bigger than a financial contribution.", entrepreneurs:"Entrepreneurs", entrepreneursText:"Helping entrepreneurs prepare for business ownership.", businesses:"Businesses", businessesText:"Supporting the creation of sustainable businesses.", communities:"Communities", communitiesText:"Strengthening local economies and communities.", jobs:"Jobs", jobsText:"Creating employment opportunities for families.", yours:"Your Legacy", a:"Every entrepreneur you help...", b:"Every business that opens...", c:"Every job that is created...", result:"becomes part of your lasting contribution to stronger communities through entrepreneurship.", m1:"EPEW develops entrepreneurs.", m2:"Entrepreneurs build businesses.", m3:"Businesses strengthen communities.", m4:"Communities create lasting prosperity." },
+  ht: { mine:"Eritaj Mwen", intro:"Depi ou rantre nan Ekosistèm Devlopman Antreprenè EPEW la, ou vin fè pati yon bagay ki pi gwo pase yon senp kontribisyon finansye.", entrepreneurs:"Antreprenè", entrepreneursText:"Ede antreprenè prepare pou vin pwopriyetè biznis.", businesses:"Biznis", businessesText:"Sipòte kreyasyon biznis dirab.", communities:"Kominote", communitiesText:"Ranfòse ekonomi lokal yo ak kominote yo.", jobs:"Travay", jobsText:"Kreye opòtinite travay pou fanmi yo.", yours:"Eritaj Ou", a:"Chak antreprenè ou ede...", b:"Chak biznis ki ouvri...", c:"Chak travay ki kreye...", result:"vin fè pati kontribisyon dirab ou pou kominote ki pi solid atravè antreprenarya.", m1:"EPEW devlope antreprenè.", m2:"Antreprenè bati biznis.", m3:"Biznis ranfòse kominote yo.", m4:"Kominote yo kreye pwosperite dirab." },
+  fr: { mine:"Mon Héritage", intro:"Depuis votre adhésion à l’Écosystème de Développement des Entrepreneurs EPEW, vous faites partie de quelque chose de bien plus grand qu’une simple contribution financière.", entrepreneurs:"Entrepreneurs", entrepreneursText:"Aider les entrepreneurs à se préparer à devenir propriétaires d’entreprise.", businesses:"Entreprises", businessesText:"Soutenir la création d’entreprises durables.", communities:"Communautés", communitiesText:"Renforcer les économies locales et les communautés.", jobs:"Emplois", jobsText:"Créer des possibilités d’emploi pour les familles.", yours:"Votre Héritage", a:"Chaque entrepreneur que vous aidez...", b:"Chaque entreprise qui ouvre...", c:"Chaque emploi qui est créé...", result:"devient une partie de votre contribution durable à des communautés plus fortes grâce à l’entrepreneuriat.", m1:"EPEW développe les entrepreneurs.", m2:"Les entrepreneurs créent des entreprises.", m3:"Les entreprises renforcent les communautés.", m4:"Les communautés créent une prospérité durable." },
+  es: { mine:"Mi Legado", intro:"Desde que se unió al Ecosistema de Desarrollo de Emprendedores EPEW, se ha convertido en parte de algo mucho más grande que una contribución financiera.", entrepreneurs:"Emprendedores", entrepreneursText:"Ayudar a los emprendedores a prepararse para ser propietarios de negocios.", businesses:"Negocios", businessesText:"Apoyar la creación de negocios sostenibles.", communities:"Comunidades", communitiesText:"Fortalecer las economías locales y las comunidades.", jobs:"Empleos", jobsText:"Crear oportunidades de empleo para las familias.", yours:"Su Legado", a:"Cada emprendedor que usted ayuda...", b:"Cada negocio que abre...", c:"Cada empleo que se crea...", result:"se convierte en parte de su contribución duradera a comunidades más fuertes mediante el emprendimiento.", m1:"EPEW desarrolla emprendedores.", m2:"Los emprendedores crean negocios.", m3:"Los negocios fortalecen las comunidades.", m4:"Las comunidades crean prosperidad duradera." }
+};
 
-          <div className="text-7xl mb-8">
-            🌟
-          </div>
-
-          <h2 className="text-5xl md:text-6xl font-extrabold mb-8">
-            My Legacy
-          </h2>
-
-          <p className="text-2xl md:text-3xl leading-relaxed text-blue-100 mb-10">
-            Since joining the EPEW Entrepreneur Development Ecosystem,
-            you have become part of something much bigger than a financial
-            contribution.
-          </p>
-
-          <div className="grid md:grid-cols-4 gap-6 mb-12">
-
-            <LegacyCard
-              icon="👨‍💼"
-              title="Entrepreneurs"
-              text="Helping entrepreneurs prepare for business ownership."
-            />
-
-            <LegacyCard
-              icon="🏢"
-              title="Businesses"
-              text="Supporting the creation of sustainable businesses."
-            />
-
-            <LegacyCard
-              icon="🌍"
-              title="Communities"
-              text="Strengthening local economies and communities."
-            />
-
-            <LegacyCard
-              icon="💼"
-              title="Jobs"
-              text="Creating employment opportunities for families."
-            />
-
-          </div>
-
-          <div className="bg-white/10 rounded-3xl p-10 backdrop-blur-sm">
-
-            <h3 className="text-4xl font-extrabold mb-6 text-lime-300">
-              Your Legacy
-            </h3>
-
-            <p className="text-2xl leading-relaxed mb-6">
-              Every entrepreneur you help...
-            </p>
-
-            <p className="text-2xl leading-relaxed mb-6">
-              Every business that opens...
-            </p>
-
-            <p className="text-2xl leading-relaxed mb-6">
-              Every job that is created...
-            </p>
-
-            <p className="text-3xl font-extrabold leading-relaxed text-white">
-              becomes part of your lasting contribution to stronger
-              communities through entrepreneurship.
-            </p>
-
-          </div>
-
-          <div className="mt-12">
-
-            <p className="text-3xl font-extrabold text-lime-300 leading-relaxed">
-              EPEW develops entrepreneurs.
-              <br />
-              Entrepreneurs build businesses.
-              <br />
-              Businesses strengthen communities.
-              <br />
-              Communities create lasting prosperity.
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-  );
-}
-
-function LegacyCard({
-  icon,
-  title,
-  text,
-}: {
-  icon: string;
-  title: string;
-  text: string;
-}) {
-  return (
-    <div className="rounded-3xl bg-white/10 p-8 backdrop-blur-sm">
-
-      <div className="text-6xl mb-5">
-        {icon}
-      </div>
-
-      <h3 className="text-2xl font-extrabold mb-4">
-        {title}
-      </h3>
-
-      <p className="text-lg leading-relaxed text-blue-100">
-        {text}
-      </p>
-
-    </div>
-  );
-}
+export default function Legacy(){ const {language}=useEpewLanguage(); const t=copy[language]; return <section className="mb-10"><div className="overflow-hidden rounded-3xl bg-gradient-to-r from-[#06245c] via-[#0b3b91] to-green-700 p-12 text-white shadow-2xl"><div className="max-w-5xl mx-auto text-center"><div className="text-7xl mb-8">🌟</div><h2 className="text-5xl md:text-6xl font-extrabold mb-8">{t.mine}</h2><p className="text-2xl md:text-3xl leading-relaxed text-blue-100 mb-10">{t.intro}</p><div className="grid md:grid-cols-4 gap-6 mb-12"><LegacyCard icon="👨‍💼" title={t.entrepreneurs} text={t.entrepreneursText}/><LegacyCard icon="🏢" title={t.businesses} text={t.businessesText}/><LegacyCard icon="🌍" title={t.communities} text={t.communitiesText}/><LegacyCard icon="💼" title={t.jobs} text={t.jobsText}/></div><div className="bg-white/10 rounded-3xl p-10 backdrop-blur-sm"><h3 className="text-4xl font-extrabold mb-6 text-lime-300">{t.yours}</h3><p className="text-2xl leading-relaxed mb-6">{t.a}</p><p className="text-2xl leading-relaxed mb-6">{t.b}</p><p className="text-2xl leading-relaxed mb-6">{t.c}</p><p className="text-3xl font-extrabold leading-relaxed text-white">{t.result}</p></div><div className="mt-12"><p className="text-3xl font-extrabold text-lime-300 leading-relaxed">{t.m1}<br/>{t.m2}<br/>{t.m3}<br/>{t.m4}</p></div></div></div></section> }
+function LegacyCard({icon,title,text}:{icon:string;title:string;text:string}){return <div className="rounded-3xl bg-white/10 p-8 backdrop-blur-sm"><div className="text-6xl mb-5">{icon}</div><h3 className="text-2xl font-extrabold mb-4">{title}</h3><p className="text-lg leading-relaxed text-blue-100">{text}</p></div>}
