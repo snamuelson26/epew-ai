@@ -2,11 +2,15 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  LanguageSelector,
-  useLocale,
-} from "@/app/components/enterprise/language";
+import type { SupportedLocale } from "@/app/components/enterprise/language";
 import { getSupporterEpewAgreementCopy } from "@/app/supporters/agreements/AgreementTranslations";
+
+const LANGUAGE_OPTIONS: Array<{ code: SupportedLocale; label: string }> = [
+  { code: "en", label: "🇺🇸 English" },
+  { code: "ht", label: "🇭🇹 Kreyòl Ayisyen" },
+  { code: "fr", label: "🇫🇷 Français" },
+  { code: "es", label: "🇪🇸 Español" },
+];
 
 function safeReturnPath(value: string | null) {
   if (value && value.startsWith("/support/") && !value.startsWith("//")) {
@@ -19,7 +23,7 @@ function safeReturnPath(value: string | null) {
 export default function SupporterPlatformParticipationAgreementPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { locale } = useLocale();
+  const [locale, setLocale] = useState<SupportedLocale>("en");
   const copy = getSupporterEpewAgreementCopy(locale);
   const returnParam = searchParams.get("returnTo");
   const hasSupportReturn = Boolean(
@@ -66,6 +70,17 @@ export default function SupporterPlatformParticipationAgreementPage() {
         throw new Error(result.error || copy.acceptanceServerError);
       }
 
+      if (hasSupportReturn) {
+        try {
+          window.sessionStorage.setItem(
+            `epew_supporter_platform_agreement:${returnTo}`,
+            "accepted"
+          );
+        } catch {
+          // The server acceptance remains authoritative if session storage is unavailable.
+        }
+      }
+
       router.push(returnTo);
     } catch (error) {
       setErrorMessage(
@@ -82,13 +97,21 @@ export default function SupporterPlatformParticipationAgreementPage() {
       <div className="mx-auto max-w-6xl">
         <section className="mb-10 rounded-3xl bg-[#06245c] p-10 text-white shadow-2xl">
           <div className="mb-6 flex justify-center">
-            <LanguageSelector
-              compact
-              showLabel
-              showNativeName
-              showEnglishName
-              className="rounded-xl bg-white p-2 text-[#06245c]"
-            />
+            <select
+              aria-label="Agreement language"
+              value={locale}
+              onChange={(event) => {
+                setLocale(event.target.value as SupportedLocale);
+                setErrorMessage("");
+              }}
+              className="rounded-xl border border-white/40 bg-white px-4 py-3 text-base font-bold text-[#06245c]"
+            >
+              {LANGUAGE_OPTIONS.map((language) => (
+                <option key={language.code} value={language.code}>
+                  {language.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           <p className="mb-3 text-lg font-bold uppercase tracking-[0.18em] text-green-300">
