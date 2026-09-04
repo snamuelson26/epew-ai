@@ -22,7 +22,9 @@ export default function SupportCheckoutPage() {
   const [units, setUnits] = useState(1);
   const [referrerName, setReferrerName] = useState("");
   const [referrerBusinessName, setReferrerBusinessName] = useState("");
-  const [acknowledged, setAcknowledged] = useState(false);
+  const [entrepreneurAgreementAccepted, setEntrepreneurAgreementAccepted] =
+    useState(false);
+  const [epewAgreementAccepted, setEpewAgreementAccepted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -191,9 +193,16 @@ export default function SupportCheckoutPage() {
       return;
     }
 
-    if (!acknowledged) {
+    if (!entrepreneurAgreementAccepted) {
       setErrorMessage(
         "Please review and accept the Supporter–Entrepreneur Participation Agreement before continuing."
+      );
+      return;
+    }
+
+    if (!epewAgreementAccepted) {
+      setErrorMessage(
+        "Please review and accept the EPEW Supporter Platform Participation Agreement before continuing."
       );
       return;
     }
@@ -201,6 +210,35 @@ export default function SupportCheckoutPage() {
     setSubmitting(true);
 
     try {
+      const agreementResponse = await fetch(
+        "/api/supporters/platform-participation-agreement/accept",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ accepted: true }),
+        }
+      );
+
+      const agreementText = await agreementResponse.text();
+      let agreementResult: { error?: string } = {};
+
+      try {
+        agreementResult = agreementText ? JSON.parse(agreementText) : {};
+      } catch {
+        throw new Error(
+          "The agreement server returned an invalid response."
+        );
+      }
+
+      if (!agreementResponse.ok) {
+        throw new Error(
+          agreementResult.error ||
+            "Unable to record the EPEW Supporter Platform Participation Agreement acceptance."
+        );
+      }
+
       const response = await fetch("/api/supporters/annual-support/checkout", {
         method: "POST",
         headers: {
@@ -507,7 +545,7 @@ export default function SupportCheckoutPage() {
             <div className="mt-7 rounded-3xl border-2 border-gray-200 bg-white p-6 shadow-sm">
               <div className="mb-5 rounded-2xl bg-blue-50 p-5 text-center">
                 <p className="font-black text-[#06245c]">
-                  Review the approved agreement before accepting.
+                  Review the approved Supporter–Entrepreneur agreement before accepting.
                 </p>
                 <a
                   href="/supporters/supporter-entrepreneur-participation-agreement"
@@ -522,9 +560,9 @@ export default function SupportCheckoutPage() {
               <label className="flex cursor-pointer items-start gap-4">
                 <input
                   type="checkbox"
-                  checked={acknowledged}
+                  checked={entrepreneurAgreementAccepted}
                   onChange={(event) => {
-                    setAcknowledged(event.target.checked);
+                    setEntrepreneurAgreementAccepted(event.target.checked);
                     setErrorMessage("");
                   }}
                   className="mt-1 h-6 w-6 shrink-0"
@@ -536,10 +574,47 @@ export default function SupportCheckoutPage() {
               </label>
             </div>
 
+            <div className="mt-7 rounded-3xl border-2 border-gray-200 bg-white p-6 shadow-sm">
+              <div className="mb-5 rounded-2xl bg-green-50 p-5 text-center">
+                <p className="font-black text-[#06245c]">
+                  Review the agreement between you and EPEW before accepting.
+                </p>
+                <a
+                  href="/supporters/platform-participation-agreement"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-block font-black text-blue-700 underline underline-offset-4 hover:text-green-700"
+                >
+                  Open EPEW Supporter Platform Participation Agreement
+                </a>
+              </div>
+
+              <label className="flex cursor-pointer items-start gap-4">
+                <input
+                  type="checkbox"
+                  checked={epewAgreementAccepted}
+                  onChange={(event) => {
+                    setEpewAgreementAccepted(event.target.checked);
+                    setErrorMessage("");
+                  }}
+                  className="mt-1 h-6 w-6 shrink-0"
+                />
+
+                <span className="leading-relaxed text-gray-700">
+                  I have reviewed and agree to the EPEW Supporter Platform Participation Agreement with <strong>EPEW (EKERO Partners Empower Wealth LLC)</strong>. I understand EPEW&apos;s platform, administrative, payment-coordination, recordkeeping, and mediation roles, and I understand that EPEW does not assume the Entrepreneur&apos;s restitution, repayment, or other contractual obligations.
+                </span>
+              </label>
+            </div>
+
             <button
               type="button"
               onClick={continueToStripeCheckout}
-              disabled={submitting || !acknowledged || unitsRemaining < 1}
+              disabled={
+                submitting ||
+                !entrepreneurAgreementAccepted ||
+                !epewAgreementAccepted ||
+                unitsRemaining < 1
+              }
               className="mt-7 w-full rounded-2xl bg-green-700 px-6 py-5 text-xl font-black text-white shadow-xl transition hover:bg-[#06245c] disabled:cursor-not-allowed disabled:bg-gray-400 md:text-2xl"
             >
               {submitting
