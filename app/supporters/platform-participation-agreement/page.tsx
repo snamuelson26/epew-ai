@@ -97,10 +97,10 @@ export default function SupporterPlatformParticipationAgreementPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f7fb] px-6 py-16 text-[#06245c]">
-      <div className="mx-auto max-w-6xl">
-        <section className="mb-10 rounded-3xl bg-[#06245c] p-10 text-white shadow-2xl">
-          <div className="mb-6 flex justify-center">
+    <main className="min-h-screen bg-[#f5f7fb] px-3 py-4 text-[#06245c] sm:px-5 sm:py-6 md:px-6 md:py-12">
+      <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-white shadow-2xl">
+        <section className="bg-[#06245c] px-5 py-6 text-white sm:px-7 sm:py-8 md:px-10 md:py-10">
+          <div className="mb-4 flex justify-center md:mb-6">
             <select
               aria-label="Agreement language"
               value={locale}
@@ -108,7 +108,7 @@ export default function SupporterPlatformParticipationAgreementPage() {
                 setLocale(event.target.value as SupportedLocale);
                 setErrorMessage("");
               }}
-              className="rounded-xl border border-white/40 bg-white px-4 py-3 text-base font-bold text-[#06245c]"
+              className="w-full max-w-xs rounded-xl border border-white/40 bg-white px-4 py-3 text-base font-bold text-[#06245c]"
             >
               {LANGUAGE_OPTIONS.map((language) => (
                 <option key={language.code} value={language.code}>
@@ -118,35 +118,35 @@ export default function SupporterPlatformParticipationAgreementPage() {
             </select>
           </div>
 
-          <p className="mb-3 text-lg font-bold uppercase tracking-[0.18em] text-green-300">
+          <p className="mb-2 text-sm font-bold uppercase tracking-[0.12em] text-green-300 sm:text-base md:mb-3 md:text-lg md:tracking-[0.18em]">
             {copy.eyebrow}
           </p>
 
-          <h1 className="text-4xl font-black leading-tight md:text-6xl">
+          <h1 className="text-3xl font-black leading-tight sm:text-4xl md:text-6xl">
             {copy.title}
           </h1>
 
-          <p className="mt-6 max-w-4xl text-xl leading-relaxed text-slate-200">
+          <p className="mt-4 text-base leading-relaxed text-slate-200 sm:text-lg md:mt-6 md:max-w-4xl md:text-xl">
             {copy.subtitle}
           </p>
         </section>
 
-        <section className="rounded-3xl bg-white p-8 shadow-2xl md:p-12">
-          <div className="max-h-[1100px] space-y-8 overflow-y-auto rounded-3xl border border-slate-200 bg-[#f8fafc] p-8 text-xl leading-relaxed text-slate-700 md:p-10">
+        <section className="px-4 py-5 sm:px-6 sm:py-7 md:p-12">
+          <div className="space-y-7 text-base leading-relaxed text-slate-700 sm:text-lg md:max-h-[1100px] md:overflow-y-auto md:rounded-3xl md:border md:border-slate-200 md:bg-[#f8fafc] md:p-10 md:text-xl">
             {copy.sections.map((section) => (
               <section key={section.title}>
-                <h2 className="mb-4 text-3xl font-black text-[#06245c]">
+                <h2 className="mb-3 text-2xl font-black text-[#06245c] sm:text-3xl md:mb-4">
                   {section.title}
                 </h2>
 
                 {section.paragraphs?.map((paragraph) => (
-                  <p key={paragraph} className="mt-4 first:mt-0">
+                  <p key={paragraph} className="mt-3 first:mt-0 md:mt-4">
                     {paragraph}
                   </p>
                 ))}
 
                 {section.bullets && (
-                  <ul className="list-disc space-y-2 pl-8">
+                  <ul className="list-disc space-y-2 pl-6 sm:pl-8">
                     {section.bullets.map((bullet) => (
                       <li key={bullet}>{bullet}</li>
                     ))}
@@ -156,7 +156,7 @@ export default function SupporterPlatformParticipationAgreementPage() {
             ))}
           </div>
 
-          <label className="mt-10 flex items-start gap-4 rounded-2xl border-2 border-slate-200 p-6 text-xl leading-relaxed text-slate-700">
+          <label className="mt-7 flex items-start gap-3 rounded-2xl border-2 border-slate-200 p-4 text-base leading-relaxed text-slate-700 sm:p-5 sm:text-lg md:mt-10 md:gap-4 md:p-6 md:text-xl">
             <input
               type="checkbox"
               checked={accepted}
@@ -164,25 +164,25 @@ export default function SupporterPlatformParticipationAgreementPage() {
                 setAccepted(event.target.checked);
                 setErrorMessage("");
               }}
-              className="mt-1 h-6 w-6"
+              className="mt-1 h-6 w-6 shrink-0"
             />
 
             <span>{copy.checkboxText}</span>
           </label>
 
           {errorMessage && (
-            <p className="mt-5 rounded-xl bg-red-50 p-4 text-lg font-bold text-red-700">
+            <p className="mt-5 rounded-xl bg-red-50 p-4 text-base font-bold text-red-700 sm:text-lg">
               {errorMessage}
             </p>
           )}
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 md:flex-row">
+          <div className="mt-6 flex flex-col gap-3 md:mt-8 md:flex-row md:items-center md:justify-center md:gap-4">
             {hasSupportReturn && (
               <button
                 type="button"
                 onClick={() => router.push(returnTo)}
                 disabled={submitting}
-                className="rounded-2xl border-2 border-[#06245c] bg-white px-8 py-4 text-lg font-black text-[#06245c] transition hover:bg-slate-100 disabled:opacity-50"
+                className="w-full rounded-2xl border-2 border-[#06245c] bg-white px-5 py-4 text-base font-black text-[#06245c] transition hover:bg-slate-100 disabled:opacity-50 md:w-auto md:px-8 md:text-lg"
               >
                 ← {copy.returnButton}
               </button>
@@ -192,7 +192,7 @@ export default function SupporterPlatformParticipationAgreementPage() {
               type="button"
               onClick={continueAfterAcceptance}
               disabled={!accepted || submitting}
-              className="rounded-2xl bg-[#06245c] px-10 py-5 text-xl font-bold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-2xl bg-[#06245c] px-6 py-4 text-lg font-bold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50 md:w-auto md:px-10 md:py-5 md:text-xl"
             >
               {submitting
                 ? "..."
