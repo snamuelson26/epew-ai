@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { SupportedLocale } from "@/app/components/enterprise/language";
 import { getSupporterEpewAgreementCopy } from "@/app/supporters/agreements/AgreementTranslations";
 
@@ -22,18 +22,24 @@ function safeReturnPath(value: string | null) {
 
 export default function SupporterPlatformParticipationAgreementPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [locale, setLocale] = useState<SupportedLocale>("en");
   const copy = getSupporterEpewAgreementCopy(locale);
-  const returnParam = searchParams.get("returnTo");
-  const hasSupportReturn = Boolean(
-    returnParam && returnParam.startsWith("/support/") && !returnParam.startsWith("//")
-  );
-  const returnTo = safeReturnPath(returnParam);
 
+  const [returnTo, setReturnTo] = useState("/supporters/dashboard");
+  const [hasSupportReturn, setHasSupportReturn] = useState(false);
   const [accepted, setAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    const returnParam = new URLSearchParams(window.location.search).get("returnTo");
+    const validSupportReturn = Boolean(
+      returnParam && returnParam.startsWith("/support/") && !returnParam.startsWith("//")
+    );
+
+    setHasSupportReturn(validSupportReturn);
+    setReturnTo(safeReturnPath(returnParam));
+  }, []);
 
   async function continueAfterAcceptance() {
     setErrorMessage("");
@@ -50,9 +56,7 @@ export default function SupporterPlatformParticipationAgreementPage() {
         "/api/supporters/platform-participation-agreement/accept",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ accepted: true }),
         }
       );
