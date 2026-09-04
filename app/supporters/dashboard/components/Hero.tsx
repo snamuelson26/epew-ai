@@ -1,126 +1,28 @@
 "use client";
 
+import { useEpewLanguage } from "@/app/components/EpewLanguage";
 import { Supporter } from "./types";
 
-export default function Hero({
-  supporter,
-  onLogout,
-}: {
-  supporter: Supporter;
-  onLogout: () => void;
-}) {
-  const countryOfOrigin =
-    supporter.country_of_origin ||
-    supporter.country_of_citizenship ||
-    "Not Provided";
+const copy = {
+  en: { portal:"EPEW Main Supporter Portal", welcome:"Welcome", supporter:"Supporter", intro:"Your participation helps entrepreneurs build businesses, strengthen communities, create jobs, and generate lasting prosperity through the EPEW Entrepreneur Development Ecosystem.", motto:"EPEW develops entrepreneurs. Entrepreneurs build businesses. Businesses strengthen communities.", explore:"Explore Entrepreneurs", choose:"Let EPEW Choose for Me", messages:"Messages", logout:"Logout", origin:"Country of Origin", residence:"Country of Residence", member:"Member Since", status:"Status", notProvided:"Not Provided", notAvailable:"Not Available", pending:"Supporter ID Pending" },
+  ht: { portal:"PÒTAL PRENSIPAL SIPÒTÈ EPEW", welcome:"Byenvini", supporter:"Sipòtè", intro:"Patisipasyon ou ede antreprenè bati biznis, ranfòse kominote, kreye travay, epi jenere pwosperite dirab atravè Ekosistèm Devlopman Antreprenè EPEW la.", motto:"EPEW devlope antreprenè. Antreprenè bati biznis. Biznis ranfòse kominote yo.", explore:"Eksplore Antreprenè yo", choose:"Kite EPEW Chwazi pou Mwen", messages:"Mesaj", logout:"Dekonekte", origin:"Peyi Orijin", residence:"Peyi Rezidans", member:"Manm Depi", status:"Estati", notProvided:"Pa Bay", notAvailable:"Pa Disponib", pending:"ID Sipòtè Ap Tann" },
+  fr: { portal:"PORTAIL PRINCIPAL DES SOUTIENS EPEW", welcome:"Bienvenue", supporter:"Soutien", intro:"Votre participation aide les entrepreneurs à créer des entreprises, renforcer les communautés, créer des emplois et générer une prospérité durable grâce à l’Écosystème de Développement des Entrepreneurs EPEW.", motto:"EPEW développe les entrepreneurs. Les entrepreneurs créent des entreprises. Les entreprises renforcent les communautés.", explore:"Explorer les Entrepreneurs", choose:"Laisser EPEW Choisir pour Moi", messages:"Messages", logout:"Déconnexion", origin:"Pays d’Origine", residence:"Pays de Résidence", member:"Membre Depuis", status:"Statut", notProvided:"Non Fourni", notAvailable:"Non Disponible", pending:"Identifiant en Attente" },
+  es: { portal:"PORTAL PRINCIPAL DE COLABORADORES EPEW", welcome:"Bienvenido", supporter:"Colaborador", intro:"Su participación ayuda a los emprendedores a crear negocios, fortalecer comunidades, crear empleos y generar prosperidad duradera a través del Ecosistema de Desarrollo de Emprendedores EPEW.", motto:"EPEW desarrolla emprendedores. Los emprendedores crean negocios. Los negocios fortalecen las comunidades.", explore:"Explorar Emprendedores", choose:"Dejar que EPEW Elija por Mí", messages:"Mensajes", logout:"Cerrar sesión", origin:"País de Origen", residence:"País de Residencia", member:"Miembro Desde", status:"Estado", notProvided:"No Proporcionado", notAvailable:"No Disponible", pending:"ID de Colaborador Pendiente" }
+};
 
-  const countryOfResidence =
-    supporter.country_of_residence ||
-    supporter.country ||
-    "Not Provided";
+export default function Hero({ supporter, onLogout }: { supporter: Supporter; onLogout: () => void }) {
+  const { language } = useEpewLanguage(); const t = copy[language];
+  const countryOfOrigin = supporter.country_of_origin || supporter.country_of_citizenship || t.notProvided;
+  const countryOfResidence = supporter.country_of_residence || supporter.country || t.notProvided;
+  const memberSince = supporter.created_at ? new Date(supporter.created_at).toLocaleDateString() : t.notAvailable;
 
-  const memberSince = supporter.created_at
-    ? new Date(supporter.created_at).toLocaleDateString()
-    : "Not Available";
-
-  return (
-    <section className="mb-8 rounded-3xl bg-gradient-to-r from-[#06245c] via-[#0b3b91] to-green-700 p-10 text-white shadow-2xl">
-      <div className="grid gap-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-center">
-        <div>
-          <p className="text-xl font-black uppercase tracking-widest text-lime-300">
-            EPEW Main Supporter Portal
-          </p>
-
-          <h1 className="mt-4 text-5xl font-extrabold leading-tight md:text-6xl">
-            Welcome, {supporter.full_name || "Supporter"}
-          </h1>
-
-          <p className="mt-6 max-w-5xl text-2xl leading-relaxed text-blue-100">
-            Your participation helps entrepreneurs build businesses, strengthen
-            communities, create jobs, and generate lasting prosperity through the
-            EPEW Entrepreneur Development Ecosystem.
-          </p>
-
-          <p className="mt-6 max-w-4xl text-2xl font-bold text-lime-300">
-            EPEW develops entrepreneurs. Entrepreneurs build businesses.
-            Businesses strengthen communities.
-          </p>
-
-          <div className="mt-8 flex flex-wrap gap-4">
-            <a
-              href="/supporters/marketplace"
-              className="rounded-2xl bg-white px-8 py-4 text-xl font-black text-[#06245c] shadow-lg hover:bg-lime-300"
-            >
-              Explore Entrepreneurs
-            </a>
-
-            <a
-              href="/supporters/annual-support"
-              className="rounded-2xl bg-green-600 px-8 py-4 text-xl font-black text-white shadow-lg hover:bg-green-500"
-            >
-              Let EPEW Choose for Me
-            </a>
-
-            <a
-              href="/supporters/messages"
-              className="rounded-2xl bg-lime-300 px-8 py-4 text-xl font-black text-[#06245c] shadow-lg hover:bg-white"
-            >
-              Messages
-            </a>
-
-            <button
-              onClick={onLogout}
-              className="rounded-2xl bg-red-600 px-8 py-4 text-xl font-black text-white shadow-lg hover:bg-red-700"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-
-        <div className="rounded-3xl bg-white/10 p-8 text-center shadow-2xl ring-1 ring-white/20">
-          <div className="mx-auto flex h-40 w-40 items-center justify-center overflow-hidden rounded-full bg-white text-7xl font-black text-[#06245c] shadow-lg">
-            {supporter.photo_url ? (
-              <img
-                src={supporter.photo_url}
-                alt={supporter.full_name || "Supporter"}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              "👤"
-            )}
-          </div>
-
-          <h2 className="mt-6 text-4xl font-black">
-            {supporter.full_name || "Supporter"}
-          </h2>
-
-          <p className="mt-3 text-2xl font-black text-lime-300">
-            {supporter.supporter_id || "Supporter ID Pending"}
-          </p>
-
-          <div className="mt-6 space-y-3 rounded-2xl bg-black/20 p-5 text-left">
-            <ProfileLine label="Country of Origin" value={countryOfOrigin} />
-            <ProfileLine
-              label="Country of Residence"
-              value={countryOfResidence}
-            />
-            <ProfileLine label="Member Since" value={memberSince} />
-            <ProfileLine
-              label="Status"
-              value={supporter.status || "Active"}
-            />
-          </div>
-        </div>
+  return <section className="mb-8 rounded-3xl bg-gradient-to-r from-[#06245c] via-[#0b3b91] to-green-700 p-10 text-white shadow-2xl">
+    <div className="grid gap-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-center">
+      <div><p className="text-xl font-black uppercase tracking-widest text-lime-300">{t.portal}</p><h1 className="mt-4 text-5xl font-extrabold leading-tight md:text-6xl">{t.welcome}, {supporter.full_name || t.supporter}</h1><p className="mt-6 max-w-5xl text-2xl leading-relaxed text-blue-100">{t.intro}</p><p className="mt-6 max-w-4xl text-2xl font-bold text-lime-300">{t.motto}</p>
+        <div className="mt-8 flex flex-wrap gap-4"><a href="/supporters/marketplace" className="rounded-2xl bg-white px-8 py-4 text-xl font-black text-[#06245c] shadow-lg hover:bg-lime-300">{t.explore}</a><a href="/supporters/annual-support" className="rounded-2xl bg-green-600 px-8 py-4 text-xl font-black text-white shadow-lg hover:bg-green-500">{t.choose}</a><a href="/supporters/messages" className="rounded-2xl bg-lime-300 px-8 py-4 text-xl font-black text-[#06245c] shadow-lg hover:bg-white">{t.messages}</a><button onClick={onLogout} className="rounded-2xl bg-red-600 px-8 py-4 text-xl font-black text-white shadow-lg hover:bg-red-700">{t.logout}</button></div>
       </div>
-    </section>
-  );
+      <div className="rounded-3xl bg-white/10 p-8 text-center shadow-2xl ring-1 ring-white/20"><div className="mx-auto flex h-40 w-40 items-center justify-center overflow-hidden rounded-full bg-white text-7xl font-black text-[#06245c] shadow-lg">{supporter.photo_url ? <img src={supporter.photo_url} alt={supporter.full_name || t.supporter} className="h-full w-full object-cover"/> : "👤"}</div><h2 className="mt-6 text-4xl font-black">{supporter.full_name || t.supporter}</h2><p className="mt-3 text-2xl font-black text-lime-300">{supporter.supporter_id || t.pending}</p><div className="mt-6 space-y-3 rounded-2xl bg-black/20 p-5 text-left"><ProfileLine label={t.origin} value={countryOfOrigin}/><ProfileLine label={t.residence} value={countryOfResidence}/><ProfileLine label={t.member} value={memberSince}/><ProfileLine label={t.status} value={supporter.status || "active"}/></div></div>
+    </div>
+  </section>;
 }
-
-function ProfileLine({ label, value }: { label: string; value: string }) {
-  return (
-    <p className="flex flex-col gap-1 text-lg md:flex-row md:justify-between">
-      <span className="font-bold text-blue-100">{label}</span>
-      <span className="font-black text-white">{value}</span>
-    </p>
-  );
-}
+function ProfileLine({label,value}:{label:string;value:string}){return <p className="flex flex-col gap-1 text-lg md:flex-row md:justify-between"><span className="font-bold text-blue-100">{label}</span><span className="font-black text-white">{value}</span></p>}
