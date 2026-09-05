@@ -7,10 +7,10 @@ import { supabase } from "@/lib/supabase";
 import { LanguageSelector, useEpewLanguage } from "@/app/components/EpewLanguage";
 
 const text = {
-  en: { title: "EPEW Supporter", dashboard: "Dashboard", communication: "Communication", financial: "Financial Center", notifications: "Notifications", stories: "Success Stories", settings: "Settings" },
-  ht: { title: "Sipòtè EPEW", dashboard: "Tablo Bò", communication: "Kominikasyon", financial: "Sant Finansye", notifications: "Notifikasyon", stories: "Istwa Siksè", settings: "Paramèt" },
-  fr: { title: "Soutien EPEW", dashboard: "Tableau de Bord", communication: "Communication", financial: "Centre Financier", notifications: "Notifications", stories: "Histoires de Réussite", settings: "Paramètres" },
-  es: { title: "Colaborador EPEW", dashboard: "Panel", communication: "Comunicación", financial: "Centro Financiero", notifications: "Notificaciones", stories: "Historias de Éxito", settings: "Configuración" },
+  en: { title: "EPEW Supporter", dashboard: "Dashboard", supportedBusinesses: "My Supported Businesses", communication: "Communication", financial: "Financial Center", notifications: "Notifications", stories: "Success Stories", settings: "Settings" },
+  ht: { title: "Sipòtè EPEW", dashboard: "Tablo Bò", supportedBusinesses: "Biznis Mwen Sipòte", communication: "Kominikasyon", financial: "Sant Finansye", notifications: "Notifikasyon", stories: "Istwa Siksè", settings: "Paramèt" },
+  fr: { title: "Soutien EPEW", dashboard: "Tableau de Bord", supportedBusinesses: "Mes Entreprises Soutenues", communication: "Communication", financial: "Centre Financier", notifications: "Notifications", stories: "Histoires de Réussite", settings: "Paramètres" },
+  es: { title: "Colaborador EPEW", dashboard: "Panel", supportedBusinesses: "Mis Negocios Apoyados", communication: "Comunicación", financial: "Centro Financiero", notifications: "Notificaciones", stories: "Historias de Éxito", settings: "Configuración" },
 };
 
 export default function SupporterLayout({ children }: { children: ReactNode }) {
@@ -68,6 +68,7 @@ export default function SupporterLayout({ children }: { children: ReactNode }) {
 
   const menu = [
     { title: `🏠 ${t.dashboard}`, href: "/supporters/dashboard" },
+    { title: `🏢 ${t.supportedBusinesses}`, href: "/supporters/my-supported-businesses" },
     { title: `💬 ${t.communication}`, href: "/supporters/messages" },
     ...(hasSupportedEntrepreneur ? [
       { title: `💳 ${t.financial}`, href: "/supporters/payment-center" },
