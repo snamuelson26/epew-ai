@@ -42,22 +42,31 @@ export default function EntrepreneurNextActionBridge() {
       const { data: authData } = await supabase.auth.getUser();
       if (!authData.user || cancelled) return;
 
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("entrepreneur_applications")
-        .select("business_code,entrepreneur_code,business_name")
+        .select("id,business_name")
         .eq("user_id", authData.user.id)
         .maybeSingle();
 
       if (cancelled) return;
+
+      if (error) {
+        console.error("Unable to verify entrepreneur next action:", error);
+        setEnabled(false);
+        return;
+      }
+
       const isFoodFans =
-        data?.business_code === "FFR-001" ||
-        data?.entrepreneur_code === "FFR-001" ||
+        Number(data?.id) === 27 ||
         data?.business_name?.trim().toLowerCase() === "food fans restaurant";
+
       setEnabled(Boolean(isFoodFans));
     }
 
     void verifyFoodFans();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
