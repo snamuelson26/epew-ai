@@ -74,6 +74,12 @@ export default function EntrepreneurNextActionBridge() {
 
     const selected = copy[(locale in copy ? locale : "en") as keyof typeof copy];
 
+    const setTextIfNeeded = (element: Element | null, value: string) => {
+      if (element && element.textContent !== value) {
+        element.textContent = value;
+      }
+    };
+
     const apply = () => {
       const oldLink = document.querySelector<HTMLAnchorElement>('a[href="/entrepreneurs/questionnaire"]');
       const communicationLink = document.querySelector<HTMLAnchorElement>('a[href="/entrepreneurs/communication"]');
@@ -83,8 +89,7 @@ export default function EntrepreneurNextActionBridge() {
       const card = link.closest("div.rounded-3xl") || link.parentElement;
       if (!card) return;
 
-      const heading = card.querySelector("h2");
-      if (heading) heading.textContent = selected.heading;
+      setTextIfNeeded(card.querySelector("h2"), selected.heading);
 
       let title = card.querySelector<HTMLElement>("[data-epew-support-title]");
       if (!title) {
@@ -94,19 +99,28 @@ export default function EntrepreneurNextActionBridge() {
         const firstParagraph = card.querySelector("p");
         card.insertBefore(title, firstParagraph || link);
       }
-      title.textContent = selected.title;
+      setTextIfNeeded(title, selected.title);
 
       const paragraphs = Array.from(card.querySelectorAll("p")).filter((p) => p !== title);
-      const body = paragraphs[0];
-      if (body) body.textContent = selected.body;
+      setTextIfNeeded(paragraphs[0] || null, selected.body);
 
-      link.href = "/entrepreneurs/communication";
-      link.textContent = selected.button;
+      if (link.getAttribute("href") !== "/entrepreneurs/communication") {
+        link.setAttribute("href", "/entrepreneurs/communication");
+      }
+      setTextIfNeeded(link, selected.button);
     };
 
     apply();
-    const observer = new MutationObserver(apply);
-    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+
+    const observer = new MutationObserver(() => {
+      window.requestAnimationFrame(apply);
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
     return () => observer.disconnect();
   }, [enabled, locale]);
 
