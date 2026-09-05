@@ -20,7 +20,39 @@ type Entrepreneur = {
   community_units_supported?: number | null;
   community_units_required?: number | null;
   leadership_credit?: number | null;
+  source_application_id?: number | null;
 };
+
+type CampaignContact = {
+  id: string;
+  prospect_name: string;
+  phone: string | null;
+  email: string | null;
+  preferred_language: string | null;
+  relationship: string | null;
+  status: string;
+};
+
+type ContactMessage = {
+  contact_id: string;
+  delivery_status: string;
+  scheduled_for: string | null;
+  sent_at: string | null;
+};
+
+const LANGUAGE_LABELS: Record<string, string> = {
+  en: "English",
+  ht: "Kreyòl Ayisyen",
+  fr: "Français",
+  es: "Español",
+};
+
+function formatStatus(value: string | null | undefined) {
+  if (!value) return "Not started";
+  return value
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
 
 export default function CampaignPage() {
   const params = useParams();
@@ -29,13 +61,20 @@ export default function CampaignPage() {
   const [entrepreneur, setEntrepreneur] = useState<Entrepreneur | null>(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [isOwner, setIsOwner] = useState(false);
+  const [contacts, setContacts] = useState<CampaignContact[]>([]);
+  const [contactMessages, setContactMessages] = useState<Record<string, ContactMessage>>({});
+  const [contactsLoading, setContactsLoading] = useState(false);
 
   useEffect(() => {
-    loadCampaign();
+    void loadCampaign();
   }, [slug]);
 
   async function loadCampaign() {
     setLoading(true);
+    setIsOwner(false);
+    setContacts([]);
+    setContactMessages({});
 
     const { data, error } = await supabase
       .from("entrepreneurs")
@@ -69,7 +108,62 @@ export default function CampaignPage() {
       })
       .eq("id", data.id);
 
+    await loadOwnerCampaignContacts(data as Entrepreneur);
     setLoading(false);
+  }
+
+  async function loadOwnerCampaignContacts(campaign: Entrepreneur) {
+    if (!campaign.source_application_id) return;
+
+    const { data: authData } = await supabase.auth.getUser();
+    const user = authData.user;
+    if (!user) return;
+
+    const { data: ownedApplication } = await supabase
+      .from("entrepreneur_applications")
+      .select("id,user_id")
+      .eq("id", campaign.source_application_id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (!ownedApplication) return;
+
+    setIsOwner(true);
+    setContactsLoading(true);
+
+    const { data: contactData } = await supabase
+      .from("epew_entrepreneur_communication_contacts")
+      .select("id,prospect_name,phone,email,preferred_language,relationship,status")
+      .eq("entrepreneur_user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    const loadedContacts = (contactData || []) as CampaignContact[];
+    setContacts(loadedContacts);
+
+    if (loadedContacts.length > 0) {
+      const contactIds = loadedContacts.map((contact) => contact.id);
+      const { data: messageData } = await supabase
+        .from("epew_entrepreneur_communication_messages")
+        .select("contact_id,delivery_status,scheduled_for,sent_at,created_at")
+        .in("contact_id", contactIds)
+        .eq("message_type", "introduction")
+        .order("created_at", { ascending: false });
+
+      const newestByContact: Record<string, ContactMessage> = {};
+      for (const item of messageData || []) {
+        if (!newestByContact[item.contact_id]) {
+          newestByContact[item.contact_id] = {
+            contact_id: item.contact_id,
+            delivery_status: item.delivery_status,
+            scheduled_for: item.scheduled_for,
+            sent_at: item.sent_at,
+          };
+        }
+      }
+      setContactMessages(newestByContact);
+    }
+
+    setContactsLoading(false);
   }
 
   const unitsSupported = Number(entrepreneur?.community_units_supported || 0);
@@ -151,6 +245,86 @@ export default function CampaignPage() {
           <Metric label="Required" value={unitsRequired} />
           <Metric label="Remaining" value={remaining} />
         </section>
+
+        {isOwner && (
+          <section className="rounded-3xl border-2 border-blue-200 bg-white p-6 shadow-lg md:p-8">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-black uppercase tracking-widest text-blue-700">
+                  Private Entrepreneur View
+                </p>
+                <h2 className="mt-1 text-3xl font-black text-blue-950">
+                  My Potential Supporters
+                </h2>
+                <p className="mt-2 text-slate-600">
+                  People you personally contacted and added to your campaign message list. This section is visible only to you.
+                </p>
+              </div>
+
+              <Link
+                href="/entrepreneurs/supporters"
+                className="inline-flex shrink-0 items-center justify-center rounded-xl bg-green-700 px-5 py-3 font-black text-white hover:bg-green-800"
+              >
+                + Add Potential Supporter
+              </Link>
+            </div>
+
+            {contactsLoading ? (
+              <p className="mt-6 text-slate-600">Loading your contact list...</p>
+            ) : contacts.length === 0 ? (
+              <div className="mt-6 rounded-2xl bg-slate-50 p-5 text-slate-700">
+                No potential supporters have been added to your campaign list yet.
+              </div>
+            ) : (
+              <div className="mt-6 overflow-x-auto">
+                <table className="w-full min-w-[760px] border-separate border-spacing-0 text-left">
+                  <thead>
+                    <tr className="text-sm uppercase tracking-wide text-slate-500">
+                      <th className="border-b border-slate-200 px-3 py-3">Name</th>
+                      <th className="border-b border-slate-200 px-3 py-3">Contact</th>
+                      <th className="border-b border-slate-200 px-3 py-3">Language</th>
+                      <th className="border-b border-slate-200 px-3 py-3">Relationship</th>
+                      <th className="border-b border-slate-200 px-3 py-3">Support Status</th>
+                      <th className="border-b border-slate-200 px-3 py-3">Message Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {contacts.map((contact) => {
+                      const contactMessage = contactMessages[contact.id];
+                      return (
+                        <tr key={contact.id} className="align-top">
+                          <td className="border-b border-slate-100 px-3 py-4 font-black text-slate-900">
+                            {contact.prospect_name}
+                          </td>
+                          <td className="border-b border-slate-100 px-3 py-4 text-slate-700">
+                            {contact.phone && <div>{contact.phone}</div>}
+                            {contact.email && <div className="break-all">{contact.email}</div>}
+                          </td>
+                          <td className="border-b border-slate-100 px-3 py-4 text-slate-700">
+                            {LANGUAGE_LABELS[contact.preferred_language || "en"] || contact.preferred_language || "English"}
+                          </td>
+                          <td className="border-b border-slate-100 px-3 py-4 text-slate-700">
+                            {contact.relationship || "—"}
+                          </td>
+                          <td className="border-b border-slate-100 px-3 py-4">
+                            <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-bold text-blue-800">
+                              {formatStatus(contact.status)}
+                            </span>
+                          </td>
+                          <td className="border-b border-slate-100 px-3 py-4">
+                            <span className="inline-flex rounded-full bg-green-50 px-3 py-1 text-sm font-bold text-green-800">
+                              {formatStatus(contactMessage?.delivery_status)}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        )}
 
         <section className="rounded-2xl bg-white p-6 shadow">
           <div className="flex flex-wrap items-center justify-between gap-4">
