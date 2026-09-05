@@ -10,8 +10,8 @@ create table if not exists public.epew_entrepreneur_communication_contacts (
   business_code text,
   business_name text,
   prospect_name text not null,
-  phone text,
-  email text,
+  phone text not null,
+  email text not null,
   preferred_language text not null default 'en'
     check (preferred_language in ('en', 'ht', 'fr', 'es')),
   relationship text,
