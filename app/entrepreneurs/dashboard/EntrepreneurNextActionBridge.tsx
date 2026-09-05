@@ -31,6 +31,8 @@ const copy = {
   },
 } as const;
 
+const GENERATED_ID = "epew-support-community-next-action";
+
 export default function EntrepreneurNextActionBridge() {
   const { locale } = useLocale();
   const [enabled, setEnabled] = useState(false);
@@ -52,15 +54,13 @@ export default function EntrepreneurNextActionBridge() {
 
       if (error) {
         console.error("Unable to verify entrepreneur next action:", error);
-        setEnabled(false);
         return;
       }
 
-      const isFoodFans =
+      setEnabled(
         Number(data?.id) === 27 ||
-        data?.business_name?.trim().toLowerCase() === "food fans restaurant";
-
-      setEnabled(Boolean(isFoodFans));
+          data?.business_name?.trim().toLowerCase() === "food fans restaurant",
+      );
     }
 
     void verifyFoodFans();
@@ -73,55 +73,62 @@ export default function EntrepreneurNextActionBridge() {
     if (!enabled) return;
 
     const selected = copy[(locale in copy ? locale : "en") as keyof typeof copy];
+    let attempts = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
 
-    const setTextIfNeeded = (element: Element | null, value: string) => {
-      if (element && element.textContent !== value) {
-        element.textContent = value;
+    const install = () => {
+      const oldLink = document.querySelector<HTMLAnchorElement>(
+        'a[href="/entrepreneurs/questionnaire"]',
+      );
+      const oldCard = oldLink?.closest("div.rounded-3xl") as HTMLElement | null;
+
+      if (!oldCard) {
+        attempts += 1;
+        if (attempts < 20) timer = setTimeout(install, 150);
+        return;
       }
+
+      oldCard.style.display = "none";
+
+      document.getElementById(GENERATED_ID)?.remove();
+
+      const card = document.createElement("div");
+      card.id = GENERATED_ID;
+      card.className = "rounded-3xl bg-white p-6 shadow";
+
+      const heading = document.createElement("h2");
+      heading.className = "text-2xl font-extrabold text-[#10246f]";
+      heading.textContent = selected.heading;
+
+      const title = document.createElement("p");
+      title.className = "mt-4 text-lg font-extrabold text-green-700";
+      title.textContent = selected.title;
+
+      const body = document.createElement("p");
+      body.className = "mt-3 leading-relaxed text-gray-700";
+      body.textContent = selected.body;
+
+      const link = document.createElement("a");
+      link.href = "/entrepreneurs/communication";
+      link.className =
+        "mt-6 inline-flex rounded-xl bg-[#10246f] px-6 py-3 font-bold text-white transition hover:bg-green-700";
+      link.textContent = selected.button;
+
+      card.append(heading, title, body, link);
+      oldCard.insertAdjacentElement("afterend", card);
     };
 
-    const apply = () => {
-      const oldLink = document.querySelector<HTMLAnchorElement>('a[href="/entrepreneurs/questionnaire"]');
-      const communicationLink = document.querySelector<HTMLAnchorElement>('a[href="/entrepreneurs/communication"]');
-      const link = oldLink || communicationLink;
-      if (!link) return;
+    install();
 
-      const card = link.closest("div.rounded-3xl") || link.parentElement;
-      if (!card) return;
-
-      setTextIfNeeded(card.querySelector("h2"), selected.heading);
-
-      let title = card.querySelector<HTMLElement>("[data-epew-support-title]");
-      if (!title) {
-        title = document.createElement("p");
-        title.dataset.epewSupportTitle = "true";
-        title.className = "mt-4 text-lg font-extrabold text-green-700";
-        const firstParagraph = card.querySelector("p");
-        card.insertBefore(title, firstParagraph || link);
-      }
-      setTextIfNeeded(title, selected.title);
-
-      const paragraphs = Array.from(card.querySelectorAll("p")).filter((p) => p !== title);
-      setTextIfNeeded(paragraphs[0] || null, selected.body);
-
-      if (link.getAttribute("href") !== "/entrepreneurs/communication") {
-        link.setAttribute("href", "/entrepreneurs/communication");
-      }
-      setTextIfNeeded(link, selected.button);
+    return () => {
+      if (timer) clearTimeout(timer);
+      document.getElementById(GENERATED_ID)?.remove();
+      const oldLink = document.querySelector<HTMLAnchorElement>(
+        'a[href="/entrepreneurs/questionnaire"]',
+      );
+      const oldCard = oldLink?.closest("div.rounded-3xl") as HTMLElement | null;
+      if (oldCard) oldCard.style.display = "";
     };
-
-    apply();
-
-    const observer = new MutationObserver(() => {
-      window.requestAnimationFrame(apply);
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
-
-    return () => observer.disconnect();
   }, [enabled, locale]);
 
   return null;
