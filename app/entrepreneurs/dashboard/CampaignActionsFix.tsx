@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-const FOOD_FANS_CAMPAIGN_PATH = "/campaign/food-fans-restaurant-1";
+const ENTREPRENEUR_CAMPAIGN_PATH = "/entrepreneurs/campaign";
 const FOOD_FANS_SUPPORT_PATH = "/support/FFR-001";
 const POTENTIAL_SUPPORTERS_PATH = "/entrepreneurs/supporters";
 
@@ -13,7 +13,7 @@ export default function CampaignActionsFix() {
         const label = (link.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
 
         if (label.includes("view my campaign")) {
-          link.href = FOOD_FANS_CAMPAIGN_PATH;
+          link.href = ENTREPRENEUR_CAMPAIGN_PATH;
         }
 
         if (
