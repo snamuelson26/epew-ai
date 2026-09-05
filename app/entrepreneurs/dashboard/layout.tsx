@@ -1,6 +1,7 @@
 import DashboardLocalization from "./DashboardLocalization";
 import EntrepreneurNextActionBridge from "./EntrepreneurNextActionBridge";
 import EntrepreneurCampaignBridge from "./EntrepreneurCampaignBridge";
+import CampaignActionsFix from "./CampaignActionsFix";
 
 export default function EntrepreneurDashboardLayout({
   children,
@@ -11,6 +12,7 @@ export default function EntrepreneurDashboardLayout({
     <DashboardLocalization>
       <EntrepreneurNextActionBridge />
       <EntrepreneurCampaignBridge />
+      <CampaignActionsFix />
       {children}
     </DashboardLocalization>
   );
