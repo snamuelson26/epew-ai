@@ -35,6 +35,13 @@ type Contact = {
   status: string;
 };
 
+type MessageMeta = {
+  contact_id: string;
+  delivery_status: string;
+  scheduled_for: string | null;
+  sent_at: string | null;
+};
+
 function messageFor(
   language: string,
   prospect: string,
@@ -59,13 +66,27 @@ function messageFor(
   return `Hello ${prospect},\n\nThank you for taking the time to listen to me regarding my new venture, ${businessName}. I am following up to remind you about my business journey with EPEW and to invite you to stay connected with me as I move forward.\n\nYou can visit the ${businessName} website at ${website} to learn more about the business.\n\nIf you are ready to support me, you can use my personal support link:\n${supportLink}\n\nParticipation is completely voluntary.\n\nWhile you are thinking about supporting me financially and putting your money to work for you through my business, your ideas and encouragement are also very important to me. Please share any advice, suggestion, business connection, referral, or idea that could help ${businessName} succeed. I would truly appreciate hearing from you.\n\nThank you again for believing in my journey and taking the time to stay connected with me.\n\n${entrepreneurName}\n${businessName}\n${businessCode}`;
 }
 
+function formatEastern(value: string | null) {
+  if (!value) return "";
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
 export default function PotentialSupportersPage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [business, setBusiness] = useState<Business | null>(null);
   const [contacts, setContacts] = useState<Contact[]>([]);
+  const [messageByContact, setMessageByContact] = useState<Record<string, MessageMeta>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
+
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -73,11 +94,13 @@ export default function PotentialSupportersPage() {
   const [relationship, setRelationship] = useState("");
   const [notes, setNotes] = useState("");
 
-  useEffect(() => { void loadPage(); }, []);
+  useEffect(() => {
+    void loadPage();
+  }, []);
 
-  async function loadPage() {
+  async function loadPage(preserveNotice = false) {
     setLoading(true);
-    setNotice("");
+    if (!preserveNotice) setNotice("");
 
     const { data: authData } = await supabase.auth.getUser();
     const user = authData.user;
@@ -118,7 +141,35 @@ export default function PotentialSupportersPage() {
       .order("created_at", { ascending: false });
 
     if (contactError) setNotice(contactError.message);
-    setContacts((contactData || []) as Contact[]);
+
+    const loadedContacts = (contactData || []) as Contact[];
+    setContacts(loadedContacts);
+
+    if (loadedContacts.length > 0) {
+      const ids = loadedContacts.map((contact) => contact.id);
+      const { data: messageData } = await supabase
+        .from("epew_entrepreneur_communication_messages")
+        .select("contact_id,delivery_status,scheduled_for,sent_at,created_at")
+        .in("contact_id", ids)
+        .eq("message_type", "introduction")
+        .order("created_at", { ascending: false });
+
+      const map: Record<string, MessageMeta> = {};
+      for (const item of messageData || []) {
+        if (!map[item.contact_id]) {
+          map[item.contact_id] = {
+            contact_id: item.contact_id,
+            delivery_status: item.delivery_status,
+            scheduled_for: item.scheduled_for,
+            sent_at: item.sent_at,
+          };
+        }
+      }
+      setMessageByContact(map);
+    } else {
+      setMessageByContact({});
+    }
+
     setLoading(false);
   }
 
@@ -151,7 +202,7 @@ export default function PotentialSupportersPage() {
     }
 
     if (!phone.trim() && !email.trim()) {
-      setNotice("Please enter at least one contact method: an email address or a phone number.");
+      setNotice("Please enter an email address, a phone number, or both.");
       return;
     }
 
@@ -190,7 +241,7 @@ export default function PotentialSupportersPage() {
       return;
     }
 
-    const { error: messageError } = await supabase
+    const { data: message, error: messageError } = await supabase
       .from("epew_entrepreneur_communication_messages")
       .insert({
         entrepreneur_user_id: user.id,
@@ -209,14 +260,15 @@ export default function PotentialSupportersPage() {
           businessCode,
         ),
         sender_voice: "entrepreneur",
-        delivery_channel: email.trim() ? "email" : null,
         delivery_status: "draft",
-      });
+      })
+      .select("delivery_status,scheduled_for,sent_at")
+      .single();
 
-    if (messageError) {
-      setNotice(`Potential supporter saved, but the message could not be prepared: ${messageError.message}`);
+    if (messageError || !message) {
+      setNotice(`Potential supporter was saved, but the first message could not be prepared: ${messageError?.message || "Unknown error"}`);
       setSaving(false);
-      await loadPage();
+      await loadPage(true);
       return;
     }
 
@@ -226,9 +278,17 @@ export default function PotentialSupportersPage() {
     setLanguage("en");
     setRelationship("");
     setNotes("");
-    setNotice("Potential supporter added successfully. The message has been prepared using the available contact method.");
+
+    if (message.sent_at || message.delivery_status === "sent" || message.delivery_status === "delivered") {
+      setNotice(`Potential supporter added. Message sent successfully${message.sent_at ? ` at ${formatEastern(message.sent_at)} Eastern` : ""}.`);
+    } else if (message.delivery_status === "queued") {
+      setNotice(`Potential supporter added. Your message is scheduled to be sent at ${formatEastern(message.scheduled_for)} Eastern.`);
+    } else {
+      setNotice(`Potential supporter added. Message status: ${message.delivery_status}.`);
+    }
+
     setSaving(false);
-    await loadPage();
+    await loadPage(true);
   }
 
   if (loading) {
@@ -249,17 +309,15 @@ export default function PotentialSupportersPage() {
         <section className="grid gap-6 lg:grid-cols-2">
           <form onSubmit={addProspect} className="rounded-3xl bg-white p-5 shadow md:p-7">
             <h2 className="text-2xl font-black text-blue-950">Add a Potential Supporter</h2>
-            <p className="mt-2 text-sm font-semibold text-slate-600">Provide an email address, a phone number, or both.</p>
-
+            <p className="mt-2 text-sm text-slate-600">Provide an email address, a phone number, or both.</p>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <label className="font-bold text-slate-700">Name<input required value={name} onChange={(e) => setName(e.target.value)} className="mt-2 w-full min-w-0 rounded-xl border border-slate-300 p-3 font-normal" /></label>
               <label className="font-bold text-slate-700">Preferred Language<select value={language} onChange={(e) => setLanguage(e.target.value)} className="mt-2 w-full min-w-0 rounded-xl border border-slate-300 p-3 font-normal">{LANGUAGES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
-              <label className="font-bold text-slate-700">Phone Number <span className="font-normal text-slate-500">(optional if email is provided)</span><input inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-2 w-full min-w-0 rounded-xl border border-slate-300 p-3 font-normal" /></label>
-              <label className="font-bold text-slate-700">Email Address <span className="font-normal text-slate-500">(optional if phone is provided)</span><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-2 w-full min-w-0 rounded-xl border border-slate-300 p-3 font-normal" /></label>
+              <label className="font-bold text-slate-700">Phone Number<input inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-2 w-full min-w-0 rounded-xl border border-slate-300 p-3 font-normal" /></label>
+              <label className="font-bold text-slate-700">Email Address<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-2 w-full min-w-0 rounded-xl border border-slate-300 p-3 font-normal" /></label>
               <label className="font-bold text-slate-700 sm:col-span-2">Relationship to Entrepreneur<input value={relationship} onChange={(e) => setRelationship(e.target.value)} className="mt-2 w-full min-w-0 rounded-xl border border-slate-300 p-3 font-normal" /></label>
               <label className="font-bold text-slate-700 sm:col-span-2">Notes From the Conversation<textarea rows={4} value={notes} onChange={(e) => setNotes(e.target.value)} className="mt-2 w-full min-w-0 rounded-xl border border-slate-300 p-3 font-normal" /></label>
             </div>
-
             <button disabled={saving} className="mt-6 w-full rounded-xl bg-green-700 px-6 py-4 text-lg font-black text-white hover:bg-green-800 disabled:opacity-60 sm:w-auto">{saving ? "Saving..." : "Add Potential Supporter"}</button>
           </form>
 
@@ -275,18 +333,27 @@ export default function PotentialSupportersPage() {
             <p className="mt-4 text-slate-600">No potential supporters have been added yet.</p>
           ) : (
             <div className="mt-5 grid gap-4 md:grid-cols-2">
-              {contacts.map((contact) => (
-                <article key={contact.id} className="min-w-0 rounded-2xl border border-slate-200 p-4">
-                  <div className="flex flex-wrap items-start justify-between gap-2">
-                    <h3 className="break-words text-xl font-black text-slate-900">{contact.prospect_name}</h3>
-                    <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-800">{contact.status.replaceAll("_", " ")}</span>
-                  </div>
-                  {contact.phone && <p className="mt-3 break-all text-sm text-slate-600">Phone: {contact.phone}</p>}
-                  {contact.email && <p className="break-all text-sm text-slate-600">Email: {contact.email}</p>}
-                  {contact.relationship && <p className="mt-2 text-sm font-semibold text-slate-700">{contact.relationship}</p>}
-                  {contact.conversation_notes && <p className="mt-2 text-sm text-slate-600">{contact.conversation_notes}</p>}
-                </article>
-              ))}
+              {contacts.map((contact) => {
+                const message = messageByContact[contact.id];
+                return (
+                  <article key={contact.id} className="min-w-0 rounded-2xl border border-slate-200 p-4">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <h3 className="break-words text-xl font-black text-slate-900">{contact.prospect_name}</h3>
+                      <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-800">{contact.status.replaceAll("_", " ")}</span>
+                    </div>
+                    {contact.phone && <p className="mt-3 break-all text-sm text-slate-600">Phone: {contact.phone}</p>}
+                    {contact.email && <p className="break-all text-sm text-slate-600">Email: {contact.email}</p>}
+                    {contact.relationship && <p className="mt-2 text-sm font-semibold text-slate-700">{contact.relationship}</p>}
+                    {contact.conversation_notes && <p className="mt-2 text-sm text-slate-600">{contact.conversation_notes}</p>}
+                    <div className="mt-4 rounded-xl bg-slate-50 p-3 text-sm font-bold text-slate-700">
+                      {!message && "First message: not prepared"}
+                      {message?.sent_at && `First message: Sent ${formatEastern(message.sent_at)} Eastern`}
+                      {!message?.sent_at && message?.delivery_status === "queued" && `First message: Scheduled for ${formatEastern(message.scheduled_for)} Eastern`}
+                      {!message?.sent_at && message && message.delivery_status !== "queued" && `First message: ${message.delivery_status}`}
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           )}
         </section>
