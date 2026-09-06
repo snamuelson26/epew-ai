@@ -5,12 +5,36 @@ import { usePathname } from "next/navigation";
 
 const EPEW_SELECTION_PATH = "/supporters/annual-support";
 const PANEL_ID = "epew-founding-supporter-panel";
+const HERO_RATE_ID = "epew-supporter-hero-rate";
 
 export default function SupporterWebsitePatch() {
   const pathname = usePathname();
 
   useEffect(() => {
     if (pathname !== "/supporters") return;
+
+    const ensureHeroRateCorrection = () => {
+      if (document.getElementById(HERO_RATE_ID)) return;
+
+      const heroImage = document.querySelector<HTMLImageElement>(
+        'img[src*="supporter-hero.png"]',
+      );
+      if (!heroImage) return;
+
+      const parent = heroImage.parentElement;
+      if (!parent) return;
+
+      parent.style.position = "relative";
+
+      const correction = document.createElement("div");
+      correction.id = HERO_RATE_ID;
+      correction.textContent = "Earn Up to 8% Annual Benefits";
+      correction.setAttribute("aria-label", "Earn Up to 8% Annual Benefits");
+      correction.className =
+        "absolute left-1/2 top-[8%] z-10 -translate-x-1/2 whitespace-nowrap bg-white/95 px-4 py-1 text-center text-[clamp(1.25rem,4vw,4.5rem)] font-black leading-tight text-green-900";
+
+      parent.appendChild(correction);
+    };
 
     const ensureFoundingSupporterPanel = () => {
       if (document.getElementById(PANEL_ID)) return;
@@ -60,7 +84,6 @@ export default function SupporterWebsitePatch() {
     };
 
     const applyApprovedChanges = () => {
-      // Approved content-only change: 6% -> 8%. Do not alter existing layout or styling.
       const walker = document.createTreeWalker(
         document.body,
         NodeFilter.SHOW_TEXT,
@@ -75,8 +98,6 @@ export default function SupporterWebsitePatch() {
         node = walker.nextNode();
       }
 
-      // Both public supporter CTA buttons now open the existing
-      // EPEW-selected business support page.
       document.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => {
         const label = (link.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
         const href = link.getAttribute("href") || "";
@@ -89,6 +110,7 @@ export default function SupporterWebsitePatch() {
         }
       });
 
+      ensureHeroRateCorrection();
       ensureFoundingSupporterPanel();
     };
 
