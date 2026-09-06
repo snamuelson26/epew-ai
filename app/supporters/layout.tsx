@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { LanguageSelector, useEpewLanguage } from "@/app/components/EpewLanguage";
+import SupporterWebsitePatch from "./SupporterWebsitePatch";
 
 const text = {
   en: { title: "EPEW Supporter", dashboard: "Dashboard", supportedBusinesses: "My Supported Businesses", communication: "Communication", financial: "Financial Center", notifications: "Notifications", stories: "Success Stories", settings: "Settings", returnMain: "Return to Main Page" },
@@ -64,7 +65,14 @@ export default function SupporterLayout({ children }: { children: ReactNode }) {
     }
   }
 
-  if (publicPages.includes(pathname)) return <>{children}</>;
+  if (publicPages.includes(pathname)) {
+    return (
+      <>
+        {pathname === "/supporters" && <SupporterWebsitePatch />}
+        {children}
+      </>
+    );
+  }
 
   const menu = [
     { title: `🏠 ${t.dashboard}`, href: "/supporters/dashboard" },
