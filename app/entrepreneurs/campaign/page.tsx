@@ -121,9 +121,7 @@ export default function EntrepreneurCampaignPage() {
       .eq("entrepreneur_user_id", user.id)
       .order("created_at", { ascending: false });
 
-    if (contactError) {
-      setNotice(contactError.message);
-    }
+    if (contactError) setNotice(contactError.message);
 
     const loadedContacts = (contactData || []) as Contact[];
     setContacts(loadedContacts);
@@ -171,6 +169,12 @@ export default function EntrepreneurCampaignPage() {
   return (
     <main className="min-h-screen bg-slate-100 px-4 py-6 sm:px-6 md:py-10">
       <div className="mx-auto max-w-6xl space-y-6">
+        <div>
+          <Link href="/entrepreneurs/dashboard" className="inline-flex items-center rounded-xl bg-blue-950 px-4 py-2.5 font-bold text-white shadow hover:bg-blue-900">
+            ← Return to Main Page
+          </Link>
+        </div>
+
         <header className="rounded-3xl bg-gradient-to-r from-blue-950 to-green-700 p-6 text-white shadow-xl md:p-8">
           <p className="text-sm font-black uppercase tracking-widest text-lime-300">Private Entrepreneur Campaign View</p>
           <h1 className="mt-2 text-4xl font-black">{business?.business_name || "My Campaign"}</h1>
