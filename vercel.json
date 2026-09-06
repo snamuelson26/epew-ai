@@ -5,6 +5,10 @@
       "schedule": "20 19 * * *"
     },
     {
+      "path": "/api/internal/communications/process-supporter-outreach",
+      "schedule": "* * * * *"
+    },
+    {
       "path": "/api/internal/supporters/process-smart-selection",
       "schedule": "0 2 * * *"
     }
