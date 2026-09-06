@@ -6,6 +6,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { LanguageSelector, useEpewLanguage } from "@/app/components/EpewLanguage";
 import SupporterWebsitePatch from "./SupporterWebsitePatch";
+import SupporterImageTranslations from "./SupporterImageTranslations";
 
 const text = {
   en: { title: "EPEW Supporter", dashboard: "Dashboard", supportedBusinesses: "My Supported Businesses", communication: "Communication", financial: "Financial Center", notifications: "Notifications", stories: "Success Stories", settings: "Settings", returnMain: "Return to Main Page" },
@@ -69,6 +70,7 @@ export default function SupporterLayout({ children }: { children: ReactNode }) {
     return (
       <>
         {pathname === "/supporters" && <SupporterWebsitePatch />}
+        {pathname === "/supporters" && <SupporterImageTranslations />}
         {children}
       </>
     );
