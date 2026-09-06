@@ -7,10 +7,10 @@ import { supabase } from "@/lib/supabase";
 import { LanguageSelector, useEpewLanguage } from "@/app/components/EpewLanguage";
 
 const text = {
-  en: { title: "EPEW Supporter", dashboard: "Dashboard", supportedBusinesses: "My Supported Businesses", communication: "Communication", financial: "Financial Center", notifications: "Notifications", stories: "Success Stories", settings: "Settings" },
-  ht: { title: "Sipòtè EPEW", dashboard: "Tablo Bò", supportedBusinesses: "Biznis Mwen Sipòte", communication: "Kominikasyon", financial: "Sant Finansye", notifications: "Notifikasyon", stories: "Istwa Siksè", settings: "Paramèt" },
-  fr: { title: "Soutien EPEW", dashboard: "Tableau de Bord", supportedBusinesses: "Mes Entreprises Soutenues", communication: "Communication", financial: "Centre Financier", notifications: "Notifications", stories: "Histoires de Réussite", settings: "Paramètres" },
-  es: { title: "Colaborador EPEW", dashboard: "Panel", supportedBusinesses: "Mis Negocios Apoyados", communication: "Comunicación", financial: "Centro Financiero", notifications: "Notificaciones", stories: "Historias de Éxito", settings: "Configuración" },
+  en: { title: "EPEW Supporter", dashboard: "Dashboard", supportedBusinesses: "My Supported Businesses", communication: "Communication", financial: "Financial Center", notifications: "Notifications", stories: "Success Stories", settings: "Settings", returnMain: "Return to Main Page" },
+  ht: { title: "Sipòtè EPEW", dashboard: "Tablo Bò", supportedBusinesses: "Biznis Mwen Sipòte", communication: "Kominikasyon", financial: "Sant Finansye", notifications: "Notifikasyon", stories: "Istwa Siksè", settings: "Paramèt", returnMain: "Retounen nan Paj Prensipal" },
+  fr: { title: "Soutien EPEW", dashboard: "Tableau de Bord", supportedBusinesses: "Mes Entreprises Soutenues", communication: "Communication", financial: "Centre Financier", notifications: "Notifications", stories: "Histoires de Réussite", settings: "Paramètres", returnMain: "Retour à la Page Principale" },
+  es: { title: "Colaborador EPEW", dashboard: "Panel", supportedBusinesses: "Mis Negocios Apoyados", communication: "Comunicación", financial: "Centro Financiero", notifications: "Notificaciones", stories: "Historias de Éxito", settings: "Configuración", returnMain: "Volver a la Página Principal" },
 };
 
 export default function SupporterLayout({ children }: { children: ReactNode }) {
@@ -111,6 +111,16 @@ export default function SupporterLayout({ children }: { children: ReactNode }) {
       </aside>
 
       <main className="w-full min-w-0 px-3 py-4 sm:px-5 sm:py-6 md:flex-1 md:p-8">
+        {pathname !== "/supporters/dashboard" && (
+          <div className="mb-4 flex justify-start">
+            <Link
+              href="/supporters/dashboard"
+              className="inline-flex items-center rounded-xl bg-[#06245c] px-4 py-2.5 font-bold text-white shadow hover:bg-blue-900"
+            >
+              ← {t.returnMain}
+            </Link>
+          </div>
+        )}
         {children}
       </main>
     </div>
