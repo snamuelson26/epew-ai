@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
@@ -47,14 +48,20 @@ function getSmsClient() {
   };
 }
 
-async function processDueMessages() {
+async function processDueMessages(businessCode?: string) {
   const now = new Date().toISOString();
 
-  const { data: messages, error } = await supabaseAdmin
+  let query = supabaseAdmin
     .from("epew_entrepreneur_communication_messages")
     .select("id,contact_id,business_code,message_type,subject,body,delivery_status,scheduled_for")
     .eq("delivery_status", "queued")
-    .lte("scheduled_for", now)
+    .lte("scheduled_for", now);
+
+  if (businessCode) {
+    query = query.eq("business_code", businessCode);
+  }
+
+  const { data: messages, error } = await query
     .order("scheduled_for", { ascending: true })
     .limit(50);
 
@@ -123,11 +130,20 @@ async function processDueMessages() {
 
         const smsBody = `${normalizeBody(message.body)}\n\nReply STOP to opt out.`;
         const to = normalizeUsPhone(contact.phone);
-        const payload = sms.useMessagingService
-          ? { to, body: smsBody, messagingServiceSid: sms.from }
-          : { to, body: smsBody, from: sms.from };
 
-        await sms.client.messages.create(payload);
+        if (sms.useMessagingService) {
+          await sms.client.messages.create({
+            to,
+            body: smsBody,
+            messagingServiceSid: sms.from,
+          });
+        } else {
+          await sms.client.messages.create({
+            to,
+            body: smsBody,
+            from: sms.from,
+          });
+        }
       } else {
         throw new Error("Contact has no deliverable email address or phone number.");
       }
@@ -162,17 +178,56 @@ async function processDueMessages() {
   return { processed: (messages ?? []).length, sent, failed, skipped };
 }
 
+async function authorizeOneTimeRecovery(request: NextRequest) {
+  const url = new URL(request.url);
+  const token = url.searchParams.get("token")?.trim();
+  const businessCode = url.searchParams.get("businessCode")?.trim();
+
+  if (!token || !businessCode) return null;
+
+  const tokenHash = createHash("sha256").update(token).digest("hex");
+  const actionKey = `supporter-outreach:${businessCode}`;
+  const now = new Date().toISOString();
+
+  const { data: action } = await supabaseAdmin
+    .from("epew_internal_action_tokens")
+    .select("id,expires_at,used_at")
+    .eq("action_key", actionKey)
+    .eq("token_hash", tokenHash)
+    .is("used_at", null)
+    .gt("expires_at", now)
+    .maybeSingle();
+
+  if (!action) return null;
+
+  const { data: claimed } = await supabaseAdmin
+    .from("epew_internal_action_tokens")
+    .update({ used_at: now })
+    .eq("id", action.id)
+    .is("used_at", null)
+    .select("id")
+    .maybeSingle();
+
+  return claimed ? businessCode : null;
+}
+
 export async function GET(request: NextRequest) {
   const secret = process.env.CRON_SECRET;
   const authorization = request.headers.get("authorization");
+  const cronAuthorized = Boolean(secret && authorization === `Bearer ${secret}`);
+  const recoveryBusinessCode = cronAuthorized ? null : await authorizeOneTimeRecovery(request);
 
-  if (!secret || authorization !== `Bearer ${secret}`) {
+  if (!cronAuthorized && !recoveryBusinessCode) {
     return NextResponse.json({ success: false, message: "Unauthorized." }, { status: 401 });
   }
 
   try {
-    const result = await processDueMessages();
-    return NextResponse.json({ success: true, ...result });
+    const result = await processDueMessages(recoveryBusinessCode ?? undefined);
+    return NextResponse.json({
+      success: true,
+      businessCode: recoveryBusinessCode ?? null,
+      ...result,
+    });
   } catch (error) {
     console.error("EPEW supporter outreach processor failed:", error);
     return NextResponse.json(
