@@ -50,6 +50,7 @@ export default function SupportEntrepreneurPage() {
         <div className="mx-auto max-w-2xl rounded-3xl bg-white p-10 text-center shadow-xl">
           <h1 className="text-3xl font-extrabold">Support Page</h1>
           <p className="mt-4 text-xl text-gray-700">{message}</p>
+          <Link href="/supporters/dashboard" className="mt-6 inline-flex rounded-xl bg-[#06245c] px-5 py-3 font-bold text-white">← Return to Main Page</Link>
         </div>
       </main>
     );
@@ -78,6 +79,12 @@ export default function SupportEntrepreneurPage() {
   return (
     <main className="min-h-screen bg-[#f4f7fb] px-4 py-10 text-[#06245c]">
       <div className="mx-auto max-w-6xl space-y-8">
+        <div>
+          <Link href="/supporters/dashboard" className="inline-flex items-center rounded-xl bg-[#06245c] px-4 py-2.5 font-bold text-white shadow hover:bg-blue-900">
+            ← Return to Main Page
+          </Link>
+        </div>
+
         <section className="overflow-hidden rounded-[32px] bg-white shadow-2xl">
           <div className="bg-[#06245c] px-6 py-9 text-center text-white">
             <div className="inline-flex flex-col items-center rounded-3xl bg-lime-300 px-9 py-4 text-[#06245c] shadow-lg">
