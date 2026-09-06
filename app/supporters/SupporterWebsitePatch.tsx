@@ -92,8 +92,9 @@ export default function SupporterWebsitePatch() {
       let node = walker.nextNode();
       while (node) {
         const value = node.nodeValue || "";
-        if (value.includes("6%")) {
-          node.nodeValue = value.replace(/6%/g, "8%");
+        const corrected = value.replace(/6[\s\u00A0\u202F]*%/g, "8%");
+        if (corrected !== value) {
+          node.nodeValue = corrected;
         }
         node = walker.nextNode();
       }
