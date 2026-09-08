@@ -30,22 +30,95 @@ function normalizeUsPhone(value: string) {
   return value.trim();
 }
 
-function getSmsClient() {
+function getTwilioClient() {
   const accountSid = process.env.TWILIO_ACCOUNT_SID?.trim();
   const authToken = process.env.TWILIO_AUTH_TOKEN?.trim();
+
+  if (!accountSid || !authToken) return null;
+  return twilio(accountSid, authToken);
+}
+
+function getSmsConfig() {
   const from =
     process.env.TWILIO_MESSAGING_SERVICE_SID?.trim() ||
     process.env.TWILIO_PHONE_NUMBER?.trim() ||
     process.env.TWILIO_FROM_NUMBER?.trim() ||
     process.env.EPEW_TWILIO_PHONE_NUMBER?.trim();
 
-  if (!accountSid || !authToken || !from) return null;
+  if (!from) return null;
 
   return {
-    client: twilio(accountSid, authToken),
     from,
     useMessagingService: from.startsWith("MG"),
   };
+}
+
+function getWhatsAppFrom() {
+  const raw =
+    process.env.TWILIO_WHATSAPP_FROM_NUMBER?.trim() ||
+    process.env.EPEW_TWILIO_WHATSAPP_NUMBER?.trim();
+
+  if (!raw) return null;
+  return raw.startsWith("whatsapp:") ? raw : `whatsapp:${normalizeUsPhone(raw)}`;
+}
+
+function easternTimeParts(date = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(date);
+
+  return {
+    hour: Number(parts.find((part) => part.type === "hour")?.value ?? -1),
+    minute: Number(parts.find((part) => part.type === "minute")?.value ?? -1),
+  };
+}
+
+function isSupporterOutreachWindow() {
+  const { hour, minute } = easternTimeParts();
+  return hour === 9 && minute >= 25 && minute <= 40;
+}
+
+async function sendSms(to: string, body: string) {
+  const client = getTwilioClient();
+  const sms = getSmsConfig();
+  if (!client || !sms) {
+    throw new Error("Twilio SMS delivery is not configured.");
+  }
+
+  if (sms.useMessagingService) {
+    await client.messages.create({
+      to,
+      body,
+      messagingServiceSid: sms.from,
+    });
+  } else {
+    await client.messages.create({
+      to,
+      body,
+      from: sms.from,
+    });
+  }
+}
+
+async function tryWhatsApp(to: string, body: string) {
+  const client = getTwilioClient();
+  const from = getWhatsAppFrom();
+  if (!client || !from) return false;
+
+  try {
+    await client.messages.create({
+      to: `whatsapp:${to}`,
+      body,
+      from,
+    });
+    return true;
+  } catch (error) {
+    console.warn("WhatsApp supporter outreach unavailable; falling back to SMS", error);
+    return false;
+  }
 }
 
 async function processDueMessages(businessCode?: string) {
@@ -74,7 +147,7 @@ async function processDueMessages(businessCode?: string) {
   for (const message of messages ?? []) {
     const { data: contact, error: contactError } = await supabaseAdmin
       .from("epew_entrepreneur_communication_contacts")
-      .select("id,prospect_name,email,phone,weekly_follow_up_enabled,opted_out_at")
+      .select("id,prospect_name,email,phone,preferred_language,weekly_follow_up_enabled,opted_out_at")
       .eq("id", message.contact_id)
       .maybeSingle();
 
@@ -100,7 +173,7 @@ async function processDueMessages(businessCode?: string) {
     if (!claimed) continue;
 
     try {
-      let channel: "email" | "sms";
+      let channel: "email" | "sms" | "whatsapp";
 
       if (contact.email?.trim()) {
         channel = "email";
@@ -115,6 +188,7 @@ async function processDueMessages(businessCode?: string) {
             supporterOutreachMessageId: message.id,
             contactId: contact.id,
             businessCode: message.business_code,
+            preferredLanguage: contact.preferred_language,
           },
         });
 
@@ -122,27 +196,15 @@ async function processDueMessages(businessCode?: string) {
           throw new Error(`Email delivery returned status ${result.status}.`);
         }
       } else if (contact.phone?.trim()) {
-        channel = "sms";
-        const sms = getSmsClient();
-        if (!sms) {
-          throw new Error("Twilio SMS delivery is not configured.");
-        }
-
-        const smsBody = `${normalizeBody(message.body)}\n\nReply STOP to opt out.`;
         const to = normalizeUsPhone(contact.phone);
+        const phoneBody = `${normalizeBody(message.body)}\n\nReply STOP to opt out.`;
 
-        if (sms.useMessagingService) {
-          await sms.client.messages.create({
-            to,
-            body: smsBody,
-            messagingServiceSid: sms.from,
-          });
+        const whatsappSent = await tryWhatsApp(to, phoneBody);
+        if (whatsappSent) {
+          channel = "whatsapp";
         } else {
-          await sms.client.messages.create({
-            to,
-            body: smsBody,
-            from: sms.from,
-          });
+          await sendSms(to, phoneBody);
+          channel = "sms";
         }
       } else {
         throw new Error("Contact has no deliverable email address or phone number.");
@@ -219,6 +281,14 @@ export async function GET(request: NextRequest) {
 
   if (!cronAuthorized && !recoveryBusinessCode) {
     return NextResponse.json({ success: false, message: "Unauthorized." }, { status: 401 });
+  }
+
+  if (cronAuthorized && !isSupporterOutreachWindow()) {
+    return NextResponse.json({
+      success: true,
+      skipped: true,
+      reason: "outside_0930_eastern_window",
+    });
   }
 
   try {
