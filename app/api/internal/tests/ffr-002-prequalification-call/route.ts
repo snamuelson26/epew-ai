@@ -93,9 +93,7 @@ export async function GET(request: NextRequest) {
       from: normalizeUsPhone(from),
       url: `${publicBaseUrl}/api/twilio/voice/prequalification?applicationId=${encodeURIComponent(String(application.id))}&q=0`,
       method: "POST",
-      statusCallback: `${publicBaseUrl}/api/twilio/voice/status`,
-      statusCallbackMethod: "POST",
-      statusCallbackEvent: ["initiated", "ringing", "answered", "completed"],
+      timeout: 45,
     });
 
     return NextResponse.json({
