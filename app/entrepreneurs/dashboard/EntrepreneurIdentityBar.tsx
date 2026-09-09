@@ -134,7 +134,7 @@ export default function EntrepreneurIdentityBar() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 lg:mr-48 xl:mr-56">
           <div className="flex h-16 min-w-24 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50 px-3">
             {businessLogo ? (
               <img
