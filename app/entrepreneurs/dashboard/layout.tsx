@@ -3,6 +3,7 @@ import EntrepreneurNextActionBridge from "./EntrepreneurNextActionBridge";
 import CampaignActionsFix from "./CampaignActionsFix";
 import EntrepreneurJourneyPreQualificationPatch from "./EntrepreneurJourneyPreQualificationPatch";
 import EntrepreneurIdentityBar from "./EntrepreneurIdentityBar";
+import EntrepreneurCommunicationAccess from "./EntrepreneurCommunicationAccess";
 
 export default function EntrepreneurDashboardLayout({
   children,
@@ -11,6 +12,7 @@ export default function EntrepreneurDashboardLayout({
 }>) {
   return (
     <DashboardLocalization>
+      <EntrepreneurCommunicationAccess />
       <EntrepreneurNextActionBridge />
       <CampaignActionsFix />
       <EntrepreneurJourneyPreQualificationPatch />
