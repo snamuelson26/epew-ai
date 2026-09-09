@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/internal/communications/process-supporter-outreach",
-      "schedule": "30 13,14 * * *"
+      "schedule": "30 13 * * *"
     },
     {
       "path": "/api/internal/supporters/process-smart-selection",
