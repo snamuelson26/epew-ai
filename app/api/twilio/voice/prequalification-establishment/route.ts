@@ -162,7 +162,7 @@ function questionFor(topic: Topic, app: any): string {
   const type = String(app.business_category || app.business_type || "business");
 
   switch (topic) {
-    case "rapport_day": return `Hello ${app.full_name || ""}. This is Daniel, your EPEW Personal Coach. How is your day going?`;
+    case "rapport_day": return `Hello ${app.full_name || ""}. This is Daniel, your EPEW Coach Assistant. I am calling to help prepare you for your first interview with your Personal Coach. How is your day going?`;
     case "identity_name": return "Please confirm your name.";
     case "identity_service": return "What product or service will your business provide?";
     case "why_business": return "Why did you choose this type of business?";
@@ -188,7 +188,7 @@ function questionFor(topic: Topic, app: any): string {
 
 function clarificationFor(topic: Topic): string {
   switch (topic) {
-    case "commitment_process": return "By commitment, I mean attending meetings, completing assignments, providing requested information, staying in communication with your coach, and following through.";
+    case "commitment_process": return "By commitment, I mean attending meetings, completing assignments, providing requested information, staying in communication with your Personal Coach, and following through.";
     case "organization": return "For example, how will you keep track of appointments, documents, deadlines, and business tasks?";
     case "communication": return "You can simply explain what the business will provide, who it will serve, and why it matters.";
     case "leadership_ability": return "For example, leadership includes making decisions, giving direction, solving problems, taking responsibility, and helping people work toward a goal.";
