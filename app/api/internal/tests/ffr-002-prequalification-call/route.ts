@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
     const call = await client.calls.create({
       to: normalizeUsPhone(application.phone),
       from: normalizeUsPhone(from),
-      url: `${publicBaseUrl}/api/twilio/voice/prequalification-fast?applicationId=${encodeURIComponent(String(application.id))}`,
+      url: `${publicBaseUrl}/api/twilio/voice/prequalification-establishment?applicationId=${encodeURIComponent(String(application.id))}`,
       method: "POST",
       timeout: 45,
     });
