@@ -147,17 +147,21 @@ function extractOutputText(payload: any) {
   if (typeof payload?.output_text === "string") return payload.output_text.trim();
 
   const output = Array.isArray(payload?.output) ? payload.output : [];
+  const pieces: string[] = [];
+
   for (const item of output) {
     const content = Array.isArray(item?.content) ? item.content : [];
     for (const part of content) {
-      if (typeof part?.text === "string" && part.text.trim()) return part.text.trim();
+      if (typeof part?.text === "string" && part.text.trim()) {
+        pieces.push(part.text.trim());
+      }
     }
   }
 
-  return "";
+  return pieces.join("\n").trim();
 }
 
-function parseDecision(text: string, state: ConversationState): InterviewDecision | null {
+function extractJsonObject(text: string) {
   const cleaned = text
     .trim()
     .replace(/^```json\s*/i, "")
@@ -165,8 +169,19 @@ function parseDecision(text: string, state: ConversationState): InterviewDecisio
     .replace(/```$/i, "")
     .trim();
 
+  if (!cleaned) return "";
+  if (cleaned.startsWith("{") && cleaned.endsWith("}")) return cleaned;
+
+  const first = cleaned.indexOf("{");
+  const last = cleaned.lastIndexOf("}");
+  if (first >= 0 && last > first) return cleaned.slice(first, last + 1);
+
+  return cleaned;
+}
+
+function parseDecision(text: string, state: ConversationState): InterviewDecision | null {
   try {
-    const parsed = JSON.parse(cleaned) as Partial<InterviewDecision>;
+    const parsed = JSON.parse(extractJsonObject(text)) as Partial<InterviewDecision>;
     const reply = String(parsed.reply ?? "").trim();
     if (!reply) return null;
 
@@ -184,6 +199,43 @@ function parseDecision(text: string, state: ConversationState): InterviewDecisio
   }
 }
 
+function asksWhatToClarify(speech: string) {
+  const normalized = speech.toLowerCase();
+  return [
+    "what should i explain",
+    "what do you want me to explain",
+    "what should i clarify",
+    "what do you mean",
+    "which part",
+    "what part",
+  ].some((phrase) => normalized.includes(phrase));
+}
+
+function topicClarification(topic: InterviewTopic, speech = "") {
+  const prefix = asksWhatToClarify(speech)
+    ? "Sure. Here is the specific part I want you to explain. "
+    : "I want to make sure I understand the specific point. ";
+
+  switch (topic) {
+    case "identity_business":
+      return `${prefix}Please confirm the business you are applying with and your role in it.`;
+    case "business_understanding":
+      return `${prefix}Tell me what the business will actually sell or provide, and who the main customers will be.`;
+    case "current_condition":
+      return `${prefix}Tell me what is already completed today and what is still missing before the business can operate.`;
+    case "readiness":
+      return `${prefix}Tell me the most important step you personally still need to complete before you are ready to move forward.`;
+    case "financial_need":
+      return `${prefix}Tell me how much support you need and the main things that money would pay for.`;
+    case "support_readiness":
+      return `${prefix}Tell me how you plan to approach potential supporters and work toward the required twenty support units.`;
+    case "obstacles_risks":
+      return `${prefix}Tell me the biggest issue that could delay the business or prevent it from opening as planned.`;
+    case "commitment":
+      return `${prefix}Tell me what you are personally prepared to do, consistently, to make this business succeed.`;
+  }
+}
+
 async function runConversationTurn(
   application: any,
   state: ConversationState,
@@ -193,8 +245,7 @@ async function runConversationTurn(
 
   if (!apiKey) {
     return {
-      reply:
-        "Thank you. I want to understand that clearly before we move on. Could you explain that in a little more detail?",
+      reply: topicClarification(state.current_topic, entrepreneurSpeech),
       current_topic: state.current_topic,
       covered_topics: state.covered_topics,
       complete: false,
@@ -202,14 +253,7 @@ async function runConversationTurn(
     };
   }
 
-  const recentConversation = [
-    ...state.messages,
-    {
-      role: "entrepreneur" as const,
-      content: entrepreneurSpeech,
-      at: new Date().toISOString(),
-    },
-  ]
+  const recentConversation = state.messages
     .slice(-24)
     .map((message) => `${message.role === "coach" ? "DANIEL" : "ENTREPRENEUR"}: ${message.content}`)
     .join("\n");
@@ -238,7 +282,7 @@ Understand whether the entrepreneur is sufficiently prepared to move forward for
 APPLICATION AND QUESTIONNAIRE CONTEXT
 ${JSON.stringify(applicationContext, null, 2)}
 
-QUALIFICATION AREAS TO UNDERSTAND OVER THE COURSE OF THE CONVERSATION
+QUALIFICATION AREAS
 - identity_business: who the entrepreneur is and confirmation of the business
 - business_understanding: what is being built, customers, product/service and business model
 - current_condition: what already exists, what has been completed, and what is missing
@@ -258,27 +302,29 @@ RECENT CONVERSATION
 ${recentConversation}
 
 INTERVIEW BEHAVIOR
-1. LISTEN to what the entrepreneur actually said and respond to it.
-2. Briefly acknowledge or reflect the substance of the answer when appropriate.
-3. If the answer is vague, incomplete, contradictory, off-topic, or just noise, stay on the same subject and ask a natural clarification or follow-up.
-4. Do NOT move to a new qualification area just because audio was detected.
-5. If the entrepreneur answers more than one area in a single response, recognize that and mark those areas covered.
-6. Use the questionnaire/application to avoid asking for information that is already clear. Instead, verify or probe important details.
-7. Ask ONE principal question at a time. It may include a short clarification, but never fire a list of questions.
-8. Keep each spoken response conversational and normally under 55 words.
-9. Do not lecture, coach the business, sell EPEW, or make a qualification decision during this interview.
-10. Never say the applicant is approved, qualified, denied, or rejected.
-11. Only set complete=true when the conversation has gathered enough meaningful information across ALL major areas. A short/noisy response cannot complete an area.
-12. Natural transitions are encouraged: “That helps me understand…”, “You mentioned…”, “Before we move on…”, “Let me make sure I understand…”.
-13. If the entrepreneur asks a brief relevant question, answer it briefly and then return naturally to the interview.
+1. Listen to the entrepreneur's actual meaning and respond to it.
+2. Briefly acknowledge the substance of the answer when useful.
+3. If the answer is vague or incomplete, ask a SPECIFIC follow-up tied to what the entrepreneur just said. Never use a generic request such as "explain that more clearly" without naming the detail you need.
+4. If the entrepreneur asks "what should I explain?", "what do you mean?", "which part?", or similar, answer that question directly by stating exactly which detail you want clarified. Do not repeat your previous sentence.
+5. Never repeat the same clarification wording twice in a row. Rephrase and become more specific.
+6. Do not move to a new area merely because audio was detected.
+7. If several areas were answered meaningfully in one response, mark each of them covered.
+8. Use application/questionnaire facts so you do not ask blindly for information already known.
+9. Ask ONE principal question at a time.
+10. Keep spoken responses conversational and normally under 55 words.
+11. Do not lecture, sell EPEW, or make a qualification decision.
+12. Never say approved, qualified, denied, or rejected.
+13. Only complete when all major areas contain meaningful information.
+14. If the entrepreneur asks a relevant question, answer it briefly and then return naturally to the interview.
+15. Treat ordinary thinking pauses, filler words, and self-corrections as part of the entrepreneur's answer, not as a reason to advance.
 
-Return ONLY valid JSON with this exact structure:
+Return ONLY valid JSON:
 {
   "reply": "what Daniel should say next",
-  "current_topic": "one of the allowed topic IDs",
+  "current_topic": "one allowed topic ID",
   "covered_topics": ["topic IDs genuinely covered so far"],
   "complete": false,
-  "summary": "short cumulative factual interview summary for later review"
+  "summary": "short cumulative factual interview summary"
 }
   `.trim();
 
@@ -304,8 +350,7 @@ Return ONLY valid JSON with this exact structure:
     const details = await apiResponse.text();
     console.error("EPEW prequalification conversation model error:", apiResponse.status, details);
     return {
-      reply:
-        "Thank you. I want to make sure I understood you correctly. Could you tell me a little more about that before we continue?",
+      reply: topicClarification(state.current_topic, entrepreneurSpeech),
       current_topic: state.current_topic,
       covered_topics: state.covered_topics,
       complete: false,
@@ -314,18 +359,21 @@ Return ONLY valid JSON with this exact structure:
   }
 
   const payload = await apiResponse.json();
-  const decision = parseDecision(extractOutputText(payload), state);
+  const outputText = extractOutputText(payload);
+  const decision = parseDecision(outputText, state);
 
-  return (
-    decision ?? {
-      reply:
-        "Thank you. Let me stay with that for a moment. Could you explain that a little more clearly for me?",
+  if (!decision) {
+    console.error("EPEW prequalification conversation parse failure:", outputText);
+    return {
+      reply: topicClarification(state.current_topic, entrepreneurSpeech),
       current_topic: state.current_topic,
       covered_topics: state.covered_topics,
       complete: false,
       summary: state.summary ?? "",
-    }
-  );
+    };
+  }
+
+  return decision;
 }
 
 async function saveState(applicationId: number, state: ConversationState, completed: boolean) {
@@ -361,8 +409,8 @@ function gatherNext(
       String(applicationId)
     )}&mode=conversation`,
     method: "POST",
-    timeout: 15,
-    speechTimeout: "auto",
+    timeout: 20,
+    speechTimeout: "3",
     actionOnEmptyResult: true,
   });
 
@@ -403,7 +451,7 @@ export async function POST(request: NextRequest) {
       return twimlResponse(response, 409);
     }
 
-    let state = parseState(application.interview_notes) ?? newState();
+    const state = parseState(application.interview_notes) ?? newState();
 
     if (state.messages.length === 0 && !speech) {
       const opening = `Hello ${application.full_name || ""}. This is Daniel, your EPEW Personal Coach. I have reviewed your application and questionnaire. This is your pre-qualification interview, and I want this to be a conversation so I can understand you and your business clearly. To begin, tell me in your own words about the business you are building and where it stands today.`;
@@ -420,7 +468,7 @@ export async function POST(request: NextRequest) {
 
     if (!speech) {
       const retry =
-        "I did not catch a clear answer. Take your time, and please continue from where we were. I am listening.";
+        "I did not catch a clear answer. Take your time. You can continue your thought, and I will wait for you to finish.";
 
       state.messages.push({
         role: "coach",
