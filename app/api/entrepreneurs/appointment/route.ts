@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import {
   getEstablishmentMeetingStartWindow,
 } from "@/lib/enterprise/establishment-meeting/EstablishmentMeetingTiming";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
 
@@ -24,26 +24,33 @@ export async function GET() {
       );
     }
 
-    // =====================================================
-    // Confirm that the signed-in user owns the application.
-    // =====================================================
+    const requestedApplicationId = Number(
+      new URL(request.url).searchParams.get("applicationId")
+    );
+
+    let applicationQuery = supabaseAdmin
+      .from("entrepreneur_applications")
+      .select(
+        `
+          id,
+          user_id,
+          full_name,
+          business_name,
+          email
+        `
+      )
+      .eq("user_id", user.id);
+
+    if (Number.isInteger(requestedApplicationId) && requestedApplicationId > 0) {
+      applicationQuery = applicationQuery.eq("id", requestedApplicationId);
+    } else {
+      applicationQuery = applicationQuery
+        .order("created_at", { ascending: false })
+        .limit(1);
+    }
 
     const { data: application, error: applicationError } =
-      await supabaseAdmin
-        .from("entrepreneur_applications")
-        .select(
-          `
-            id,
-            user_id,
-            full_name,
-            business_name,
-            email
-          `
-        )
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+      await applicationQuery.maybeSingle();
 
     if (applicationError) {
       throw applicationError;
@@ -60,10 +67,6 @@ export async function GET() {
     }
 
     const applicationId = Number(application.id);
-
-    // =====================================================
-    // Load the current Establishment Meeting.
-    // =====================================================
 
     const { data: meeting, error: meetingError } =
       await supabaseAdmin
@@ -94,10 +97,6 @@ export async function GET() {
       throw meetingError;
     }
 
-    // =====================================================
-    // Load the active/current Coach assignment.
-    // =====================================================
-
     const { data: assignment, error: assignmentError } =
       await supabaseAdmin
         .from("coach_assignments")
@@ -125,11 +124,6 @@ export async function GET() {
       throw assignmentError;
     }
 
-    // =====================================================
-    // No meeting exists yet.
-    // This is a normal onboarding state, not an API error.
-    // =====================================================
-
     if (!meeting) {
       return NextResponse.json({
         success: true,
@@ -149,13 +143,6 @@ export async function GET() {
         },
       });
     }
-
-    // =====================================================
-    // Load no-show recovery state.
-    //
-    // This table is backend-only under RLS, so its contents
-    // are filtered here before being returned to the user.
-    // =====================================================
 
     const { data: recovery, error: recoveryError } =
       await supabaseAdmin
@@ -212,20 +199,11 @@ export async function GET() {
         meeting.scheduled_at
       );
 
-    /*
-     * Defensive lifecycle normalization:
-     * a future appointment must never appear entrepreneur-facing
-     * as already in progress.
-     */
     const entrepreneurFacingMeetingStatus =
       meetingStatus === "in_progress" &&
       startWindow.isTooEarly
         ? "scheduled"
         : meetingStatus;
-
-    // =====================================================
-    // Determine the entrepreneur-facing action.
-    // =====================================================
 
     let action: {
       type:
@@ -352,9 +330,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-
       applicationId,
-
       appointment: {
         id: meeting.id,
         type: "Establishment Meeting",
@@ -367,34 +343,29 @@ export async function GET() {
         joinUrl:
           meeting.zoom_join_url ?? null,
       },
-
       controls: {
         canJoin,
         joinUrl:
           canJoin && meetingProvider === "zoom"
             ? meeting.zoom_join_url ?? null
             : null,
-
         canChange,
         changeHref:
           canChange
             ? `/entrepreneurs/availability?applicationId=${applicationId}`
             : null,
-
         canReschedule,
         rescheduleHref:
           canReschedule
             ? `/entrepreneurs/availability?applicationId=${applicationId}`
             : null,
       },
-
       coach: assignment
         ? {
             id: assignment.coach_id ?? null,
             name: assignment.coach_name ?? null,
           }
         : null,
-
       recovery: recovery
         ? {
             status: recovery.status,
@@ -412,7 +383,6 @@ export async function GET() {
               recovery.closed_at,
           }
         : null,
-
       action,
     });
   } catch (error) {
