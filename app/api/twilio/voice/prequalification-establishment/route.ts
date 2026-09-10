@@ -8,6 +8,10 @@ const TOPICS = [
   "commitment_reason",
   "commitment_process",
   "organization",
+  "new_business_location",
+  "existing_address",
+  "existing_duration",
+  "existing_performance",
   "communication",
   "target_market",
   "market_need",
@@ -35,7 +39,7 @@ type Scores = {
 };
 type Message = { role: "coach" | "entrepreneur"; topic: Topic; content: string; at: string };
 type State = {
-  source: "phone_prequalification_approved_v3";
+  source: "phone_prequalification_approved_v4";
   started_at: string;
   current_topic: Topic;
   messages: Message[];
@@ -76,7 +80,7 @@ function normalizeScores(v: unknown): Scores {
 
 function freshState(): State {
   return {
-    source: "phone_prequalification_approved_v3",
+    source: "phone_prequalification_approved_v4",
     started_at: new Date().toISOString(),
     current_topic: "business_verification",
     messages: [],
@@ -89,17 +93,17 @@ function parseState(value: unknown): State | null {
   try {
     const p = JSON.parse(value) as Partial<State>;
     if (
-      p.source !== "phone_prequalification_approved_v3" ||
+      p.source !== "phone_prequalification_approved_v4" ||
       !isTopic(p.current_topic) ||
       !Array.isArray(p.messages) ||
       typeof p.started_at !== "string"
     ) return null;
 
     return {
-      source: "phone_prequalification_approved_v3",
+      source: "phone_prequalification_approved_v4",
       started_at: p.started_at,
       current_topic: p.current_topic,
-      messages: (p.messages as Message[]).slice(-70),
+      messages: (p.messages as Message[]).slice(-80),
       no_input_count: Number(p.no_input_count ?? 0) || 0,
       completed_at: p.completed_at,
       summary: typeof p.summary === "string" ? p.summary : undefined,
@@ -113,7 +117,7 @@ function parseState(value: unknown): State | null {
 async function loadApplication(id: number) {
   const { data, error } = await supabaseAdmin
     .from("entrepreneur_applications")
-    .select("id,full_name,business_name,business_type,business_category,business_description,funding_request,questionnaire_answers,questionnaire_status,interview_notes")
+    .select("id,full_name,business_name,business_type,business_category,business_description,funding_request,questionnaire_answers,questionnaire_status,interview_notes,address,street_address,city,state,address_country,enterprise_country,business_city,business_state,opened_business,business_opening_date,grand_opening_date")
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;
@@ -122,21 +126,12 @@ async function loadApplication(id: number) {
 
 async function updateApplicationWithRetry(id: number, update: Record<string, unknown>) {
   let lastError: unknown = null;
-
   for (let attempt = 1; attempt <= 3; attempt += 1) {
-    const { error } = await supabaseAdmin
-      .from("entrepreneur_applications")
-      .update(update)
-      .eq("id", id);
-
+    const { error } = await supabaseAdmin.from("entrepreneur_applications").update(update).eq("id", id);
     if (!error) return;
     lastError = error;
-
-    if (attempt < 3) {
-      await new Promise((resolve) => setTimeout(resolve, attempt * 300));
-    }
+    if (attempt < 3) await new Promise((resolve) => setTimeout(resolve, attempt * 300));
   }
-
   throw lastError;
 }
 
@@ -174,9 +169,29 @@ async function markInterrupted(id: number, state: State) {
   });
 }
 
-function nextTopic(topic: Topic): Topic | null {
-  const i = TOPICS.indexOf(topic);
-  return i >= TOPICS.length - 1 ? null : TOPICS[i + 1];
+function isExistingBusiness(app: any) {
+  if (app.opened_business === true) return true;
+  const type = String(app.business_type || "").toLowerCase();
+  return type.includes("existing") || type.includes("established") || type.includes("operating") || type.includes("open business");
+}
+
+function nextTopic(topic: Topic, app: any): Topic | null {
+  const existing = isExistingBusiness(app);
+  let i = TOPICS.indexOf(topic) + 1;
+
+  while (i < TOPICS.length) {
+    const candidate = TOPICS[i];
+    if (existing && candidate === "new_business_location") {
+      i += 1;
+      continue;
+    }
+    if (!existing && (candidate === "existing_address" || candidate === "existing_duration" || candidate === "existing_performance")) {
+      i += 1;
+      continue;
+    }
+    return candidate;
+  }
+  return null;
 }
 
 function businessIdFor(app: any) {
@@ -191,11 +206,20 @@ function displayBusinessName(app: any) {
     .trim();
 }
 
+function existingAddressFor(app: any) {
+  const parts = [
+    app.street_address || app.address,
+    app.business_city || app.city,
+    app.business_state || app.state,
+    app.enterprise_country || app.address_country,
+  ].filter((v) => String(v || "").trim());
+  return parts.join(", ");
+}
+
 function openingFor(app: any) {
   const name = String(app.full_name || "Entrepreneur").trim();
   const business = displayBusinessName(app);
   const businessId = businessIdFor(app);
-
   return `Hello ${name}. This is Daniel, your AI EPEW Coach Assistant. I am calling to help prepare you for your first interview with your Personal Coach. I have your business listed as ${business}, Business ID ${businessId}. Is that correct?`;
 }
 
@@ -206,62 +230,49 @@ function welcomeAndIntroduction() {
 function questionFor(topic: Topic, app: any): string {
   const submittedName = displayBusinessName(app);
   const category = String(app.business_category || app.business_type || "the category you selected");
-  const type = String(app.business_type || app.business_category || "business");
+  const type = String(app.business_category || app.business_type || "business");
+  const address = existingAddressFor(app);
 
   switch (topic) {
-    case "business_verification":
-      return openingFor(app);
-    case "commitment_reason":
-      return "Why do you want to become an entrepreneur?";
-    case "commitment_process":
-      return "How committed are you to completing the EPEW development process? For example, are you ready to attend meetings, complete assignments, provide requested information, and stay in communication with your Personal Coach?";
-    case "organization":
-      return "Do you have an idea of how you will organize your responsibilities, appointments, documents, and business-related tasks?";
-    case "communication":
-      return "Can you explain your business idea? Please share the business development idea that you want your coach and future supporters to understand.";
-    case "target_market":
-      return `I see you want to establish a ${type}. Who is your target market?`;
-    case "market_need":
-      return "Why do you believe people will need or want your service or product?";
-    case "leadership_hiring":
-      return "Are you planning to hire other people in your business?";
-    case "leadership_ability":
-      return "Tell me a little about your leadership ability.";
-    case "readiness_now":
-      return "What are you personally ready and committed to do now?";
-    case "readiness_recognition":
-      return "You have already started developing the idea, which is one of the most important first steps. Do you agree?";
-    case "idea_importance":
-      return "Why do you think developing the business idea is so important?";
-    case "establishment_needs":
-      return "What do you think you still need help understanding or preparing for the establishment of your business?";
-    case "business_name":
-      return `You submitted the business name ${submittedName}. Is that the name you want to develop, or is it still a working name?`;
-    case "business_category":
-      return `You selected ${category}. Does that accurately describe the type of business you really want to develop?`;
-    case "business_description":
-      return "I reviewed your description. Is there anything important about the business idea that you want to clarify before your first interview?";
-    case "mission_orientation":
-      return "Before we finish, do you understand the mission of EPEW, EDE, and IBOS, or would you like me to clarify any part of it?";
-    case "first_interview_preparation":
-      return "Is there anything you want your Personal Coach to know before your first interview so the meeting can be more productive?";
+    case "business_verification": return openingFor(app);
+    case "commitment_reason": return "Why do you want to become an entrepreneur?";
+    case "commitment_process": return "How committed are you to completing the EPEW development process? For example, are you ready to attend meetings, complete assignments, provide requested information, and stay in communication with your Personal Coach?";
+    case "organization": return "Do you have an idea of how you will organize your responsibilities, appointments, documents, and business-related tasks?";
+    case "new_business_location": return "Where do you want to open the business? Please tell me the country, state, and city.";
+    case "existing_address": return address
+      ? `I have the business address as ${address}. Is that correct?`
+      : "What is the current address of the business?";
+    case "existing_duration": return "How long has the business been open?";
+    case "existing_performance": return "How is the business doing so far?";
+    case "communication": return "Can you explain your business idea? Please share the business development idea that you want your coach and future supporters to understand.";
+    case "target_market": return `I see you want to establish a ${type}. Who is your target market?`;
+    case "market_need": return "Why do you believe people will need or want your service or product?";
+    case "leadership_hiring": return "Are you planning to hire other people in your business?";
+    case "leadership_ability": return "Tell me a little about your leadership ability.";
+    case "readiness_now": return "What are you personally ready and committed to do now?";
+    case "readiness_recognition": return "You have already started developing the idea, which is one of the most important first steps. Do you agree?";
+    case "idea_importance": return "Why do you think developing the business idea is so important?";
+    case "establishment_needs": return "What do you think you still need help understanding or preparing for the establishment of your business?";
+    case "business_name": return `You submitted the business name ${submittedName}. Is that the name you want to develop, or is it still a working name?`;
+    case "business_category": return `You selected ${category}. Does that accurately describe the type of business you really want to develop?`;
+    case "business_description": return "I reviewed your description. Is there anything important about the business idea that you want to clarify before your first interview?";
+    case "mission_orientation": return "Before we finish, do you understand the mission of EPEW, EDE, and IBOS, or would you like me to clarify any part of it?";
+    case "first_interview_preparation": return "Is there anything you want your Personal Coach to know before your first interview so the meeting can be more productive?";
   }
 }
 
 function clarificationFor(topic: Topic): string {
   switch (topic) {
-    case "commitment_process":
-      return "For example, are you ready to attend your meetings, complete the work your coach gives you, provide information when requested, and stay involved until your business is developed?";
-    case "organization":
-      return "I simply mean this: do you already have a way to keep track of your appointments, papers, and business tasks?";
-    case "communication":
-      return "You can keep it simple. Tell me what you want the business to do, who you want to serve, and what makes the idea important to you.";
-    case "leadership_ability":
-      return "For example, leadership can mean making decisions, organizing people, solving problems, taking responsibility, and helping a team work together.";
-    case "establishment_needs":
-      return "For example, you may need help with the business idea, planning, financing, location, licensing, marketing, staffing, or deciding what should come first.";
-    default:
-      return "Please answer in the way that best describes your situation.";
+    case "commitment_process": return "For example, are you ready to attend your meetings, complete the work your coach gives you, provide information when requested, and stay involved until your business is developed?";
+    case "organization": return "I simply mean this: do you already have a way to keep track of your appointments, papers, and business tasks?";
+    case "new_business_location": return "Just tell me the country first, then the state, and then the city where you want the business to operate.";
+    case "existing_address": return "I only need to confirm the current business location.";
+    case "existing_duration": return "For example, you can tell me the number of months or years the business has been operating.";
+    case "existing_performance": return "You can simply tell me whether the business is doing well, struggling, growing, or still trying to become stable.";
+    case "communication": return "You can keep it simple. Tell me what you want the business to do, who you want to serve, and what makes the idea important to you.";
+    case "leadership_ability": return "For example, leadership can mean making decisions, organizing people, solving problems, taking responsibility, and helping a team work together.";
+    case "establishment_needs": return "For example, you may need help with the business idea, planning, financing, location, licensing, marketing, staffing, or deciding what should come first.";
+    default: return "Please answer in the way that best describes your situation.";
   }
 }
 
@@ -280,57 +291,38 @@ function acknowledgement(topic: Topic, speech: string): string {
   const negative = /^(no|not yet|i don't|i do not|none|nothing)\b/.test(normalized);
 
   switch (topic) {
-    case "commitment_reason":
-      return "Thank you. That helps us understand your motivation.";
-    case "commitment_process":
-      return "Good. Your level of commitment will help your coach understand how to work with you.";
-    case "organization":
-      return negative
-        ? "That is okay. Your Personal Coach can help you create a simple way to stay organized."
-        : "Good. Having a simple way to stay organized will help you throughout the process.";
-    case "communication":
-      return "Thank you. That gives us a clearer picture of the business idea you want to develop.";
-    case "target_market":
-      return "Good. Knowing who you want to serve is an important part of developing the idea.";
-    case "market_need":
-      return "Thank you. That helps explain the need for the business.";
-    case "leadership_hiring":
-      return negative ? "All right." : "Great.";
-    case "leadership_ability":
-      return "Thank you. I will include that in your preparation notes.";
-    case "readiness_now":
-      return "Congratulations. Taking action and making time for the business are important signs of readiness.";
-    case "readiness_recognition":
-      return "Exactly.";
-    case "idea_importance":
-      return "Very good. A strong business idea gives direction to everything that follows.";
-    case "establishment_needs":
-      return "Great. I will note that for you so your Personal Coach can help you with it.";
-    case "business_name":
-      return "Thank you.";
-    case "business_category":
-      return "Good.";
-    case "business_description":
-      return "Thank you. I will include that in the notes.";
-    case "mission_orientation":
-      return "Thank you.";
-    case "first_interview_preparation":
-      return "Thank you. I will make sure your Personal Coach has that information before the interview.";
-    case "business_verification":
-      return "Wonderful.";
+    case "business_verification": return "Wonderful.";
+    case "commitment_reason": return "Thank you. That helps us understand your motivation.";
+    case "commitment_process": return "Good. Your level of commitment will help your coach understand how to work with you.";
+    case "organization": return negative ? "That is okay. Your Personal Coach can help you create a simple way to stay organized." : "Good. Having a simple way to stay organized will help you throughout the process.";
+    case "new_business_location": return "Thank you. I will include that location in your preparation notes.";
+    case "existing_address": return "Thank you. I have noted the business location.";
+    case "existing_duration": return "Thank you. That helps us understand the history of the business.";
+    case "existing_performance": return "Thank you. That gives your Personal Coach useful background about the business today.";
+    case "communication": return "Thank you. That gives us a clearer picture of the business idea you want to develop.";
+    case "target_market": return "Good. Knowing who you want to serve is an important part of developing the idea.";
+    case "market_need": return "Thank you. That helps explain the need for the business.";
+    case "leadership_hiring": return negative ? "All right." : "Great.";
+    case "leadership_ability": return "Thank you. I will include that in your preparation notes.";
+    case "readiness_now": return "Congratulations. Taking action and making time for the business are important signs of readiness.";
+    case "readiness_recognition": return "Exactly.";
+    case "idea_importance": return "Very good. A strong business idea gives direction to everything that follows.";
+    case "establishment_needs": return "Great. I will note that for you so your Personal Coach can help you with it.";
+    case "business_name": return "Thank you.";
+    case "business_category": return "Good.";
+    case "business_description": return "Thank you. I will include that in the notes.";
+    case "mission_orientation": return "Thank you.";
+    case "first_interview_preparation": return "Thank you. I will make sure your Personal Coach has that information before the interview.";
   }
 }
 
-function communicationTransition() {
-  return "Now let us focus on the business idea you want to establish.";
-}
-
-function leadershipTransition() {
-  return "Now I would like to understand a little about how you see yourself leading the business.";
-}
-
-function readinessTransition() {
-  return "Let us talk about your readiness to move forward.";
+function transitionFor(next: Topic) {
+  if (next === "new_business_location") return "Before we discuss the business idea, I would like to understand where you plan to establish it.";
+  if (next === "existing_address") return "Before we discuss the business idea, I would like to confirm a few details about the business as it operates today.";
+  if (next === "communication") return "Now let us focus on the business idea you want to develop.";
+  if (next === "leadership_hiring") return "Now I would like to understand a little about how you see yourself leading the business.";
+  if (next === "readiness_now") return "Let us talk about your readiness to move forward.";
+  return "";
 }
 
 function missionClarification() {
@@ -339,17 +331,9 @@ function missionClarification() {
 
 async function evaluateCompletedInterview(app: any, state: State) {
   const key = process.env.OPENAI_API_KEY?.trim();
-  if (!key) {
-    return {
-      summary: "Pre-qualification interview completed. Human review required.",
-      scores: normalizeScores({}),
-    };
-  }
+  if (!key) return { summary: "Pre-qualification interview completed. Human review required.", scores: normalizeScores({}) };
 
-  const transcript = state.messages
-    .map((m) => `${m.role === "coach" ? "COACH ASSISTANT" : "ENTREPRENEUR"} [${m.topic}]: ${m.content}`)
-    .join("\n");
-
+  const transcript = state.messages.map((m) => `${m.role === "coach" ? "COACH ASSISTANT" : "ENTREPRENEUR"} [${m.topic}]: ${m.content}`).join("\n");
   const schema = {
     type: "object",
     additionalProperties: false,
@@ -375,24 +359,13 @@ async function evaluateCompletedInterview(app: any, state: State) {
   try {
     const api = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
-      },
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       signal: AbortSignal.timeout(6500),
       body: JSON.stringify({
         model: process.env.EPEW_INTERVIEW_MODEL?.trim() || "gpt-5.6-luna",
-        input: `Review this completed EPEW pre-qualification interview. Summarize the entrepreneur's motivation and commitment, organization, business idea, target market, customer need, leadership, readiness, what still needs to be prepared, confirmed business name/category/description, and what the Personal Coach should focus on first. Score commitment, organization, communication, leadership, business potential, and readiness from 0 to 10 using only transcript evidence. Do not make a qualification decision.\n\nAPPLICATION:\n${JSON.stringify({ name: app.full_name, business_name: app.business_name, category: app.business_category, funding_goal: app.funding_request })}\n\nTRANSCRIPT:\n${transcript}`,
+        input: `Review this completed EPEW pre-qualification interview. Summarize the entrepreneur's motivation and commitment, organization, business status and location, business idea, target market, customer need, leadership, readiness, what still needs to be prepared, confirmed business name/category/description, and what the Personal Coach should focus on first. Score commitment, organization, communication, leadership, business potential, and readiness from 0 to 10 using only transcript evidence. Do not make a qualification decision.\n\nAPPLICATION:\n${JSON.stringify({ name: app.full_name, business_name: app.business_name, category: app.business_category, funding_goal: app.funding_request })}\n\nTRANSCRIPT:\n${transcript}`,
         max_output_tokens: 500,
-        text: {
-          verbosity: "low",
-          format: {
-            type: "json_schema",
-            name: "epew_prequalification_evaluation",
-            strict: true,
-            schema,
-          },
-        },
+        text: { verbosity: "low", format: { type: "json_schema", name: "epew_prequalification_evaluation", strict: true, schema } },
       }),
     });
 
@@ -401,46 +374,18 @@ async function evaluateCompletedInterview(app: any, state: State) {
     const text = typeof payload.output_text === "string"
       ? payload.output_text
       : Array.isArray(payload.output)
-        ? payload.output
-            .flatMap((item: any) => Array.isArray(item?.content) ? item.content : [])
-            .map((part: any) => part?.text || "")
-            .join("")
+        ? payload.output.flatMap((item: any) => Array.isArray(item?.content) ? item.content : []).map((part: any) => part?.text || "").join("")
         : "";
-
     const parsed = JSON.parse(text);
-    return {
-      summary: String(parsed.summary || ""),
-      scores: normalizeScores(parsed.scores),
-    };
+    return { summary: String(parsed.summary || ""), scores: normalizeScores(parsed.scores) };
   } catch (error) {
     console.error("EPEW completed prequalification evaluation error:", error);
-    return {
-      summary: "Pre-qualification interview completed. Human review required.",
-      scores: normalizeScores({}),
-    };
+    return { summary: "Pre-qualification interview completed. Human review required.", scores: normalizeScores({}) };
   }
 }
 
-function gather(
-  response: twilio.twiml.VoiceResponse,
-  origin: string,
-  id: number,
-  prompt: string,
-  app: any,
-  timeout = 8
-) {
-  const hints = [
-    app.full_name,
-    displayBusinessName(app),
-    businessIdFor(app),
-    app.business_type,
-    app.business_category,
-    "EPEW",
-    "EDE",
-    "IBOS",
-    "entrepreneur",
-  ].filter(Boolean).join(",");
-
+function gather(response: twilio.twiml.VoiceResponse, origin: string, id: number, prompt: string, app: any, timeout = 8) {
+  const hints = [app.full_name, displayBusinessName(app), businessIdFor(app), app.business_type, app.business_category, app.business_city, app.business_state, app.city, app.state, app.enterprise_country, app.address_country, "EPEW", "EDE", "IBOS", "entrepreneur"].filter(Boolean).join(",");
   const g = response.gather({
     input: ["speech"],
     action: `${origin}/api/twilio/voice/prequalification-establishment?applicationId=${encodeURIComponent(String(id))}`,
@@ -453,7 +398,6 @@ function gather(
     profanityFilter: false,
     actionOnEmptyResult: true,
   } as any);
-
   g.say(voice(), prompt);
 }
 
@@ -495,12 +439,7 @@ export async function POST(request: NextRequest) {
     if (state.messages.length === 0 && !speech) {
       const opening = openingFor(app);
       state.current_topic = "business_verification";
-      state.messages.push({
-        role: "coach",
-        topic: "business_verification",
-        content: opening,
-        at: new Date().toISOString(),
-      });
+      state.messages.push({ role: "coach", topic: "business_verification", content: opening, at: new Date().toISOString() });
       await saveState(id, state, false);
       gather(response, url.origin, id, opening, app);
       return xml(response);
@@ -510,46 +449,25 @@ export async function POST(request: NextRequest) {
       state.no_input_count += 1;
       if (state.no_input_count >= 2) {
         const goodbye = "I do not seem to be hearing you clearly, so I am going to end this call. We can continue the pre-qualification interview another time. Thank you, and have a blessed day.";
-        state.messages.push({
-          role: "coach",
-          topic: state.current_topic,
-          content: goodbye,
-          at: new Date().toISOString(),
-        });
+        state.messages.push({ role: "coach", topic: state.current_topic, content: goodbye, at: new Date().toISOString() });
         await markInterrupted(id, state);
         response.say(voice(), goodbye);
         response.hangup();
         return xml(response);
       }
-
       const retry = `Let me repeat the question. ${questionFor(state.current_topic, app)}`;
-      state.messages.push({
-        role: "coach",
-        topic: state.current_topic,
-        content: retry,
-        at: new Date().toISOString(),
-      });
+      state.messages.push({ role: "coach", topic: state.current_topic, content: retry, at: new Date().toISOString() });
       await saveState(id, state, false);
       gather(response, url.origin, id, retry, app);
       return xml(response);
     }
 
     state.no_input_count = 0;
-    state.messages.push({
-      role: "entrepreneur",
-      topic: state.current_topic,
-      content: speech,
-      at: new Date().toISOString(),
-    });
+    state.messages.push({ role: "entrepreneur", topic: state.current_topic, content: speech, at: new Date().toISOString() });
 
     if (asksForRepeat(speech)) {
       const repeat = questionFor(state.current_topic, app);
-      state.messages.push({
-        role: "coach",
-        topic: state.current_topic,
-        content: repeat,
-        at: new Date().toISOString(),
-      });
+      state.messages.push({ role: "coach", topic: state.current_topic, content: repeat, at: new Date().toISOString() });
       await saveState(id, state, false);
       gather(response, url.origin, id, repeat, app);
       return xml(response);
@@ -557,19 +475,14 @@ export async function POST(request: NextRequest) {
 
     if (asksForMeaning(speech)) {
       const clarification = clarificationFor(state.current_topic);
-      state.messages.push({
-        role: "coach",
-        topic: state.current_topic,
-        content: clarification,
-        at: new Date().toISOString(),
-      });
+      state.messages.push({ role: "coach", topic: state.current_topic, content: clarification, at: new Date().toISOString() });
       await saveState(id, state, false);
       gather(response, url.origin, id, clarification, app);
       return xml(response);
     }
 
     const answered = state.current_topic;
-    const next = nextTopic(answered);
+    const next = nextTopic(answered, app);
 
     if (!next) {
       const evaluation = await evaluateCompletedInterview(app, state);
@@ -577,7 +490,6 @@ export async function POST(request: NextRequest) {
       state.summary = evaluation.summary;
       state.scores = evaluation.scores;
       await saveState(id, state, true);
-
       const closing = "Thank you for attending the meeting. We are looking forward to helping you open a successful business. Thank you, and have a blessed day.";
       response.say(voice(), closing);
       response.hangup();
@@ -591,29 +503,13 @@ export async function POST(request: NextRequest) {
       reply = welcomeAndIntroduction();
     } else {
       reply = acknowledgement(answered, speech);
-
-      if (next === "communication") {
-        reply = `${reply} ${communicationTransition()}`;
-      } else if (next === "leadership_hiring") {
-        reply = `${reply} ${leadershipTransition()}`;
-      } else if (next === "readiness_now") {
-        reply = `${reply} ${readinessTransition()}`;
-      }
-
-      if (answered === "mission_orientation") {
-        reply = `${reply} ${missionClarification()}`;
-      }
-
+      const transition = transitionFor(next);
+      if (transition) reply = `${reply} ${transition}`;
+      if (answered === "mission_orientation") reply = `${reply} ${missionClarification()}`;
       reply = `${reply} ${questionFor(next, app)}`.trim();
     }
 
-    state.messages.push({
-      role: "coach",
-      topic: next,
-      content: reply,
-      at: new Date().toISOString(),
-    });
-
+    state.messages.push({ role: "coach", topic: next, content: reply, at: new Date().toISOString() });
     await saveState(id, state, false);
     gather(response, url.origin, id, reply, app);
     return xml(response);
