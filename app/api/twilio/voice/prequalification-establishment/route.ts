@@ -28,6 +28,8 @@ const TOPICS = [
   "business_name",
   "business_category",
   "business_description",
+  "business_goal",
+  "description_extra",
   "mission_orientation",
   "first_interview_preparation",
 ] as const;
@@ -43,7 +45,7 @@ type Scores = {
 };
 type Message = { role: "coach" | "entrepreneur"; topic: Topic; content: string; at: string };
 type State = {
-  source: "phone_prequalification_approved_v5";
+  source: "phone_prequalification_approved_v6";
   started_at: string;
   current_topic: Topic;
   messages: Message[];
@@ -84,7 +86,7 @@ function normalizeScores(v: unknown): Scores {
 
 function freshState(): State {
   return {
-    source: "phone_prequalification_approved_v5",
+    source: "phone_prequalification_approved_v6",
     started_at: new Date().toISOString(),
     current_topic: "business_verification",
     messages: [],
@@ -97,17 +99,17 @@ function parseState(value: unknown): State | null {
   try {
     const p = JSON.parse(value) as Partial<State>;
     if (
-      p.source !== "phone_prequalification_approved_v5" ||
+      p.source !== "phone_prequalification_approved_v6" ||
       !isTopic(p.current_topic) ||
       !Array.isArray(p.messages) ||
       typeof p.started_at !== "string"
     ) return null;
 
     return {
-      source: "phone_prequalification_approved_v5",
+      source: "phone_prequalification_approved_v6",
       started_at: p.started_at,
       current_topic: p.current_topic,
-      messages: (p.messages as Message[]).slice(-90),
+      messages: (p.messages as Message[]).slice(-100),
       no_input_count: Number(p.no_input_count ?? 0) || 0,
       completed_at: p.completed_at,
       summary: typeof p.summary === "string" ? p.summary : undefined,
@@ -188,12 +190,8 @@ function nextTopic(topic: Topic, app: any, speech = ""): Topic | null {
   const existing = isExistingBusiness(app);
   let i = TOPICS.indexOf(topic) + 1;
 
-  if (topic === "existing_logo" && isNegativeAnswer(speech)) {
-    i = TOPICS.indexOf("existing_website");
-  }
-  if (topic === "existing_website" && isNegativeAnswer(speech)) {
-    i = TOPICS.indexOf("communication");
-  }
+  if (topic === "existing_logo" && isNegativeAnswer(speech)) i = TOPICS.indexOf("existing_website");
+  if (topic === "existing_website" && isNegativeAnswer(speech)) i = TOPICS.indexOf("communication");
 
   while (i < TOPICS.length) {
     const candidate = TOPICS[i];
@@ -263,9 +261,7 @@ function questionFor(topic: Topic, app: any): string {
     case "commitment_process": return "How committed are you to completing the EPEW development process? For example, are you ready to attend meetings, complete assignments, provide requested information, and stay in communication with your Personal Coach?";
     case "organization": return "Do you have an idea of how you will organize your responsibilities, appointments, documents, and business-related tasks?";
     case "new_business_location": return "Where do you want to open the business? Please tell me the country, state, and city.";
-    case "existing_address": return address
-      ? `I have the business address as ${address}. Is that correct?`
-      : "What is the current address of the business?";
+    case "existing_address": return address ? `I have the business address as ${address}. Is that correct?` : "What is the current address of the business?";
     case "existing_duration": return "How long has the business been open?";
     case "existing_performance": return "How is the business doing so far?";
     case "existing_logo": return "Do you have a logo for your business?";
@@ -283,7 +279,9 @@ function questionFor(topic: Topic, app: any): string {
     case "establishment_needs": return "What do you think you still need help understanding or preparing for the establishment of your business?";
     case "business_name": return `You submitted the business name ${submittedName}. Is that the name you want to develop, or is it still a working name?`;
     case "business_category": return `You selected ${category}. Does that accurately describe the type of business you really want to develop?`;
-    case "business_description": return "I reviewed your description. Is there anything important about the business idea that you want to clarify before your first interview?";
+    case "business_description": return "I reviewed the business information you provided. What is the most important thing you want people to understand about your business?";
+    case "business_goal": return "What is your main goal for this business?";
+    case "description_extra": return "Is there any other important idea you want us to include when we prepare your business description?";
     case "mission_orientation": return "Before we finish, do you understand the mission of EPEW, EDE, and IBOS, or would you like me to clarify any part of it?";
     case "first_interview_preparation": return "Is there anything you want your Personal Coach to know before your first interview so the meeting can be more productive?";
   }
@@ -304,6 +302,9 @@ function clarificationFor(topic: Topic): string {
     case "communication": return "You can keep it simple. Tell me what you want the business to do, who you want to serve, and what makes the idea important to you.";
     case "leadership_ability": return "For example, leadership can mean making decisions, organizing people, solving problems, taking responsibility, and helping a team work together.";
     case "establishment_needs": return "For example, you may need help with the business idea, planning, financing, location, licensing, marketing, staffing, or deciding what should come first.";
+    case "business_description": return "For example, you can tell me what the business will offer, who it will serve, or what will make it useful or different.";
+    case "business_goal": return "For example, your goal may be to create income, serve a community need, create jobs, grow into several locations, or build long-term financial stability.";
+    case "description_extra": return "Think about anything else you would want a customer, supporter, or your Personal Coach to know about the business.";
     default: return "Please answer in the way that best describes your situation.";
   }
 }
@@ -345,7 +346,9 @@ function acknowledgement(topic: Topic, speech: string): string {
     case "establishment_needs": return "Great. I will note that for you so your Personal Coach can help you with it.";
     case "business_name": return "Thank you.";
     case "business_category": return "Good.";
-    case "business_description": return "Thank you. I will include that in the notes.";
+    case "business_description": return "Excellent. That gives us another important part of the description we will prepare for you.";
+    case "business_goal": return "Very good. Your goal helps give the business description a clear direction.";
+    case "description_extra": return "Thank you. We will use these ideas to help prepare a clear business description for you.";
     case "mission_orientation": return "Thank you.";
     case "first_interview_preparation": return "Thank you. I will make sure your Personal Coach has that information before the interview.";
   }
@@ -358,6 +361,7 @@ function transitionFor(next: Topic) {
   if (next === "communication") return "Now let us focus on the business idea you want to develop.";
   if (next === "leadership_hiring") return "Now I would like to understand a little about how you see yourself leading the business.";
   if (next === "readiness_now") return "Let us talk about your readiness to move forward.";
+  if (next === "business_description") return "Now I would like to collect the final ideas we need to help prepare your business description.";
   return "";
 }
 
@@ -366,7 +370,7 @@ function missionClarification() {
 }
 
 function coachPreparationSummary() {
-  return "I think we now have enough information to help your Personal Coach begin drafting your business plan and prepare for your first interview.";
+  return "I think we now have enough information to prepare a strong business description for you and help your Personal Coach begin drafting your business plan for the first interview.";
 }
 
 async function evaluateCompletedInterview(app: any, state: State) {
@@ -403,7 +407,7 @@ async function evaluateCompletedInterview(app: any, state: State) {
       signal: AbortSignal.timeout(6500),
       body: JSON.stringify({
         model: process.env.EPEW_INTERVIEW_MODEL?.trim() || "gpt-5.6-luna",
-        input: `Review this completed EPEW pre-qualification interview. Summarize the entrepreneur's motivation and commitment, organization, business status and location, existing brand assets and website when applicable, business idea, target market, customer need, leadership, readiness, what still needs to be prepared, confirmed business name/category/description, and what the Personal Coach should focus on first. Score commitment, organization, communication, leadership, business potential, and readiness from 0 to 10 using only transcript evidence. Do not make a qualification decision.\n\nAPPLICATION:\n${JSON.stringify({ name: app.full_name, business_name: app.business_name, category: app.business_category, funding_goal: app.funding_request })}\n\nTRANSCRIPT:\n${transcript}`,
+        input: `Review this completed EPEW pre-qualification interview. Summarize the entrepreneur's motivation and commitment, organization, business status and location, existing brand assets and website when applicable, business idea, business goal, target market, customer need, leadership, readiness, what still needs to be prepared, confirmed business name/category, the information needed to prepare the business description, and what the Personal Coach should focus on first. Score commitment, organization, communication, leadership, business potential, and readiness from 0 to 10 using only transcript evidence. Do not make a qualification decision.\n\nAPPLICATION:\n${JSON.stringify({ name: app.full_name, business_name: app.business_name, category: app.business_category, funding_goal: app.funding_request })}\n\nTRANSCRIPT:\n${transcript}`,
         max_output_tokens: 500,
         text: { verbosity: "low", format: { type: "json_schema", name: "epew_prequalification_evaluation", strict: true, schema } },
       }),
