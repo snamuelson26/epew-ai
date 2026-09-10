@@ -162,7 +162,7 @@ function questionFor(topic: Topic, app: any): string {
   const type = String(app.business_category || app.business_type || "business");
 
   switch (topic) {
-    case "rapport_day": return `Hello ${app.full_name || ""}. This is Daniel, your EPEW Coach Assistant. I am calling to help prepare you for your first interview with your Personal Coach. How is your day going?`;
+    case "rapport_day": return `Hello ${app.full_name || ""}. This is Daniel, your AI EPEW Coach Assistant. I am calling to help prepare you for your first interview with your Personal Coach. How is your day going?`;
     case "identity_name": return "Please confirm your name.";
     case "identity_service": return "What product or service will your business provide?";
     case "why_business": return "Why did you choose this type of business?";
