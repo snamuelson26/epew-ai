@@ -5,6 +5,7 @@ import { useEffect } from "react";
 const ENTREPRENEUR_CAMPAIGN_PATH = "/entrepreneurs/campaign";
 const FOOD_FANS_SUPPORT_PATH = "/support/FFR-001";
 const POTENTIAL_SUPPORTERS_PATH = "/entrepreneurs/supporters";
+const COMMUNICATION_CENTER_PATH = "/entrepreneurs/communication";
 
 export default function CampaignActionsFix() {
   useEffect(() => {
@@ -23,6 +24,16 @@ export default function CampaignActionsFix() {
         ) {
           link.href = POTENTIAL_SUPPORTERS_PATH;
           link.textContent = "👥 My Potential Supporters";
+
+          const parent = link.parentElement;
+          if (parent && !parent.querySelector('[data-epew-communication-center="true"]')) {
+            const communicationLink = document.createElement("a");
+            communicationLink.href = COMMUNICATION_CENTER_PATH;
+            communicationLink.dataset.epewCommunicationCenter = "true";
+            communicationLink.textContent = "✉️ Communication Center";
+            communicationLink.className = "rounded-xl bg-blue-950 px-5 py-3 font-bold text-white hover:bg-blue-800";
+            link.insertAdjacentElement("afterend", communicationLink);
+          }
         }
       });
     };
@@ -30,6 +41,9 @@ export default function CampaignActionsFix() {
     applyLinks();
     const timer1 = window.setTimeout(applyLinks, 250);
     const timer2 = window.setTimeout(applyLinks, 1000);
+
+    const observer = new MutationObserver(applyLinks);
+    observer.observe(document.body, { childList: true, subtree: true });
 
     const onClick = async (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
@@ -68,6 +82,7 @@ export default function CampaignActionsFix() {
     return () => {
       window.clearTimeout(timer1);
       window.clearTimeout(timer2);
+      observer.disconnect();
       document.removeEventListener("click", onClick, true);
     };
   }, []);
