@@ -12,6 +12,10 @@ const TOPICS = [
   "existing_address",
   "existing_duration",
   "existing_performance",
+  "existing_logo",
+  "existing_logo_upload",
+  "existing_website",
+  "existing_website_url",
   "communication",
   "target_market",
   "market_need",
@@ -39,7 +43,7 @@ type Scores = {
 };
 type Message = { role: "coach" | "entrepreneur"; topic: Topic; content: string; at: string };
 type State = {
-  source: "phone_prequalification_approved_v4";
+  source: "phone_prequalification_approved_v5";
   started_at: string;
   current_topic: Topic;
   messages: Message[];
@@ -80,7 +84,7 @@ function normalizeScores(v: unknown): Scores {
 
 function freshState(): State {
   return {
-    source: "phone_prequalification_approved_v4",
+    source: "phone_prequalification_approved_v5",
     started_at: new Date().toISOString(),
     current_topic: "business_verification",
     messages: [],
@@ -93,17 +97,17 @@ function parseState(value: unknown): State | null {
   try {
     const p = JSON.parse(value) as Partial<State>;
     if (
-      p.source !== "phone_prequalification_approved_v4" ||
+      p.source !== "phone_prequalification_approved_v5" ||
       !isTopic(p.current_topic) ||
       !Array.isArray(p.messages) ||
       typeof p.started_at !== "string"
     ) return null;
 
     return {
-      source: "phone_prequalification_approved_v4",
+      source: "phone_prequalification_approved_v5",
       started_at: p.started_at,
       current_topic: p.current_topic,
-      messages: (p.messages as Message[]).slice(-80),
+      messages: (p.messages as Message[]).slice(-90),
       no_input_count: Number(p.no_input_count ?? 0) || 0,
       completed_at: p.completed_at,
       summary: typeof p.summary === "string" ? p.summary : undefined,
@@ -175,9 +179,21 @@ function isExistingBusiness(app: any) {
   return type.includes("existing") || type.includes("established") || type.includes("operating") || type.includes("open business");
 }
 
-function nextTopic(topic: Topic, app: any): Topic | null {
+function isNegativeAnswer(speech: string) {
+  const normalized = speech.trim().toLowerCase();
+  return /^(no|nope|not yet|i don't|i do not|none|nothing)\b/.test(normalized);
+}
+
+function nextTopic(topic: Topic, app: any, speech = ""): Topic | null {
   const existing = isExistingBusiness(app);
   let i = TOPICS.indexOf(topic) + 1;
+
+  if (topic === "existing_logo" && isNegativeAnswer(speech)) {
+    i = TOPICS.indexOf("existing_website");
+  }
+  if (topic === "existing_website" && isNegativeAnswer(speech)) {
+    i = TOPICS.indexOf("communication");
+  }
 
   while (i < TOPICS.length) {
     const candidate = TOPICS[i];
@@ -185,7 +201,15 @@ function nextTopic(topic: Topic, app: any): Topic | null {
       i += 1;
       continue;
     }
-    if (!existing && (candidate === "existing_address" || candidate === "existing_duration" || candidate === "existing_performance")) {
+    if (!existing && [
+      "existing_address",
+      "existing_duration",
+      "existing_performance",
+      "existing_logo",
+      "existing_logo_upload",
+      "existing_website",
+      "existing_website_url",
+    ].includes(candidate)) {
       i += 1;
       continue;
     }
@@ -244,6 +268,10 @@ function questionFor(topic: Topic, app: any): string {
       : "What is the current address of the business?";
     case "existing_duration": return "How long has the business been open?";
     case "existing_performance": return "How is the business doing so far?";
+    case "existing_logo": return "Do you have a logo for your business?";
+    case "existing_logo_upload": return "Can you please upload the logo in your EPEW portal?";
+    case "existing_website": return "Do you have a website for your business?";
+    case "existing_website_url": return "What is your website address?";
     case "communication": return "Can you explain your business idea? Please share the business development idea that you want your coach and future supporters to understand.";
     case "target_market": return `I see you want to establish a ${type}. Who is your target market?`;
     case "market_need": return "Why do you believe people will need or want your service or product?";
@@ -269,6 +297,10 @@ function clarificationFor(topic: Topic): string {
     case "existing_address": return "I only need to confirm the current business location.";
     case "existing_duration": return "For example, you can tell me the number of months or years the business has been operating.";
     case "existing_performance": return "You can simply tell me whether the business is doing well, struggling, growing, or still trying to become stable.";
+    case "existing_logo": return "I am only asking whether your business already has a logo.";
+    case "existing_logo_upload": return "You can upload the logo through your EPEW entrepreneur portal so your Personal Coach can use it while preparing your business materials.";
+    case "existing_website": return "I am only asking whether the business currently has a website.";
+    case "existing_website_url": return "Please tell me the website address, for example, yourbusiness dot com.";
     case "communication": return "You can keep it simple. Tell me what you want the business to do, who you want to serve, and what makes the idea important to you.";
     case "leadership_ability": return "For example, leadership can mean making decisions, organizing people, solving problems, taking responsibility, and helping a team work together.";
     case "establishment_needs": return "For example, you may need help with the business idea, planning, financing, location, licensing, marketing, staffing, or deciding what should come first.";
@@ -287,8 +319,7 @@ function asksForMeaning(speech: string) {
 }
 
 function acknowledgement(topic: Topic, speech: string): string {
-  const normalized = speech.trim().toLowerCase();
-  const negative = /^(no|not yet|i don't|i do not|none|nothing)\b/.test(normalized);
+  const negative = isNegativeAnswer(speech);
 
   switch (topic) {
     case "business_verification": return "Wonderful.";
@@ -297,8 +328,12 @@ function acknowledgement(topic: Topic, speech: string): string {
     case "organization": return negative ? "That is okay. Your Personal Coach can help you create a simple way to stay organized." : "Good. Having a simple way to stay organized will help you throughout the process.";
     case "new_business_location": return "Thank you. I will include that location in your preparation notes.";
     case "existing_address": return "Thank you. I have noted the business location.";
-    case "existing_duration": return "Thank you. That helps us understand the history of the business.";
-    case "existing_performance": return "Thank you. That gives your Personal Coach useful background about the business today.";
+    case "existing_duration": return "Excellent. That gives us a better picture of the history and experience behind your business.";
+    case "existing_performance": return "Thank you. That gives your Personal Coach useful background about how the business is doing today.";
+    case "existing_logo": return negative ? "That is okay. Your Personal Coach can help you think about branding later." : "Excellent. Having a logo already gives your coach something concrete to build from.";
+    case "existing_logo_upload": return "Great. Having the logo in your portal will make it easier for your coach to prepare your business materials.";
+    case "existing_website": return negative ? "That is okay. A website can be discussed later as part of the business development process." : "Very good. An existing website can help your coach understand how the business is currently presented to the public.";
+    case "existing_website_url": return "Thank you. I will include the website in your preparation notes.";
     case "communication": return "Thank you. That gives us a clearer picture of the business idea you want to develop.";
     case "target_market": return "Good. Knowing who you want to serve is an important part of developing the idea.";
     case "market_need": return "Thank you. That helps explain the need for the business.";
@@ -319,6 +354,7 @@ function acknowledgement(topic: Topic, speech: string): string {
 function transitionFor(next: Topic) {
   if (next === "new_business_location") return "Before we discuss the business idea, I would like to understand where you plan to establish it.";
   if (next === "existing_address") return "Before we discuss the business idea, I would like to confirm a few details about the business as it operates today.";
+  if (next === "existing_logo") return "Now I would like to confirm a couple of business identity items.";
   if (next === "communication") return "Now let us focus on the business idea you want to develop.";
   if (next === "leadership_hiring") return "Now I would like to understand a little about how you see yourself leading the business.";
   if (next === "readiness_now") return "Let us talk about your readiness to move forward.";
@@ -327,6 +363,10 @@ function transitionFor(next: Topic) {
 
 function missionClarification() {
   return "EPEW is focused on developing entrepreneurs, not simply giving money to a business. The vision is to help people become capable business owners who can create income, opportunity, and stronger communities. EDE is the support environment around the entrepreneur, connecting coaching, professional assistance, supporters, and resources. IBOS, I Am My Own Boss, is the organized journey that keeps the entrepreneur connected to the process, responsibilities, milestones, and progress. The philosophy behind all three is unity and support: the entrepreneur is not expected to build alone, but the entrepreneur must remain committed, involved, and responsible for developing the business. That is why this pre-qualification conversation is preparing your Personal Coach to begin with the right information.";
+}
+
+function coachPreparationSummary() {
+  return "I think we now have enough information to help your Personal Coach begin drafting your business plan and prepare for your first interview.";
 }
 
 async function evaluateCompletedInterview(app: any, state: State) {
@@ -363,7 +403,7 @@ async function evaluateCompletedInterview(app: any, state: State) {
       signal: AbortSignal.timeout(6500),
       body: JSON.stringify({
         model: process.env.EPEW_INTERVIEW_MODEL?.trim() || "gpt-5.6-luna",
-        input: `Review this completed EPEW pre-qualification interview. Summarize the entrepreneur's motivation and commitment, organization, business status and location, business idea, target market, customer need, leadership, readiness, what still needs to be prepared, confirmed business name/category/description, and what the Personal Coach should focus on first. Score commitment, organization, communication, leadership, business potential, and readiness from 0 to 10 using only transcript evidence. Do not make a qualification decision.\n\nAPPLICATION:\n${JSON.stringify({ name: app.full_name, business_name: app.business_name, category: app.business_category, funding_goal: app.funding_request })}\n\nTRANSCRIPT:\n${transcript}`,
+        input: `Review this completed EPEW pre-qualification interview. Summarize the entrepreneur's motivation and commitment, organization, business status and location, existing brand assets and website when applicable, business idea, target market, customer need, leadership, readiness, what still needs to be prepared, confirmed business name/category/description, and what the Personal Coach should focus on first. Score commitment, organization, communication, leadership, business potential, and readiness from 0 to 10 using only transcript evidence. Do not make a qualification decision.\n\nAPPLICATION:\n${JSON.stringify({ name: app.full_name, business_name: app.business_name, category: app.business_category, funding_goal: app.funding_request })}\n\nTRANSCRIPT:\n${transcript}`,
         max_output_tokens: 500,
         text: { verbosity: "low", format: { type: "json_schema", name: "epew_prequalification_evaluation", strict: true, schema } },
       }),
@@ -482,7 +522,7 @@ export async function POST(request: NextRequest) {
     }
 
     const answered = state.current_topic;
-    const next = nextTopic(answered, app);
+    const next = nextTopic(answered, app, speech);
 
     if (!next) {
       const evaluation = await evaluateCompletedInterview(app, state);
@@ -505,6 +545,7 @@ export async function POST(request: NextRequest) {
       reply = acknowledgement(answered, speech);
       const transition = transitionFor(next);
       if (transition) reply = `${reply} ${transition}`;
+      if (next === "mission_orientation") reply = `${reply} ${coachPreparationSummary()}`;
       if (answered === "mission_orientation") reply = `${reply} ${missionClarification()}`;
       reply = `${reply} ${questionFor(next, app)}`.trim();
     }
