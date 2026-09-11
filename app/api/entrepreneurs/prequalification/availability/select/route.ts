@@ -2,6 +2,37 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
+function easternLocalToUtc(dateValue: string, timeValue: string) {
+  const dateMatch = dateValue.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const timeMatch = timeValue.match(/^(\d{2}):(\d{2})(?::(\d{2}))?$/);
+  if (!dateMatch || !timeMatch) return null;
+
+  const [, y, m, d] = dateMatch;
+  const [, hh, mm, ss = "00"] = timeMatch;
+  const wantedAsUtc = Date.UTC(Number(y), Number(m) - 1, Number(d), Number(hh), Number(mm), Number(ss));
+
+  function offsetAt(instantMs: number) {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/New_York",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hourCycle: "h23",
+    }).formatToParts(new Date(instantMs));
+
+    const get = (type: string) => Number(parts.find((part) => part.type === type)?.value ?? 0);
+    const shownAsUtc = Date.UTC(get("year"), get("month") - 1, get("day"), get("hour"), get("minute"), get("second"));
+    return shownAsUtc - instantMs;
+  }
+
+  let instant = wantedAsUtc - offsetAt(wantedAsUtc);
+  instant = wantedAsUtc - offsetAt(instant);
+  return new Date(instant);
+}
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -11,20 +42,17 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { success: false, message: "Authentication required." },
-        { status: 401 },
-      );
+      return NextResponse.json({ success: false, message: "Authentication required." }, { status: 401 });
     }
 
     const body = await request.json().catch(() => ({}));
     const applicationId = Number(body.applicationId);
     const requestedStartAt = String(body.requestedStartAt ?? "").trim();
-    const meetingProvider = String(body.meetingProvider ?? "phone")
-      .trim()
-      .toLowerCase();
+    const requestedLocalDate = String(body.appointmentDate ?? "").trim();
+    const requestedLocalTime = String(body.appointmentTime ?? "").trim();
+    const meetingProvider = String(body.meetingProvider ?? "phone").trim().toLowerCase();
 
-    if (!Number.isInteger(applicationId) || applicationId <= 0 || !requestedStartAt) {
+    if (!Number.isInteger(applicationId) || applicationId <= 0 || (!requestedStartAt && !(requestedLocalDate && requestedLocalTime))) {
       return NextResponse.json(
         { success: false, message: "Please choose the date and time for your Pre-Qualification Interview." },
         { status: 400 },
@@ -38,8 +66,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const scheduledDate = new Date(requestedStartAt);
-    if (Number.isNaN(scheduledDate.getTime()) || scheduledDate <= new Date()) {
+    const scheduledDate = requestedLocalDate && requestedLocalTime
+      ? easternLocalToUtc(requestedLocalDate, requestedLocalTime)
+      : new Date(requestedStartAt);
+
+    if (!scheduledDate || Number.isNaN(scheduledDate.getTime()) || scheduledDate <= new Date()) {
       return NextResponse.json(
         { success: false, message: "Please choose a valid future appointment date and time." },
         { status: 400 },
@@ -54,10 +85,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (applicationError || !application) {
-      return NextResponse.json(
-        { success: false, message: "Entrepreneur application not found." },
-        { status: 404 },
-      );
+      return NextResponse.json({ success: false, message: "Entrepreneur application not found." }, { status: 404 });
     }
 
     if (String(application.questionnaire_status ?? "").toLowerCase() !== "completed") {
@@ -74,25 +102,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const easternDate = new Intl.DateTimeFormat("en-CA", {
+    const easternDate = requestedLocalDate || new Intl.DateTimeFormat("en-CA", {
       timeZone: "America/New_York",
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
     }).format(scheduledDate);
 
-    const easternTimeParts = new Intl.DateTimeFormat("en-US", {
-      timeZone: "America/New_York",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hourCycle: "h23",
-    }).formatToParts(scheduledDate);
+    let easternTime = requestedLocalTime ? `${requestedLocalTime}:00`.replace(/:00:00$/, ":00") : "";
+    if (!requestedLocalTime) {
+      const easternTimeParts = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/New_York",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hourCycle: "h23",
+      }).formatToParts(scheduledDate);
+      const getPart = (type: string) => easternTimeParts.find((part) => part.type === type)?.value ?? "00";
+      easternTime = `${getPart("hour")}:${getPart("minute")}:${getPart("second")}`;
+    }
 
-    const getPart = (type: string) =>
-      easternTimeParts.find((part) => part.type === type)?.value ?? "00";
-
-    const easternTime = `${getPart("hour")}:${getPart("minute")}:${getPart("second")}`;
     const now = new Date().toISOString();
 
     const { error: updateError } = await supabaseAdmin
@@ -138,6 +167,8 @@ export async function POST(request: NextRequest) {
         appointmentType: "prequalification_interview",
         provider: "phone",
         scheduledAt: scheduledDate.toISOString(),
+        easternDate,
+        easternTime,
       },
     });
 
@@ -148,6 +179,8 @@ export async function POST(request: NextRequest) {
         type: "Pre-Qualification Interview",
         provider: "phone",
         scheduledAt: scheduledDate.toISOString(),
+        easternDate,
+        easternTime,
         status: "scheduled",
       },
       message: "Your EPEW Pre-Qualification Interview has been scheduled successfully.",
