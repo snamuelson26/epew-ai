@@ -44,12 +44,23 @@ export default function EntrepreneurNextActionBridge() {
       const { data: authData } = await supabase.auth.getUser();
       if (!authData.user || cancelled) return;
 
-      const { data, error } = await supabase
+      const requestedId =
+        typeof window !== "undefined"
+          ? Number(new URLSearchParams(window.location.search).get("applicationId"))
+          : NaN;
+
+      let query = supabase
         .from("entrepreneur_applications")
         .select("id,business_name")
-        .eq("user_id", authData.user.id)
-        .maybeSingle();
+        .eq("user_id", authData.user.id);
 
+      if (Number.isInteger(requestedId) && requestedId > 0) {
+        query = query.eq("id", requestedId);
+      } else {
+        query = query.order("created_at", { ascending: false }).limit(1);
+      }
+
+      const { data: rows, error } = await query;
       if (cancelled) return;
 
       if (error) {
@@ -57,6 +68,7 @@ export default function EntrepreneurNextActionBridge() {
         return;
       }
 
+      const data = rows?.[0];
       setEnabled(
         Number(data?.id) === 27 ||
           data?.business_name?.trim().toLowerCase() === "food fans restaurant",
@@ -77,9 +89,7 @@ export default function EntrepreneurNextActionBridge() {
     let timer: ReturnType<typeof setTimeout> | undefined;
 
     const install = () => {
-      const oldLink = document.querySelector<HTMLAnchorElement>(
-        'a[href="/entrepreneurs/questionnaire"]',
-      );
+      const oldLink = document.querySelector<HTMLAnchorElement>('a[href="/entrepreneurs/questionnaire"]');
       const oldCard = oldLink?.closest("div.rounded-3xl") as HTMLElement | null;
 
       if (!oldCard) {
@@ -89,7 +99,6 @@ export default function EntrepreneurNextActionBridge() {
       }
 
       oldCard.style.display = "none";
-
       document.getElementById(GENERATED_ID)?.remove();
 
       const card = document.createElement("div");
@@ -110,8 +119,7 @@ export default function EntrepreneurNextActionBridge() {
 
       const link = document.createElement("a");
       link.href = "/entrepreneurs/communication";
-      link.className =
-        "mt-6 inline-flex rounded-xl bg-[#10246f] px-6 py-3 font-bold text-white transition hover:bg-green-700";
+      link.className = "mt-6 inline-flex rounded-xl bg-[#10246f] px-6 py-3 font-bold text-white transition hover:bg-green-700";
       link.textContent = selected.button;
 
       card.append(heading, title, body, link);
@@ -123,9 +131,7 @@ export default function EntrepreneurNextActionBridge() {
     return () => {
       if (timer) clearTimeout(timer);
       document.getElementById(GENERATED_ID)?.remove();
-      const oldLink = document.querySelector<HTMLAnchorElement>(
-        'a[href="/entrepreneurs/questionnaire"]',
-      );
+      const oldLink = document.querySelector<HTMLAnchorElement>('a[href="/entrepreneurs/questionnaire"]');
       const oldCard = oldLink?.closest("div.rounded-3xl") as HTMLElement | null;
       if (oldCard) oldCard.style.display = "";
     };
