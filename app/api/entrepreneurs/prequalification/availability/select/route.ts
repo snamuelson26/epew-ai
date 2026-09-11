@@ -102,7 +102,6 @@ export async function POST(request: NextRequest) {
         interview_time: easternTime,
         interview_type: "phone",
         interview_status: "Scheduled",
-        updated_at: now,
       })
       .eq("id", applicationId)
       .eq("user_id", user.id);
