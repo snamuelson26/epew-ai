@@ -159,34 +159,46 @@ export default function EntrepreneurDashboardPage() {
       const selected =
         rows.find((row) => String(row.id) === String(requestedId || "")) || rows[0];
 
+      // The dashboard itself must never wait on the appointment service. This is
+      // especially important after a Pre-Qualification Interview is completed:
+      // application 45 can render immediately while appointment details load
+      // independently in the appointment card.
       setEntrepreneur(selected);
-
-      try {
-        const appointmentResponse = await fetch(
-          `/api/entrepreneurs/appointment?applicationId=${encodeURIComponent(String(selected.id))}`,
-          {
-            method: "GET",
-            credentials: "include",
-            cache: "no-store",
-          },
-        );
-
-        const appointmentData = (await appointmentResponse.json()) as AppointmentResponse;
-
-        if (appointmentResponse.ok && appointmentData.success) {
-          setAppointment(appointmentData);
-        } else {
-          console.error("Unable to load entrepreneur appointment:", appointmentData);
-          setAppointment(null);
-        }
-      } catch (appointmentError) {
-        console.error("Unable to load entrepreneur appointment:", appointmentError);
-        setAppointment(null);
-      } finally {
-        setAppointmentLoading(false);
-      }
-
       setLoading(false);
+
+      void (async () => {
+        try {
+          const controller = new AbortController();
+          const timeout = window.setTimeout(() => controller.abort(), 8000);
+          try {
+            const appointmentResponse = await fetch(
+              `/api/entrepreneurs/appointment?applicationId=${encodeURIComponent(String(selected.id))}`,
+              {
+                method: "GET",
+                credentials: "include",
+                cache: "no-store",
+                signal: controller.signal,
+              },
+            );
+
+            const appointmentData = (await appointmentResponse.json()) as AppointmentResponse;
+
+            if (appointmentResponse.ok && appointmentData.success) {
+              setAppointment(appointmentData);
+            } else {
+              console.error("Unable to load entrepreneur appointment:", appointmentData);
+              setAppointment(null);
+            }
+          } finally {
+            window.clearTimeout(timeout);
+          }
+        } catch (appointmentError) {
+          console.error("Unable to load entrepreneur appointment:", appointmentError);
+          setAppointment(null);
+        } finally {
+          setAppointmentLoading(false);
+        }
+      })();
     } catch (error) {
       console.error("Unable to load entrepreneur dashboard:", error);
       setMessage(error instanceof Error ? error.message : "Unable to load your entrepreneur dashboard.");
@@ -309,18 +321,15 @@ export default function EntrepreneurDashboardPage() {
     applicationStatus === "Qualification Review";
 
   if (isPreQualification) {
-    const coachAssigned =
-      applicationStatus === "Coach Assigned" ||
-      applicationStatus === "Personal Coach Assigned" ||
-      applicationStatus === "Interview Scheduled" ||
-      applicationStatus === "Business Idea Development" ||
-      applicationStatus === "Qualification Review";
-    const interviewScheduled =
-      applicationStatus === "Interview Scheduled" ||
-      applicationStatus === "Business Idea Development" ||
-      applicationStatus === "Qualification Review";
-    const businessIdeaDevelopment = applicationStatus === "Business Idea Development" || applicationStatus === "Qualification Review";
-    const qualificationReview = applicationStatus === "Qualification Review";
+    const interviewState = String(entrepreneur.interview_status || "").trim().toLowerCase();
+    const preQualificationCompleted = interviewState === "completed";
+    const preQualificationScheduled = interviewState === "scheduled";
+    const questionnaireCompleted = String(entrepreneur.questionnaire_status || "").trim().toLowerCase() === "completed";
+    const shouldSchedulePreQualification = questionnaireCompleted && ["pending", "ready to schedule", "ready_to_schedule"].includes(interviewState);
+    const coachAssigned = Boolean(entrepreneur.assigned_coach_name || entrepreneur.coach_name);
+    const interviewScheduled = preQualificationScheduled || preQualificationCompleted;
+    const businessIdeaDevelopment = preQualificationCompleted || applicationStatus === "Business Idea Development" || applicationStatus === "Qualification Review";
+    const qualificationReview = preQualificationCompleted || applicationStatus === "Qualification Review";
     const appointmentStatus = appointment?.appointment?.status?.toLowerCase() ?? null;
     const appointmentAction = appointment?.action ?? null;
     const scheduledAt = appointment?.appointment?.scheduledAt ? new Date(appointment.appointment.scheduledAt) : null;
@@ -338,20 +347,20 @@ export default function EntrepreneurDashboardPage() {
         : null;
     const isNoShow = appointmentStatus === "no_show";
     const isSchedulingReview = appointmentAction?.type === "scheduling_in_progress";
-    const appointmentCompleted = appointmentAction?.type === "appointment_completed";
-    const interviewState = String(entrepreneur.interview_status || "").trim().toLowerCase();
-    const questionnaireCompleted = String(entrepreneur.questionnaire_status || "").trim().toLowerCase() === "completed";
-    const preQualificationScheduled = interviewState === "scheduled";
-    const shouldSchedulePreQualification = questionnaireCompleted && ["pending", "ready to schedule", "ready_to_schedule"].includes(interviewState);
-    const preQualificationHeroMessage = preQualificationScheduled
-      ? "Your Pre-Qualification Interview is scheduled. Please be available at the scheduled time. Your EPEW Coach Assistant will contact you by phone."
-      : shouldSchedulePreQualification
-        ? "Please schedule your appointment for your Pre-Qualification Interview."
-        : "Your application has been received successfully and is currently under review. Please allow approximately 3 to 15 days for a Personal Coach to be assigned and guide you through the next steps.";
+    const appointmentCompleted = preQualificationCompleted || appointmentAction?.type === "appointment_completed";
+    const preQualificationHeroMessage = preQualificationCompleted
+      ? "Your Pre-Qualification Interview has been completed successfully. EPEW is reviewing your interview information and preparing it for your Personal Coach."
+      : preQualificationScheduled
+        ? "Your Pre-Qualification Interview is scheduled. Please be available at the scheduled time. Your EPEW Coach Assistant will contact you by phone."
+        : shouldSchedulePreQualification
+          ? "Please schedule your appointment for your Pre-Qualification Interview."
+          : "Your application has been received successfully and is currently under review.";
 
     const journeySteps = [
       { label: "Application Received", complete: true },
+      { label: "Registration & Questionnaire Completed", complete: questionnaireCompleted },
       { label: "Application Under Review", complete: true },
+      { label: "Pre-Qualification Interview", complete: preQualificationCompleted },
       { label: "Personal Coach Assigned", complete: coachAssigned },
       { label: "Interview Scheduled", complete: interviewScheduled },
       { label: "Business Idea Development", complete: businessIdeaDevelopment },
@@ -401,21 +410,28 @@ export default function EntrepreneurDashboardPage() {
                 <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center">
                   <img src="/images/epew-ede-ibos-logo.png" alt="EPEW EDE IBOS Platform" className="h-auto w-full max-w-[150px]" />
                   <div className="flex flex-wrap items-center gap-3">
-                    <h2 className="text-2xl font-extrabold text-[#10246f] md:text-3xl">Your Appointment</h2>
+                    <h2 className="text-2xl font-extrabold text-[#10246f] md:text-3xl">Pre-Qualification Interview</h2>
                     {isNoShow && <span className="rounded-full bg-red-600 px-4 py-1 text-sm font-extrabold uppercase tracking-wide text-white">Missed — Action Required</span>}
                     {appointmentCompleted && <span className="rounded-full bg-green-700 px-4 py-1 text-sm font-extrabold uppercase tracking-wide text-white">Completed</span>}
                     {isSchedulingReview && <span className="rounded-full bg-amber-500 px-4 py-1 text-sm font-extrabold uppercase tracking-wide text-white">Rescheduling</span>}
                   </div>
                 </div>
 
-                {appointmentLoading ? (
+                {preQualificationCompleted ? (
+                  <div className="space-y-3">
+                    <p className="text-xl font-extrabold text-green-800">Interview completed successfully.</p>
+                    {entrepreneur.interview_date && entrepreneur.interview_time && (
+                      <p className="text-lg font-bold text-gray-800">📅 {entrepreneur.interview_date} at {entrepreneur.interview_time.slice(0, 5)} ET</p>
+                    )}
+                    <p className="leading-relaxed text-gray-700">Your answers have been saved. EPEW is reviewing your interview and preparing your information for your Personal Coach.</p>
+                  </div>
+                ) : appointmentLoading ? (
                   <p className="text-gray-600">Loading your appointment...</p>
                 ) : appointment?.appointment ? (
                   <div className="space-y-3">
-                    <p className="text-xl font-extrabold text-gray-900">EPEW Establishment Meeting</p>
+                    <p className="text-xl font-extrabold text-gray-900">{appointment.appointment.type || "Pre-Qualification Interview"}</p>
                     {scheduledDateTime && <p className="text-lg font-bold text-gray-800">📅 {scheduledDateTime}</p>}
-                    {appointment.coach?.name && <p className="text-gray-700"><span className="font-bold">Personal Coach:</span> {appointment.coach.name}</p>}
-                    <p className="text-gray-700"><span className="font-bold">Meeting Status:</span> {isNoShow ? "Missed / No Show" : appointmentCompleted ? "Completed" : isSchedulingReview ? "Scheduling in Progress" : appointment.appointment.status?.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase()) || "Being Prepared"}</p>
+                    <p className="text-gray-700"><span className="font-bold">Meeting Status:</span> {isNoShow ? "Missed / No Show" : isSchedulingReview ? "Scheduling In Progress" : appointment.appointment.status?.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase()) || "Being Prepared"}</p>
                   </div>
                 ) : (
                   <div>
@@ -425,38 +441,12 @@ export default function EntrepreneurDashboardPage() {
                 )}
               </div>
 
-              {!appointmentLoading && (
+              {!appointmentLoading && !preQualificationCompleted && (
                 <div className="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col">
-                  {appointment?.controls?.canJoin && appointment.appointment?.provider === "phone" ? (
-                    <button type="button" onClick={async () => {
-                      try {
-                        const response = await fetch("/api/entrepreneurs/appointment/join", {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ meetingId: appointment.appointment?.id }),
-                        });
-                        const result = await response.json();
-                        if (!response.ok || !result.success) {
-                          window.alert(result.message || "Unable to start your Phone Meeting.");
-                          return;
-                        }
-                        window.alert(result.message || "Your phone is ringing. Answer the call to begin your meeting.");
-                      } catch (error) {
-                        console.error("Unable to start Phone Meeting:", error);
-                        window.alert("Unable to start your Phone Meeting.");
-                      }
-                    }} className="inline-flex items-center justify-center rounded-xl bg-green-700 px-5 py-3 font-bold text-white hover:bg-green-800">Join Meeting</button>
-                  ) : appointment?.controls?.canJoin && appointment.appointment?.provider === "zoom" && appointment.controls.joinUrl ? (
-                    <a href={appointment.controls.joinUrl} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center rounded-xl bg-green-700 px-5 py-3 font-bold text-white hover:bg-green-800">Join Meeting</a>
-                  ) : null}
-
-                  {appointment?.controls?.canChange && appointment.controls.changeHref && <Link href={appointment.controls.changeHref} className="inline-flex items-center justify-center rounded-xl bg-[#10246f] px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-blue-800">Change Appointment</Link>}
-                  {appointment?.controls?.canReschedule && appointment.controls.rescheduleHref && <Link href={appointment.controls.rescheduleHref} className="inline-flex items-center justify-center rounded-xl bg-red-600 px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-red-700">Reschedule Appointment</Link>}
+                  {appointment?.controls?.canChange && appointment.controls.changeHref && <Link href={appointment.controls.changeHref} className="inline-flex items-center justify-center rounded-xl bg-[#10246f] px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-blue-800">Re-schedule Your Pre-Qualification Interview</Link>}
+                  {appointment?.controls?.canReschedule && appointment.controls.rescheduleHref && <Link href={appointment.controls.rescheduleHref} className="inline-flex items-center justify-center rounded-xl bg-red-600 px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-red-700">Re-schedule Your Pre-Qualification Interview</Link>}
                   {!appointment?.appointment && (
                     <Link href={`/entrepreneurs/availability?applicationId=${encodeURIComponent(String(entrepreneur.id))}`} className="inline-flex items-center justify-center rounded-xl bg-[#10246f] px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-green-700">Schedule Pre-Qualification Interview</Link>
-                  )}
-                  {appointment?.appointment && !appointment?.controls?.canJoin && !appointment?.controls?.canChange && !appointment?.controls?.canReschedule && appointmentAction?.href && (
-                    <Link href={appointmentAction.href} className="inline-flex items-center justify-center rounded-xl bg-[#10246f] px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-green-700">{appointmentAction.label}</Link>
                   )}
                 </div>
               )}
@@ -466,13 +456,15 @@ export default function EntrepreneurDashboardPage() {
           <section className="grid gap-6 md:grid-cols-2">
             <div className="rounded-3xl bg-white p-6 shadow">
               <h2 className="text-2xl font-extrabold text-[#10246f]">Your Current Status</h2>
-              <p className="mt-4 text-lg font-bold text-green-700">{applicationStatus}</p>
-              <p className="mt-3 leading-relaxed text-gray-600">Our team is reviewing your application and verification documents.</p>
+              <p className="mt-4 text-lg font-bold text-green-700">{preQualificationCompleted ? "Pre-Qualification Interview Completed — Awaiting Review" : preQualificationScheduled ? "Waiting for Pre-Qualification Interview" : applicationStatus}</p>
+              <p className="mt-3 leading-relaxed text-gray-600">{preQualificationCompleted ? "Your interview information is being reviewed and prepared for the next step with your Personal Coach." : preQualificationScheduled ? "Your appointment has been scheduled. Please be available at the selected date and time." : "Our team is reviewing your application and verification documents."}</p>
             </div>
             <div className="rounded-3xl bg-white p-6 shadow">
               <h2 className="text-2xl font-extrabold text-[#10246f]">Your Next Action</h2>
-              <p className="mt-4 leading-relaxed text-gray-700">Schedule and complete your Pre-Qualification Interview so EPEW can prepare your information for your Personal Coach.</p>
-              <Link href={`/entrepreneurs/availability?applicationId=${encodeURIComponent(String(entrepreneur.id))}`} className="mt-6 inline-flex rounded-xl bg-[#10246f] px-6 py-3 font-bold text-white transition hover:bg-green-700">Schedule Pre-Qualification Interview</Link>
+              <p className="mt-4 leading-relaxed text-gray-700">{preQualificationCompleted ? "No action is required right now. EPEW is reviewing your Pre-Qualification Interview and preparing a clear summary for your Personal Coach." : preQualificationScheduled ? "Be ready for your appointment. We will discuss your business idea and goal, target market and customer need, commitment and readiness, what you have already prepared, and what support you still need before meeting with your Personal Coach." : "Schedule and complete your Pre-Qualification Interview so EPEW can prepare your information for your Personal Coach."}</p>
+              {!preQualificationCompleted && (
+                <Link href={`/entrepreneurs/availability?applicationId=${encodeURIComponent(String(entrepreneur.id))}`} className="mt-6 inline-flex rounded-xl bg-[#10246f] px-6 py-3 font-bold text-white transition hover:bg-green-700">{preQualificationScheduled ? "Re-schedule Your Pre-Qualification Interview" : "Schedule Pre-Qualification Interview"}</Link>
+              )}
             </div>
           </section>
 
