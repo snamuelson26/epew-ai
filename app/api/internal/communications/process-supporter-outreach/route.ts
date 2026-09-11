@@ -17,10 +17,17 @@ function normalizeBody(body: string) {
   return body.replace(/your business website/gi, "www.foodfans.org");
 }
 
-function emailHtml(body: string) {
-  return `<div style="font-family:Arial,sans-serif;line-height:1.6;color:#222;white-space:pre-line">${escapeHtml(
+function emailHtml(body: string, openTrackingToken?: string | null) {
+  const content = `<div style="font-family:Arial,sans-serif;line-height:1.6;color:#222;white-space:pre-line">${escapeHtml(
     normalizeBody(body)
   )}</div>`;
+
+  if (!openTrackingToken) return content;
+
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || process.env.EPEW_PUBLIC_BASE_URL || "https://www.epew.us").replace(/\/$/, "");
+  const trackingUrl = `${baseUrl}/api/entrepreneurs/campaign/email-open/${encodeURIComponent(openTrackingToken)}`;
+
+  return `${content}<img src="${trackingUrl}" width="1" height="1" alt="" style="display:block;width:1px;height:1px;border:0;opacity:0;overflow:hidden" />`;
 }
 
 function normalizeUsPhone(value: string) {
@@ -126,7 +133,7 @@ async function processDueMessages(businessCode?: string) {
 
   let query = supabaseAdmin
     .from("epew_entrepreneur_communication_messages")
-    .select("id,contact_id,business_code,message_type,subject,body,delivery_status,scheduled_for")
+    .select("id,contact_id,business_code,message_type,subject,body,delivery_status,scheduled_for,open_tracking_token")
     .eq("delivery_status", "queued")
     .lte("scheduled_for", now);
 
@@ -182,7 +189,7 @@ async function processDueMessages(businessCode?: string) {
           recipientName: contact.prospect_name,
           messageType: `supporter_${message.message_type}`,
           subject: message.subject,
-          html: emailHtml(message.body),
+          html: emailHtml(message.body, message.open_tracking_token),
           idempotencyKey: `supporter-outreach:${message.id}`,
           metadata: {
             supporterOutreachMessageId: message.id,
