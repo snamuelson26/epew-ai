@@ -68,6 +68,7 @@ export default function EntrepreneurCampaignPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [messages, setMessages] = useState<Record<string, MessageMeta>>({});
   const [notice, setNotice] = useState("");
+  const [resendingId, setResendingId] = useState<string | null>(null);
 
   useEffect(() => {
     void loadPage();
@@ -152,6 +153,55 @@ export default function EntrepreneurCampaignPage() {
     setLoading(false);
   }
 
+  async function resendMessage(contact: Contact) {
+    const businessCode = business?.public_business_id;
+    if (!businessCode) {
+      setNotice("Your campaign business account is not available yet.");
+      return;
+    }
+
+    setResendingId(contact.id);
+    setNotice("");
+
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if (!token) throw new Error("Your session has expired. Please sign in again.");
+
+      const response = await fetch("/api/entrepreneurs/supporters/resend", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ contactId: contact.id, businessCode }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Unable to resend this message.");
+
+      setMessages((current) => ({
+        ...current,
+        [contact.id]: {
+          contact_id: contact.id,
+          delivery_status: "queued",
+          scheduled_for: data.scheduledFor || new Date().toISOString(),
+          sent_at: null,
+        },
+      }));
+
+      setNotice(
+        data.alreadyQueued
+          ? `A resend to ${contact.prospect_name} is already queued.`
+          : `Message to ${contact.prospect_name} has been queued to resend.`,
+      );
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Unable to resend this message.");
+    } finally {
+      setResendingId(null);
+    }
+  }
+
   const supported = Number(business?.community_units_supported || 0);
   const required = Number(business?.community_units_required || 20);
   const remaining = Math.max(0, required - supported);
@@ -209,16 +259,16 @@ export default function EntrepreneurCampaignPage() {
 
         <section className="rounded-3xl border-2 border-blue-200 bg-white p-6 shadow-lg md:p-8">
           <div>
-            <p className="text-sm font-black uppercase tracking-widest text-blue-700">Campaign Contact List</p>
+            <p className="text-sm font-black uppercase tracking-widest text-blue-700">Private Entrepreneur View</p>
             <h2 className="mt-1 text-3xl font-black text-blue-950">My Potential Supporters</h2>
-            <p className="mt-2 text-slate-600">These are the people you personally talked to and added to receive campaign messages. This list is private to you.</p>
+            <p className="mt-2 text-slate-600">People you personally contacted and added to your campaign message list. This section is visible only to you.</p>
           </div>
 
           {contacts.length === 0 ? (
             <div className="mt-6 rounded-2xl bg-slate-50 p-5 text-slate-700">No potential supporters have been added yet.</div>
           ) : (
             <div className="mt-6 overflow-x-auto">
-              <table className="w-full min-w-[900px] border-separate border-spacing-0 text-left">
+              <table className="w-full min-w-[1020px] border-separate border-spacing-0 text-left">
                 <thead>
                   <tr className="text-sm uppercase tracking-wide text-slate-500">
                     <th className="border-b border-slate-200 px-3 py-3">Name</th>
@@ -228,12 +278,14 @@ export default function EntrepreneurCampaignPage() {
                     <th className="border-b border-slate-200 px-3 py-3">Support Status</th>
                     <th className="border-b border-slate-200 px-3 py-3">Message Status</th>
                     <th className="border-b border-slate-200 px-3 py-3">Scheduled / Sent</th>
+                    <th className="border-b border-slate-200 px-3 py-3">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {contacts.map((contact) => {
                     const message = messages[contact.id];
                     const dateValue = message?.sent_at || message?.scheduled_for;
+                    const isQueued = message?.delivery_status === "queued";
                     return (
                       <tr key={contact.id} className="align-top">
                         <td className="border-b border-slate-100 px-3 py-4 font-black text-slate-900">{contact.prospect_name}</td>
@@ -244,8 +296,18 @@ export default function EntrepreneurCampaignPage() {
                         <td className="border-b border-slate-100 px-3 py-4 text-slate-700">{LANGUAGE_LABELS[contact.preferred_language || "en"] || contact.preferred_language || "English"}</td>
                         <td className="border-b border-slate-100 px-3 py-4 text-slate-700">{contact.relationship || "—"}</td>
                         <td className="border-b border-slate-100 px-3 py-4"><span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-bold text-blue-800">{formatStatus(contact.status)}</span></td>
-                        <td className="border-b border-slate-100 px-3 py-4"><span className="inline-flex rounded-full bg-green-50 px-3 py-1 text-sm font-bold text-green-800">{formatStatus(message?.delivery_status)}</span></td>
+                        <td className="border-b border-slate-100 px-3 py-4"><span className={`inline-flex rounded-full px-3 py-1 text-sm font-bold ${isQueued ? "bg-amber-50 text-amber-800" : "bg-green-50 text-green-800"}`}>{formatStatus(message?.delivery_status)}</span></td>
                         <td className="border-b border-slate-100 px-3 py-4 text-slate-700">{dateValue ? `${formatEastern(dateValue)} Eastern` : "—"}</td>
+                        <td className="border-b border-slate-100 px-3 py-4">
+                          <button
+                            type="button"
+                            onClick={() => void resendMessage(contact)}
+                            disabled={resendingId === contact.id || isQueued || !message}
+                            className="rounded-lg bg-blue-950 px-4 py-2 text-sm font-black text-white transition hover:bg-blue-900 disabled:cursor-not-allowed disabled:bg-slate-300"
+                          >
+                            {resendingId === contact.id ? "Queuing..." : isQueued ? "Queued" : "Resend"}
+                          </button>
+                        </td>
                       </tr>
                     );
                   })}
