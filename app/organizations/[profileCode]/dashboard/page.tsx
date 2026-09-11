@@ -30,6 +30,11 @@ const MODULES = [
     description: "Manufacturers, telecoms, solar providers, logistics, schools, sponsors, technical requirements, and pilot status.",
   },
   {
+    key: "tablet-project/technology",
+    title: "Technology",
+    description: "Tablet Hardware, Connectivity, Solar & Power, Learning Technology, and Device Management & Security for the Tablet Project.",
+  },
+  {
     key: "vendors",
     title: "Vendors",
     description: "Quotes, products and services, approvals, negotiation history, relationship status, and supporting documents.",
