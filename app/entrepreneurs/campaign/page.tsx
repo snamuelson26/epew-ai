@@ -32,8 +32,11 @@ type Contact = {
 type MessageMeta = {
   contact_id: string;
   delivery_status: string;
+  delivery_channel: string | null;
   scheduled_for: string | null;
   sent_at: string | null;
+  opened_at: string | null;
+  open_count: number;
 };
 
 const OFFICIAL_FUNDING_APPROVAL = 100000;
@@ -131,7 +134,7 @@ export default function EntrepreneurCampaignPage() {
       const ids = loadedContacts.map((contact) => contact.id);
       const { data: messageData } = await supabase
         .from("epew_entrepreneur_communication_messages")
-        .select("contact_id,delivery_status,scheduled_for,sent_at,created_at")
+        .select("contact_id,delivery_status,delivery_channel,scheduled_for,sent_at,opened_at,open_count,created_at")
         .in("contact_id", ids)
         .eq("message_type", "introduction")
         .order("created_at", { ascending: false });
@@ -142,8 +145,11 @@ export default function EntrepreneurCampaignPage() {
           byContact[item.contact_id] = {
             contact_id: item.contact_id,
             delivery_status: item.delivery_status,
+            delivery_channel: item.delivery_channel,
             scheduled_for: item.scheduled_for,
             sent_at: item.sent_at,
+            opened_at: item.opened_at,
+            open_count: Number(item.open_count || 0),
           };
         }
       }
@@ -185,8 +191,11 @@ export default function EntrepreneurCampaignPage() {
         [contact.id]: {
           contact_id: contact.id,
           delivery_status: "queued",
+          delivery_channel: null,
           scheduled_for: data.scheduledFor || new Date().toISOString(),
           sent_at: null,
+          opened_at: null,
+          open_count: 0,
         },
       }));
 
@@ -268,7 +277,7 @@ export default function EntrepreneurCampaignPage() {
             <div className="mt-6 rounded-2xl bg-slate-50 p-5 text-slate-700">No potential supporters have been added yet.</div>
           ) : (
             <div className="mt-6 overflow-x-auto">
-              <table className="w-full min-w-[1020px] border-separate border-spacing-0 text-left">
+              <table className="w-full min-w-[1160px] border-separate border-spacing-0 text-left">
                 <thead>
                   <tr className="text-sm uppercase tracking-wide text-slate-500">
                     <th className="border-b border-slate-200 px-3 py-3">Name</th>
@@ -278,6 +287,7 @@ export default function EntrepreneurCampaignPage() {
                     <th className="border-b border-slate-200 px-3 py-3">Support Status</th>
                     <th className="border-b border-slate-200 px-3 py-3">Message Status</th>
                     <th className="border-b border-slate-200 px-3 py-3">Scheduled / Sent</th>
+                    <th className="border-b border-slate-200 px-3 py-3">Email Open</th>
                     <th className="border-b border-slate-200 px-3 py-3">Action</th>
                   </tr>
                 </thead>
@@ -286,6 +296,7 @@ export default function EntrepreneurCampaignPage() {
                     const message = messages[contact.id];
                     const dateValue = message?.sent_at || message?.scheduled_for;
                     const isQueued = message?.delivery_status === "queued";
+                    const isEmail = message?.delivery_channel === "email";
                     return (
                       <tr key={contact.id} className="align-top">
                         <td className="border-b border-slate-100 px-3 py-4 font-black text-slate-900">{contact.prospect_name}</td>
@@ -298,6 +309,18 @@ export default function EntrepreneurCampaignPage() {
                         <td className="border-b border-slate-100 px-3 py-4"><span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-bold text-blue-800">{formatStatus(contact.status)}</span></td>
                         <td className="border-b border-slate-100 px-3 py-4"><span className={`inline-flex rounded-full px-3 py-1 text-sm font-bold ${isQueued ? "bg-amber-50 text-amber-800" : "bg-green-50 text-green-800"}`}>{formatStatus(message?.delivery_status)}</span></td>
                         <td className="border-b border-slate-100 px-3 py-4 text-slate-700">{dateValue ? `${formatEastern(dateValue)} Eastern` : "—"}</td>
+                        <td className="border-b border-slate-100 px-3 py-4">
+                          {message?.opened_at ? (
+                            <div>
+                              <span className="inline-flex rounded-full bg-green-50 px-3 py-1 text-sm font-bold text-green-800">Open detected</span>
+                              <div className="mt-1 text-xs text-slate-600">{formatEastern(message.opened_at)} Eastern{message.open_count > 1 ? ` · ${message.open_count} opens` : ""}</div>
+                            </div>
+                          ) : isEmail ? (
+                            <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-sm font-bold text-slate-600">Not detected yet</span>
+                          ) : (
+                            <span className="text-slate-400">—</span>
+                          )}
+                        </td>
                         <td className="border-b border-slate-100 px-3 py-4">
                           <button
                             type="button"
