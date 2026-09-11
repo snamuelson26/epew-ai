@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
@@ -9,15 +10,56 @@ function normalizeUsPhone(value: string) {
   return String(value ?? "").trim();
 }
 
-function scheduledAtIso(date: string, time: string) {
-  const local = `${date}T${time}`;
-  const parts = local.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?/);
-  if (!parts) return null;
+function easternLocalToUtc(dateValue: string, timeValue: string) {
+  const dateMatch = dateValue.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const timeMatch = timeValue.match(/^(\d{2}):(\d{2})(?::(\d{2}))?$/);
+  if (!dateMatch || !timeMatch) return null;
 
-  const [, year, month, day, hour, minute, second = "00"] = parts;
-  // Pre-Qualification appointments are stored as America/New_York local date/time.
-  // September is EDT (-04:00). The dispatcher only needs a real instant for due-time checks.
-  return `${year}-${month}-${day}T${hour}:${minute}:${second}-04:00`;
+  const [, y, m, d] = dateMatch;
+  const [, hh, mm, ss = "00"] = timeMatch;
+  const wantedAsUtc = Date.UTC(Number(y), Number(m) - 1, Number(d), Number(hh), Number(mm), Number(ss));
+
+  function offsetAt(instantMs: number) {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/New_York",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hourCycle: "h23",
+    }).formatToParts(new Date(instantMs));
+
+    const get = (type: string) => Number(parts.find((part) => part.type === type)?.value ?? 0);
+    const shownAsUtc = Date.UTC(get("year"), get("month") - 1, get("day"), get("hour"), get("minute"), get("second"));
+    return shownAsUtc - instantMs;
+  }
+
+  let instant = wantedAsUtc - offsetAt(wantedAsUtc);
+  instant = wantedAsUtc - offsetAt(instant);
+  return new Date(instant);
+}
+
+async function isAuthorized(request: NextRequest) {
+  const secret = process.env.CRON_SECRET;
+  const authorization = request.headers.get("authorization");
+  if (secret && authorization === `Bearer ${secret}`) return true;
+
+  const token = new URL(request.url).searchParams.get("token")?.trim();
+  if (!token) return false;
+
+  const tokenHash = createHash("sha256").update(token).digest("hex");
+  const { data, error } = await supabaseAdmin
+    .from("epew_internal_cron_tokens")
+    .select("id")
+    .eq("action_key", "prequalification-call-dispatch")
+    .eq("token_hash", tokenHash)
+    .eq("active", true)
+    .maybeSingle();
+
+  if (error) throw error;
+  return Boolean(data);
 }
 
 async function processScheduledCalls() {
@@ -64,14 +106,8 @@ async function processScheduledCalls() {
       continue;
     }
 
-    const iso = scheduledAtIso(String(application.interview_date), String(application.interview_time));
-    if (!iso) {
-      skipped += 1;
-      continue;
-    }
-
-    const scheduledAt = new Date(iso);
-    if (scheduledAt < windowStart || scheduledAt > windowEnd) {
+    const scheduledAt = easternLocalToUtc(String(application.interview_date), String(application.interview_time));
+    if (!scheduledAt || scheduledAt < windowStart || scheduledAt > windowEnd) {
       skipped += 1;
       continue;
     }
@@ -115,11 +151,7 @@ async function processScheduledCalls() {
 
       await supabaseAdmin
         .from("epew_prequalification_call_dispatch")
-        .update({
-          status: "started",
-          call_sid: call.sid,
-          error_message: null,
-        })
+        .update({ status: "started", call_sid: call.sid, error_message: null })
         .eq("id", dispatch.id);
 
       started += 1;
@@ -140,14 +172,11 @@ async function processScheduledCalls() {
 }
 
 export async function GET(request: NextRequest) {
-  const secret = process.env.CRON_SECRET;
-  const authorization = request.headers.get("authorization");
-
-  if (!secret || authorization !== `Bearer ${secret}`) {
-    return NextResponse.json({ success: false, message: "Unauthorized." }, { status: 401 });
-  }
-
   try {
+    if (!(await isAuthorized(request))) {
+      return NextResponse.json({ success: false, message: "Unauthorized." }, { status: 401 });
+    }
+
     const result = await processScheduledCalls();
     return NextResponse.json({ success: true, ...result });
   } catch (error) {
