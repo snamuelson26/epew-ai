@@ -11,6 +11,10 @@
     {
       "path": "/api/internal/supporters/process-smart-selection",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/internal/meetings/process-prequalification-calls",
+      "schedule": "* * * * *"
     }
   ]
 }
