@@ -52,10 +52,6 @@ function EntrepreneurAvailabilityContent() {
         );
         const result = await response.json();
         if (cancelled) return;
-
-        // A real coach-meeting record means the entrepreneur is scheduling
-        // or changing an Establishment Meeting. No meeting record means this
-        // applicant is still at the Pre-Qualification Interview stage.
         setMode(result?.appointment ? "establishment" : "prequalification");
       } catch {
         if (!cancelled) setMode("prequalification");
@@ -103,6 +99,8 @@ function EntrepreneurAvailabilityContent() {
         body: JSON.stringify({
           applicationId,
           requestedStartAt: requestedDate.toISOString(),
+          appointmentDate: mode === "prequalification" ? appointmentDate : undefined,
+          appointmentTime: mode === "prequalification" ? appointmentTime : undefined,
           meetingProvider: mode === "prequalification" ? "phone" : meetingProvider,
         }),
       });
@@ -123,6 +121,7 @@ function EntrepreneurAvailabilityContent() {
         hour: "numeric",
         minute: "2-digit",
         timeZoneName: "short",
+        timeZone: mode === "prequalification" ? "America/New_York" : undefined,
       }).format(scheduledDate);
 
       setSuccess(true);
@@ -165,7 +164,7 @@ function EntrepreneurAvailabilityContent() {
         </p>
         {isPreQualification && (
           <p style={{ lineHeight: 1.6, margin: 0 }}>
-            Your EPEW Coach Assistant will call your registered phone number at the scheduled time.
+            Your EPEW Coach Assistant will call your registered phone number at the scheduled time. All Pre-Qualification appointment times are Eastern Time.
           </p>
         )}
         <a
@@ -219,7 +218,7 @@ function EntrepreneurAvailabilityContent() {
           </label>
 
           <label style={{ display: "grid", gap: 8, fontWeight: 700 }}>
-            Desired Start Time
+            Desired Start Time (Eastern Time)
             <select
               value={appointmentTime}
               onChange={(event) => {
