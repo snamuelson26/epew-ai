@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import { supabase } from "@/lib/supabase";
@@ -33,8 +32,6 @@ function cleanBusinessName(name: string | null, code: string) {
 }
 
 export default function EntrepreneurLoginPage() {
-  const router = useRouter();
-
   const { t } = useTranslation();
   const { loadNamespaces } = useLanguage();
 
@@ -98,6 +95,11 @@ export default function EntrepreneurLoginPage() {
     });
   }
 
+  function openApplication(applicationId: number) {
+    window.location.href =
+      `/entrepreneurs/dashboard?applicationId=${encodeURIComponent(String(applicationId))}`;
+  }
+
   async function handleLogin(
     event: React.FormEvent<HTMLFormElement>,
   ) {
@@ -133,9 +135,7 @@ export default function EntrepreneurLoginPage() {
       }
 
       if (businessAccounts.length === 1) {
-        router.push(
-          `/entrepreneurs/dashboard?applicationId=${encodeURIComponent(String(businessAccounts[0].id))}`,
-        );
+        openApplication(businessAccounts[0].id);
         return;
       }
 
@@ -152,9 +152,7 @@ export default function EntrepreneurLoginPage() {
   }
 
   function openAccount(account: BusinessAccount) {
-    router.push(
-      `/entrepreneurs/dashboard?applicationId=${encodeURIComponent(String(account.id))}`,
-    );
+    openApplication(account.id);
   }
 
   if (accounts.length > 1) {
