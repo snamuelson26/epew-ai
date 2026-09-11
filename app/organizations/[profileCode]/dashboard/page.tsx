@@ -14,11 +14,41 @@ type Profile = {
 };
 
 const MODULES = [
-  { key: "communication-center", title: "Communication Center", description: "Manage Emanon Institute conversations, contact history, follow-up, and external communication." },
-  { key: "grant-contacts", title: "Grant Contacts", description: "Manage foundations, agencies, grant writers, funding opportunities, and grant-related contacts." },
-  { key: "tablet-project", title: "Tablet Project", description: "Manage schools, sponsors, donors, logistics contacts, stakeholders, and tablet project communication." },
-  { key: "vendors", title: "Vendors", description: "Manage prospective and approved vendors, products, services, quotes, and communication." },
-  { key: "partners", title: "Partners", description: "Manage strategic, education, technology, nonprofit, and community partners." },
+  {
+    key: "communication-center",
+    title: "Communication Center",
+    description: "Contacts, full conversation history, AI Arrange Message, scheduled follow-ups, delivery/read status, attachments, and meetings.",
+  },
+  {
+    key: "grant-contacts",
+    title: "Grant Contacts",
+    description: "Funders, grant amount, eligibility, deadlines, LOI/application status, requested amount, required documents, and follow-up.",
+  },
+  {
+    key: "tablet-project",
+    title: "Tablet Project",
+    description: "Manufacturers, telecoms, solar providers, logistics, schools, sponsors, technical requirements, and pilot status.",
+  },
+  {
+    key: "vendors",
+    title: "Vendors",
+    description: "Quotes, products and services, approvals, negotiation history, relationship status, and supporting documents.",
+  },
+  {
+    key: "partners",
+    title: "Partners",
+    description: "Strategic partners, education partners, nonprofits, implementation organizations, relationship stage, and next action.",
+  },
+  {
+    key: "documents",
+    title: "Documents",
+    description: "Proposal packages, grant applications, tablet specifications, quotations, contracts, nonprofit records, budgets, and signed agreements.",
+  },
+  {
+    key: "meetings-followups",
+    title: "Meetings / Follow-Ups",
+    description: "Upcoming meetings, Zoom links, notes, next actions, scheduled reminders, and follow-up history across every Emanon relationship.",
+  },
 ];
 
 export default function OrganizationDashboardPage() {
@@ -80,10 +110,14 @@ export default function OrganizationDashboardPage() {
               <p className="text-sm font-extrabold uppercase tracking-[0.25em] text-lime-300">Organization Portal</p>
               <h1 className="mt-2 text-4xl font-extrabold md:text-5xl">{profile.display_name}</h1>
               <p className="mt-3 text-xl font-bold">Profile: {profile.profile_code}</p>
-              <p className="mt-2 text-white/90">External communication sender: <span className="font-bold">{profile.external_sender}</span></p>
+              <p className="mt-2 text-white/90">External communication sender: <span className="font-bold">{profile.display_name} / {profile.external_sender}</span></p>
             </div>
             <Link href="/entrepreneurs/login" className="rounded-xl bg-white px-5 py-3 font-extrabold text-[#10246f]">Switch Account</Link>
           </div>
+        </section>
+
+        <section className="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+          <p className="font-bold text-slate-800">Choose one workspace. Each area opens separately so the main Emanon dashboard stays simple and uncluttered.</p>
         </section>
 
         <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -91,11 +125,11 @@ export default function OrganizationDashboardPage() {
             <Link
               key={module.key}
               href={`/organizations/${encodeURIComponent(profile.profile_code)}/${module.key}`}
-              className="rounded-3xl border border-slate-200 bg-white p-6 shadow transition hover:-translate-y-1 hover:border-green-400 hover:shadow-lg"
+              className="group rounded-3xl border border-slate-200 bg-white p-6 shadow transition hover:-translate-y-1 hover:border-green-400 hover:shadow-lg"
             >
               <h2 className="text-2xl font-extrabold text-[#10246f]">{module.title}</h2>
-              <p className="mt-3 leading-relaxed text-slate-600">{module.description}</p>
-              <span className="mt-6 inline-flex rounded-xl bg-[#10246f] px-4 py-2 font-bold text-white">Open</span>
+              <p className="mt-3 min-h-24 leading-relaxed text-slate-600">{module.description}</p>
+              <span className="mt-6 inline-flex rounded-xl bg-[#10246f] px-4 py-2 font-bold text-white transition group-hover:bg-green-700">Open Workspace</span>
             </Link>
           ))}
         </section>
