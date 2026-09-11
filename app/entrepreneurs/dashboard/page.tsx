@@ -70,6 +70,10 @@ type Entrepreneur = {
   application_decision?: string | null;
   qualification_status?: string | null;
   interview_status?: string | null;
+  interview_date?: string | null;
+  interview_time?: string | null;
+  interview_type?: string | null;
+  questionnaire_status?: string | null;
   campaign_slug?: string | null;
   campaign_status?: string | null;
   campaign_visitors?: number | null;
@@ -335,6 +339,15 @@ export default function EntrepreneurDashboardPage() {
     const isNoShow = appointmentStatus === "no_show";
     const isSchedulingReview = appointmentAction?.type === "scheduling_in_progress";
     const appointmentCompleted = appointmentAction?.type === "appointment_completed";
+    const interviewState = String(entrepreneur.interview_status || "").trim().toLowerCase();
+    const questionnaireCompleted = String(entrepreneur.questionnaire_status || "").trim().toLowerCase() === "completed";
+    const preQualificationScheduled = interviewState === "scheduled";
+    const shouldSchedulePreQualification = questionnaireCompleted && ["pending", "ready to schedule", "ready_to_schedule"].includes(interviewState);
+    const preQualificationHeroMessage = preQualificationScheduled
+      ? "Your Pre-Qualification Interview is scheduled. Please be available at the scheduled time. Your EPEW Coach Assistant will contact you by phone."
+      : shouldSchedulePreQualification
+        ? "Please schedule your appointment for your Pre-Qualification Interview."
+        : "Your application has been received successfully and is currently under review. Please allow approximately 3 to 15 days for a Personal Coach to be assigned and guide you through the next steps.";
 
     const journeySteps = [
       { label: "Application Received", complete: true },
@@ -366,7 +379,7 @@ export default function EntrepreneurDashboardPage() {
                   </div>
                   <button type="button" onClick={handleLogout} className="inline-flex shrink-0 items-center justify-center self-start rounded-xl bg-white px-6 py-3 text-lg font-extrabold text-[#10246f] shadow transition hover:bg-red-50 hover:text-red-700">Logout</button>
                 </div>
-                <p className="mt-5 max-w-4xl text-lg leading-relaxed text-white/90">Your application has been received successfully and is currently under review. Please allow approximately 3 to 15 days for a Personal Coach to be assigned and guide you through the next steps.</p>
+                <p className="mt-5 max-w-4xl text-lg leading-relaxed text-white/90">{preQualificationHeroMessage}</p>
               </div>
             </div>
           </section>
