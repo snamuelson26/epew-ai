@@ -197,6 +197,7 @@ async function processDueMessages(businessCode?: string) {
             businessCode: message.business_code,
             preferredLanguage: contact.preferred_language,
           },
+          replyTo: `contact+${contact.id}@inbound.emanoninstitute.org`,
         });
 
         if (!result.ok && result.status !== "sent") {
