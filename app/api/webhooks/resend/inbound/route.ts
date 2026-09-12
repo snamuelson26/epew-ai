@@ -8,6 +8,11 @@ export const runtime = "nodejs";
 const INBOUND_DOMAIN = "inbound.emanoninstitute.org";
 const CONTACT_ALIAS = /^contact\+([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/i;
 
+const INBOUND_IDENTITY_KEYS: Record<string, string> = {
+  programdirector: "emanon_program_director",
+  partnership: "emanon_strategic_partnerships_director",
+};
+
 const DELIVERY_STATUS: Record<string, string> = {
   "email.sent": "sent",
   "email.delivered": "delivered",
