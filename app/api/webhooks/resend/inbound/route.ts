@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { resend } from "@/lib/email/resend";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
@@ -7,9 +8,23 @@ export const runtime = "nodejs";
 const INBOUND_DOMAIN = "inbound.emanoninstitute.org";
 const CONTACT_ALIAS = /^contact\+([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/i;
 
+const DELIVERY_STATUS: Record<string, string> = {
+  "email.sent": "sent",
+  "email.delivered": "delivered",
+  "email.delivery_delayed": "sending",
+  "email.bounced": "failed",
+  "email.complained": "failed",
+  "email.failed": "failed",
+  "email.suppressed": "failed",
+};
+
 function addressOnly(value: string) {
   const bracketed = value.match(/<([^>]+)>/);
   return (bracketed?.[1] ?? value).trim().toLowerCase();
+}
+
+function localPart(value: string) {
+  return addressOnly(value).split("@")[0] ?? "";
 }
 
 function contactIdFromRecipients(recipients: string[]) {
@@ -69,6 +84,63 @@ async function auditUnmatched(input: {
   if (error) throw error;
 }
 
+async function recordDeliveryEvent(input: {
+  eventId: string;
+  eventType: string;
+  providerEmailId: string;
+  occurredAt?: string | null;
+  payload: unknown;
+}) {
+  const normalizedStatus = DELIVERY_STATUS[input.eventType];
+  if (!normalizedStatus) return;
+
+  const { error: eventError } = await supabaseAdmin
+    .from("epew_email_delivery_events")
+    .upsert(
+      {
+        webhook_event_id: input.eventId,
+        provider_email_id: input.providerEmailId,
+        event_type: input.eventType,
+        normalized_status: normalizedStatus,
+        payload: input.payload,
+        occurred_at: input.occurredAt ?? null,
+      },
+      { onConflict: "webhook_event_id", ignoreDuplicates: true }
+    );
+
+  if (eventError) throw eventError;
+
+  const updatedAt = input.occurredAt || new Date().toISOString();
+  const deliveryUpdate: Record<string, unknown> = {
+    status: normalizedStatus,
+    provider_status: input.eventType,
+    delivery_status_updated_at: updatedAt,
+    updated_at: new Date().toISOString(),
+  };
+  if (normalizedStatus === "sent") deliveryUpdate.sent_at = updatedAt;
+
+  const { error: deliveryError } = await supabaseAdmin
+    .from("epew_email_deliveries")
+    .update(deliveryUpdate)
+    .eq("provider_message_id", input.providerEmailId);
+
+  if (deliveryError) throw deliveryError;
+
+  const messageUpdate: Record<string, unknown> = {
+    delivery_status: normalizedStatus,
+    provider_status: input.eventType,
+    delivery_status_updated_at: updatedAt,
+  };
+  if (normalizedStatus === "sent") messageUpdate.sent_at = updatedAt;
+
+  const { error: messageError } = await supabaseAdmin
+    .from("epew_entrepreneur_communication_messages")
+    .update(messageUpdate)
+    .eq("provider_email_id", input.providerEmailId);
+
+  if (messageError) throw messageError;
+}
+
 export async function POST(request: NextRequest) {
   if (!resend) {
     return NextResponse.json({ error: "Resend is not configured." }, { status: 503 });
@@ -77,8 +149,10 @@ export async function POST(request: NextRequest) {
   const rawPayload = await request.text();
   let event: {
     type?: string;
+    created_at?: string;
     data?: {
       email_id?: string;
+      created_at?: string;
       received_for?: string[];
       to?: string[];
     };
@@ -103,11 +177,33 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid webhook." }, { status: 400 });
   }
 
-  if (event.type !== "email.received") {
+  const eventType = String(event.type ?? "");
+  const providerEmailId = String(event.data?.email_id ?? "").trim();
+
+  if (DELIVERY_STATUS[eventType]) {
+    if (!providerEmailId) {
+      return NextResponse.json({ error: "Missing email ID." }, { status: 400 });
+    }
+
+    const eventId =
+      request.headers.get("svix-id") ||
+      createHash("sha256").update(rawPayload).digest("hex");
+
+    await recordDeliveryEvent({
+      eventId,
+      eventType,
+      providerEmailId,
+      occurredAt: event.data?.created_at ?? event.created_at ?? null,
+      payload: event,
+    });
+
+    return NextResponse.json({ ok: true, statusUpdated: true });
+  }
+
+  if (eventType !== "email.received") {
     return NextResponse.json({ ok: true, ignored: true });
   }
 
-  const providerEmailId = String(event.data?.email_id ?? "").trim();
   if (!providerEmailId) {
     return NextResponse.json({ error: "Missing inbound email ID." }, { status: 400 });
   }
@@ -134,6 +230,23 @@ export async function POST(request: NextRequest) {
 
   if (inboundRecipients.length === 0) {
     return NextResponse.json({ ok: true, ignored: true });
+  }
+
+  let senderIdentityId: string | null = null;
+  const identityLocal = inboundRecipients
+    .map(localPart)
+    .find((value) => value === "programdirector");
+
+  if (identityLocal) {
+    const identityResult = await supabaseAdmin
+      .from("epew_communication_sender_identities")
+      .select("id")
+      .eq("identity_key", "emanon_program_director")
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (identityResult.error) throw identityResult.error;
+    senderIdentityId = identityResult.data?.id ?? null;
   }
 
   let contactId = contactIdFromRecipients(inboundRecipients);
@@ -188,6 +301,7 @@ export async function POST(request: NextRequest) {
         received_for: email.received_for,
         cc: email.cc,
         attachments: email.attachments,
+        sender_identity_id: senderIdentityId,
       },
       receivedAt: email.created_at,
     });
@@ -212,9 +326,12 @@ export async function POST(request: NextRequest) {
       body,
       html_body: email.html,
       sender_voice: "contact",
+      sender_identity_id: senderIdentityId,
       direction: "inbound",
       delivery_channel: "email",
       delivery_status: "received",
+      provider_status: "email.received",
+      delivery_status_updated_at: email.created_at,
       provider_email_id: providerEmailId,
       provider_message_id: email.message_id,
       sender_email: senderEmail,
