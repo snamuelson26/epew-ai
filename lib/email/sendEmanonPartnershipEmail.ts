@@ -10,7 +10,12 @@ export const EMANON_PARTNERSHIP_REPLY_TO =
 export const EMANON_PARTNERSHIP_INBOUND =
   "partnership@inbound.emanoninstitute.org";
 
+export type EmanonPartnershipPurpose =
+  | "funding"
+  | "strategic_collaboration";
+
 type SendPartnershipEmailInput = {
+  purpose: EmanonPartnershipPurpose;
   recipientEmail: string;
   recipientName?: string | null;
   subject: string;
@@ -47,6 +52,9 @@ export async function sendEmanonPartnershipEmail(
     metadata: {
       ...input.metadata,
       senderIdentityKey: EMANON_PARTNERSHIP_IDENTITY_KEY,
+      roleScope: "funding_and_strategic_collaboration_only",
+      purpose: input.purpose,
+      approvalRequiredForCommitments: true,
       inboundProcessingAddress: EMANON_PARTNERSHIP_INBOUND,
     },
   });
