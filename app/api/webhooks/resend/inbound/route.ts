@@ -111,8 +111,14 @@ async function recordDeliveryEvent(input: {
   if (eventError) throw eventError;
 
   const updatedAt = input.occurredAt || new Date().toISOString();
+  const deliveryStatus =
+    normalizedStatus === "failed"
+      ? "failed"
+      : normalizedStatus === "sending"
+        ? "pending"
+        : "sent";
   const deliveryUpdate: Record<string, unknown> = {
-    status: normalizedStatus,
+    status: deliveryStatus,
     provider_status: input.eventType,
     delivery_status_updated_at: updatedAt,
     updated_at: new Date().toISOString(),
