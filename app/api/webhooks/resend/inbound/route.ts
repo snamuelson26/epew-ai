@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
           signature: request.headers.get("svix-signature") ?? "",
         },
         webhookSecret: secret,
-      });
+      }) as unknown as typeof event;
     } else {
       event = JSON.parse(rawPayload);
     }
