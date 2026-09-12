@@ -248,13 +248,16 @@ export async function POST(request: NextRequest) {
   let senderIdentityId: string | null = null;
   const identityLocal = inboundRecipients
     .map(localPart)
-    .find((value) => value === "programdirector");
+    .find((value) => Boolean(INBOUND_IDENTITY_KEYS[value]));
+  const identityKey = identityLocal
+    ? INBOUND_IDENTITY_KEYS[identityLocal]
+    : null;
 
-  if (identityLocal) {
+  if (identityKey) {
     const identityResult = await supabaseAdmin
       .from("epew_communication_sender_identities")
       .select("id")
-      .eq("identity_key", "emanon_program_director")
+      .eq("identity_key", identityKey)
       .eq("is_active", true)
       .maybeSingle();
 
