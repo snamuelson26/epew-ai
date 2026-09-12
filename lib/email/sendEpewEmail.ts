@@ -12,6 +12,7 @@ type SendEpewEmailInput = {
   metadata?: Record<string, unknown>;
   from?: string;
   replyTo?: string | string[];
+  senderIdentityId?: string | null;
 };
 
 export async function sendEpewEmail(input: SendEpewEmailInput) {
@@ -26,6 +27,7 @@ export async function sendEpewEmail(input: SendEpewEmailInput) {
     metadata = {},
     from = EPEW_EMAIL_FROM,
     replyTo,
+    senderIdentityId = null,
   } = input;
 
   if (!resend) {
@@ -44,7 +46,7 @@ export async function sendEpewEmail(input: SendEpewEmailInput) {
 
   if (existing) {
     return {
-      ok: existing.status === "sent",
+      ok: existing.status === "sent" || existing.status === "delivered",
       duplicate: true,
       deliveryId: existing.id,
       status: existing.status,
@@ -61,6 +63,7 @@ export async function sendEpewEmail(input: SendEpewEmailInput) {
       message_type: messageType,
       subject,
       idempotency_key: idempotencyKey,
+      sender_identity_id: senderIdentityId,
       status: "pending",
       metadata,
     })
@@ -88,6 +91,8 @@ export async function sendEpewEmail(input: SendEpewEmailInput) {
         .from("epew_email_deliveries")
         .update({
           status: "failed",
+          provider_status: "send_failed",
+          delivery_status_updated_at: new Date().toISOString(),
           error_message: message,
           updated_at: new Date().toISOString(),
         })
@@ -100,8 +105,10 @@ export async function sendEpewEmail(input: SendEpewEmailInput) {
       .from("epew_email_deliveries")
       .update({
         status: "sent",
+        provider_status: "email.sent",
         provider_message_id: result.data.id,
         sent_at: new Date().toISOString(),
+        delivery_status_updated_at: new Date().toISOString(),
         error_message: null,
         updated_at: new Date().toISOString(),
       })
@@ -122,6 +129,8 @@ export async function sendEpewEmail(input: SendEpewEmailInput) {
       .from("epew_email_deliveries")
       .update({
         status: "failed",
+        provider_status: "send_failed",
+        delivery_status_updated_at: new Date().toISOString(),
         error_message: message,
         updated_at: new Date().toISOString(),
       })
