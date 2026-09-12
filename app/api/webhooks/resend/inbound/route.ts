@@ -139,6 +139,13 @@ async function recordDeliveryEvent(input: {
     .eq("provider_email_id", input.providerEmailId);
 
   if (messageError) throw messageError;
+
+  const { error: centerEventError } = await supabaseAdmin
+    .from("communication_events")
+    .update({ status: normalizedStatus })
+    .contains("metadata", { provider_email_id: input.providerEmailId });
+
+  if (centerEventError) throw centerEventError;
 }
 
 export async function POST(request: NextRequest) {
@@ -288,6 +295,63 @@ export async function POST(request: NextRequest) {
   }
 
   if (!contact || !contactId) {
+    const genericResult = await supabaseAdmin
+      .from("communication_contacts")
+      .select("id,preferred_language")
+      .or(`normalized_email.eq.${senderEmail},email.ilike.${senderEmail}`)
+      .limit(2);
+
+    if (genericResult.error) throw genericResult.error;
+
+    if (genericResult.data?.length === 1) {
+      const genericContact = genericResult.data[0];
+      const body =
+        email.text?.trim() ||
+        textFromHtml(email.html) ||
+        "[HTML email received — open the message details to view it.]";
+
+      const { error: genericEventError } = await supabaseAdmin
+        .from("communication_events")
+        .insert({
+          contact_id: genericContact.id,
+          event_type: "email_received",
+          channel: "email",
+          direction: "inbound",
+          status: "received",
+          title: email.subject || "(no subject)",
+          summary: body,
+          message_preview: body.slice(0, 500),
+          performed_by_type: "contact",
+          metadata: {
+            provider: "resend",
+            provider_email_id: providerEmailId,
+            provider_message_id: email.message_id,
+            sender_email: senderEmail,
+            recipient_emails: inboundRecipients,
+            html_body: email.html,
+            attachments: email.attachments,
+            received_at: email.created_at,
+            sender_identity_id: senderIdentityId,
+          },
+        });
+
+      if (genericEventError) throw genericEventError;
+
+      await supabaseAdmin
+        .from("communication_contacts")
+        .update({
+          last_engaged_at: email.created_at || new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", genericContact.id);
+
+      return NextResponse.json({
+        ok: true,
+        matched: true,
+        communicationCenter: true,
+      });
+    }
+
     await auditUnmatched({
       providerEmailId,
       providerMessageId: email.message_id,
