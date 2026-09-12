@@ -1,9 +1,13 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 export default function EmanonRegisterPage() {
+  return <Suspense fallback={<main className="min-h-screen bg-[#f5f7fb] p-8 text-center text-2xl font-bold text-[#06245c]">Verifying your invitation...</main>}><EmanonRegisterContent /></Suspense>;
+}
+
+function EmanonRegisterContent() {
   const token = useSearchParams().get("invite") ?? "";
   const [invite, setInvite] = useState<{ email:string; full_name:string; title:string } | null>(null);
   const [password, setPassword] = useState("");
