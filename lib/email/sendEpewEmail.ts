@@ -11,6 +11,7 @@ type SendEpewEmailInput = {
   idempotencyKey: string;
   metadata?: Record<string, unknown>;
   from?: string;
+  replyTo?: string | string[];
 };
 
 export async function sendEpewEmail(input: SendEpewEmailInput) {
@@ -24,6 +25,7 @@ export async function sendEpewEmail(input: SendEpewEmailInput) {
     idempotencyKey,
     metadata = {},
     from = EPEW_EMAIL_FROM,
+    replyTo,
   } = input;
 
   if (!resend) {
@@ -75,6 +77,7 @@ export async function sendEpewEmail(input: SendEpewEmailInput) {
       to: recipientEmail,
       subject,
       html,
+      ...(replyTo ? { replyTo } : {}),
     });
 
     if (result.error || !result.data?.id) {
