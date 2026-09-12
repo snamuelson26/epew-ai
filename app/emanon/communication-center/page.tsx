@@ -23,9 +23,18 @@ type Message = {
   created_at: string;
   sender?: { display_name: string; title: string };
 };
+type Contact = {
+  id: string;
+  email: string;
+  display_name: string;
+  title: string;
+  conversation_id: string;
+};
 
 export default function EmanonCommunicationCenter() {
   const [member, setMember] = useState<Member | null>(null);
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [selectedContactId, setSelectedContactId] = useState("");
   const [conversationId, setConversationId] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [subject, setSubject] = useState("");
@@ -59,16 +68,55 @@ export default function EmanonCommunicationCenter() {
       return;
     }
     setMember(m);
-    const { data: links } = await supabase
-      .from("emanon_conversation_members")
-      .select("conversation_id")
-      .eq("member_id", m.id)
-      .limit(1);
-    const cid = links?.[0]?.conversation_id;
-    if (cid) {
-      setConversationId(cid);
-      await loadMessages(cid, m.id);
+    const { data: conversations, error: conversationsError } = await supabase
+      .from("emanon_conversations")
+      .select("id")
+      .eq("organization_id", m.organization_id)
+      .eq("conversation_type", "direct");
+    if (conversationsError) {
+      setNotice(conversationsError.message);
+      return;
     }
+    const conversationIds = (conversations ?? []).map((item) => item.id);
+    if (!conversationIds.length) return;
+    const { data: links, error: linksError } = await supabase
+      .from("emanon_conversation_members")
+      .select(
+        "conversation_id,member:emanon_staff_members!member_id(id,email,display_name,title)",
+      )
+      .in("conversation_id", conversationIds)
+      .neq("member_id", m.id);
+    if (linksError) {
+      setNotice(linksError.message);
+      return;
+    }
+    const availableContacts = (links ?? [])
+      .map((link) => {
+        const contact = Array.isArray(link.member)
+          ? link.member[0]
+          : link.member;
+        return contact
+          ? { ...contact, conversation_id: link.conversation_id }
+          : null;
+      })
+      .filter((contact): contact is Contact => contact !== null)
+      .sort((a, b) => a.display_name.localeCompare(b.display_name));
+    setContacts(availableContacts);
+    const initialContact = availableContacts[0];
+    if (!initialContact) return;
+    setSelectedContactId(initialContact.id);
+    setConversationId(initialContact.conversation_id);
+    await loadMessages(initialContact.conversation_id, m.id);
+  }
+  async function selectContact(contactId: string) {
+    if (!member) return;
+    const contact = contacts.find((item) => item.id === contactId);
+    if (!contact) return;
+    setSelectedContactId(contact.id);
+    setConversationId(contact.conversation_id);
+    setMessages([]);
+    setNotice("");
+    await loadMessages(contact.conversation_id, member.id);
   }
   async function loadMessages(cid: string, memberId: string) {
     const { data, error } = await supabase
@@ -170,6 +218,9 @@ export default function EmanonCommunicationCenter() {
       </main>
     );
   const isDirector = member.role_code === "program_director";
+  const selectedContact = contacts.find(
+    (contact) => contact.id === selectedContactId,
+  );
   return (
     <main className="min-h-screen bg-[#f5f7fb] p-4 text-[#06245c] md:p-8">
       <div className="mx-auto max-w-6xl">
@@ -196,6 +247,30 @@ export default function EmanonCommunicationCenter() {
             </button>
           </div>
         </header>
+        {contacts.length > 0 && (
+          <section className="mb-6 rounded-2xl bg-white p-5 shadow">
+            <label className="block font-bold text-[#06245c]">
+              Recipient / Contact
+              <select
+                value={selectedContactId}
+                onChange={(event) => void selectContact(event.target.value)}
+                className="mt-2 w-full rounded-xl border-2 border-blue-200 bg-white p-4 text-base font-semibold text-gray-900"
+              >
+                {contacts.map((contact) => (
+                  <option key={contact.id} value={contact.id}>
+                    {contact.display_name} — {contact.title} — {contact.email}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {selectedContact && (
+              <p className="mt-3 text-sm text-gray-600">
+                Private one-to-one Emanon conversation with{" "}
+                <strong>{selectedContact.display_name}</strong>
+              </p>
+            )}
+          </section>
+        )}
         {!conversationId && (
           <section className="rounded-2xl bg-amber-50 p-6 font-semibold text-amber-900">
             Your secure account is active. The direct conversation will appear
@@ -206,9 +281,14 @@ export default function EmanonCommunicationCenter() {
         {conversationId && (
           <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
             <section className="rounded-3xl bg-white p-6 shadow">
-              <h2 className="mb-5 text-2xl font-bold">
+              <h2 className="mb-1 text-2xl font-bold">
                 Full Conversation History
               </h2>
+              {selectedContact && (
+                <p className="mb-5 text-sm text-gray-600">
+                  {member.display_name} ↔ {selectedContact.display_name}
+                </p>
+              )}
               <div className="max-h-[650px] space-y-4 overflow-y-auto">
                 {messages.length === 0 && (
                   <p className="text-gray-600">No messages yet.</p>
@@ -219,16 +299,24 @@ export default function EmanonCommunicationCenter() {
                     className={`rounded-2xl border p-4 ${message.sender_member_id === member.id ? "border-blue-200 bg-blue-50" : "border-green-200 bg-green-50"}`}
                   >
                     <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                      <p className="font-bold">
-                        {message.sender?.display_name ?? "Emanon Staff"}
-                      </p>
+                      <div>
+                        <p className="font-bold">
+                          From: {message.sender?.display_name ?? "Emanon Staff"}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          To:{" "}
+                          {message.sender_member_id === member.id
+                            ? selectedContact?.display_name ?? "Emanon Staff"
+                            : member.display_name}
+                        </p>
+                      </div>
                       <span className="rounded-full bg-white px-3 py-1 text-xs font-bold uppercase">
                         {message.message_type.replace("_", " ")}
                       </span>
                     </div>
-                    {message.subject && (
-                      <h3 className="font-bold">{message.subject}</h3>
-                    )}
+                    <h3 className="font-bold">
+                      Subject: {message.subject || "No subject"}
+                    </h3>
                     <p className="whitespace-pre-wrap text-gray-800">
                       {message.body}
                     </p>
@@ -268,6 +356,20 @@ export default function EmanonCommunicationCenter() {
                 </p>
               )}
               <form onSubmit={submit} className="space-y-4">
+                <label className="block text-sm font-bold">
+                  Recipient
+                  <select
+                    value={selectedContactId}
+                    onChange={(event) => void selectContact(event.target.value)}
+                    className="mt-1 w-full rounded-xl border p-3 font-semibold"
+                  >
+                    {contacts.map((contact) => (
+                      <option key={contact.id} value={contact.id}>
+                        {contact.display_name} — {contact.email}
+                      </option>
+                    ))}
+                  </select>
+                </label>
                 <select
                   value={type}
                   onChange={(e) => setType(e.target.value)}
@@ -328,7 +430,11 @@ export default function EmanonCommunicationCenter() {
                   disabled={busy}
                   className="w-full rounded-xl bg-[#06245c] p-4 text-lg font-bold text-white disabled:opacity-60"
                 >
-                  {busy ? "Sending..." : "Send to Emanon Conversation"}
+                  {busy
+                    ? "Sending..."
+                    : selectedContact
+                      ? `Send to ${selectedContact.display_name}`
+                      : "Send Message"}
                 </button>
               </form>
             </section>
