@@ -32,5 +32,5 @@ export async function POST(request: Request) {
   if (result.error || !result.data) {
     return NextResponse.json({ error: result.error?.message ?? "Authorization failed." }, { status: 400 });
   }
-  return NextResponse.redirect(result.data.redirect_url);
+  return NextResponse.redirect(result.data.redirect_url, { status: 303 });
 }
