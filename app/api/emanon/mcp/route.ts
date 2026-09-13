@@ -85,6 +85,7 @@ const toolDefinitions = [
   { name: "emanon_read_messages", title: "Read direct conversation", annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false }, description: "Read the full direct Emanon conversation with one authorized staff member, including sender, recipient, subject, type, dates, follow-ups, assignments, and attachment metadata.", inputSchema: { type: "object", properties: { recipient_email: { type: "string", description: "Other staff member's Emanon email. Optional when only one direct contact exists." }, limit: { type: "integer", minimum: 1, maximum: 200, default: 100 } }, additionalProperties: false } },
   { name: "emanon_send_message", title: "Send direct message", annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false }, description: "Send a direct internal Emanon message, report, assignment, follow-up instruction, proposal, or urgent update. The authenticated staff member is always recorded as sender.", inputSchema: { type: "object", required: ["message_type", "body"], properties: { recipient_email: { type: "string", description: "Recipient Emanon email. Optional when only one direct contact exists." }, message_type: { type: "string", enum: allowedTypes }, subject: { type: "string" }, body: { type: "string" }, assignment_due_at: { type: "string", description: "Optional ISO-8601 date/time; assignment messages only." }, follow_up_at: { type: "string", description: "Optional ISO-8601 follow-up date/time." }, attachments: { type: "array", maxItems: 3, description: "Optional small attachments encoded as base64; each must be 2 MB or less.", items: { type: "object", required: ["name", "mime_type", "base64"], properties: { name: { type: "string" }, mime_type: { type: "string" }, base64: { type: "string" } }, additionalProperties: false } } }, additionalProperties: false } },
   { name: "emanon_list_conversations", title: "List conversations", annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false }, description: "List the authenticated user's private one-to-one Emanon conversations and participants.", inputSchema: { type: "object", properties: {}, additionalProperties: false } },
+  { name: "emanon_send_text_attachment", title: "Send text file attachment", annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false }, description: "Create a UTF-8 text file from provided content and send it securely as an attachment in an existing direct Emanon conversation.", inputSchema: { type: "object", required: ["filename", "text_content"], properties: { recipient_email: { type: "string" }, filename: { type: "string", description: "Filename ending in .txt, .md, .csv, or .json." }, text_content: { type: "string", maxLength: 200000 }, message_type: { type: "string", enum: ["message", "report", "proposal"], default: "proposal" }, subject: { type: "string" }, body: { type: "string" }, follow_up_at: { type: "string", description: "Optional ISO-8601 follow-up date/time." } }, additionalProperties: false } },
   { name: "emanon_get_attachment", title: "Get secure attachment link", annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false }, description: "Create a short-lived secure download URL for an attachment that belongs to the selected authorized conversation.", inputSchema: { type: "object", required: ["path"], properties: { recipient_email: { type: "string" }, path: { type: "string" } }, additionalProperties: false } },
   { name: "emanon_update_follow_up", title: "Update message follow-up", annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false }, description: "Create, change, or clear the follow-up date on a message sent by the authenticated user.", inputSchema: { type: "object", required: ["message_id"], properties: { recipient_email: { type: "string" }, message_id: { type: "string" }, follow_up_at: { type: "string", description: "Optional ISO-8601 date/time. Omit or send an empty string to clear." } }, additionalProperties: false } },
   { name: "emanon_mark_read", title: "Mark conversation read", annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false }, description: "Mark all incoming messages in a direct Emanon conversation as opened by the authenticated user.", inputSchema: { type: "object", properties: { recipient_email: { type: "string" } }, additionalProperties: false } },
@@ -114,6 +115,38 @@ async function callTool(name: string, args: Record<string, unknown>, supabase: R
       return { id: item.id, sender: sender ?? (fromSelf ? member : contact), recipient: fromSelf ? contact : member, message_type: item.message_type, subject: item.subject, body: item.body, assignment_due_at: item.assignment_due_at, follow_up_at: item.follow_up_at, attachments: item.attachments, delivery_status: item.receipts, created_at: item.created_at, updated_at: item.updated_at };
     });
     return textResult({ organization: "Emanon Institute", conversation_id: contact.conversation_id, participants: [member, contact], messages });
+  }
+
+  if (name === "emanon_send_text_attachment") {
+    const filename = typeof args.filename === "string" ? args.filename.trim() : "";
+    const content = typeof args.text_content === "string" ? args.text_content : "";
+    if (!filename || !/\.(txt|md|csv|json)$/i.test(filename)) throw new Error("filename must end in .txt, .md, .csv, or .json.");
+    if (!content) throw new Error("text_content is required.");
+    if (Buffer.byteLength(content, "utf8") > 2 * 1024 * 1024) throw new Error("Attachment is larger than 2 MB.");
+    const messageType = typeof args.message_type === "string" ? args.message_type : "proposal";
+    if (!["message", "report", "proposal"].includes(messageType)) throw new Error("Unsupported attachment message_type.");
+    const safe = filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const path = `${member.organization_id}/${member.id}/${crypto.randomUUID()}-${safe}`;
+    const { error: uploadError } = await supabase.storage.from("emanon-communications").upload(
+      path,
+      Buffer.from(content, "utf8"),
+      { contentType: "text/plain; charset=utf-8" },
+    );
+    if (uploadError) throw uploadError;
+    const attachment = { name: filename, path, mime_type: "text/plain; charset=utf-8" };
+    const body = typeof args.body === "string" && args.body.trim() ? args.body.trim() : `Attached: ${filename}`;
+    const { data, error } = await supabase.from("emanon_messages").insert({
+      organization_id: member.organization_id,
+      conversation_id: contact.conversation_id,
+      sender_member_id: member.id,
+      message_type: messageType,
+      subject: typeof args.subject === "string" && args.subject.trim() ? args.subject.trim() : filename,
+      body,
+      follow_up_at: iso(args.follow_up_at),
+      attachments: [attachment],
+    }).select("id,created_at").single();
+    if (error) throw error;
+    return textResult({ sent: true, organization: "Emanon Institute", conversation_id: contact.conversation_id, message_id: data.id, sender: member, recipient: contact, created_at: data.created_at, attachment: { name: filename, mime_type: attachment.mime_type } });
   }
 
   if (name === "emanon_get_attachment") {
