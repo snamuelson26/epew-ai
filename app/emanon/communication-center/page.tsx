@@ -21,6 +21,7 @@ type Message = {
   follow_up_at: string | null;
   attachments: Array<{ name: string; path: string }>;
   created_at: string;
+  receipts?: Array<{ delivered_at: string; opened_at: string | null; member?: { display_name: string; email: string } }>;
   sender?: { display_name: string; title: string };
 };
 type Contact = {
@@ -49,6 +50,20 @@ export default function EmanonCommunicationCenter() {
   useEffect(() => {
     void load();
   }, []);
+  useEffect(() => {
+    if (!conversationId || !member) return;
+    const channel = supabase
+      .channel(`emanon-direct-${conversationId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "emanon_messages", filter: `conversation_id=eq.${conversationId}` },
+        () => void loadMessages(conversationId, member.id),
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [conversationId, member]);
   async function load() {
     const {
       data: { user },
@@ -122,7 +137,7 @@ export default function EmanonCommunicationCenter() {
     const { data, error } = await supabase
       .from("emanon_messages")
       .select(
-        "*,sender:emanon_staff_members!sender_member_id(display_name,title)",
+        "*,sender:emanon_staff_members!sender_member_id(display_name,title),receipts:emanon_message_receipts(delivered_at,opened_at,member:emanon_staff_members!member_id(display_name,email))",
       )
       .eq("conversation_id", cid)
       .order("created_at");
@@ -341,9 +356,18 @@ export default function EmanonCommunicationCenter() {
                         Open {file.name}
                       </button>
                     ))}
-                    <p className="mt-3 text-xs text-gray-500">
-                      {new Date(message.created_at).toLocaleString()}
-                    </p>
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-gray-500">
+                      <span>{new Date(message.created_at).toLocaleString()}</span>
+                      {message.sender_member_id === member.id && (
+                        <span className="font-semibold">
+                          {message.receipts?.some((receipt) => receipt.opened_at)
+                            ? "Read"
+                            : message.receipts?.length
+                              ? "Delivered"
+                              : "Sent"}
+                        </span>
+                      )}
+                    </div>
                   </article>
                 ))}
               </div>
@@ -382,6 +406,7 @@ export default function EmanonCommunicationCenter() {
                     <option value="follow_up">Follow-up Instruction</option>
                   )}
                   <option value="proposal">Proposal</option>
+                  <option value="urgent_update">Urgent Update</option>
                 </select>
                 <input
                   value={subject}
