@@ -3,9 +3,17 @@ import { createClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 
+function safeRedirect(value: unknown) {
+  return typeof value === "string" &&
+    value.startsWith("/emanon/") &&
+    !value.startsWith("//")
+    ? value
+    : "/emanon/communication-center";
+}
+
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => null)) as
-    | { email?: string; password?: string }
+    | { email?: string; password?: string; redirectTo?: string }
     | null;
   const email = body?.email?.trim().toLowerCase() ?? "";
   const password = body?.password ?? "";
@@ -18,10 +26,7 @@ export async function POST(request: NextRequest) {
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error || !data.user) {
     return NextResponse.json(
@@ -45,8 +50,5 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  return NextResponse.json({
-    ok: true,
-    redirectTo: "/emanon/communication-center",
-  });
+  return NextResponse.json({ ok: true, redirectTo: safeRedirect(body?.redirectTo) });
 }
