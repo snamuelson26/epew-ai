@@ -57,6 +57,8 @@ type Entrepreneur = {
   user_id?: string | null;
   entrepreneur_code?: string | null;
   business_code?: string | null;
+  public_business_id?: string | null;
+  source_application_id?: number | null;
   full_name?: string | null;
   business_name?: string | null;
   email?: string | null;
@@ -93,7 +95,7 @@ type Entrepreneur = {
 function businessAccountCode(app: Entrepreneur) {
   const match = String(app.business_name || "").match(/\b[A-Z]{2,6}-\d{2,6}\b/i);
   if (match) return match[0].toUpperCase();
-  return String(app.business_code || app.entrepreneur_code || `Application ${app.id}`);
+  return String(app.public_business_id || app.business_code || app.entrepreneur_code || `Application ${app.id}`);
 }
 
 export default function EntrepreneurDashboardPage() {
@@ -135,7 +137,22 @@ export default function EntrepreneurDashboardPage() {
         return;
       }
 
-      const rows = (data || []) as Entrepreneur[];
+      const applicationRows = (data || []) as Entrepreneur[];
+      const applicationIds = applicationRows.map((row) => Number(row.id)).filter(Number.isFinite);
+      const { data: registryRows } = applicationIds.length
+        ? await supabase
+            .from("entrepreneurs")
+            .select("source_application_id,public_business_id,business_code,entrepreneur_code,campaign_slug,campaign_status,campaign_visitors,campaign_shares,community_units_supported,community_units_required,units_supported,units_required,leadership_credit,referred_units_for_others,vision_score,current_stage,status")
+            .in("source_application_id", applicationIds)
+        : { data: [] };
+      const registryByApplication = new Map(
+        (registryRows || []).map((row) => [Number(row.source_application_id), row]),
+      );
+      const rows = applicationRows.map((row) => ({
+        ...row,
+        ...(registryByApplication.get(Number(row.id)) || {}),
+        id: row.id,
+      }));
       setApplications(rows);
 
       if (!rows.length) {
@@ -311,6 +328,7 @@ export default function EntrepreneurDashboardPage() {
   const applicationStatus = entrepreneur.status ?? "Pending Review";
   const normalizedApplicationStatus = applicationStatus.trim().toLowerCase();
   const normalizedApplicationDecision = String(entrepreneur.application_decision || "").trim().toLowerCase();
+  const isOrgdhPartner = String(entrepreneur.business_name || "").trim().toLowerCase().includes("orgdh network");
   const businessApprovalReached = normalizedApplicationDecision === "approved" || [
     "approved",
     "campaign ready",
@@ -602,27 +620,37 @@ export default function EntrepreneurDashboardPage() {
         {message && <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-blue-800">{message}</div>}
 
         <section className="rounded-3xl bg-gradient-to-r from-blue-950 via-blue-900 to-green-700 p-10 text-white shadow-2xl">
-          <p className="text-3xl font-black uppercase tracking-widest text-lime-300">WELCOME TO IBOS</p>
-          <h1 className="mt-2 text-4xl font-extrabold leading-none">I Am My Own Boss</h1>
-          <p className="mt-3 text-3xl font-semibold text-white">Community → <span className="text-lime-300">Leadership</span> → <span className="text-white">Business</span> → <span className="text-lime-300">Wealth</span></p>
+          <p className="text-3xl font-black uppercase tracking-widest text-lime-300">{isOrgdhPartner ? "WELCOME TO ORGDH NETWORK" : "WELCOME TO IBOS"}</p>
+          <h1 className="mt-2 text-4xl font-extrabold leading-none">{isOrgdhPartner ? "Promotion & Design Partner" : "I Am My Own Boss"}</h1>
+          <p className="mt-3 text-3xl font-semibold text-white">{isOrgdhPartner ? <>Entrepreneurs → <span className="text-lime-300">Promotion</span> → <span className="text-white">Design</span> → <span className="text-lime-300">Growth</span></> : <>Community → <span className="text-lime-300">Leadership</span> → <span className="text-white">Business</span> → <span className="text-lime-300">Wealth</span></>}</p>
           <div className="mt-10 rounded-3xl border border-lime-400 bg-gradient-to-r from-slate-900/40 to-green-800/40 p-8">
             <h2 className="text-4xl font-black text-lime-300">🎉 CONGRATULATIONS!</h2>
-            <p className="mt-5 text-2xl font-semibold">Your business has been approved for funding of up to</p>
-            <div className="mt-2 text-6xl font-black text-lime-200 drop-shadow-lg">$100,000</div>
-            <p className="text-2xl font-semibold">through the Ekero Partners Empower Wealth Program.</p>
+            {isOrgdhPartner ? (
+              <>
+                <p className="mt-5 text-2xl font-semibold">ORGDH Network is active as an EPEW Partner Entrepreneur for</p>
+                <div className="mt-2 text-5xl font-black text-lime-200 drop-shadow-lg">Business Promotion & Design</div>
+                <p className="mt-4 text-2xl font-semibold">Supporters can participate weekly, monthly, or yearly.</p>
+              </>
+            ) : (
+              <>
+                <p className="mt-5 text-2xl font-semibold">Your business has been approved for funding of up to</p>
+                <div className="mt-2 text-6xl font-black text-lime-200 drop-shadow-lg">$100,000</div>
+                <p className="text-2xl font-semibold">through the Ekero Partners Empower Wealth Program.</p>
+              </>
+            )}
           </div>
         </section>
 
         <section className="rounded-2xl bg-white p-6 shadow">
-          <h2 className="mb-4 text-xl font-bold text-slate-900">Your Entrepreneur Journey</h2>
+          <h2 className="mb-4 text-xl font-bold text-slate-900">{isOrgdhPartner ? "Your Partner Entrepreneur Journey" : "Your Entrepreneur Journey"}</h2>
           <div className="grid gap-3 md:grid-cols-3">
-            <JourneyStep label="Registration Completed" done />
-            <JourneyStep label="Questionnaire Completed" done />
-            <JourneyStep label="Application Completed" done />
-            <JourneyStep label="Personal Coach Assigned" done />
-            <JourneyStep label="Pre-Qualification Completed" done />
-            <JourneyStep label="Qualification Interview Is Completed" done />
-            <JourneyStep label="Business Approved for Up to $100,000" done />
+            <JourneyStep label={isOrgdhPartner ? "Partner Registration Completed" : "Registration Completed"} done />
+            <JourneyStep label={isOrgdhPartner ? "Promotion & Design Profile Completed" : "Questionnaire Completed"} done />
+            <JourneyStep label={isOrgdhPartner ? "Partner Verification Completed" : "Application Completed"} done />
+            <JourneyStep label={isOrgdhPartner ? "EPEW Partner Team Connected" : "Personal Coach Assigned"} done />
+            <JourneyStep label={isOrgdhPartner ? "Partner Services Activated" : "Pre-Qualification Completed"} done />
+            <JourneyStep label={isOrgdhPartner ? "Promotion Workflow Ready" : "Qualification Interview Is Completed"} done />
+            <JourneyStep label={isOrgdhPartner ? "Partner Entrepreneur Approved" : "Business Approved for Up to $100,000"} done />
             <JourneyStep label="Campaign Activated & Invitation Link Available" done={approvedCampaignAndInvitationAvailable} active={!approvedCampaignAndInvitationAvailable} />
             <JourneyStep
               label={approvedBusinessIdeaDevelopmentApproved
@@ -644,8 +672,8 @@ export default function EntrepreneurDashboardPage() {
           <section className="rounded-2xl bg-white p-6 shadow xl:col-span-2">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900">Community Leadership Goal</h2>
-                <p className="mt-2 text-slate-600">Build your community by reaching 20 Community Support Units.</p>
+                <h2 className="text-2xl font-bold text-slate-900">{isOrgdhPartner ? "Partner Support Goal" : "Community Leadership Goal"}</h2>
+                <p className="mt-2 text-slate-600">{isOrgdhPartner ? "Build support for ORGDH Network's entrepreneur promotion and design services through weekly, monthly, or yearly participation." : "Build your community by reaching 20 Community Support Units."}</p>
               </div>
               <div className={`rounded-full px-4 py-2 text-sm font-bold ${hasReachedGoal ? "bg-green-100 text-green-700" : "bg-blue-100 text-blue-700"}`}>{hasReachedGoal ? "Community Leader" : "Campaign Ready"}</div>
             </div>
@@ -661,7 +689,7 @@ export default function EntrepreneurDashboardPage() {
         </div>
 
         <section className="rounded-2xl bg-white p-6 shadow">
-          <h2 className="mb-4 text-xl font-bold text-slate-900">Campaign Center</h2>
+          <h2 className="mb-4 text-xl font-bold text-slate-900">{isOrgdhPartner ? "ORGDH Promotion & Support Center" : "Campaign Center"}</h2>
           <div className="rounded-xl bg-slate-50 p-4"><p className="text-sm font-bold text-slate-500">Your Campaign Link</p><p className="mt-2 break-all font-semibold text-blue-700">{campaignUrl}</p></div>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link href={`/campaign/${campaignSlug}`} className="rounded-xl bg-blue-700 px-5 py-3 font-bold text-white hover:bg-blue-800">🌐 View My Campaign</Link>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 type ApplicationIdentity = {
@@ -26,11 +26,7 @@ export default function EntrepreneurIdentityBar() {
   const [business, setBusiness] = useState<BusinessIdentity | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    void loadIdentity();
-  }, []);
-
-  async function loadIdentity() {
+  const loadIdentity = useCallback(async () => {
     setLoading(true);
 
     try {
@@ -86,7 +82,13 @@ export default function EntrepreneurIdentityBar() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    // Identity is loaded from the authenticated Supabase session after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadIdentity();
+  }, [loadIdentity]);
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -105,6 +107,7 @@ export default function EntrepreneurIdentityBar() {
   const entrepreneurPhoto = business?.entrepreneur_photo || application?.entrepreneur_photo_url || null;
   const businessLogo = business?.business_logo || application?.business_photo_url || null;
   const verified = Boolean(business?.public_business_id || Number(application?.id) === 27);
+  const isOrgdhPartner = businessName.trim().toLowerCase().includes("orgdh network");
 
   return (
     <header className="border-b border-slate-200 bg-white shadow-sm">
@@ -124,7 +127,7 @@ export default function EntrepreneurIdentityBar() {
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="truncate text-xl font-extrabold text-slate-900">{entrepreneurName}</h1>
               <span className={`rounded-full px-3 py-1 text-xs font-extrabold ${verified ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"}`}>
-                {verified ? "✓ Verified Entrepreneur" : "Identity Pending"}
+                {verified ? (isOrgdhPartner ? "✓ Verified Partner Entrepreneur" : "✓ Verified Entrepreneur") : "Identity Pending"}
               </span>
             </div>
             <p className="mt-1 truncate font-bold text-[#10246f]">{businessName}</p>

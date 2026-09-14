@@ -1,24 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+
+type PublicBusiness = {
+  business_name?: string | null;
+  full_name?: string | null;
+  business_category?: string | null;
+  city?: string | null;
+  state?: string | null;
+  business_description?: string | null;
+  business_logo?: string | null;
+  business_logo_url?: string | null;
+  logo_url?: string | null;
+  entrepreneur_photo?: string | null;
+  entrepreneur_photo_url?: string | null;
+  photo_url?: string | null;
+  profile_photo_url?: string | null;
+};
 
 export default function SupportEntrepreneurPage() {
   const params = useParams();
   const businessId = typeof params?.slug === "string" ? params.slug : "";
 
-  const [business, setBusiness] = useState<any>(null);
+  const [business, setBusiness] = useState<PublicBusiness | null>(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [logoError, setLogoError] = useState(false);
   const [photoError, setPhotoError] = useState(false);
 
-  useEffect(() => {
-    if (businessId) loadBusiness();
-  }, [businessId]);
-
-  async function loadBusiness() {
+  const loadBusiness = useCallback(async () => {
     setLoading(true);
     setMessage("");
 
@@ -38,7 +50,13 @@ export default function SupportEntrepreneurPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [businessId]);
+
+  useEffect(() => {
+    // The public business record is loaded after the dynamic route is available.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (businessId) void loadBusiness();
+  }, [businessId, loadBusiness]);
 
   if (loading) {
     return <main className="min-h-screen bg-[#f4f7fb] p-8 text-[#06245c]"><p className="text-center text-xl font-bold">Loading...</p></main>;
@@ -63,6 +81,7 @@ export default function SupportEntrepreneurPage() {
   const state = business.state || "";
   const location = [city, state].filter(Boolean).join(", ");
   const description = business.business_description || "This entrepreneur is building a business designed to serve the community, create opportunity, and build long-term wealth.";
+  const isOrgdhPartner = businessName.trim().toLowerCase().includes("orgdh network");
 
   const logo = business.business_logo || business.business_logo_url || business.logo_url;
   const photo = business.entrepreneur_photo || business.entrepreneur_photo_url || business.photo_url || business.profile_photo_url;
@@ -88,8 +107,8 @@ export default function SupportEntrepreneurPage() {
         <section className="overflow-hidden rounded-[32px] bg-white shadow-2xl">
           <div className="bg-[#06245c] px-6 py-9 text-center text-white">
             <div className="inline-flex flex-col items-center rounded-3xl bg-lime-300 px-9 py-4 text-[#06245c] shadow-lg">
-              <span className="text-xl font-black md:text-2xl">⭐ EPEW Qualified Entrepreneur</span>
-              <span className="mt-1 text-3xl font-black md:text-4xl">$100,000.00</span>
+              <span className="text-xl font-black md:text-2xl">⭐ {isOrgdhPartner ? "EPEW Partner Entrepreneur" : "EPEW Qualified Entrepreneur"}</span>
+              <span className="mt-1 text-3xl font-black md:text-4xl">{isOrgdhPartner ? "Promotion & Design" : "$100,000.00"}</span>
             </div>
           </div>
 
@@ -130,7 +149,7 @@ export default function SupportEntrepreneurPage() {
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               <Info label="Business Category" value={category} />
               <Info label="Location" value={location || "Community"} />
-              <Info label="Funding Approval" value="$100,000.00" />
+              <Info label={isOrgdhPartner ? "Partner Role" : "Funding Approval"} value={isOrgdhPartner ? "Business Promotion & Design" : "$100,000.00"} />
               <Info label="Campaign Status" value="Active" />
             </div>
           </div>
@@ -138,8 +157,8 @@ export default function SupportEntrepreneurPage() {
           <div className="rounded-3xl border border-green-200 bg-green-50 p-7 shadow-xl">
             <h2 className="text-3xl font-black text-green-900">Why Become a Founding Supporter?</h2>
             <div className="mt-6 space-y-5 text-green-950">
-              <Benefit title="You become part of this entrepreneur's success story." text="You will be recognized as a Founding Supporter and be part of their journey and legacy." />
-              <Benefit title="You help launch a real business that serves its community." text="Your support helps turn a vision into a business that creates value, serves people, and builds opportunity." />
+              <Benefit title={isOrgdhPartner ? "You help entrepreneurs become visible and ready for growth." : "You become part of this entrepreneur's success story."} text={isOrgdhPartner ? "Your support strengthens professional promotion, design, and campaign services for entrepreneurs." : "You will be recognized as a Founding Supporter and be part of their journey and legacy."} />
+              <Benefit title={isOrgdhPartner ? "You support an EPEW partner entrepreneur." : "You help launch a real business that serves its community."} text={isOrgdhPartner ? "ORGDH Network helps businesses communicate their vision through promotion and design." : "Your support helps turn a vision into a business that creates value, serves people, and builds opportunity."} />
               <Benefit title="You may receive participation benefits of up to 6% annually." text="Participation benefits depend on business performance and EPEW policies and regulations." />
               <Benefit title="Your support creates jobs, strengthens communities, and helps build the next generation of entrepreneurs." text="" />
             </div>
@@ -160,7 +179,7 @@ export default function SupportEntrepreneurPage() {
             <Link href={loginHref} className="inline-block w-full rounded-2xl bg-green-700 px-8 py-5 text-xl font-black text-white shadow-lg transition hover:bg-green-800">
               Support This Entrepreneur →
             </Link>
-            <p className="mt-4 font-bold text-slate-600">🔒 Secure • Simple • Impactful</p>
+            <p className="mt-4 font-bold text-slate-600">🔒 Secure • Weekly, Monthly, or Yearly • Impactful</p>
           </div>
         </section>
 
