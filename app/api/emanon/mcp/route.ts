@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+import { emanonSendMessage } from "@/lib/emanon/directMessaging";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -204,19 +205,18 @@ async function callTool(name: string, args: Record<string, unknown>, supabase: R
       if (error) throw error;
       uploaded.push({ name: file.name, path, mime_type: file.mime_type });
     }
-    const { data, error } = await supabase.from("emanon_messages").insert({
-      organization_id: member.organization_id,
-      conversation_id: contact.conversation_id,
-      sender_member_id: member.id,
-      message_type: messageType,
-      subject: typeof args.subject === "string" && args.subject.trim() ? args.subject.trim() : null,
+    const result = await emanonSendMessage({
+      supabase,
+      senderEmail: member.email,
+      recipientEmail: contact.email,
+      messageType: messageType as "message" | "report" | "assignment" | "follow_up" | "proposal",
+      subject: typeof args.subject === "string" ? args.subject : null,
       body,
-      assignment_due_at: messageType === "assignment" ? iso(args.assignment_due_at) : null,
-      follow_up_at: iso(args.follow_up_at),
+      assignmentDueAt: typeof args.assignment_due_at === "string" ? args.assignment_due_at : null,
+      followUpAt: typeof args.follow_up_at === "string" ? args.follow_up_at : null,
       attachments: uploaded,
-    }).select("id,created_at").single();
-    if (error) throw error;
-    return textResult({ sent: true, organization: "Emanon Institute", conversation_id: contact.conversation_id, message_id: data.id, sender: member, recipient: contact, created_at: data.created_at, attachments: uploaded.map(({ name, mime_type }) => ({ name, mime_type })) });
+    });
+    return textResult({ sent: true, organization: "Emanon Institute", conversation_id: result.conversation.id, message_id: result.message.id, sender: member, recipient: contact, created_at: result.message.created_at, attachments: uploaded.map(({ name, mime_type }) => ({ name, mime_type })) });
   }
 
   throw new Error("Unknown tool.");
