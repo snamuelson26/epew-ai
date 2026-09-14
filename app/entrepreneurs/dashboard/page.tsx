@@ -697,7 +697,7 @@ export default function EntrepreneurDashboardPage() {
             <Link href={`/campaign/${campaignSlug}`} className="rounded-xl bg-blue-700 px-5 py-3 font-bold text-white hover:bg-blue-800">🌐 View My Campaign</Link>
             <button type="button" onClick={copyCampaignLink} className="rounded-xl bg-green-700 px-5 py-3 font-bold text-white hover:bg-green-800">🔗 Copy Campaign Link</button>
             <button type="button" onClick={recordShare} className="rounded-xl bg-purple-700 px-5 py-3 font-bold text-white hover:bg-purple-800">📤 Share My Vision</button>
-            <Link href="/entrepreneurs/supporters" className="rounded-xl bg-slate-800 px-5 py-3 font-bold text-white hover:bg-slate-900">👥 Founding Supporters</Link>
+            <Link href={`/entrepreneurs/supporters?applicationId=${encodeURIComponent(String(entrepreneur.id))}`} className="rounded-xl bg-slate-800 px-5 py-3 font-bold text-white hover:bg-slate-900">👥 Founding Supporters</Link>
           </div>
         </section>
 

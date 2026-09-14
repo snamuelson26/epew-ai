@@ -79,6 +79,7 @@ function formatEastern(value: string | null) {
 }
 
 export default function PotentialSupportersPage() {
+  const [applications, setApplications] = useState<Profile[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [business, setBusiness] = useState<Business | null>(null);
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -109,25 +110,31 @@ export default function PotentialSupportersPage() {
       return;
     }
 
-    const { data: app, error: appError } = await supabase
+    const { data: applicationData, error: appError } = await supabase
       .from("entrepreneur_applications")
       .select("id,user_id,full_name,business_name")
       .eq("user_id", user.id)
-      .maybeSingle();
+      .order("created_at", { ascending: false });
 
-    if (appError || !app) {
+    const applicationRows = (applicationData || []) as Profile[];
+    if (appError || applicationRows.length === 0) {
       setNotice(appError?.message || "Unable to load your entrepreneur profile.");
       setLoading(false);
       return;
     }
 
-    setProfile(app as Profile);
+    const requestedApplicationId = new URLSearchParams(window.location.search).get("applicationId");
+    const selectedApplication =
+      applicationRows.find((application) => String(application.id) === String(requestedApplicationId || "")) ||
+      applicationRows[0];
+
+    setApplications(applicationRows);
+    setProfile(selectedApplication);
 
     const { data: businessData } = await supabase
       .from("entrepreneurs")
       .select("public_business_id,business_name,business_website_url")
-      .eq("source_application_id", app.id)
-      .eq("qualified", true)
+      .eq("source_application_id", selectedApplication.id)
       .order("created_at", { ascending: true })
       .limit(1)
       .maybeSingle();
@@ -138,6 +145,7 @@ export default function PotentialSupportersPage() {
       .from("epew_entrepreneur_communication_contacts")
       .select("id,prospect_name,phone,email,preferred_language,relationship,conversation_notes,status")
       .eq("entrepreneur_user_id", user.id)
+      .eq("entrepreneur_application_id", String(selectedApplication.id))
       .order("created_at", { ascending: false });
 
     if (contactError) setNotice(contactError.message);
@@ -196,7 +204,12 @@ export default function PotentialSupportersPage() {
     event.preventDefault();
     setNotice("");
 
-    if (!profile || !name.trim()) {
+    if (!profile) {
+      setNotice("Please select the business account for this potential supporter.");
+      return;
+    }
+
+    if (!name.trim()) {
       setNotice("Please enter the supporter name.");
       return;
     }
@@ -295,6 +308,12 @@ export default function PotentialSupportersPage() {
     return <main className="min-h-screen bg-slate-100 p-5 text-slate-700">Loading potential supporters...</main>;
   }
 
+  function switchBusiness(applicationId: string) {
+    const params = new URLSearchParams(window.location.search);
+    params.set("applicationId", applicationId);
+    window.location.href = `/entrepreneurs/supporters?${params.toString()}`;
+  }
+
   return (
     <main className="min-h-screen bg-slate-100 px-4 py-6 sm:px-6 md:py-10">
       <div className="mx-auto max-w-6xl space-y-6">
@@ -303,6 +322,28 @@ export default function PotentialSupportersPage() {
           <h1 className="mt-2 text-3xl font-black sm:text-4xl">My Potential Supporters</h1>
           <p className="mt-2 text-white/90">Add people you have already spoken with who may support your business journey.</p>
         </header>
+
+        {applications.length > 1 && profile && (
+          <section className="rounded-2xl border border-blue-200 bg-white p-5 shadow">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="text-lg font-extrabold text-blue-950">Business Account</h2>
+                <p className="mt-1 text-sm text-slate-600">Choose the business account for this potential supporter.</p>
+              </div>
+              <select
+                value={String(profile.id)}
+                onChange={(event) => switchBusiness(event.target.value)}
+                className="min-w-72 rounded-xl border border-slate-300 bg-white px-4 py-3 font-bold text-slate-900"
+              >
+                {applications.map((application) => (
+                  <option key={String(application.id)} value={String(application.id)}>
+                    {application.business_name || `Application ${application.id}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </section>
+        )}
 
         {notice && <div className="rounded-2xl border border-blue-200 bg-blue-50 p-4 font-semibold text-blue-800">{notice}</div>}
 
@@ -359,7 +400,7 @@ export default function PotentialSupportersPage() {
         </section>
 
         <div className="flex flex-col gap-3 sm:flex-row">
-          <Link href="/entrepreneurs/dashboard" className="rounded-xl bg-blue-950 px-5 py-3 text-center font-bold text-white">Back to Entrepreneur Dashboard</Link>
+          <Link href={`/entrepreneurs/dashboard?applicationId=${encodeURIComponent(String(profile?.id || ""))}`} className="rounded-xl bg-blue-950 px-5 py-3 text-center font-bold text-white">Back to Entrepreneur Dashboard</Link>
           <Link href={supportLink.replace("https://www.epew.us", "")} className="rounded-xl bg-green-700 px-5 py-3 text-center font-bold text-white">View My Support Page</Link>
         </div>
       </div>

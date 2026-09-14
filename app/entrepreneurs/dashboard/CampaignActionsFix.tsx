@@ -28,8 +28,13 @@ export default function CampaignActionsFix() {
             label.includes("my potential supporter") ||
             label.includes("my potential supporters")
           ) {
-            if (link.getAttribute("href") !== POTENTIAL_SUPPORTERS_PATH) {
-              link.href = POTENTIAL_SUPPORTERS_PATH;
+            const applicationId = new URLSearchParams(window.location.search).get("applicationId");
+            const supportersPath = applicationId
+              ? `${POTENTIAL_SUPPORTERS_PATH}?applicationId=${encodeURIComponent(applicationId)}`
+              : POTENTIAL_SUPPORTERS_PATH;
+
+            if (link.getAttribute("href") !== supportersPath) {
+              link.href = supportersPath;
             }
 
             const desiredLabel = "👥 My Potential Supporters";
