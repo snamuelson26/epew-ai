@@ -141,13 +141,13 @@ export async function POST(request: NextRequest) {
     }
 
     // =====================================================
-    // Temporary official Establishment Meeting opening.
+    // Temporary official Qualification Interview opening.
     //
     // General scheduling opens:
     // Tuesday, August 18, 2026 at 1:00 PM Eastern.
     //
     // Samuel Nelson / Food Fans Restaurant has temporary early scheduling access
-    // while general Establishment Meeting scheduling is not yet open.
+    // while general Qualification Interview scheduling is not yet open.
     // =====================================================
 
     const isSamuelFoodFansEarlyAccess =
@@ -167,7 +167,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           message:
-            "Establishment Meeting appointments officially begin Tuesday, August 18, 2026 at 1:00 PM Eastern. Please choose Tuesday at 1:00 PM or later.",
+            "Qualification Interview appointments officially begin Tuesday, August 18, 2026 at 1:00 PM Eastern. Please choose Tuesday at 1:00 PM or later.",
         },
         { status: 400 }
       );
@@ -212,7 +212,7 @@ export async function POST(request: NextRequest) {
     }
 
     // =====================================================
-    // Load the current Establishment Meeting record.
+    // Load the current Qualification Interview record.
     // =====================================================
 
     const { data: meeting, error: meetingError } =
@@ -233,7 +233,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           message:
-            "Your Establishment Meeting record could not be found.",
+            "Your Qualification Interview record could not be found.",
         },
         { status: 404 }
       );
@@ -317,7 +317,7 @@ export async function POST(request: NextRequest) {
       meeting.meeting_status ?? null;
 
     // =====================================================
-    // Schedule the Establishment Meeting.
+    // Schedule the Qualification Interview.
     // =====================================================
 
     const {
@@ -503,11 +503,11 @@ export async function POST(request: NextRequest) {
           ? "meeting_rescheduled"
           : "meeting_scheduled",
         event_name: wasNoShow
-          ? "Establishment Meeting Rescheduled"
-          : "Establishment Meeting Scheduled",
+          ? "Qualification Interview Rescheduled"
+          : "Qualification Interview Scheduled",
         event_description: wasNoShow
-          ? "Entrepreneur selected the desired date and time. EPEW verified the requested 60-minute period was available and rescheduled the Establishment Meeting."
-          : "Entrepreneur selected the desired date and time. EPEW verified the requested 60-minute period was available and scheduled the Establishment Meeting.",
+          ? "Entrepreneur selected the desired date and time. EPEW verified the requested 60-minute period was available and rescheduled the Qualification Interview."
+          : "Entrepreneur selected the desired date and time. EPEW verified the requested 60-minute period was available and scheduled the Qualification Interview.",
         previous_status: previousMeetingStatus,
         new_status: "scheduled",
         occurred_at: now,

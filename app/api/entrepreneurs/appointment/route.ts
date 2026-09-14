@@ -5,6 +5,51 @@ import {
   getEstablishmentMeetingStartWindow,
 } from "@/lib/enterprise/establishment-meeting/EstablishmentMeetingTiming";
 
+function easternLocalToUtc(dateValue: string, timeValue: string) {
+  const dateMatch = dateValue.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const timeMatch = timeValue.match(/^(\d{2}):(\d{2})(?::(\d{2}))?$/);
+  if (!dateMatch || !timeMatch) return null;
+
+  const [, year, month, day] = dateMatch;
+  const [, hour, minute, second = "00"] = timeMatch;
+  const localPartsAsUtc = Date.UTC(
+    Number(year),
+    Number(month) - 1,
+    Number(day),
+    Number(hour),
+    Number(minute),
+    Number(second)
+  );
+
+  function offsetAt(instantMs: number) {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/New_York",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hourCycle: "h23",
+    }).formatToParts(new Date(instantMs));
+    const value = (type: string) =>
+      Number(parts.find((part) => part.type === type)?.value ?? 0);
+    const renderedPartsAsUtc = Date.UTC(
+      value("year"),
+      value("month") - 1,
+      value("day"),
+      value("hour"),
+      value("minute"),
+      value("second")
+    );
+    return renderedPartsAsUtc - instantMs;
+  }
+
+  let instant = localPartsAsUtc - offsetAt(localPartsAsUtc);
+  instant = localPartsAsUtc - offsetAt(instant);
+  return new Date(instant);
+}
+
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -36,7 +81,11 @@ export async function GET(request: NextRequest) {
           user_id,
           full_name,
           business_name,
-          email
+          email,
+          interview_status,
+          interview_date,
+          interview_time,
+          interview_notes
         `
       )
       .eq("user_id", user.id);
@@ -68,7 +117,7 @@ export async function GET(request: NextRequest) {
 
     const applicationId = Number(application.id);
 
-    const { data: meeting, error: meetingError } =
+    const { data: existingMeeting, error: meetingError } =
       await supabaseAdmin
         .from("epew_coach_meetings")
         .select(
@@ -124,6 +173,92 @@ export async function GET(request: NextRequest) {
       throw assignmentError;
     }
 
+    let meeting = existingMeeting;
+
+    if (!meeting && assignment && String(application.interview_status || "").trim().toLowerCase() === "completed") {
+      let completedAt: Date | null = null;
+
+      try {
+        const interviewNotes = typeof application.interview_notes === "string"
+          ? JSON.parse(application.interview_notes)
+          : application.interview_notes;
+        const recordedCompletion = interviewNotes?.completed_at;
+        if (recordedCompletion) {
+          const parsedCompletion = new Date(String(recordedCompletion));
+          if (!Number.isNaN(parsedCompletion.getTime())) completedAt = parsedCompletion;
+        }
+      } catch {
+        completedAt = null;
+      }
+
+      if (!completedAt && application.interview_date && application.interview_time) {
+        completedAt = easternLocalToUtc(
+          String(application.interview_date),
+          String(application.interview_time)
+        );
+      }
+
+      const schedulingAvailableAt = completedAt
+        ? new Date(completedAt.getTime() + 24 * 60 * 60 * 1000)
+        : null;
+
+      if (schedulingAvailableAt && schedulingAvailableAt <= new Date()) {
+        const meetingId = `EPEW-QUALIFICATION-${applicationId}`;
+        const now = new Date().toISOString();
+        const { error: createMeetingError } = await supabaseAdmin
+          .from("epew_coach_meetings")
+          .upsert(
+            {
+              id: meetingId,
+              business_id: String(applicationId),
+              coach_id: assignment.coach_id ?? null,
+              attended: false,
+              meeting_date: now,
+              payload: {
+                source: "automatic_24_hour_post_prequalification_transition",
+                applicationId,
+                meetingName: "Qualification Interview",
+                schedulingAvailableAt: schedulingAvailableAt.toISOString(),
+              },
+              application_id: applicationId,
+              entrepreneur_user_id: application.user_id,
+              coach_assignment_id: assignment.id,
+              meeting_type: "entrepreneur_first_meeting",
+              meeting_status: "ready_to_schedule",
+              preparation_status: "ready",
+              next_required_action: "Schedule your Qualification Interview.",
+            },
+            { onConflict: "id", ignoreDuplicates: true }
+          );
+
+        if (createMeetingError) throw createMeetingError;
+
+        const { data: createdMeeting, error: createdMeetingError } = await supabaseAdmin
+          .from("epew_coach_meetings")
+          .select(
+            `
+              id,
+              application_id,
+              coach_id,
+              meeting_type,
+              meeting_status,
+              zoom_meeting_status,
+              meeting_provider,
+              scheduled_at,
+              meeting_date,
+              zoom_join_url,
+              created_at,
+              updated_at
+            `
+          )
+          .eq("id", meetingId)
+          .single();
+
+        if (createdMeetingError) throw createdMeetingError;
+        meeting = createdMeeting;
+      }
+    }
+
     if (!meeting) {
       return NextResponse.json({
         success: true,
@@ -138,7 +273,7 @@ export async function GET(request: NextRequest) {
         recovery: null,
         action: {
           type: "waiting_for_appointment",
-          label: "Appointment Being Prepared",
+          label: "Qualification Interview Scheduling Opens After the 24-Hour Review",
           href: null,
         },
       });
@@ -333,7 +468,7 @@ export async function GET(request: NextRequest) {
       applicationId,
       appointment: {
         id: meeting.id,
-        type: "Establishment Meeting",
+        type: "Qualification Interview",
         status: entrepreneurFacingMeetingStatus,
         zoomStatus:
           meeting.zoom_meeting_status ?? null,

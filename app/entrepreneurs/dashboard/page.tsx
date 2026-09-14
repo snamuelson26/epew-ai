@@ -103,15 +103,7 @@ export default function EntrepreneurDashboardPage() {
   const [appointment, setAppointment] = useState<AppointmentResponse | null>(null);
   const [appointmentLoading, setAppointmentLoading] = useState(true);
 
-  useEffect(() => {
-    void loadEntrepreneur();
-  }, []);
-
   async function loadEntrepreneur() {
-    setLoading(true);
-    setMessage("");
-    setAppointmentLoading(true);
-
     try {
       const {
         data: { user },
@@ -205,6 +197,12 @@ export default function EntrepreneurDashboardPage() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    // The dashboard is client-authenticated, so its first data load starts after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadEntrepreneur();
+  }, []);
 
   function switchBusiness(applicationId: string) {
     const params = new URLSearchParams(window.location.search);
@@ -310,15 +308,26 @@ export default function EntrepreneurDashboardPage() {
   }
 
   const applicationStatus = entrepreneur.status ?? "Pending Review";
+  const normalizedApplicationStatus = applicationStatus.trim().toLowerCase();
+  const normalizedApplicationDecision = String(entrepreneur.application_decision || "").trim().toLowerCase();
+  const businessApprovalReached = normalizedApplicationDecision === "approved" || [
+    "approved",
+    "campaign ready",
+    "business idea development",
+    "business idea development approved",
+    "business development approved",
+  ].includes(normalizedApplicationStatus);
   const isPreQualification =
-    applicationStatus === "Pending Review" ||
-    applicationStatus === "Application Received" ||
-    applicationStatus === "Application Under Review" ||
-    applicationStatus === "Coach Assigned" ||
-    applicationStatus === "Personal Coach Assigned" ||
-    applicationStatus === "Interview Scheduled" ||
-    applicationStatus === "Business Idea Development" ||
-    applicationStatus === "Qualification Review";
+    !businessApprovalReached && (
+      applicationStatus === "Pending Review" ||
+      applicationStatus === "Application Received" ||
+      applicationStatus === "Application Under Review" ||
+      applicationStatus === "Coach Assigned" ||
+      applicationStatus === "Personal Coach Assigned" ||
+      applicationStatus === "Interview Scheduled" ||
+      applicationStatus === "Business Idea Development" ||
+      applicationStatus === "Qualification Review"
+    );
 
   if (isPreQualification) {
     const interviewState = String(entrepreneur.interview_status || "").trim().toLowerCase();
@@ -327,11 +336,29 @@ export default function EntrepreneurDashboardPage() {
     const questionnaireCompleted = String(entrepreneur.questionnaire_status || "").trim().toLowerCase() === "completed";
     const shouldSchedulePreQualification = questionnaireCompleted && ["pending", "ready to schedule", "ready_to_schedule"].includes(interviewState);
     const coachAssigned = Boolean(entrepreneur.assigned_coach_name || entrepreneur.coach_name);
-    const interviewScheduled = preQualificationScheduled || preQualificationCompleted;
-    const businessIdeaDevelopment = preQualificationCompleted || applicationStatus === "Business Idea Development" || applicationStatus === "Qualification Review";
-    const qualificationReview = preQualificationCompleted || applicationStatus === "Qualification Review";
     const appointmentStatus = appointment?.appointment?.status?.toLowerCase() ?? null;
     const appointmentAction = appointment?.action ?? null;
+    const firstApprovalReady = preQualificationCompleted && appointmentAction?.type === "choose_appointment";
+    const firstApprovalScheduled = preQualificationCompleted && Boolean(
+      appointment?.appointment && ["scheduled", "ready_to_start", "in_progress", "completed"].includes(
+        String(appointment.appointment.status || "").toLowerCase(),
+      ),
+    );
+    const firstApprovalCompleted = preQualificationCompleted && appointmentAction?.type === "appointment_completed";
+    const normalizedCampaignStatus = String(entrepreneur.campaign_status || "").trim().toLowerCase();
+    const businessApproved = businessApprovalReached;
+    const qualificationReviewActive = firstApprovalCompleted && !businessApproved;
+    const campaignActivated = normalizedCampaignStatus === "active";
+    const invitationLinkAvailable = campaignActivated && Boolean(entrepreneur.campaign_slug);
+    const businessIdeaDevelopmentInProgress = normalizedApplicationStatus === "business idea development";
+    const businessIdeaDevelopmentApproved = [
+      "business idea development approved",
+      "business development approved",
+    ].includes(normalizedApplicationStatus);
+    const businessIdeaDevelopmentReady = invitationLinkAvailable && !businessIdeaDevelopmentInProgress && !businessIdeaDevelopmentApproved;
+    const applicationReviewCompleted = questionnaireCompleted && (
+      shouldSchedulePreQualification || preQualificationScheduled || preQualificationCompleted
+    );
     const scheduledAt = appointment?.appointment?.scheduledAt ? new Date(appointment.appointment.scheduledAt) : null;
     const scheduledDateTime =
       scheduledAt && !Number.isNaN(scheduledAt.getTime())
@@ -343,12 +370,15 @@ export default function EntrepreneurDashboardPage() {
             hour: "numeric",
             minute: "2-digit",
             timeZoneName: "short",
+            timeZone: "America/New_York",
           }).format(scheduledAt)
         : null;
     const isNoShow = appointmentStatus === "no_show";
     const isSchedulingReview = appointmentAction?.type === "scheduling_in_progress";
-    const appointmentCompleted = preQualificationCompleted || appointmentAction?.type === "appointment_completed";
-    const preQualificationHeroMessage = preQualificationCompleted
+    const displayedStepCompleted = appointment?.appointment ? firstApprovalCompleted : preQualificationCompleted;
+    const preQualificationHeroMessage = firstApprovalReady
+      ? "Your Pre-Qualification Interview is completed. You may now schedule your Qualification Interview with your Personal Coach."
+      : preQualificationCompleted
       ? "Your Pre-Qualification Interview has been completed successfully. EPEW is reviewing your interview information and preparing it for your Personal Coach."
       : preQualificationScheduled
         ? "Your Pre-Qualification Interview is scheduled. Please be available at the scheduled time. Your EPEW Coach Assistant will contact you by phone."
@@ -357,16 +387,67 @@ export default function EntrepreneurDashboardPage() {
           : "Your application has been received successfully and is currently under review.";
 
     const journeySteps = [
-      { label: "Application Received", complete: true },
-      { label: "Registration & Questionnaire Completed", complete: questionnaireCompleted },
-      { label: "Application Under Review", complete: true },
-      { label: "Pre-Qualification Interview", complete: preQualificationCompleted },
-      { label: "Personal Coach Assigned", complete: coachAssigned },
-      { label: "Interview Scheduled", complete: interviewScheduled },
-      { label: "Business Idea Development", complete: businessIdeaDevelopment },
-      { label: "Qualification Review", complete: qualificationReview },
-      { label: "Campaign Activated", complete: false },
-      { label: "Invitation Link Available", complete: false },
+      { label: "Registration Completed", complete: true, active: false },
+      {
+        label: questionnaireCompleted ? "Questionnaire Completed" : "Fill Out Your Questionnaire",
+        complete: questionnaireCompleted,
+        active: !questionnaireCompleted,
+      },
+      {
+        label: applicationReviewCompleted ? "Application Completed" : "Application Review",
+        complete: applicationReviewCompleted,
+        active: questionnaireCompleted && !applicationReviewCompleted,
+      },
+      {
+        label: coachAssigned ? "Personal Coach Assigned" : "Personal Coach Assignment",
+        complete: coachAssigned,
+        active: applicationReviewCompleted && !coachAssigned,
+      },
+      {
+        label: preQualificationCompleted
+          ? "Pre-Qualification Completed"
+          : preQualificationScheduled
+            ? "Pre-Qualification Scheduled"
+            : "Schedule Your Pre-Qualification Interview",
+        complete: preQualificationCompleted,
+        active: shouldSchedulePreQualification || preQualificationScheduled,
+      },
+      {
+        label: firstApprovalCompleted
+          ? "Qualification Interview Is Completed"
+          : firstApprovalScheduled
+            ? "Qualification Interview Is Scheduled"
+            : firstApprovalReady
+              ? "Schedule Your Qualification Interview"
+              : "Qualification Interview",
+        complete: firstApprovalCompleted,
+        active: firstApprovalReady || (firstApprovalScheduled && !firstApprovalCompleted),
+      },
+      {
+        label: businessApproved ? "Business Approved for Up to $100,000" : "Qualification Review",
+        complete: businessApproved,
+        active: qualificationReviewActive,
+      },
+      {
+        label: invitationLinkAvailable
+          ? "Campaign Activated & Invitation Link Available"
+          : campaignActivated
+            ? "Campaign Activated — Invitation Link Preparing"
+            : "Campaign & Invitation Link",
+        complete: invitationLinkAvailable,
+        active: businessApproved && !invitationLinkAvailable,
+      },
+      {
+        label: businessIdeaDevelopmentApproved
+          ? "Business Idea Development Approved"
+          : businessIdeaDevelopmentInProgress
+            ? "Business Idea Development in Progress"
+            : businessIdeaDevelopmentReady
+              ? "Schedule Your Business Idea Development Meeting"
+              : "Business Idea Development Meeting",
+        complete: businessIdeaDevelopmentApproved,
+        active: businessIdeaDevelopmentReady || businessIdeaDevelopmentInProgress,
+      },
     ];
 
     return (
@@ -397,27 +478,39 @@ export default function EntrepreneurDashboardPage() {
             <h2 className="mb-5 text-2xl font-extrabold text-[#10246f]">Your Current Journey</h2>
             <div className="grid gap-4 md:grid-cols-2">
               {journeySteps.map((step) => (
-                <div key={step.label} className={`rounded-2xl border p-4 font-bold ${step.complete ? "border-green-300 bg-green-50 text-green-800" : "border-gray-200 bg-gray-50 text-gray-500"}`}>
-                  {step.complete ? "✅" : "⬜"} {step.label}
+                <div key={step.label} className={`rounded-2xl border p-4 font-bold ${step.complete ? "border-green-300 bg-green-50 text-green-800" : step.active ? "border-blue-400 bg-blue-50 text-blue-900" : "border-gray-200 bg-gray-50 text-gray-500"}`}>
+                  {step.complete ? "✅" : step.active ? "🔵" : "⬜"} {step.label}
+                  {step.active ? <span className="ml-2 text-xs font-extrabold uppercase tracking-wide">Current step</span> : null}
                 </div>
               ))}
             </div>
           </section>
 
-          <section className={`rounded-3xl border-2 p-6 shadow-lg md:p-8 ${isNoShow ? "border-red-300 bg-red-50" : appointmentCompleted ? "border-green-300 bg-green-50" : "border-blue-200 bg-white"}`}>
+          <section className={`rounded-3xl border-2 p-6 shadow-lg md:p-8 ${isNoShow ? "border-red-300 bg-red-50" : displayedStepCompleted ? "border-green-300 bg-green-50" : "border-blue-200 bg-white"}`}>
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex-1">
                 <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center">
                   <img src="/images/epew-ede-ibos-logo.png" alt="EPEW EDE IBOS Platform" className="h-auto w-full max-w-[150px]" />
                   <div className="flex flex-wrap items-center gap-3">
-                    <h2 className="text-2xl font-extrabold text-[#10246f] md:text-3xl">Pre-Qualification Interview</h2>
+                    <h2 className="text-2xl font-extrabold text-[#10246f] md:text-3xl">{preQualificationCompleted && appointment?.appointment ? "Qualification Interview" : "Pre-Qualification Interview"}</h2>
                     {isNoShow && <span className="rounded-full bg-red-600 px-4 py-1 text-sm font-extrabold uppercase tracking-wide text-white">Missed — Action Required</span>}
-                    {appointmentCompleted && <span className="rounded-full bg-green-700 px-4 py-1 text-sm font-extrabold uppercase tracking-wide text-white">Completed</span>}
+                    {displayedStepCompleted && <span className="rounded-full bg-green-700 px-4 py-1 text-sm font-extrabold uppercase tracking-wide text-white">Completed</span>}
                     {isSchedulingReview && <span className="rounded-full bg-amber-500 px-4 py-1 text-sm font-extrabold uppercase tracking-wide text-white">Rescheduling</span>}
                   </div>
                 </div>
 
-                {preQualificationCompleted ? (
+                {firstApprovalReady ? (
+                  <div className="space-y-3">
+                    <p className="text-xl font-extrabold text-green-800">Your Qualification Interview is ready to be scheduled.</p>
+                    <p className="leading-relaxed text-gray-700">Choose a convenient appointment time to meet with your Personal Coach in English.</p>
+                  </div>
+                ) : preQualificationCompleted && appointment?.appointment ? (
+                  <div className="space-y-3">
+                    <p className="text-xl font-extrabold text-gray-900">{appointment.appointment.type || "Qualification Interview"}</p>
+                    {scheduledDateTime && <p className="text-lg font-bold text-gray-800">📅 {scheduledDateTime}</p>}
+                    <p className="text-gray-700"><span className="font-bold">Meeting Status:</span> {appointment.appointment.status?.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase()) || "Being Prepared"}</p>
+                  </div>
+                ) : preQualificationCompleted ? (
                   <div className="space-y-3">
                     <p className="text-xl font-extrabold text-green-800">Interview completed successfully.</p>
                     {entrepreneur.interview_date && entrepreneur.interview_time && (
@@ -441,11 +534,13 @@ export default function EntrepreneurDashboardPage() {
                 )}
               </div>
 
-              {!appointmentLoading && !preQualificationCompleted && (
+              {!appointmentLoading && (firstApprovalReady || firstApprovalScheduled || !preQualificationCompleted) && (
                 <div className="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col">
-                  {appointment?.controls?.canChange && appointment.controls.changeHref && <Link href={appointment.controls.changeHref} className="inline-flex items-center justify-center rounded-xl bg-[#10246f] px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-blue-800">Re-schedule Your Pre-Qualification Interview</Link>}
-                  {appointment?.controls?.canReschedule && appointment.controls.rescheduleHref && <Link href={appointment.controls.rescheduleHref} className="inline-flex items-center justify-center rounded-xl bg-red-600 px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-red-700">Re-schedule Your Pre-Qualification Interview</Link>}
-                  {!appointment?.appointment && (
+                  {firstApprovalReady && appointmentAction?.href && <Link href={appointmentAction.href} className="inline-flex items-center justify-center rounded-xl bg-[#10246f] px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-green-700">Schedule Your Qualification Interview</Link>}
+                  {firstApprovalScheduled && appointment?.controls?.canJoin && appointment.controls.joinUrl && <a href={appointment.controls.joinUrl} className="inline-flex items-center justify-center rounded-xl bg-green-700 px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-green-800">Join Qualification Interview</a>}
+                  {appointment?.controls?.canChange && appointment.controls.changeHref && <Link href={appointment.controls.changeHref} className="inline-flex items-center justify-center rounded-xl bg-[#10246f] px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-blue-800">{preQualificationCompleted ? "Re-schedule Your Qualification Interview" : "Re-schedule Your Pre-Qualification Interview"}</Link>}
+                  {appointment?.controls?.canReschedule && appointment.controls.rescheduleHref && <Link href={appointment.controls.rescheduleHref} className="inline-flex items-center justify-center rounded-xl bg-red-600 px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-red-700">{preQualificationCompleted ? "Re-schedule Your Qualification Interview" : "Re-schedule Your Pre-Qualification Interview"}</Link>}
+                  {!preQualificationCompleted && !appointment?.appointment && (
                     <Link href={`/entrepreneurs/availability?applicationId=${encodeURIComponent(String(entrepreneur.id))}`} className="inline-flex items-center justify-center rounded-xl bg-[#10246f] px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-green-700">Schedule Pre-Qualification Interview</Link>
                   )}
                 </div>
@@ -456,12 +551,15 @@ export default function EntrepreneurDashboardPage() {
           <section className="grid gap-6 md:grid-cols-2">
             <div className="rounded-3xl bg-white p-6 shadow">
               <h2 className="text-2xl font-extrabold text-[#10246f]">Your Current Status</h2>
-              <p className="mt-4 text-lg font-bold text-green-700">{preQualificationCompleted ? "Pre-Qualification Interview Completed — Awaiting Review" : preQualificationScheduled ? "Waiting for Pre-Qualification Interview" : applicationStatus}</p>
-              <p className="mt-3 leading-relaxed text-gray-600">{preQualificationCompleted ? "Your interview information is being reviewed and prepared for the next step with your Personal Coach." : preQualificationScheduled ? "Your appointment has been scheduled. Please be available at the selected date and time." : "Our team is reviewing your application and verification documents."}</p>
+              <p className="mt-4 text-lg font-bold text-green-700">{preQualificationCompleted ? "Pre-Qualification Interview Completed" : preQualificationScheduled ? "Waiting for Pre-Qualification Interview" : applicationStatus}</p>
+              <p className="mt-3 leading-relaxed text-gray-600">{firstApprovalReady ? "The 24-hour review period is complete. Your Qualification Interview is ready to schedule." : firstApprovalScheduled ? "Your Pre-Qualification Interview is completed, and your Qualification Interview appointment is confirmed." : preQualificationCompleted ? "Your Pre-Qualification Interview is completed. The Qualification Interview scheduling option will become available after the 24-hour review period." : preQualificationScheduled ? "Your appointment has been scheduled. Please be available at the selected date and time." : "Our team is reviewing your application and verification documents."}</p>
             </div>
             <div className="rounded-3xl bg-white p-6 shadow">
               <h2 className="text-2xl font-extrabold text-[#10246f]">Your Next Action</h2>
-              <p className="mt-4 leading-relaxed text-gray-700">{preQualificationCompleted ? "No action is required right now. EPEW is reviewing your Pre-Qualification Interview and preparing a clear summary for your Personal Coach." : preQualificationScheduled ? "Be ready for your appointment. We will discuss your business idea and goal, target market and customer need, commitment and readiness, what you have already prepared, and what support you still need before meeting with your Personal Coach." : "Schedule and complete your Pre-Qualification Interview so EPEW can prepare your information for your Personal Coach."}</p>
+              <p className="mt-4 leading-relaxed text-gray-700">{firstApprovalReady ? "Schedule your Qualification Interview with your Personal Coach." : firstApprovalScheduled ? "Be ready to attend your Qualification Interview at the confirmed time." : preQualificationCompleted ? "Please allow up to 24 hours for EPEW to complete the review. Your scheduling link will appear here automatically." : preQualificationScheduled ? "Be ready for your appointment. We will discuss your business idea and goal, target market and customer need, commitment and readiness, what you have already prepared, and what support you still need before meeting with your Personal Coach." : "Schedule and complete your Pre-Qualification Interview so EPEW can prepare your information for your Personal Coach."}</p>
+              {firstApprovalReady && appointmentAction?.href && (
+                <Link href={appointmentAction.href} className="mt-6 inline-flex rounded-xl bg-[#10246f] px-6 py-3 font-bold text-white transition hover:bg-green-700">Schedule Your Qualification Interview</Link>
+              )}
               {!preQualificationCompleted && (
                 <Link href={`/entrepreneurs/availability?applicationId=${encodeURIComponent(String(entrepreneur.id))}`} className="mt-6 inline-flex rounded-xl bg-[#10246f] px-6 py-3 font-bold text-white transition hover:bg-green-700">{preQualificationScheduled ? "Re-schedule Your Pre-Qualification Interview" : "Schedule Pre-Qualification Interview"}</Link>
               )}
@@ -476,6 +574,13 @@ export default function EntrepreneurDashboardPage() {
       </main>
     );
   }
+
+  const approvedCampaignAndInvitationAvailable = Boolean(campaignSlug);
+  const approvedBusinessIdeaDevelopmentInProgress = normalizedApplicationStatus === "business idea development";
+  const approvedBusinessIdeaDevelopmentApproved = [
+    "business idea development approved",
+    "business development approved",
+  ].includes(normalizedApplicationStatus);
 
   return (
     <main className="min-h-screen bg-slate-100 p-6">
@@ -497,11 +602,24 @@ export default function EntrepreneurDashboardPage() {
 
         <section className="rounded-2xl bg-white p-6 shadow">
           <h2 className="mb-4 text-xl font-bold text-slate-900">Your Entrepreneur Journey</h2>
-          <div className="grid gap-3 md:grid-cols-4">
+          <div className="grid gap-3 md:grid-cols-3">
             <JourneyStep label="Registration Completed" done />
-            <JourneyStep label="Interview Completed" done />
-            <JourneyStep label="Business Approved" done />
-            <JourneyStep label="Campaign Ready" done />
+            <JourneyStep label="Questionnaire Completed" done />
+            <JourneyStep label="Application Completed" done />
+            <JourneyStep label="Personal Coach Assigned" done />
+            <JourneyStep label="Pre-Qualification Completed" done />
+            <JourneyStep label="Qualification Interview Is Completed" done />
+            <JourneyStep label="Business Approved for Up to $100,000" done />
+            <JourneyStep label="Campaign Activated & Invitation Link Available" done={approvedCampaignAndInvitationAvailable} active={!approvedCampaignAndInvitationAvailable} />
+            <JourneyStep
+              label={approvedBusinessIdeaDevelopmentApproved
+                ? "Business Idea Development Approved"
+                : approvedBusinessIdeaDevelopmentInProgress
+                  ? "Business Idea Development in Progress"
+                  : "Schedule Your Business Idea Development Meeting"}
+              done={approvedBusinessIdeaDevelopmentApproved}
+              active={!approvedBusinessIdeaDevelopmentApproved}
+            />
             <JourneyStep label="Community Leadership Goal" done={hasReachedGoal} active={!hasReachedGoal} />
             <JourneyStep label="Funding Management" done={false} />
             <JourneyStep label="Business Opening" done={false} />

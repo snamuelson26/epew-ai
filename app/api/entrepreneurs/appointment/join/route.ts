@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: "Establishment Meeting not found.",
+          message: "Qualification Interview not found.",
         },
         { status: 404 }
       );
@@ -341,7 +341,7 @@ export async function POST(request: NextRequest) {
       callStatus:
         call.status ?? "queued",
       message:
-        "Your phone is ringing. Answer the call to begin your EPEW Establishment Meeting.",
+        "Your phone is ringing. Answer the call to begin your EPEW Qualification Interview.",
     });
   } catch (error) {
     console.error(

@@ -9,17 +9,14 @@ function EntrepreneurAvailabilityContent() {
   const searchParams = useSearchParams();
   const applicationId = Number(searchParams.get("applicationId"));
 
-  const [mode, setMode] = useState<SchedulingMode>("loading");
+  const [mode, setMode] = useState<SchedulingMode>(applicationId ? "loading" : "prequalification");
   const [appointmentDate, setAppointmentDate] = useState("");
   const [appointmentTime, setAppointmentTime] = useState("");
   const [meetingProvider, setMeetingProvider] = useState<"phone" | "whatsapp" | "zoom">("phone");
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
-  const [minimumDate, setMinimumDate] = useState("");
-  const [maximumDate, setMaximumDate] = useState("");
-
-  useEffect(() => {
+  const [{ minimumDate, maximumDate }] = useState(() => {
     const firstAvailableDate = new Date();
     const lastDay = new Date(firstAvailableDate);
     lastDay.setDate(lastDay.getDate() + 6);
@@ -32,15 +29,14 @@ function EntrepreneurAvailabilityContent() {
       ].join("-");
     }
 
-    setMinimumDate(formatDate(firstAvailableDate));
-    setMaximumDate(formatDate(lastDay));
-  }, []);
+    return {
+      minimumDate: formatDate(firstAvailableDate),
+      maximumDate: formatDate(lastDay),
+    };
+  });
 
   useEffect(() => {
-    if (!applicationId) {
-      setMode("prequalification");
-      return;
-    }
+    if (!applicationId) return;
 
     let cancelled = false;
 
@@ -121,14 +117,14 @@ function EntrepreneurAvailabilityContent() {
         hour: "numeric",
         minute: "2-digit",
         timeZoneName: "short",
-        timeZone: mode === "prequalification" ? "America/New_York" : undefined,
+        timeZone: "America/New_York",
       }).format(scheduledDate);
 
       setSuccess(true);
       setMessage(
         mode === "prequalification"
           ? `Your EPEW Pre-Qualification Interview is scheduled for ${formatted}.`
-          : `Your EPEW Establishment Meeting is scheduled for ${formatted}.`,
+          : `Your EPEW Qualification Interview is scheduled for ${formatted}.`,
       );
     } catch {
       setSuccess(false);
@@ -143,7 +139,7 @@ function EntrepreneurAvailabilityContent() {
   }
 
   const isPreQualification = mode === "prequalification";
-  const title = isPreQualification ? "Pre-Qualification Interview" : "Establishment Meeting";
+  const title = isPreQualification ? "Pre-Qualification Interview" : "Qualification Interview";
 
   return (
     <main style={{ maxWidth: 760, margin: "0 auto", padding: "40px 20px", fontFamily: "Arial, sans-serif" }}>
@@ -160,7 +156,7 @@ function EntrepreneurAvailabilityContent() {
         <p style={{ fontSize: 17, lineHeight: 1.6, marginBottom: 10 }}>
           {isPreQualification
             ? "Choose a convenient date and time for your EPEW Pre-Qualification Interview."
-            : "Choose the exact date and time you would like for your Establishment Meeting."}
+            : "Choose the exact date and time you would like for your Qualification Interview."}
         </p>
         {isPreQualification && (
           <p style={{ lineHeight: 1.6, margin: 0 }}>
@@ -252,7 +248,7 @@ function EntrepreneurAvailabilityContent() {
             ? "Scheduling..."
             : isPreQualification
               ? "Schedule My Pre-Qualification Interview"
-              : "Schedule My Appointment"}
+              : "Schedule My Qualification Interview"}
         </button>
       </section>
 
