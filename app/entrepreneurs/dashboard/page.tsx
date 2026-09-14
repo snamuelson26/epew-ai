@@ -692,6 +692,8 @@ export default function EntrepreneurDashboardPage() {
           <h2 className="mb-4 text-xl font-bold text-slate-900">{isOrgdhPartner ? "ORGDH Promotion & Support Center" : "Campaign Center"}</h2>
           <div className="rounded-xl bg-slate-50 p-4"><p className="text-sm font-bold text-slate-500">Your Campaign Link</p><p className="mt-2 break-all font-semibold text-blue-700">{campaignUrl}</p></div>
           <div className="mt-5 flex flex-wrap gap-3">
+            {isOrgdhPartner && <Link href="/support/ORGDH-001" className="rounded-xl bg-green-700 px-5 py-3 font-bold text-white hover:bg-green-800">🤝 Support ORGDH Network</Link>}
+            {isOrgdhPartner && <Link href="/services/orgdh-network" className="rounded-xl bg-amber-500 px-5 py-3 font-bold text-slate-950 hover:bg-amber-400">🎨 Request Promotion & Design Services</Link>}
             <Link href={`/campaign/${campaignSlug}`} className="rounded-xl bg-blue-700 px-5 py-3 font-bold text-white hover:bg-blue-800">🌐 View My Campaign</Link>
             <button type="button" onClick={copyCampaignLink} className="rounded-xl bg-green-700 px-5 py-3 font-bold text-white hover:bg-green-800">🔗 Copy Campaign Link</button>
             <button type="button" onClick={recordShare} className="rounded-xl bg-purple-700 px-5 py-3 font-bold text-white hover:bg-purple-800">📤 Share My Vision</button>

@@ -177,8 +177,13 @@ export default function SupportEntrepreneurPage() {
 
           <div className="text-center">
             <Link href={loginHref} className="inline-block w-full rounded-2xl bg-green-700 px-8 py-5 text-xl font-black text-white shadow-lg transition hover:bg-green-800">
-              Support This Entrepreneur →
+              {isOrgdhPartner ? "Support ORGDH Network →" : "Support This Entrepreneur →"}
             </Link>
+            {isOrgdhPartner && (
+              <Link href="/services/orgdh-network" className="mt-4 inline-block w-full rounded-2xl bg-[#06245c] px-8 py-5 text-xl font-black text-white shadow-lg transition hover:bg-blue-900">
+                Request Promotion & Design Services →
+              </Link>
+            )}
             <p className="mt-4 font-bold text-slate-600">🔒 Secure • Weekly, Monthly, or Yearly • Impactful</p>
           </div>
         </section>
