@@ -67,6 +67,7 @@ type Entrepreneur = {
   ibos_status?: string | null;
   funding_goal?: number | null;
   status?: string | null;
+  review_status?: string | null;
   application_decision?: string | null;
   qualification_status?: string | null;
   interview_status?: string | null;
@@ -161,7 +162,7 @@ export default function EntrepreneurDashboardPage() {
       void (async () => {
         try {
           const controller = new AbortController();
-          const timeout = window.setTimeout(() => controller.abort(), 8000);
+          const timeout = window.setTimeout(() => controller.abort(), 30000);
           try {
             const appointmentResponse = await fetch(
               `/api/entrepreneurs/appointment?applicationId=${encodeURIComponent(String(selected.id))}`,
@@ -338,7 +339,19 @@ export default function EntrepreneurDashboardPage() {
     const coachAssigned = Boolean(entrepreneur.assigned_coach_name || entrepreneur.coach_name);
     const appointmentStatus = appointment?.appointment?.status?.toLowerCase() ?? null;
     const appointmentAction = appointment?.action ?? null;
-    const firstApprovalReady = preQualificationCompleted && appointmentAction?.type === "choose_appointment";
+    const normalizedReviewStatus = String(entrepreneur.review_status || "").trim().toLowerCase();
+    const qualificationSchedulingReadyByApplication = [
+      "ready for qualification interview",
+      "ready to schedule qualification interview",
+      "ready for first approval meeting",
+    ].includes(normalizedReviewStatus);
+    const firstApprovalReady = preQualificationCompleted && (
+      appointmentAction?.type === "choose_appointment" ||
+      qualificationSchedulingReadyByApplication
+    );
+    const qualificationScheduleHref =
+      appointmentAction?.href ||
+      `/entrepreneurs/availability?applicationId=${encodeURIComponent(String(entrepreneur.id))}`;
     const firstApprovalScheduled = preQualificationCompleted && Boolean(
       appointment?.appointment && ["scheduled", "ready_to_start", "in_progress", "completed"].includes(
         String(appointment.appointment.status || "").toLowerCase(),
@@ -486,7 +499,7 @@ export default function EntrepreneurDashboardPage() {
             </div>
           </section>
 
-          <section className={`rounded-3xl border-2 p-6 shadow-lg md:p-8 ${isNoShow ? "border-red-300 bg-red-50" : displayedStepCompleted ? "border-green-300 bg-green-50" : "border-blue-200 bg-white"}`}>
+          {(!preQualificationCompleted || firstApprovalScheduled || firstApprovalCompleted || isNoShow || isSchedulingReview) && <section className={`rounded-3xl border-2 p-6 shadow-lg md:p-8 ${isNoShow ? "border-red-300 bg-red-50" : displayedStepCompleted ? "border-green-300 bg-green-50" : "border-blue-200 bg-white"}`}>
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex-1">
                 <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -536,7 +549,7 @@ export default function EntrepreneurDashboardPage() {
 
               {!appointmentLoading && (firstApprovalReady || firstApprovalScheduled || !preQualificationCompleted) && (
                 <div className="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col">
-                  {firstApprovalReady && appointmentAction?.href && <Link href={appointmentAction.href} className="inline-flex items-center justify-center rounded-xl bg-[#10246f] px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-green-700">Schedule Your Qualification Interview</Link>}
+                  {firstApprovalReady && <Link href={qualificationScheduleHref} className="inline-flex items-center justify-center rounded-xl bg-[#10246f] px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-green-700">Schedule Your Qualification Interview</Link>}
                   {firstApprovalScheduled && appointment?.controls?.canJoin && appointment.controls.joinUrl && <a href={appointment.controls.joinUrl} className="inline-flex items-center justify-center rounded-xl bg-green-700 px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-green-800">Join Qualification Interview</a>}
                   {appointment?.controls?.canChange && appointment.controls.changeHref && <Link href={appointment.controls.changeHref} className="inline-flex items-center justify-center rounded-xl bg-[#10246f] px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-blue-800">{preQualificationCompleted ? "Re-schedule Your Qualification Interview" : "Re-schedule Your Pre-Qualification Interview"}</Link>}
                   {appointment?.controls?.canReschedule && appointment.controls.rescheduleHref && <Link href={appointment.controls.rescheduleHref} className="inline-flex items-center justify-center rounded-xl bg-red-600 px-7 py-4 text-center text-lg font-extrabold text-white shadow transition hover:bg-red-700">{preQualificationCompleted ? "Re-schedule Your Qualification Interview" : "Re-schedule Your Pre-Qualification Interview"}</Link>}
@@ -546,19 +559,19 @@ export default function EntrepreneurDashboardPage() {
                 </div>
               )}
             </div>
-          </section>
+          </section>}
 
           <section className="grid gap-6 md:grid-cols-2">
             <div className="rounded-3xl bg-white p-6 shadow">
               <h2 className="text-2xl font-extrabold text-[#10246f]">Your Current Status</h2>
               <p className="mt-4 text-lg font-bold text-green-700">{preQualificationCompleted ? "Pre-Qualification Interview Completed" : preQualificationScheduled ? "Waiting for Pre-Qualification Interview" : applicationStatus}</p>
-              <p className="mt-3 leading-relaxed text-gray-600">{firstApprovalReady ? "The 24-hour review period is complete. Your Qualification Interview is ready to schedule." : firstApprovalScheduled ? "Your Pre-Qualification Interview is completed, and your Qualification Interview appointment is confirmed." : preQualificationCompleted ? "Your Pre-Qualification Interview is completed. The Qualification Interview scheduling option will become available after the 24-hour review period." : preQualificationScheduled ? "Your appointment has been scheduled. Please be available at the selected date and time." : "Our team is reviewing your application and verification documents."}</p>
+              {!preQualificationCompleted && <p className="mt-3 leading-relaxed text-gray-600">{preQualificationScheduled ? "Your appointment has been scheduled. Please be available at the selected date and time." : "Our team is reviewing your application and verification documents."}</p>}
             </div>
             <div className="rounded-3xl bg-white p-6 shadow">
               <h2 className="text-2xl font-extrabold text-[#10246f]">Your Next Action</h2>
               <p className="mt-4 leading-relaxed text-gray-700">{firstApprovalReady ? "Schedule your Qualification Interview with your Personal Coach." : firstApprovalScheduled ? "Be ready to attend your Qualification Interview at the confirmed time." : preQualificationCompleted ? "Please allow up to 24 hours for EPEW to complete the review. Your scheduling link will appear here automatically." : preQualificationScheduled ? "Be ready for your appointment. We will discuss your business idea and goal, target market and customer need, commitment and readiness, what you have already prepared, and what support you still need before meeting with your Personal Coach." : "Schedule and complete your Pre-Qualification Interview so EPEW can prepare your information for your Personal Coach."}</p>
-              {firstApprovalReady && appointmentAction?.href && (
-                <Link href={appointmentAction.href} className="mt-6 inline-flex rounded-xl bg-[#10246f] px-6 py-3 font-bold text-white transition hover:bg-green-700">Schedule Your Qualification Interview</Link>
+              {firstApprovalReady && (
+                <Link href={qualificationScheduleHref} className="mt-6 inline-flex rounded-xl bg-[#10246f] px-6 py-3 font-bold text-white transition hover:bg-green-700">Schedule Your Qualification Interview</Link>
               )}
               {!preQualificationCompleted && (
                 <Link href={`/entrepreneurs/availability?applicationId=${encodeURIComponent(String(entrepreneur.id))}`} className="mt-6 inline-flex rounded-xl bg-[#10246f] px-6 py-3 font-bold text-white transition hover:bg-green-700">{preQualificationScheduled ? "Re-schedule Your Pre-Qualification Interview" : "Schedule Pre-Qualification Interview"}</Link>
