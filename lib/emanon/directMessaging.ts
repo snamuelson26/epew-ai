@@ -11,6 +11,7 @@ const allowedMessageTypes = [
   "assignment",
   "follow_up",
   "proposal",
+  "urgent_update",
 ] as const;
 
 export type EmanonMessageType = (typeof allowedMessageTypes)[number];
@@ -43,6 +44,8 @@ type SendDirectMessageInput = {
   assignmentDueAt?: string | null;
   followUpAt?: string | null;
   attachments?: Array<Record<string, unknown>>;
+  directorRoleCodes?: string[];
+  organizationLabel?: string;
 };
 
 function normalizedEmail(value: string) {
@@ -69,7 +72,7 @@ async function loadActiveMember(supabase: SupabaseClient, email: string) {
     .maybeSingle();
 
   if (error) throw error;
-  if (!data) throw new Error(`No active Emanon member exists for ${email}.`);
+  if (!data) throw new Error(`No active organization member exists for ${email}.`);
   return data as StaffMember;
 }
 
@@ -84,7 +87,7 @@ export async function resolveExistingDirectConversation(
   ]);
 
   if (sender.organization_id !== recipient.organization_id) {
-    throw new Error("The sender and recipient are not in the same Emanon profile.");
+    throw new Error("The sender and recipient are not in the same organization profile.");
   }
 
   const { data: senderLinks, error: senderLinksError } = await supabase
@@ -95,7 +98,7 @@ export async function resolveExistingDirectConversation(
 
   const candidateIds = (senderLinks ?? []).map((link) => link.conversation_id);
   if (!candidateIds.length) {
-    throw new Error("The sender has no Emanon direct conversation.");
+    throw new Error("The sender has no direct conversation.");
   }
 
   const { data: recipientLinks, error: recipientLinksError } = await supabase
@@ -133,7 +136,7 @@ export async function resolveExistingDirectConversation(
 
 export async function emanonSendMessage(input: SendDirectMessageInput) {
   if (!allowedMessageTypes.includes(input.messageType)) {
-    throw new Error("Unsupported Emanon message type.");
+    throw new Error("Unsupported internal message type.");
   }
 
   const body = input.body.trim();
@@ -146,14 +149,14 @@ export async function emanonSendMessage(input: SendDirectMessageInput) {
   );
 
   if (!context.sender.permissions?.send_messages) {
-    throw new Error("The sender does not have permission to send Emanon messages.");
+    throw new Error(`The sender does not have permission to send ${input.organizationLabel ?? "internal"} messages.`);
   }
 
   if (
     (input.messageType === "assignment" || input.messageType === "follow_up") &&
-    context.sender.role_code !== "program_director"
+    !(input.directorRoleCodes ?? ["program_director"]).includes(context.sender.role_code)
   ) {
-    throw new Error("Only the Program Director may issue assignments or follow-ups.");
+    throw new Error("Only an authorized director may issue assignments or follow-ups.");
   }
 
   const { data, error } = await input.supabase

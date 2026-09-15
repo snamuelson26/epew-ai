@@ -5,7 +5,7 @@ export const runtime = "nodejs";
 
 function safeRedirect(value: unknown) {
   return typeof value === "string" &&
-    value.startsWith("/emanon/") &&
+    (value.startsWith("/emanon/") || value.startsWith("/orgdh/")) &&
     !value.startsWith("//")
     ? value
     : "/emanon/communication-center";
@@ -13,7 +13,7 @@ function safeRedirect(value: unknown) {
 
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => null)) as
-    | { email?: string; password?: string; redirectTo?: string }
+    | { email?: string; password?: string; redirectTo?: string; organizationCode?: string }
     | null;
   const email = body?.email?.trim().toLowerCase() ?? "";
   const password = body?.password ?? "";
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 
   const { data: member, error: memberError } = await supabase
     .from("emanon_staff_members")
-    .select("id,status")
+    .select("id,status,organization_id")
     .eq("user_id", data.user.id)
     .eq("status", "active")
     .maybeSingle();
@@ -48,6 +48,21 @@ export async function POST(request: NextRequest) {
       { error: "This account does not have active Emanon Institute access." },
       { status: 403 },
     );
+  }
+
+  if (body?.organizationCode) {
+    const { data: organization } = await supabase
+      .from("emanon_organizations")
+      .select("organization_code")
+      .eq("id", member.organization_id)
+      .maybeSingle();
+    if (organization?.organization_code !== body.organizationCode) {
+      await supabase.auth.signOut();
+      return NextResponse.json(
+        { error: "This account does not have access to the selected organization." },
+        { status: 403 },
+      );
+    }
   }
 
   return NextResponse.json({ ok: true, redirectTo: safeRedirect(body?.redirectTo) });

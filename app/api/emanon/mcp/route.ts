@@ -5,8 +5,34 @@ import { emanonSendMessage } from "@/lib/emanon/directMessaging";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const RESOURCE = "https://www.epew.us/api/emanon/mcp";
-const METADATA = "https://www.epew.us/.well-known/oauth-protected-resource";
+type ConnectorConfig = {
+  organizationCode: string;
+  organizationName: string;
+  prefix: "emanon" | "orgdh";
+  directorRole: string;
+  resource: string;
+  metadata: string;
+};
+function connectorConfig(request: NextRequest): ConnectorConfig {
+  const isOrgdh = request.nextUrl.pathname.includes("/api/orgdh/");
+  return isOrgdh
+    ? {
+        organizationCode: "ORGDH-NETWORK",
+        organizationName: "ORGDH Network",
+        prefix: "orgdh",
+        directorRole: "general_marketing_director",
+        resource: "https://www.epew.us/api/orgdh/mcp",
+        metadata: "https://www.epew.us/.well-known/oauth-protected-resource/api/orgdh/mcp",
+      }
+    : {
+        organizationCode: "EMANON-INSTITUTE",
+        organizationName: "Emanon Institute",
+        prefix: "emanon",
+        directorRole: "program_director",
+        resource: "https://www.epew.us/api/emanon/mcp",
+        metadata: "https://www.epew.us/.well-known/oauth-protected-resource/api/emanon/mcp",
+      };
+}
 const allowedTypes = ["message", "report", "assignment", "follow_up", "proposal", "urgent_update"] as const;
 
 type JsonRpc = { jsonrpc?: string; id?: string | number | null; method?: string; params?: { name?: string; arguments?: Record<string, unknown> } };
@@ -19,10 +45,10 @@ function rpc(id: JsonRpc["id"], result: unknown, status = 200) {
 function rpcError(id: JsonRpc["id"], code: number, message: string, status = 200) {
   return NextResponse.json({ jsonrpc: "2.0", id: id ?? null, error: { code, message } }, { status });
 }
-function unauthorized(id: JsonRpc["id"]) {
+function unauthorized(id: JsonRpc["id"], metadata: string) {
   return NextResponse.json(
     { jsonrpc: "2.0", id: id ?? null, error: { code: -32001, message: "OAuth authentication required." } },
-    { status: 401, headers: { "WWW-Authenticate": `Bearer resource_metadata="${METADATA}", scope="openid email profile offline_access"` } },
+    { status: 401, headers: { "WWW-Authenticate": `Bearer resource_metadata="${metadata}", scope="openid email profile offline_access"` } },
   );
 }
 function textResult(value: unknown) {
@@ -40,13 +66,16 @@ function bearerClient(token: string) {
     { global: { headers: { Authorization: `Bearer ${token}` } }, auth: { persistSession: false, autoRefreshToken: false } },
   );
 }
-async function identity(supabase: ReturnType<typeof bearerClient>, token: string) {
+async function identity(supabase: ReturnType<typeof bearerClient>, token: string, organizationCode: string) {
   const { data: userData, error: userError } = await supabase.auth.getUser(token);
   if (userError || !userData.user) return null;
   const { data } = await supabase.from("emanon_staff_members")
     .select("id,organization_id,email,display_name,title,role_code")
     .eq("user_id", userData.user.id).eq("status", "active").maybeSingle();
-  return (data ?? null) as Member | null;
+  if (!data) return null;
+  const { data: organization } = await supabase.from("emanon_organizations")
+    .select("organization_code").eq("id", data.organization_id).maybeSingle();
+  return organization?.organization_code === organizationCode ? data as Member : null;
 }
 async function contactsFor(supabase: ReturnType<typeof bearerClient>, member: Member) {
   const { data: ownLinks, error } = await supabase.from("emanon_conversation_members")
@@ -91,14 +120,23 @@ const toolDefinitions = [
   { name: "emanon_update_follow_up", title: "Update message follow-up", annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false }, description: "Create, change, or clear the follow-up date on a message sent by the authenticated user.", inputSchema: { type: "object", required: ["message_id"], properties: { recipient_email: { type: "string" }, message_id: { type: "string" }, follow_up_at: { type: "string", description: "Optional ISO-8601 date/time. Omit or send an empty string to clear." } }, additionalProperties: false } },
   { name: "emanon_mark_read", title: "Mark conversation read", annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false }, description: "Mark all incoming messages in a direct Emanon conversation as opened by the authenticated user.", inputSchema: { type: "object", properties: { recipient_email: { type: "string" } }, additionalProperties: false } },
 ];
-const tools = toolDefinitions;
+function toolsFor(config: ConnectorConfig) {
+  if (config.prefix === "emanon") return toolDefinitions;
+  return toolDefinitions.map((tool) => ({
+    ...tool,
+    name: tool.name.replace(/^emanon_/, "orgdh_"),
+    title: tool.title.replace(/Emanon/g, "ORGDH"),
+    description: tool.description.replace(/Emanon Institute/g, "ORGDH Network").replace(/Emanon/g, "ORGDH"),
+  }));
+}
 
-async function callTool(name: string, args: Record<string, unknown>, supabase: ReturnType<typeof bearerClient>, member: Member) {
-  if (name === "emanon_get_identity") return textResult({ organization: "Emanon Institute", ...member });
+async function callTool(requestedName: string, args: Record<string, unknown>, supabase: ReturnType<typeof bearerClient>, member: Member, config: ConnectorConfig) {
+  const name = requestedName.replace(/^orgdh_/, "emanon_");
+  if (name === "emanon_get_identity") return textResult({ organization: config.organizationName, ...member });
   if (name === "emanon_list_direct_contacts") return textResult({ contacts: await contactsFor(supabase, member) });
   if (name === "emanon_list_conversations") {
     const contacts = await contactsFor(supabase, member);
-    return textResult({ organization: "Emanon Institute", conversations: contacts.map((contact) => ({ conversation_id: contact.conversation_id, conversation_type: "direct", participants: [member, contact] })) });
+    return textResult({ organization: config.organizationName, conversations: contacts.map((contact) => ({ conversation_id: contact.conversation_id, conversation_type: "direct", participants: [member, contact] })) });
   }
 
   const contact = await selectedContact(supabase, member, typeof args.recipient_email === "string" ? args.recipient_email : undefined);
@@ -115,7 +153,7 @@ async function callTool(name: string, args: Record<string, unknown>, supabase: R
       const fromSelf = item.sender_member_id === member.id;
       return { id: item.id, sender: sender ?? (fromSelf ? member : contact), recipient: fromSelf ? contact : member, message_type: item.message_type, subject: item.subject, body: item.body, assignment_due_at: item.assignment_due_at, follow_up_at: item.follow_up_at, attachments: item.attachments, delivery_status: item.receipts, created_at: item.created_at, updated_at: item.updated_at };
     });
-    return textResult({ organization: "Emanon Institute", conversation_id: contact.conversation_id, participants: [member, contact], messages });
+    return textResult({ organization: config.organizationName, conversation_id: contact.conversation_id, participants: [member, contact], messages });
   }
 
   if (name === "emanon_send_text_attachment") {
@@ -147,7 +185,7 @@ async function callTool(name: string, args: Record<string, unknown>, supabase: R
       attachments: [attachment],
     }).select("id,created_at").single();
     if (error) throw error;
-    return textResult({ sent: true, organization: "Emanon Institute", conversation_id: contact.conversation_id, message_id: data.id, sender: member, recipient: contact, created_at: data.created_at, attachment: { name: filename, mime_type: attachment.mime_type } });
+    return textResult({ sent: true, organization: config.organizationName, conversation_id: contact.conversation_id, message_id: data.id, sender: member, recipient: contact, created_at: data.created_at, attachment: { name: filename, mime_type: attachment.mime_type } });
   }
 
   if (name === "emanon_get_attachment") {
@@ -187,8 +225,8 @@ async function callTool(name: string, args: Record<string, unknown>, supabase: R
   if (name === "emanon_send_message") {
     const messageType = typeof args.message_type === "string" ? args.message_type : "";
     if (!allowedTypes.includes(messageType as typeof allowedTypes[number])) throw new Error("Unsupported message_type.");
-    if ((messageType === "assignment" || messageType === "follow_up") && member.role_code !== "program_director") {
-      throw new Error("Only the Program Director may issue assignments or follow-up instructions.");
+    if ((messageType === "assignment" || messageType === "follow_up") && member.role_code !== config.directorRole) {
+      throw new Error("Only the authorized director may issue assignments or follow-up instructions.");
     }
     const body = typeof args.body === "string" ? args.body.trim() : "";
     if (!body) throw new Error("Message body is required.");
@@ -215,37 +253,41 @@ async function callTool(name: string, args: Record<string, unknown>, supabase: R
       assignmentDueAt: typeof args.assignment_due_at === "string" ? args.assignment_due_at : null,
       followUpAt: typeof args.follow_up_at === "string" ? args.follow_up_at : null,
       attachments: uploaded,
+      directorRoleCodes: [config.directorRole],
+      organizationLabel: config.organizationName,
     });
-    return textResult({ sent: true, organization: "Emanon Institute", conversation_id: result.conversation.id, message_id: result.message.id, sender: member, recipient: contact, created_at: result.message.created_at, attachments: uploaded.map(({ name, mime_type }) => ({ name, mime_type })) });
+    return textResult({ sent: true, organization: config.organizationName, conversation_id: result.conversation.id, message_id: result.message.id, sender: member, recipient: contact, created_at: result.message.created_at, attachments: uploaded.map(({ name, mime_type }) => ({ name, mime_type })) });
   }
 
   throw new Error("Unknown tool.");
 }
 
-export async function GET() {
-  return NextResponse.json({ name: "Emanon Communication Center MCP", authenticated: true, resource: RESOURCE });
+export async function GET(request: NextRequest) {
+  const config = connectorConfig(request);
+  return NextResponse.json({ name: `${config.organizationName} Communication Center MCP`, authenticated: true, resource: config.resource });
 }
 export async function OPTIONS() {
   return new NextResponse(null, { status: 204, headers: { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization,content-type,mcp-protocol-version", "Access-Control-Allow-Methods": "GET,POST,OPTIONS" } });
 }
 export async function POST(request: NextRequest) {
+  const config = connectorConfig(request);
   const payload = (await request.json().catch(() => null)) as JsonRpc | null;
   if (!payload?.method) return rpcError(payload?.id, -32700, "Invalid JSON-RPC request.", 400);
-  if (payload.method === "initialize") return rpc(payload.id, { protocolVersion: "2025-06-18", capabilities: { tools: { listChanged: false } }, serverInfo: { name: "Emanon Communication Center", version: "1.0.0" }, instructions: "Use these tools only for authenticated one-to-one Emanon Institute communication. Confirm before sending messages." });
+  if (payload.method === "initialize") return rpc(payload.id, { protocolVersion: "2025-06-18", capabilities: { tools: { listChanged: false } }, serverInfo: { name: `${config.organizationName} Communication Center`, version: "1.0.0" }, instructions: `Use these tools only for authenticated one-to-one ${config.organizationName} communication. Confirm before sending messages.` });
   if (payload.method === "notifications/initialized") return new NextResponse(null, { status: 202 });
   if (payload.method === "ping") return rpc(payload.id, {});
-  if (payload.method === "tools/list") return rpc(payload.id, { tools });
+  if (payload.method === "tools/list") return rpc(payload.id, { tools: toolsFor(config) });
 
   const token = request.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1];
-  if (!token) return unauthorized(payload.id);
+  if (!token) return unauthorized(payload.id, config.metadata);
   const supabase = bearerClient(token);
-  const member = await identity(supabase, token);
-  if (!member) return unauthorized(payload.id);
+  const member = await identity(supabase, token, config.organizationCode);
+  if (!member) return unauthorized(payload.id, config.metadata);
 
   if (payload.method === "tools/call") {
     const name = payload.params?.name ?? "";
     try {
-      return rpc(payload.id, await callTool(name, payload.params?.arguments ?? {}, supabase, member));
+      return rpc(payload.id, await callTool(name, payload.params?.arguments ?? {}, supabase, member, config));
     } catch (error) {
       return rpc(payload.id, { content: [{ type: "text", text: error instanceof Error ? error.message : "Tool call failed." }], isError: true });
     }

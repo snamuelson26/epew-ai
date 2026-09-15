@@ -22,11 +22,17 @@ export default async function ConsentPage({
 
   const { data: member } = await supabase
     .from("emanon_staff_members")
-    .select("display_name,title,email,status")
+    .select("display_name,title,email,status,organization_id")
     .eq("user_id", userData.user.id)
     .eq("status", "active")
     .maybeSingle();
   if (!member) redirect("/emanon/login");
+  const { data: organization } = await supabase
+    .from("emanon_organizations")
+    .select("organization_code,display_name")
+    .eq("id", member.organization_id)
+    .maybeSingle();
+  if (!organization) redirect("/emanon/login");
 
   const { data: authDetails, error } =
     await supabase.auth.oauth.getAuthorizationDetails(authorizationId);
@@ -39,9 +45,9 @@ export default async function ConsentPage({
   return (
     <main className="min-h-screen bg-[#f5f7fb] px-4 py-12 text-[#06245c]">
       <section className="mx-auto max-w-xl rounded-3xl bg-white p-8 shadow-xl">
-        <p className="text-sm font-bold uppercase tracking-widest text-green-700">Emanon Institute · EPEW</p>
+        <p className="text-sm font-bold uppercase tracking-widest text-green-700">{organization.display_name} · EPEW</p>
         <h1 className="mt-2 text-3xl font-extrabold">Authorize Communication Center</h1>
-        <p className="mt-4 text-gray-700"><strong>{authDetails.client.name}</strong> is requesting access to the authenticated Emanon account below.</p>
+        <p className="mt-4 text-gray-700"><strong>{authDetails.client.name}</strong> is requesting access to the authenticated {organization.display_name} account below.</p>
         <div className="my-6 rounded-2xl bg-blue-50 p-4">
           <p className="font-bold">{member.display_name}</p>
           <p>{member.title}</p>
@@ -50,9 +56,9 @@ export default async function ConsentPage({
         <p className="font-bold">Requested permissions</p>
         <ul className="mt-2 list-disc pl-6 text-gray-700">
           {scopes.map((scope) => <li key={scope}>{scope}</li>)}
-          <li>Read and send messages in this user&apos;s authorized Emanon conversations</li>
+          <li>Read and send messages in this user&apos;s authorized {organization.display_name} conversations</li>
         </ul>
-        <p className="mt-5 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">Only approve this on the correct staff member&apos;s ChatGPT account. Access remains limited by Emanon row-level security.</p>
+        <p className="mt-5 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">Only approve this on the correct staff member&apos;s ChatGPT account. Access remains limited by organization-scoped row-level security.</p>
         <form action="/api/emanon/oauth/decision" method="POST" className="mt-6 flex gap-3">
           <input type="hidden" name="authorization_id" value={authorizationId} />
           <button type="submit" name="decision" value="deny" className="flex-1 rounded-xl border-2 border-[#06245c] p-3 font-bold">Deny</button>

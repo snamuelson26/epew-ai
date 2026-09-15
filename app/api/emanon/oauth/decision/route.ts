@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     .eq("status", "active")
     .maybeSingle();
   if (!member) {
-    return NextResponse.json({ error: "Active Emanon access is required." }, { status: 403 });
+    return NextResponse.json({ error: "Active organization access is required." }, { status: 403 });
   }
 
   const result = decision === "approve"

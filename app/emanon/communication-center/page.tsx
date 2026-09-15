@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { usePathname } from "next/navigation";
 
 type Member = {
   id: string;
@@ -33,6 +34,10 @@ type Contact = {
 };
 
 export default function EmanonCommunicationCenter() {
+  const isOrgdh = usePathname().startsWith("/orgdh/");
+  const organizationCode = isOrgdh ? "ORGDH-NETWORK" : "EMANON-INSTITUTE";
+  const organizationName = isOrgdh ? "ORGDH Network" : "Emanon Institute";
+  const basePath = isOrgdh ? "/orgdh" : "/emanon";
   const [member, setMember] = useState<Member | null>(null);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [selectedContactId, setSelectedContactId] = useState("");
@@ -69,7 +74,7 @@ export default function EmanonCommunicationCenter() {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
-      window.location.href = "/emanon/login";
+      window.location.href = `${basePath}/login`;
       return;
     }
     const { data: m } = await supabase
@@ -79,7 +84,17 @@ export default function EmanonCommunicationCenter() {
       .eq("status", "active")
       .single();
     if (!m) {
-      window.location.href = "/emanon/login";
+      window.location.href = `${basePath}/login`;
+      return;
+    }
+    const { data: organization } = await supabase
+      .from("emanon_organizations")
+      .select("organization_code")
+      .eq("id", m.organization_id)
+      .maybeSingle();
+    if (organization?.organization_code !== organizationCode) {
+      await supabase.auth.signOut();
+      window.location.href = `${basePath}/login`;
       return;
     }
     setMember(m);
@@ -220,7 +235,7 @@ export default function EmanonCommunicationCenter() {
         setLoggingOut(false);
         return;
       }
-      window.location.href = data.redirectTo ?? "/emanon/login";
+      window.location.href = `${basePath}/login`;
     } catch {
       setNotice("The logout service could not be reached. Please try again.");
       setLoggingOut(false);
@@ -229,10 +244,10 @@ export default function EmanonCommunicationCenter() {
   if (!member)
     return (
       <main className="min-h-screen bg-[#f5f7fb] p-8 text-center text-2xl font-bold text-[#06245c]">
-        Loading Emanon Communication Center...
+        Loading {organizationName} Communication Center...
       </main>
     );
-  const isDirector = member.role_code === "program_director";
+  const isDirector = member.role_code === "program_director" || member.role_code === "general_marketing_director";
   const selectedContact = contacts.find(
     (contact) => contact.id === selectedContactId,
   );
@@ -243,7 +258,7 @@ export default function EmanonCommunicationCenter() {
           <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-sm font-bold uppercase tracking-widest text-green-700">
-                Emanon Institute · Innovative Educational System
+                {isOrgdh ? "ORGDH Network · Business Promotion & Media Services" : "Emanon Institute · Innovative Educational System"}
               </p>
               <h1 className="text-4xl font-extrabold">
                 Communication Center
@@ -280,7 +295,7 @@ export default function EmanonCommunicationCenter() {
             </label>
             {selectedContact && (
               <p className="mt-3 text-sm text-gray-600">
-                Private one-to-one Emanon conversation with{" "}
+                Private one-to-one {organizationName} conversation with{" "}
                 <strong>{selectedContact.display_name}</strong>
               </p>
             )}
@@ -289,7 +304,7 @@ export default function EmanonCommunicationCenter() {
         {!conversationId && (
           <section className="rounded-2xl bg-amber-50 p-6 font-semibold text-amber-900">
             Your secure account is active. The direct conversation will appear
-            automatically after the other authorized Emanon staff member
+            automatically after the other authorized {organizationName} team member
             activates their account.
           </section>
         )}
@@ -316,12 +331,12 @@ export default function EmanonCommunicationCenter() {
                     <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                       <div>
                         <p className="font-bold">
-                          From: {message.sender?.display_name ?? "Emanon Staff"}
+                          From: {message.sender?.display_name ?? `${organizationName} Staff`}
                         </p>
                         <p className="text-sm text-gray-600">
                           To:{" "}
                           {message.sender_member_id === member.id
-                            ? selectedContact?.display_name ?? "Emanon Staff"
+                            ? selectedContact?.display_name ?? `${organizationName} Staff`
                             : member.display_name}
                         </p>
                       </div>
