@@ -212,6 +212,8 @@ export default function SupporterLoginPage() {
       passwordLabel={translate(
         "common.password",
       )}
+      showPasswordLabel={translate("common.show")}
+      hidePasswordLabel={translate("common.hide")}
       emailPlaceholder={translate(
         "common.enterEmail",
       )}

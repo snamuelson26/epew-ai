@@ -217,6 +217,8 @@ export default function EntrepreneurLoginPage() {
       password={password}
       emailLabel={translate("common.email")}
       passwordLabel={translate("common.password")}
+      showPasswordLabel={translate("common.show")}
+      hidePasswordLabel={translate("common.hide")}
       emailPlaceholder={translate("common.enterEmail")}
       passwordPlaceholder={translate("common.enterPassword")}
       submitLabel={translate("common.signIn")}

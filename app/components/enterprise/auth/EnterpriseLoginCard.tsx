@@ -4,6 +4,7 @@ import type {
   FormEvent,
   ReactNode,
 } from "react";
+import { useState } from "react";
 
 interface EnterpriseLoginCardProps {
   title: string;
@@ -14,6 +15,8 @@ interface EnterpriseLoginCardProps {
 
   emailLabel: string;
   passwordLabel: string;
+  showPasswordLabel?: string;
+  hidePasswordLabel?: string;
 
   emailPlaceholder?: string;
   passwordPlaceholder?: string;
@@ -43,6 +46,8 @@ export default function EnterpriseLoginCard({
 
   emailLabel,
   passwordLabel,
+  showPasswordLabel,
+  hidePasswordLabel,
 
   emailPlaceholder,
   passwordPlaceholder,
@@ -60,6 +65,8 @@ export default function EnterpriseLoginCard({
   icon,
   footer,
 }: EnterpriseLoginCardProps) {
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
   return (
     <main className="flex min-h-[100svh] w-full items-center justify-center bg-[#f5f7fb] px-4 py-5 sm:px-6 sm:py-10 md:py-16">
       <div className="w-full max-w-xl rounded-2xl bg-white p-5 shadow-xl sm:rounded-3xl sm:p-8 md:p-10 md:shadow-2xl">
@@ -118,23 +125,34 @@ export default function EnterpriseLoginCard({
               {passwordLabel}
             </label>
 
-            <input
-              id="login-password"
-              type="password"
-              value={password}
-              onChange={(event) =>
-                onPasswordChange(
-                  event.target.value,
-                )
-              }
-              placeholder={
-                passwordPlaceholder
-              }
-              required
-              autoComplete="current-password"
-              disabled={loading}
-              className="w-full rounded-xl border-2 border-gray-300 p-3.5 text-base outline-none transition focus:border-green-600 disabled:cursor-not-allowed disabled:bg-gray-100 sm:rounded-2xl sm:p-4 sm:text-lg md:text-xl"
-            />
+            <div className="relative">
+              <input
+                id="login-password"
+                type={passwordVisible ? "text" : "password"}
+                value={password}
+                onChange={(event) =>
+                  onPasswordChange(
+                    event.target.value,
+                  )
+                }
+                placeholder={passwordPlaceholder}
+                required
+                autoComplete="current-password"
+                disabled={loading}
+                className={`w-full rounded-xl border-2 border-gray-300 p-3.5 text-base outline-none transition focus:border-green-600 disabled:cursor-not-allowed disabled:bg-gray-100 sm:rounded-2xl sm:p-4 sm:text-lg md:text-xl ${showPasswordLabel && hidePasswordLabel ? "pr-24 sm:pr-28" : ""}`}
+              />
+              {showPasswordLabel && hidePasswordLabel ? (
+                <button
+                  type="button"
+                  aria-label={`${passwordVisible ? hidePasswordLabel : showPasswordLabel} ${passwordLabel}`}
+                  aria-pressed={passwordVisible}
+                  onClick={() => setPasswordVisible((visible) => !visible)}
+                  className="absolute inset-y-0 right-3 px-2 text-sm font-bold text-[#06245c] hover:text-green-700 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 sm:right-4 sm:text-base"
+                >
+                  {passwordVisible ? hidePasswordLabel : showPasswordLabel}
+                </button>
+              ) : null}
+            </div>
           </div>
 
           {message ? (
