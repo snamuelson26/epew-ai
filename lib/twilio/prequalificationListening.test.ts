@@ -21,9 +21,9 @@ test("unstructured notes are preserved and ordinary JSON still loads", () => {
   assert.deepEqual(readInterviewNotes('{"no_input_count":2}'), { data: { no_input_count: 2 } });
   assert.deepEqual(readInterviewNotes(null), { data: null });
 });
-test("gather supports speech and keypad, waits longer, and identifies listening callbacks", () => {
+test("gather supports speech and keypad, waits longer, and identifies listening callbacks", async () => {
   const response = new twilio.twiml.VoiceResponse();
-  appendInterviewGather(response, { origin: "https://example.test", applicationId: 29, prompt: "Please answer.", hints: "EPEW" });
+  await appendInterviewGather(response, { origin: "https://example.test", applicationId: 29, prompt: "Please answer.", hints: "EPEW" });
   const xml = response.toString();
   assert.match(xml, /input="speech dtmf"/);
   assert.match(xml, /numDigits="1"/);
@@ -33,9 +33,9 @@ test("gather supports speech and keypad, waits longer, and identifies listening 
   assert.match(xml, /actionOnEmptyResult="true"/);
   assert.match(xml, /googlev2_telephony/);
 });
-test("a retry uses the default recognizer without discarding speech input", () => {
+test("a retry uses the default recognizer without discarding speech input", async () => {
   const response = new twilio.twiml.VoiceResponse();
-  appendInterviewGather(response, { origin: "https://example.test", applicationId: 29, prompt: "Try again.", hints: "EPEW", retry: true });
+  await appendInterviewGather(response, { origin: "https://example.test", applicationId: 29, prompt: "Try again.", hints: "EPEW", retry: true });
   assert.match(response.toString(), /speechModel="default"/);
   assert.match(response.toString(), /input="speech dtmf"/);
 });

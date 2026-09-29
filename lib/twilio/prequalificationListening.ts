@@ -1,4 +1,5 @@
 import twilio from "twilio";
+import { sayCoach, type CoachLanguage } from "./coachLanguage";
 
 /** Preserve a historical correction appended after the structured interview. */
 export function readInterviewNotes(value: unknown): { data: Record<string, unknown> | null; annotation?: string } {
@@ -22,10 +23,21 @@ export function isNewInterviewCall(savedCallSid: string | undefined, callSid: st
   return !isListeningCallback || Boolean(savedCallSid && savedCallSid !== callSid);
 }
 
-export function appendInterviewGather(
+export async function appendInterviewGather(
   response: twilio.twiml.VoiceResponse,
-  options: { origin: string; applicationId: number; prompt: string; hints: string; retry?: boolean },
-): void {
+  options: { origin: string; applicationId: number; prompt: string; hints: string; retry?: boolean; language?: CoachLanguage },
+): Promise<void> {
+  const language = options.language ?? "en";
+  if (language === "ht") {
+    await sayCoach(response, options.origin, options.prompt + " Answer after the beep. Press the star key to change language.", language);
+    response.record({
+      action: `${options.origin}/api/twilio/voice/prequalification-establishment?applicationId=${options.applicationId}&turn=recorded`,
+      method: "POST", timeout: 5, maxLength: 90, finishOnKey: "*#", playBeep: true, transcribe: false,
+      recordingStatusCallback: `${options.origin}/api/twilio/voice/prequalification-recording?applicationId=${options.applicationId}`,
+      recordingStatusCallbackMethod: "POST", recordingStatusCallbackEvent: ["completed", "absent"],
+    });
+    return;
+  }
   const gather = response.gather({
     input: ["speech", "dtmf"],
     numDigits: 1,
@@ -35,11 +47,11 @@ export function appendInterviewGather(
     speechTimeout: "5",
     // Let Twilio select its default recognizer on retries rather than pinning
     // every failed attempt to the same provider/model.
-    speechModel: options.retry ? "default" : "googlev2_telephony",
-    language: "en-US",
+    speechModel: language !== "en" || options.retry ? "default" : "googlev2_telephony",
+    language: language === "fr" ? "fr-FR" : language === "es" ? "es-MX" : "en-US",
     hints: options.hints,
     profanityFilter: false,
     actionOnEmptyResult: true,
   });
-  gather.say({ voice: "Polly.Matthew", language: "en-US" }, options.prompt);
+  await sayCoach(gather, options.origin, options.prompt, language);
 }

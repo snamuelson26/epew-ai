@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
+import { appendLanguageMenu, appendCreoleConsent, coachLanguage, languageDigit, needsLanguageChoice, sayCoach, translateCoachText, type CoachLanguage } from "@/lib/twilio/coachLanguage";
 import { appendInterviewGather, isNewInterviewCall, readInterviewNotes } from "@/lib/twilio/prequalificationListening";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { validateTwilioWebhook } from "@/lib/twilio/validateTwilioWebhook";
@@ -44,7 +45,7 @@ type Scores = {
   business_potential: number;
   readiness: number;
 };
-type Message = { role: "coach" | "entrepreneur"; topic: Topic; content: string; at: string };
+type Message = { role: "coach" | "entrepreneur"; topic: Topic; content: string; at: string; language?: CoachLanguage; english_translation?: string };
 type State = {
   source: "phone_prequalification_approved_v6";
   started_at: string;
@@ -52,6 +53,10 @@ type State = {
   messages: Message[];
   no_input_count: number;
   call_sid?: string;
+  language?: CoachLanguage;
+  language_menu_attempts?: number;
+  recording_consent_call_sid?: string;
+  processed_recordings?: string[];
   record_notes?: string;
   listening_events?: { at: string; call_sid: string; event: string; confidence?: string }[];
   completed_at?: string;
@@ -117,6 +122,10 @@ function parseState(value: unknown): State | null {
       current_topic: p.current_topic,
       messages: (p.messages as Message[]).slice(-100),
       no_input_count: Number(p.no_input_count ?? 0) || 0,
+      language: coachLanguage(p.language),
+      language_menu_attempts: Number(p.language_menu_attempts) || 0,
+      recording_consent_call_sid: p.recording_consent_call_sid,
+      processed_recordings: Array.isArray(p.processed_recordings) ? p.processed_recordings : [],
       call_sid: typeof p.call_sid === "string" ? p.call_sid : undefined,
       record_notes: [p.record_notes, parsed.annotation].filter(Boolean).join("\n") || undefined,
       listening_events: Array.isArray(p.listening_events) ? p.listening_events : [],
@@ -437,12 +446,13 @@ async function evaluateCompletedInterview(app: any, state: State) {
   }
 }
 
-function gather(response: twilio.twiml.VoiceResponse, origin: string, id: number, prompt: string, app: any, retry = false) {
+async function gather(response: twilio.twiml.VoiceResponse, origin: string, id: number, prompt: string, app: any, language: CoachLanguage, retry = false) {
   const hints = [app.full_name, displayBusinessName(app), businessIdFor(app), app.business_type, app.business_category, app.business_city, app.business_state, app.city, app.state, app.enterprise_country, app.address_country, "EPEW", "EDE", "IBOS", "entrepreneur"].filter(Boolean).join(",");
-  appendInterviewGather(response, { origin, applicationId: id, prompt, hints, retry });
+  await appendInterviewGather(response, { origin, applicationId: id, prompt, hints, retry, language });
 }
 
 export async function POST(request: NextRequest) {
+  let currentLanguage: CoachLanguage = "en";
   try {
     const { valid, params } = await validateTwilioWebhook(request);
     const response = new twilio.twiml.VoiceResponse();
@@ -454,8 +464,9 @@ export async function POST(request: NextRequest) {
 
     const url = new URL(request.url);
     const id = Number(url.searchParams.get("applicationId"));
-    const speech = String(params.SpeechResult ?? "").trim();
-    const digits = String(params.Digits ?? "").trim();
+    let speech = String(params.SpeechResult ?? "").trim();
+    let originalSpeech = speech;
+    let digits = String(params.Digits ?? "").trim();
     const callSid = String(params.CallSid ?? "").trim();
 
     if (!Number.isInteger(id) || id <= 0) {
@@ -477,10 +488,12 @@ export async function POST(request: NextRequest) {
       return xml(response, 409);
     }
 
-    const state = parseState(app.interview_notes) ?? {
+    const state: State = parseState(app.interview_notes) ?? {
       ...freshState(),
       record_notes: typeof app.interview_notes === "string" ? app.interview_notes : undefined,
     };
+    currentLanguage = coachLanguage(state.language);
+    const turn = url.searchParams.get("turn");
     const recordInputEvent = (event: string) => {
       state.listening_events = [...(state.listening_events ?? []), {
         at: new Date().toISOString(), call_sid: callSid, event,
@@ -494,20 +507,89 @@ export async function POST(request: NextRequest) {
       return xml(response);
     }
 
-    if (isNewInterviewCall(state.call_sid, callSid, url.searchParams.get("turn") === "listen")) {
+    if (isNewInterviewCall(state.call_sid, callSid, Boolean(turn))) {
       // A fresh call must never inherit the exhausted silence counter from a
       // previous attempt. Keep the transcript and resume the unanswered topic.
       state.call_sid = callSid;
       state.no_input_count = 0;
       recordInputEvent("call_started");
-      const opening = state.current_topic === "business_verification"
-        ? openingFor(app)
-        : `Hello ${String(app.full_name || "").trim()}. This is Daniel from EPEW. Let us continue where we stopped. ${questionFor(state.current_topic, app)}`;
-      const prompt = `${opening} Please answer after I finish speaking. If I do not hear you, press 9 to try again.`;
-      state.messages.push({ role: "coach", topic: state.current_topic, content: prompt, at: new Date().toISOString() });
+      state.language_menu_attempts = 0;
       await saveState(id, state, false);
-      gather(response, url.origin, id, prompt, app);
+      appendLanguageMenu(response, url.origin, id);
       return xml(response);
+    }
+
+    const showLanguageMenu = async () => {
+      recordInputEvent("language_choice_requested");
+      state.language_menu_attempts = (state.language_menu_attempts ?? 0) + 1;
+      await saveState(id, state, false);
+      if (state.language_menu_attempts > 3) {
+        await markInterrupted(id, state);
+        // The menu itself is multilingual even if a translation service is down.
+        response.say(voice(), "We could not confirm your language. Your interview remains pending. Thank you.");
+        response.hangup();
+      } else appendLanguageMenu(response, url.origin, id);
+    };
+
+    if (turn === "language") {
+      const selected = languageDigit(digits);
+      if (!selected) { await showLanguageMenu(); return xml(response); }
+      state.language = selected;
+      currentLanguage = selected;
+      state.no_input_count = 0;
+      state.language_menu_attempts = 0;
+      recordInputEvent(`language_selected_${selected}`);
+      await saveState(id, state, false);
+      if (selected === "ht" && state.recording_consent_call_sid !== callSid) appendCreoleConsent(response, url.origin, id);
+      else await gather(response, url.origin, id, questionFor(state.current_topic, app) + " Press the star key at any time to change language.", app, currentLanguage);
+      return xml(response);
+    }
+
+    if (turn === "record-consent") {
+      if (digits !== "1") { await showLanguageMenu(); return xml(response); }
+      state.recording_consent_call_sid = callSid;
+      recordInputEvent("creole_transcription_consent");
+      await saveState(id, state, false);
+      await gather(response, url.origin, id, questionFor(state.current_topic, app), app, currentLanguage);
+      return xml(response);
+    }
+
+    if (digits === "*") { await showLanguageMenu(); return xml(response); }
+
+    if (turn === "recorded" || turn === "record-poll") {
+      const recordingSid = String(params.RecordingSid || url.searchParams.get("recordingSid") || "");
+      if (!/^RE[0-9a-f]{32}$/i.test(recordingSid) || state.recording_consent_call_sid !== callSid) {
+        await showLanguageMenu(); return xml(response);
+      }
+      const { data: job, error: jobError } = await supabaseAdmin.from("epew_phone_recording_jobs")
+        .select("status,original_text,english_text").eq("recording_sid", recordingSid).eq("call_sid", callSid).eq("application_id", id).maybeSingle();
+      if (jobError) throw new Error("Transcription result unavailable");
+      const attempt = Number(url.searchParams.get("attempt") || 0);
+      if (!job || job.status === "processing") {
+        if (!Number.isInteger(attempt) || attempt >= 20) { await showLanguageMenu(); return xml(response); }
+        response.pause({ length: 2 });
+        response.redirect({ method: "POST" }, `${url.origin}/api/twilio/voice/prequalification-establishment?applicationId=${id}&turn=record-poll&recordingSid=${recordingSid}&attempt=${attempt + 1}`);
+        return xml(response);
+      }
+      if (state.processed_recordings?.includes(recordingSid)) {
+        await gather(response, url.origin, id, questionFor(state.current_topic, app), app, currentLanguage);
+        return xml(response);
+      }
+      state.processed_recordings = [...(state.processed_recordings ?? []), recordingSid];
+      speech = job.status === "ready" ? String(job.english_text || "") : "";
+      originalSpeech = String(job.original_text || "");
+      digits = "";
+    }
+
+    if (needsLanguageChoice(speech, String(params.Confidence ?? "")) && !digits) {
+      recordInputEvent(speech ? "speech_unclear_or_language_request" : "no_recognized_speech");
+      state.no_input_count += 1;
+      await showLanguageMenu();
+      return xml(response);
+    }
+    if (speech && currentLanguage !== "en" && currentLanguage !== "ht") {
+      speech = await translateCoachText(speech, "en");
+      if (needsLanguageChoice(speech, "")) { await showLanguageMenu(); return xml(response); }
     }
 
     if (digits) {
@@ -517,37 +599,19 @@ export async function POST(request: NextRequest) {
       const prompt = `I received your keypress. Let us try your voice again. ${questionFor(state.current_topic, app)} Please answer after I finish speaking.`;
       state.messages.push({ role: "coach", topic: state.current_topic, content: prompt, at: new Date().toISOString() });
       await saveState(id, state, false);
-      gather(response, url.origin, id, prompt, app, true);
-      return xml(response);
-    }
-
-    if (!speech) {
-      recordInputEvent("no_recognized_speech");
-      state.no_input_count += 1;
-      if (state.no_input_count >= 3) {
-        const goodbye = "The phone system is not receiving your response. Your interview remains incomplete, and we can continue another time. Thank you, and have a blessed day.";
-        state.messages.push({ role: "coach", topic: state.current_topic, content: goodbye, at: new Date().toISOString() });
-        await markInterrupted(id, state);
-        response.say(voice(), goodbye);
-        response.hangup();
-        return xml(response);
-      }
-      const retry = `The phone system did not recognize a response. Please check that your phone is not muted. If you can hear me, press 9 to retry, or answer after I finish speaking. ${questionFor(state.current_topic, app)}`;
-      state.messages.push({ role: "coach", topic: state.current_topic, content: retry, at: new Date().toISOString() });
-      await saveState(id, state, false);
-      gather(response, url.origin, id, retry, app, true);
+      await gather(response, url.origin, id, prompt, app, currentLanguage, true);
       return xml(response);
     }
 
     recordInputEvent("speech_recognized");
     state.no_input_count = 0;
-    state.messages.push({ role: "entrepreneur", topic: state.current_topic, content: speech, at: new Date().toISOString() });
+    state.messages.push({ role: "entrepreneur", topic: state.current_topic, content: originalSpeech, language: currentLanguage, english_translation: speech, at: new Date().toISOString() });
 
     if (asksForRepeat(speech)) {
       const repeat = questionFor(state.current_topic, app);
       state.messages.push({ role: "coach", topic: state.current_topic, content: repeat, at: new Date().toISOString() });
       await saveState(id, state, false);
-      gather(response, url.origin, id, repeat, app);
+      await gather(response, url.origin, id, repeat, app, currentLanguage);
       return xml(response);
     }
 
@@ -555,7 +619,7 @@ export async function POST(request: NextRequest) {
       const clarification = clarificationFor(state.current_topic);
       state.messages.push({ role: "coach", topic: state.current_topic, content: clarification, at: new Date().toISOString() });
       await saveState(id, state, false);
-      gather(response, url.origin, id, clarification, app);
+      await gather(response, url.origin, id, clarification, app, currentLanguage);
       return xml(response);
     }
 
@@ -569,7 +633,7 @@ export async function POST(request: NextRequest) {
       state.scores = evaluation.scores;
       await saveState(id, state, true);
       const closing = "Thank you for attending the meeting. We are looking forward to helping you open a successful business. Thank you, and have a blessed day.";
-      response.say(voice(), closing);
+      await sayCoach(response, url.origin, closing, currentLanguage);
       response.hangup();
       return xml(response);
     }
@@ -590,13 +654,14 @@ export async function POST(request: NextRequest) {
 
     state.messages.push({ role: "coach", topic: next, content: reply, at: new Date().toISOString() });
     await saveState(id, state, false);
-    gather(response, url.origin, id, reply, app);
+    await gather(response, url.origin, id, reply, app, currentLanguage);
     return xml(response);
   } catch (error) {
     console.error("EPEW approved prequalification error:", error);
     const response = new twilio.twiml.VoiceResponse();
-    response.say(voice(), "I am sorry. I am having trouble continuing the interview right now. We will stop here and continue another time.");
-    response.hangup();
-    return xml(response, 500);
+    const id = Number(request.nextUrl.searchParams.get("applicationId"));
+    if (Number.isSafeInteger(id) && id > 0) appendLanguageMenu(response, request.nextUrl.origin, id);
+    else response.hangup();
+    return xml(response);
   }
 }
