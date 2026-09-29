@@ -93,7 +93,7 @@
     }
   },
   "organization": {
-    "title": "Paso 4 — Organización / Empresa de Grupo",
+    "title": "Organización / Empresa de Grupo",
     "identity_title": "Identidad de la Organización",
     "legal_name": "Nombre Legal de la Organización",
     "display_name": "Nombre Público o Comercial — Opcional",
@@ -136,7 +136,7 @@
     "mission": "Misión de la organización *"
   },
   "participants": {
-    "title": "Paso 5 — Participantes de la Organización",
+    "title": "Participantes de la Organización",
     "description": "Agregue a los participantes activos que trabajarán juntos en el proyecto empresarial conjunto. Se requieren al menos 3 participantes activos antes del envío final.",
     "add": "Agregar Participante",
     "remove": "Eliminar Participante",

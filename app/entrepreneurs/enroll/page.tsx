@@ -1278,6 +1278,10 @@ export default function EntrepreneurEnrollPage() {
                     }
                     className="mt-10 space-y-10"
                   >
+                    {applicantType === "individual" && (
+                      <CommonIdentitySection organization={false} form={commonForm} onChange={handleCommonChange} tr={tr} />
+                    )}
+
                     {applicantType ===
                       "individual" && (
                       <IndividualSection
@@ -1318,12 +1322,9 @@ export default function EntrepreneurEnrollPage() {
                       </>
                     )}
 
-                    <CommonIdentitySection
-                      organization={applicantType === "organization"}
-                      form={commonForm}
-                      onChange={handleCommonChange}
-                      tr={tr}
-                    />
+                    {applicantType === "organization" && (
+                      <CommonIdentitySection organization form={commonForm} onChange={handleCommonChange} tr={tr} />
+                    )}
 
                     <AgreementSection
                       applicantType={

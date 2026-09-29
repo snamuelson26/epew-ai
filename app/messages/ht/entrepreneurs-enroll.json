@@ -93,7 +93,7 @@
     }
   },
   "organization": {
-    "title": "Etap 4 — Òganizasyon / Antrepriz Gwoup",
+    "title": "Òganizasyon / Antrepriz Gwoup",
     "identity_title": "Idantite Òganizasyon an",
     "legal_name": "Non Legal Òganizasyon an",
     "display_name": "Non Piblik oswa Non Itilizasyon — Opsyonèl",
@@ -136,7 +136,7 @@
     "mission": "Misyon òganizasyon an *"
   },
   "participants": {
-    "title": "Etap 5 — Patisipan Òganizasyon an",
+    "title": "Patisipan Òganizasyon an",
     "description": "Ajoute patisipan aktif ki pral travay ansanm sou pwojè antrepriz kolektif la. Omwen 3 patisipan aktif obligatwa anvan soumisyon final la.",
     "add": "Ajoute Patisipan",
     "remove": "Retire Patisipan",

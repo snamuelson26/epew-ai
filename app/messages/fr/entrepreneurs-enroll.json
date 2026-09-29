@@ -93,7 +93,7 @@
     }
   },
   "organization": {
-    "title": "Étape 4 — Organisation / Entreprise de groupe",
+    "title": "Organisation / Entreprise de groupe",
     "identity_title": "Identité de l’organisation",
     "legal_name": "Nom légal de l’organisation",
     "display_name": "Nom public ou d’usage — Facultatif",
@@ -136,7 +136,7 @@
     "mission": "Mission de l’organisation *"
   },
   "participants": {
-    "title": "Étape 5 — Participants de l’organisation",
+    "title": "Participants de l’organisation",
     "description": "Ajoutez les participants actifs qui travailleront ensemble sur le projet entrepreneurial commun. Au moins 3 participants actifs sont requis avant la soumission finale.",
     "add": "Ajouter un participant",
     "remove": "Supprimer le participant",

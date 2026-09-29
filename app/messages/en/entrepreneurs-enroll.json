@@ -93,7 +93,7 @@
     }
   },
   "organization": {
-    "title": "Step 4 — Organization / Group Enterprise",
+    "title": "Organization / Group Enterprise",
     "identity_title": "Organization Identity",
     "legal_name": "Legal Organization Name",
     "display_name": "Public or Display Name — Optional",
@@ -136,7 +136,7 @@
     "mission": "Organization mission *"
   },
   "participants": {
-    "title": "Step 5 — Organization Participants",
+    "title": "Organization Participants",
     "description": "Add the active participants who will work together on the mutual enterprise project. At least 3 active participants are required before final submission.",
     "add": "Add Participant",
     "remove": "Remove Participant",
