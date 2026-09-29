@@ -1,3 +1,4 @@
+import { reconcileIndependentSupport } from "@/lib/enterprise/supporters/IndependentSupportPaymentService";
 import {
   NextRequest,
   NextResponse,
@@ -7,6 +8,8 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import {
   processSmartSupportSelection,
 } from "@/lib/enterprise/supporters/SmartSupportSelectionService";
+
+export const maxDuration = 60;
 
 export const dynamic =
   "force-dynamic";
@@ -225,6 +228,9 @@ export async function GET(
   }
 
   try {
+    const { data: independentAllocated, error: independentError } = await supabaseAdmin.rpc("epew_allocate_independent_payments");
+    if (independentError) throw independentError;
+    const independentPlansChecked = await reconcileIndependentSupport();
     const result =
       await processPendingSelections();
 
@@ -232,6 +238,8 @@ export async function GET(
       success: true,
       processedAt:
         new Date().toISOString(),
+      independentAllocated,
+      independentPlansChecked,
       ...result,
     });
   } catch (error) {

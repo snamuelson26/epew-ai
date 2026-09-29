@@ -1,3 +1,4 @@
+import { independentCheckout, independentInvoice, independentSubscription } from "@/lib/enterprise/supporters/IndependentSupportPaymentService";
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { createEnterpriseContext } from "@/lib/enterprise/core/context";
@@ -52,7 +53,9 @@ export async function POST(req: Request) {
         const supportFlow =
           session.metadata?.support_flow || "";
 
-        if (supportFlow === "annual_one_time") {
+        if (supportFlow === "independent") {
+          await independentCheckout(session);
+        } else if (supportFlow === "annual_one_time") {
           if (session.payment_status !== "paid") {
             console.log(
               "Annual support payment pending; waiting for Stripe settlement:",
@@ -135,6 +138,14 @@ export async function POST(req: Request) {
         break;
       }
 
+      case "invoice.paid":
+      case "invoice.payment_succeeded":
+        await independentInvoice(event.data.object);
+        break;
+      case "customer.subscription.updated":
+      case "customer.subscription.deleted":
+        await independentSubscription(event.data.object);
+        break;
       default:
         console.log(`Unhandled Stripe event: ${event.type}`);
     }

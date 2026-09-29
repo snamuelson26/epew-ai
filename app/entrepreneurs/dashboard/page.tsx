@@ -485,6 +485,7 @@ export default function EntrepreneurDashboardPage() {
       <main className="min-h-screen bg-[#f4f7fb] p-6 md:p-10">
         <div className="mx-auto max-w-6xl space-y-6">
           {accountSelector}
+          <Link href={`/entrepreneurs/whatsapp-interview?applicationId=${encodeURIComponent(String(entrepreneur.id))}`} className="inline-block rounded-xl bg-green-700 px-5 py-3 font-bold text-white">International interviews: WhatsApp calls, text and voice notes</Link>
           {message && <div className="rounded-2xl border border-blue-200 bg-blue-50 p-4 text-blue-800">{message}</div>}
 
           <section className="rounded-3xl bg-gradient-to-r from-[#1f7cf0] via-[#168fb7] to-[#078443] p-8 text-white shadow-xl md:p-10">
@@ -617,6 +618,7 @@ export default function EntrepreneurDashboardPage() {
     <main className="min-h-screen bg-slate-100 p-6">
       <div className="mx-auto max-w-7xl space-y-6">
         {accountSelector}
+          <Link href={`/entrepreneurs/whatsapp-interview?applicationId=${encodeURIComponent(String(entrepreneur.id))}`} className="inline-block rounded-xl bg-green-700 px-5 py-3 font-bold text-white">International interviews: WhatsApp calls, text and voice notes</Link>
         {message && <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-blue-800">{message}</div>}
 
         <section className="rounded-3xl bg-gradient-to-r from-blue-950 via-blue-900 to-green-700 p-10 text-white shadow-2xl">

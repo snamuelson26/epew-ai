@@ -77,6 +77,7 @@ export default function SupporterLayout({ children }: { children: ReactNode }) {
   }
 
   const menu = [
+    { title: ({ en: "Independent Support", ht: "Sipò Endepandan", fr: "Soutien indépendant", es: "Apoyo independiente" })[language], href: "/supporters/independent-support" },
     { title: `🏠 ${t.dashboard}`, href: "/supporters/dashboard" },
     { title: `🏢 ${t.supportedBusinesses}`, href: "/supporters/my-supported-businesses" },
     { title: `💬 ${t.communication}`, href: "/supporters/messages" },

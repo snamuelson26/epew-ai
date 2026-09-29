@@ -260,6 +260,7 @@ export default function AnnualSupportPage() {
             <h1 className="mt-4 text-5xl font-black md:text-6xl">
               Let EPEW Choose a Qualified Business for You
             </h1>
+            <a href="/supporters/independent-support" className="mt-5 inline-block rounded-xl bg-green-700 px-5 py-3 font-bold text-white">Independent support: from $500 one time, $100 weekly, or $400 monthly</a>
 
             <p className="mt-6 max-w-5xl text-2xl leading-relaxed text-blue-100">
               Choose how many Support Units you would like to provide.

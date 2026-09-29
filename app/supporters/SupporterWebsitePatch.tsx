@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
-const EPEW_SELECTION_PATH = "/supporters/annual-support";
+const EPEW_SELECTION_PATH = "/supporters/independent-support";
 const PANEL_ID = "epew-founding-supporter-panel";
 const HERO_RATE_ID = "epew-supporter-hero-rate";
 
