@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     !phone ||
     !String(params.From).startsWith("whatsapp:") ||
     whatsappNumber(params.To ?? "") !== sender ||
-    !/^SM[0-9a-f]{32}$/i.test(sid)
+    !/^(SM|MM)[0-9a-f]{32}$/i.test(sid)
   )
     return new NextResponse("Invalid message", { status: 400 });
   if (!whatsappReadiness().messaging)

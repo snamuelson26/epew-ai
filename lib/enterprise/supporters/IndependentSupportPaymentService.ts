@@ -51,8 +51,10 @@ export async function independentCheckout(session: Stripe.Checkout.Session) {
   );
 }
 export async function independentInvoice(invoice: Stripe.Invoice) {
+  // Existing webhook endpoints may still emit the older Invoice shape.
+  const legacy = invoice as Stripe.Invoice & { subscription?: string | Stripe.Subscription | null };
   const subscriptionId = idOf(
-    invoice.parent?.subscription_details?.subscription,
+    invoice.parent?.subscription_details?.subscription ?? legacy.subscription,
   );
   if (!subscriptionId) return;
   const subscription = await stripe.subscriptions.retrieve(subscriptionId);
