@@ -93,7 +93,7 @@
     }
   },
   "organization": {
-    "title": "Paso 4 — Organización / Empresa de Grupo",
+    "title": "Organización / Empresa de Grupo",
     "identity_title": "Identidad de la Organización",
     "legal_name": "Nombre Legal de la Organización",
     "display_name": "Nombre Público o Comercial — Opcional",
@@ -131,10 +131,12 @@
     "estimated_cost": "Costo Estimado del Proyecto — Opcional",
     "requested_financing": "Financiamiento EPEW Solicitado",
     "financing_notice": "La organización tiene una sola posición de financiamiento. La cantidad de participantes no multiplica el monto del financiamiento. El financiamiento solicitado no puede superar los $100,000 para esta solicitud empresarial de organización.",
-    "use_of_financing": "¿Cómo se utilizará el financiamiento?"
+    "use_of_financing": "¿Cómo se utilizará el financiamiento?",
+    "area_of_activity": "Área de actividad *",
+    "mission": "Misión de la organización *"
   },
   "participants": {
-    "title": "Paso 5 — Participantes de la Organización",
+    "title": "Participantes de la Organización",
     "description": "Agregue a los participantes activos que trabajarán juntos en el proyecto empresarial conjunto. Se requieren al menos 3 participantes activos antes del envío final.",
     "add": "Agregar Participante",
     "remove": "Eliminar Participante",
@@ -162,7 +164,8 @@
       "community_relations": "Relaciones Comunitarias",
       "member": "Miembro",
       "other": "Otro"
-    }
+    },
+    "identity_required": "Cada miembro debe presentar su propio documento oficial de identidad y una selfie. Incluya al menos 3 miembros y agregue tantos como necesite."
   },
   "international_special_request": {
     "title": "Solicitud Especial Internacional para Emprendedor Individual",
@@ -230,7 +233,8 @@
     "selfie_required": "Cargue o tome una foto selfie de verificación.",
     "agreement_required": "Debe aceptar el acuerdo de participación aplicable antes de enviar la solicitud.",
     "submission_error": "No se pudo enviar su solicitud. Revise su información e inténtelo nuevamente.",
-    "unexpected_error": "Ocurrió un error inesperado. Inténtelo nuevamente."
+    "unexpected_error": "Ocurrió un error inesperado. Inténtelo nuevamente.",
+    "document_upload_failed": "No se pudo cargar un documento. Inténtelo de nuevo."
   },
   "submit": {
     "button": "Enviar Mi Solicitud",

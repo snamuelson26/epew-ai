@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ChangeEvent,
   type FormEvent,
@@ -29,6 +30,9 @@ type ApplicantType =
 type LocationType = "" | "us" | "canada" | "other";
 
 type Participant = {
+  clientId: string;
+  governmentId: File | null;
+  selfie: File | null;
   full_name: string;
   email: string;
   phone: string;
@@ -70,6 +74,8 @@ type IndividualForm = {
 };
 
 type OrganizationForm = {
+  area_of_activity: string;
+  mission: string;
   legal_name: string;
   display_name: string;
   organization_type: string;
@@ -156,6 +162,8 @@ const INITIAL_INDIVIDUAL: IndividualForm = {
 };
 
 const INITIAL_ORGANIZATION: OrganizationForm = {
+  area_of_activity: "",
+  mission: "",
   legal_name: "",
   display_name: "",
   organization_type: "",
@@ -209,6 +217,9 @@ const INITIAL_SPECIAL_REQUEST: SpecialRequestForm = {
 };
 
 const EMPTY_PARTICIPANT: Participant = {
+  clientId: "",
+  governmentId: null,
+  selfie: null,
   full_name: "",
   email: "",
   phone: "",
@@ -311,10 +322,12 @@ export default function EntrepreneurEnrollPage() {
 
   const [participants, setParticipants] =
     useState<Participant[]>([
-      { ...EMPTY_PARTICIPANT },
-      { ...EMPTY_PARTICIPANT },
-      { ...EMPTY_PARTICIPANT },
+      { ...EMPTY_PARTICIPANT, clientId: crypto.randomUUID() },
+      { ...EMPTY_PARTICIPANT, clientId: crypto.randomUUID() },
+      { ...EMPTY_PARTICIPANT, clientId: crypto.randomUUID() },
     ]);
+
+  const organizationUploadReceipt = useRef<string>("");
 
   const [governmentIdFile, setGovernmentIdFile] =
     useState<File | null>(null);
@@ -416,7 +429,7 @@ export default function EntrepreneurEnrollPage() {
   const updateParticipant = (
     index: number,
     field: keyof Participant,
-    value: string | boolean,
+    value: string | boolean | File | null,
   ) => {
     setParticipants((current) =>
       current.map((participant, participantIndex) => {
@@ -435,7 +448,7 @@ export default function EntrepreneurEnrollPage() {
   const addParticipant = () => {
     setParticipants((current) => [
       ...current,
-      { ...EMPTY_PARTICIPANT },
+      { ...EMPTY_PARTICIPANT, clientId: crypto.randomUUID() },
     ]);
   };
 
@@ -459,9 +472,9 @@ export default function EntrepreneurEnrollPage() {
     setIndividualForm(INITIAL_INDIVIDUAL);
     setOrganizationForm(INITIAL_ORGANIZATION);
     setParticipants([
-      { ...EMPTY_PARTICIPANT },
-      { ...EMPTY_PARTICIPANT },
-      { ...EMPTY_PARTICIPANT },
+      { ...EMPTY_PARTICIPANT, clientId: crypto.randomUUID() },
+      { ...EMPTY_PARTICIPANT, clientId: crypto.randomUUID() },
+      { ...EMPTY_PARTICIPANT, clientId: crypto.randomUUID() },
     ]);
     setGovernmentIdFile(null);
     setSelfieFile(null);
@@ -633,6 +646,8 @@ export default function EntrepreneurEnrollPage() {
 
     if (
       !organizationForm.legal_name.trim() ||
+      !organizationForm.area_of_activity.trim() ||
+      !organizationForm.mission.trim() ||
       !organizationForm.organization_street_address.trim() ||
       !organizationForm.organization_city.trim() ||
       !organizationForm.organization_state_region.trim() ||
@@ -668,6 +683,8 @@ export default function EntrepreneurEnrollPage() {
     if (
       participants.some(
         (participant) =>
+          !participant.governmentId ||
+          !participant.selfie ||
           !participant.full_name.trim() ||
           !participant.organizational_title.trim() ||
           !participant.project_role.trim() ||
@@ -695,20 +712,42 @@ export default function EntrepreneurEnrollPage() {
       enterpriseCountryValue,
     );
 
-    payload.append(
-      "participants",
-      JSON.stringify(participants),
-    );
+    payload.append("participants", JSON.stringify(participants.map(({ clientId, governmentId, selfie, ...member }) => {
+      void clientId; void governmentId; void selfie;
+      return member;
+    })));
 
-    payload.append(
-      "government_id",
-      governmentIdFile as File,
-    );
-
-    payload.append(
-      "selfie",
-      selfieFile as File,
-    );
+    const people = [
+      { name: commonForm.full_name, governmentId: governmentIdFile!, selfie: selfieFile! },
+      ...participants.map((member) => ({ name: member.full_name, governmentId: member.governmentId!, selfie: member.selfie! })),
+    ];
+    const preparation = await fetch("/api/entrepreneurs/organization-uploads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: commonForm.email,
+        password: commonForm.password,
+        receipt: organizationUploadReceipt.current,
+        people: people.map((person) => ({
+          name: person.name,
+          governmentId: { size: person.governmentId.size, type: person.governmentId.type },
+          selfie: { size: person.selfie.size, type: person.selfie.type },
+        })),
+      }),
+    });
+    const prepared = await preparation.json();
+    if (!preparation.ok) throw new Error(prepared.error || tr("validation.submission_error"));
+    organizationUploadReceipt.current = prepared.receipt;
+    const files = people.flatMap((person) => [person.governmentId, person.selfie]);
+    for (let index = 0; index < files.length; index++) {
+      const upload = await fetch(prepared.uploads[index].signedUrl, {
+        method: "PUT",
+        headers: { "Content-Type": files[index].type },
+        body: files[index],
+      });
+      if (!upload.ok) throw new Error(tr("validation.document_upload_failed"));
+    }
+    payload.append("upload_receipt", prepared.receipt);
 
     const response = await fetch(
       "/api/entrepreneurs/organization-application",
@@ -1239,11 +1278,9 @@ export default function EntrepreneurEnrollPage() {
                     }
                     className="mt-10 space-y-10"
                   >
-                    <CommonIdentitySection
-                      form={commonForm}
-                      onChange={handleCommonChange}
-                      tr={tr}
-                    />
+                    {applicantType === "individual" && (
+                      <CommonIdentitySection organization={false} form={commonForm} onChange={handleCommonChange} tr={tr} />
+                    )}
 
                     {applicantType ===
                       "individual" && (
@@ -1283,6 +1320,10 @@ export default function EntrepreneurEnrollPage() {
                           tr={tr}
                         />
                       </>
+                    )}
+
+                    {applicantType === "organization" && (
+                      <CommonIdentitySection organization form={commonForm} onChange={handleCommonChange} tr={tr} />
                     )}
 
                     <AgreementSection
@@ -1366,10 +1407,12 @@ export default function EntrepreneurEnrollPage() {
 }
 
 function CommonIdentitySection({
+  organization,
   form,
   onChange,
   tr,
 }: {
+  organization: boolean;
   form: CommonForm;
   onChange: (
     event: ChangeEvent<
@@ -1381,7 +1424,7 @@ function CommonIdentitySection({
   return (
     <section className="rounded-3xl bg-white p-8 shadow-2xl md:p-10">
       <h3 className="text-3xl font-extrabold md:text-4xl">
-        {tr("account.title")}
+        {tr(organization ? "account.representative_title" : "account.title")}
       </h3>
 
       <div className="mt-8 grid gap-6 md:grid-cols-2">
@@ -1734,6 +1777,15 @@ function OrganizationSection({
           )}
           required
         />
+
+        <label className="block md:col-span-2">
+          <span className="mb-2 block font-bold">{tr("organization.area_of_activity")}</span>
+          <Input name="area_of_activity" value={form.area_of_activity} onChange={onChange} required />
+        </label>
+        <label className="block md:col-span-2">
+          <span className="mb-2 block font-bold">{tr("organization.mission")}</span>
+          <textarea name="mission" value={form.mission} onChange={onChange} required className="h-32 w-full rounded-2xl border p-4" />
+        </label>
 
         <Input
           name="display_name"
@@ -2130,7 +2182,7 @@ function ParticipantsSection({
   updateParticipant: (
     index: number,
     field: keyof Participant,
-    value: string | boolean,
+    value: string | boolean | File | null,
   ) => void;
   addParticipant: () => void;
   removeParticipant: (
@@ -2169,7 +2221,7 @@ function ParticipantsSection({
         {participants.map(
           (participant, index) => (
             <div
-              key={index}
+              key={participant.clientId}
               className="rounded-3xl border border-gray-200 bg-[#f5f7fb] p-6"
             >
               <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
@@ -2185,6 +2237,7 @@ function ParticipantsSection({
                   onClick={() =>
                     removeParticipant(index)
                   }
+                  disabled={participants.length <= 3}
                   className="rounded-xl bg-red-100 px-5 py-3 font-bold text-red-700"
                 >
                   {tr(
@@ -2308,6 +2361,17 @@ function ParticipantsSection({
                   )}
                   required
                 />
+
+                <div className="md:col-span-2">
+                  <p className="mb-4 font-semibold">{tr("participants.identity_required")}</p>
+                  <VerificationSection
+                    governmentIdFile={participant.governmentId}
+                    setGovernmentIdFile={(file) => updateParticipant(index, "governmentId", file)}
+                    selfieFile={participant.selfie}
+                    setSelfieFile={(file) => updateParticipant(index, "selfie", file)}
+                    tr={tr}
+                  />
+                </div>
 
                 <label className="flex items-center gap-3 rounded-2xl border bg-white p-4 font-semibold">
                   <input
@@ -2534,6 +2598,8 @@ function VerificationSection({
 
           <input
             type="file"
+            required
+            aria-label={tr("verification.government_id")}
             accept="image/jpeg,image/png,image/webp,application/pdf"
             onChange={(event) =>
               setGovernmentIdFile(
@@ -2564,6 +2630,8 @@ function VerificationSection({
 
           <input
             type="file"
+            required
+            aria-label={tr("verification.selfie")}
             accept="image/jpeg,image/png,image/webp"
             capture="user"
             onChange={(event) =>

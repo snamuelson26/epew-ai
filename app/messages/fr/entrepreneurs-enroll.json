@@ -93,7 +93,7 @@
     }
   },
   "organization": {
-    "title": "Étape 4 — Organisation / Entreprise de groupe",
+    "title": "Organisation / Entreprise de groupe",
     "identity_title": "Identité de l’organisation",
     "legal_name": "Nom légal de l’organisation",
     "display_name": "Nom public ou d’usage — Facultatif",
@@ -131,10 +131,12 @@
     "estimated_cost": "Coût estimé du projet — Facultatif",
     "requested_financing": "Financement EPEW demandé",
     "financing_notice": "L’organisation dispose d’une seule position de financement. Le nombre de participants ne multiplie pas le montant du financement. Le financement demandé ne peut pas dépasser 100 000 $ pour cette demande d’entreprise organisationnelle.",
-    "use_of_financing": "Comment le financement sera-t-il utilisé ?"
+    "use_of_financing": "Comment le financement sera-t-il utilisé ?",
+    "area_of_activity": "Domaine d’activité *",
+    "mission": "Mission de l’organisation *"
   },
   "participants": {
-    "title": "Étape 5 — Participants de l’organisation",
+    "title": "Participants de l’organisation",
     "description": "Ajoutez les participants actifs qui travailleront ensemble sur le projet entrepreneurial commun. Au moins 3 participants actifs sont requis avant la soumission finale.",
     "add": "Ajouter un participant",
     "remove": "Supprimer le participant",
@@ -162,7 +164,8 @@
       "community_relations": "Relations communautaires",
       "member": "Membre",
       "other": "Autre"
-    }
+    },
+    "identity_required": "Chaque membre inscrit doit fournir sa propre pièce d’identité officielle et un selfie. Ajoutez au moins 3 membres, et autant que nécessaire."
   },
   "international_special_request": {
     "title": "Demande spéciale internationale pour entrepreneur individuel",
@@ -230,7 +233,8 @@
     "selfie_required": "Veuillez téléverser ou prendre une photo selfie de vérification.",
     "agreement_required": "Vous devez accepter l’accord de participation applicable avant de soumettre votre demande.",
     "submission_error": "Impossible de soumettre votre demande. Veuillez vérifier vos informations et réessayer.",
-    "unexpected_error": "Une erreur inattendue s’est produite. Veuillez réessayer."
+    "unexpected_error": "Une erreur inattendue s’est produite. Veuillez réessayer.",
+    "document_upload_failed": "Un document n’a pas pu être téléversé. Veuillez réessayer."
   },
   "submit": {
     "button": "Soumettre ma demande",
