@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
+import { appendInterviewGather, isNewInterviewCall, readInterviewNotes } from "@/lib/twilio/prequalificationListening";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { validateTwilioWebhook } from "@/lib/twilio/validateTwilioWebhook";
 
@@ -50,6 +51,9 @@ type State = {
   current_topic: Topic;
   messages: Message[];
   no_input_count: number;
+  call_sid?: string;
+  record_notes?: string;
+  listening_events?: { at: string; call_sid: string; event: string; confidence?: string }[];
   completed_at?: string;
   summary?: string;
   scores?: Scores;
@@ -97,7 +101,9 @@ function freshState(): State {
 function parseState(value: unknown): State | null {
   if (typeof value !== "string" || !value.trim()) return null;
   try {
-    const p = JSON.parse(value) as Partial<State>;
+    const parsed = readInterviewNotes(value);
+    const p = parsed.data as Partial<State> | null;
+    if (!p) return null;
     if (
       p.source !== "phone_prequalification_approved_v6" ||
       !isTopic(p.current_topic) ||
@@ -111,6 +117,9 @@ function parseState(value: unknown): State | null {
       current_topic: p.current_topic,
       messages: (p.messages as Message[]).slice(-100),
       no_input_count: Number(p.no_input_count ?? 0) || 0,
+      call_sid: typeof p.call_sid === "string" ? p.call_sid : undefined,
+      record_notes: [p.record_notes, parsed.annotation].filter(Boolean).join("\n") || undefined,
+      listening_events: Array.isArray(p.listening_events) ? p.listening_events : [],
       completed_at: p.completed_at,
       summary: typeof p.summary === "string" ? p.summary : undefined,
       scores: p.scores ? normalizeScores(p.scores) : undefined,
@@ -428,21 +437,9 @@ async function evaluateCompletedInterview(app: any, state: State) {
   }
 }
 
-function gather(response: twilio.twiml.VoiceResponse, origin: string, id: number, prompt: string, app: any, timeout = 8) {
+function gather(response: twilio.twiml.VoiceResponse, origin: string, id: number, prompt: string, app: any, retry = false) {
   const hints = [app.full_name, displayBusinessName(app), businessIdFor(app), app.business_type, app.business_category, app.business_city, app.business_state, app.city, app.state, app.enterprise_country, app.address_country, "EPEW", "EDE", "IBOS", "entrepreneur"].filter(Boolean).join(",");
-  const g = response.gather({
-    input: ["speech"],
-    action: `${origin}/api/twilio/voice/prequalification-establishment?applicationId=${encodeURIComponent(String(id))}`,
-    method: "POST",
-    timeout,
-    speechTimeout: "3",
-    speechModel: "googlev2_telephony",
-    language: "en-US",
-    hints,
-    profanityFilter: false,
-    actionOnEmptyResult: true,
-  } as any);
-  g.say(voice(), prompt);
+  appendInterviewGather(response, { origin, applicationId: id, prompt, hints, retry });
 }
 
 export async function POST(request: NextRequest) {
@@ -458,6 +455,8 @@ export async function POST(request: NextRequest) {
     const url = new URL(request.url);
     const id = Number(url.searchParams.get("applicationId"));
     const speech = String(params.SpeechResult ?? "").trim();
+    const digits = String(params.Digits ?? "").trim();
+    const callSid = String(params.CallSid ?? "").trim();
 
     if (!Number.isInteger(id) || id <= 0) {
       response.say(voice(), "This EPEW pre-qualification interview could not be identified.");
@@ -478,34 +477,69 @@ export async function POST(request: NextRequest) {
       return xml(response, 409);
     }
 
-    const state = parseState(app.interview_notes) ?? freshState();
+    const state = parseState(app.interview_notes) ?? {
+      ...freshState(),
+      record_notes: typeof app.interview_notes === "string" ? app.interview_notes : undefined,
+    };
+    const recordInputEvent = (event: string) => {
+      state.listening_events = [...(state.listening_events ?? []), {
+        at: new Date().toISOString(), call_sid: callSid, event,
+        ...(speech ? { confidence: String(params.Confidence ?? "") } : {}),
+      }].slice(-200);
+    };
 
-    if (state.messages.length === 0 && !speech) {
-      const opening = openingFor(app);
-      state.current_topic = "business_verification";
-      state.messages.push({ role: "coach", topic: "business_verification", content: opening, at: new Date().toISOString() });
+    if (state.completed_at) {
+      response.say(voice(), "Your pre-qualification interview is already complete. Thank you. Your Personal Coach will continue with the next steps.");
+      response.hangup();
+      return xml(response);
+    }
+
+    if (isNewInterviewCall(state.call_sid, callSid, url.searchParams.get("turn") === "listen")) {
+      // A fresh call must never inherit the exhausted silence counter from a
+      // previous attempt. Keep the transcript and resume the unanswered topic.
+      state.call_sid = callSid;
+      state.no_input_count = 0;
+      recordInputEvent("call_started");
+      const opening = state.current_topic === "business_verification"
+        ? openingFor(app)
+        : `Hello ${String(app.full_name || "").trim()}. This is Daniel from EPEW. Let us continue where we stopped. ${questionFor(state.current_topic, app)}`;
+      const prompt = `${opening} Please answer after I finish speaking. If I do not hear you, press 9 to try again.`;
+      state.messages.push({ role: "coach", topic: state.current_topic, content: prompt, at: new Date().toISOString() });
       await saveState(id, state, false);
-      gather(response, url.origin, id, opening, app);
+      gather(response, url.origin, id, prompt, app);
+      return xml(response);
+    }
+
+    if (digits) {
+      // A keypress verifies a working keypad path; it is not an interview answer.
+      recordInputEvent(digits === "9" ? "keypad_retry" : "other_keypad_input");
+      state.no_input_count = 0;
+      const prompt = `I received your keypress. Let us try your voice again. ${questionFor(state.current_topic, app)} Please answer after I finish speaking.`;
+      state.messages.push({ role: "coach", topic: state.current_topic, content: prompt, at: new Date().toISOString() });
+      await saveState(id, state, false);
+      gather(response, url.origin, id, prompt, app, true);
       return xml(response);
     }
 
     if (!speech) {
+      recordInputEvent("no_recognized_speech");
       state.no_input_count += 1;
-      if (state.no_input_count >= 2) {
-        const goodbye = "I do not seem to be hearing you clearly, so I am going to end this call. We can continue the pre-qualification interview another time. Thank you, and have a blessed day.";
+      if (state.no_input_count >= 3) {
+        const goodbye = "The phone system is not receiving your response. Your interview remains incomplete, and we can continue another time. Thank you, and have a blessed day.";
         state.messages.push({ role: "coach", topic: state.current_topic, content: goodbye, at: new Date().toISOString() });
         await markInterrupted(id, state);
         response.say(voice(), goodbye);
         response.hangup();
         return xml(response);
       }
-      const retry = `Let me repeat the question. ${questionFor(state.current_topic, app)}`;
+      const retry = `The phone system did not recognize a response. Please check that your phone is not muted. If you can hear me, press 9 to retry, or answer after I finish speaking. ${questionFor(state.current_topic, app)}`;
       state.messages.push({ role: "coach", topic: state.current_topic, content: retry, at: new Date().toISOString() });
       await saveState(id, state, false);
-      gather(response, url.origin, id, retry, app);
+      gather(response, url.origin, id, retry, app, true);
       return xml(response);
     }
 
+    recordInputEvent("speech_recognized");
     state.no_input_count = 0;
     state.messages.push({ role: "entrepreneur", topic: state.current_topic, content: speech, at: new Date().toISOString() });
 
