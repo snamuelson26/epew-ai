@@ -131,7 +131,9 @@
     "estimated_cost": "Estimated Project Cost — Optional",
     "requested_financing": "Requested EPEW Financing",
     "financing_notice": "The organization has one financing position. Participant count does not multiply the funding amount. Requested financing cannot exceed $100,000 for this organizational enterprise application.",
-    "use_of_financing": "How will the financing be used?"
+    "use_of_financing": "How will the financing be used?",
+    "area_of_activity": "Area of activity *",
+    "mission": "Organization mission *"
   },
   "participants": {
     "title": "Step 5 — Organization Participants",
@@ -162,7 +164,8 @@
       "community_relations": "Community Relations",
       "member": "Member",
       "other": "Other"
-    }
+    },
+    "identity_required": "Each listed member must provide their own government-issued ID and selfie. Include at least 3 members; add as many as needed."
   },
   "international_special_request": {
     "title": "International Individual Special Request",
@@ -230,7 +233,8 @@
     "selfie_required": "Please upload or take a selfie verification photo.",
     "agreement_required": "You must accept the applicable participation agreement before submitting.",
     "submission_error": "Unable to submit your application. Please review your information and try again.",
-    "unexpected_error": "An unexpected error occurred. Please try again."
+    "unexpected_error": "An unexpected error occurred. Please try again.",
+    "document_upload_failed": "A document could not be uploaded. Please try again."
   },
   "submit": {
     "button": "Submit My Application",

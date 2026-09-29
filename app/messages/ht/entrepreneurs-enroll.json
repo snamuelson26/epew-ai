@@ -131,7 +131,9 @@
     "estimated_cost": "Pri Total Pwojè a Estime — Opsyonèl",
     "requested_financing": "Finansman EPEW Mande",
     "financing_notice": "Òganizasyon an gen yon sèl pozisyon finansman. Kantite patisipan yo pa miltipliye kantite finansman an. Finansman yo mande a pa ka depase $100,000 pou aplikasyon antrepriz òganizasyonèl sa a.",
-    "use_of_financing": "Kijan finansman an pral itilize?"
+    "use_of_financing": "Kijan finansman an pral itilize?",
+    "area_of_activity": "Domèn aktivite *",
+    "mission": "Misyon òganizasyon an *"
   },
   "participants": {
     "title": "Etap 5 — Patisipan Òganizasyon an",
@@ -162,7 +164,8 @@
       "community_relations": "Relasyon Kominotè",
       "member": "Manm",
       "other": "Lòt"
-    }
+    },
+    "identity_required": "Chak manm sou lis la dwe bay pwòp pyès idantite ofisyèl li ak yon selfie. Mete omwen 3 manm; ajoute kantite manm ou bezwen."
   },
   "international_special_request": {
     "title": "Demann Espesyal Entènasyonal pou Antreprenè Endividyèl",
@@ -230,7 +233,8 @@
     "selfie_required": "Tanpri telechaje oswa pran yon foto selfie pou verifikasyon.",
     "agreement_required": "Ou dwe aksepte akò patisipasyon ki aplikab la anvan ou soumèt aplikasyon an.",
     "submission_error": "Nou pa kapab soumèt aplikasyon ou. Tanpri verifye enfòmasyon ou epi eseye ankò.",
-    "unexpected_error": "Yon erè inatandi rive. Tanpri eseye ankò."
+    "unexpected_error": "Yon erè inatandi rive. Tanpri eseye ankò.",
+    "document_upload_failed": "Nou pa t kapab telechaje yon dokiman. Tanpri eseye ankò."
   },
   "submit": {
     "button": "Soumèt Aplikasyon Mwen",

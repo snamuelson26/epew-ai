@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
-import { createClient } from "@/lib/supabase/server";
+import { verifyUploadReceipt } from "@/lib/entrepreneurs/organizationUploadReceipt";
 import {
   removeVerificationDocuments,
-  uploadVerificationDocuments,
   type VerificationDocumentPaths,
 } from "@/lib/entrepreneurs/verificationDocuments";
 
@@ -61,10 +60,6 @@ function cleanNumber(value: unknown): number | null {
   return Number.isFinite(number) ? number : null;
 }
 
-function getFile(value: FormDataEntryValue | null): File | null {
-  return value instanceof File && value.size > 0 ? value : null;
-}
-
 function parseParticipants(value: string): Participant[] {
   let parsed: unknown;
 
@@ -78,6 +73,10 @@ function parseParticipants(value: string): Participant[] {
     throw new Error(
       "Organization participant information must be provided as a list.",
     );
+  }
+
+  if (parsed.some((item) => !item || typeof item !== "object" || Array.isArray(item))) {
+    throw new Error("Every member must contain valid participant information.");
   }
 
   return parsed.map((item: ParticipantInput) => ({
@@ -94,6 +93,7 @@ function parseParticipants(value: string): Participant[] {
 
 export async function POST(request: NextRequest) {
   let uploadedDocuments: VerificationDocumentPaths | null = null;
+  const memberDocuments: VerificationDocumentPaths[] = [];
   let createdApplicationId: number | null = null;
 
   try {
@@ -121,6 +121,8 @@ export async function POST(request: NextRequest) {
       formData.get("race_ethnicity_other"),
     );
 
+    const areaOfActivity = cleanString(formData.get("area_of_activity"));
+    const mission = cleanString(formData.get("mission"));
     const legalName = cleanString(formData.get("legal_name"));
     const displayName = cleanString(formData.get("display_name"));
     const organizationType = cleanString(formData.get("organization_type"));
@@ -195,8 +197,7 @@ export async function POST(request: NextRequest) {
 
     const participantsValue = cleanString(formData.get("participants"));
 
-    const governmentId = getFile(formData.get("government_id"));
-    const selfie = getFile(formData.get("selfie"));
+    const uploadReceipt = cleanString(formData.get("upload_receipt"));
 
     if (
       !fullName ||
@@ -212,6 +213,9 @@ export async function POST(request: NextRequest) {
       !state ||
       !zipCode ||
       !legalName ||
+      !areaOfActivity ||
+      !mission ||
+      !uploadReceipt ||
       !enterpriseCountry ||
       !organizationStreetAddress ||
       !organizationCity ||
@@ -240,27 +244,6 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: "Password must be at least 8 characters.",
-        },
-        { status: 400 },
-      );
-    }
-
-    if (!governmentId) {
-      return NextResponse.json(
-        {
-          success: false,
-          error:
-            "A valid government-issued identification document is required.",
-        },
-        { status: 400 },
-      );
-    }
-
-    if (!selfie) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "A selfie verification photo is required.",
         },
         { status: 400 },
       );
@@ -415,49 +398,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
-
-    let userId = "";
-
-    const { data: existingAuth } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    const receipt = verifyUploadReceipt(uploadReceipt);
+    const names = [fullName, ...participants.map((member) => member.full_name)];
+    if (receipt.email !== email || receipt.names.length !== names.length || receipt.names.some((name, index) => name !== names[index]) || receipt.documents.length !== names.length * 2) {
+      return NextResponse.json({ error: "Identity documents must match every listed member. Please submit again." }, { status: 400 });
+    }
+    const userId = receipt.userId;
+    // Verify stored objects, never trust paths or upload completion reported by the browser.
+    for (const document of receipt.documents) {
+      const { data, error } = await supabaseAdmin.storage.from(document.bucket).info(document.path);
+      if (error || !data || data.size !== document.size || data.contentType !== document.type) {
+        return NextResponse.json({ error: "Every listed person must complete both identity uploads before submission." }, { status: 400 });
+      }
+    }
+    uploadedDocuments = { governmentIdPath: receipt.documents[0].path, selfieVerificationPath: receipt.documents[1].path };
+    const verifiedParticipants = participants.map((participant, index) => {
+      const documents = { governmentIdPath: receipt.documents[(index + 1) * 2].path, selfieVerificationPath: receipt.documents[(index + 1) * 2 + 1].path };
+      memberDocuments.push(documents);
+      return { ...participant, government_id_path: documents.governmentIdPath, selfie_verification_path: documents.selfieVerificationPath };
     });
 
-    if (existingAuth.user) {
-      userId = existingAuth.user.id;
-    } else {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${request.nextUrl.origin}/entrepreneurs/login`,
-        },
-      });
-
-      if (authError || !authData.user) {
-        return NextResponse.json(
-          {
-            success: false,
-            error:
-              authError?.message ||
-              "Unable to create your entrepreneur account.",
-          },
-          { status: 400 },
-        );
-      }
-
-      userId = authData.user.id;
-    }
-
-    uploadedDocuments = await uploadVerificationDocuments(
-      userId,
-      governmentId,
-      selfie,
-    );
-
     const { data: submissionData, error: submissionError } =
-      await supabaseAdmin.rpc("eeqc_submit_organization_application", {
+      await supabaseAdmin.rpc("eeqc_submit_organization_application_v2", {
         p_application: {
           user_id: userId,
           full_name: fullName,
@@ -486,6 +448,8 @@ export async function POST(request: NextRequest) {
 
         p_organization: {
           legal_name: legalName,
+          area_of_activity: areaOfActivity,
+          mission,
           display_name: displayName || null,
           organization_type: organizationType || null,
           registration_number: registrationNumber || null,
@@ -528,7 +492,7 @@ export async function POST(request: NextRequest) {
           intended_use_of_financing: intendedUseOfFinancing,
         },
 
-        p_participants: participants,
+        p_participants: verifiedParticipants,
       });
 
     if (submissionError || !submissionData) {
@@ -538,6 +502,7 @@ export async function POST(request: NextRequest) {
       );
 
       await removeVerificationDocuments(uploadedDocuments);
+      await Promise.all(memberDocuments.map(removeVerificationDocuments));
 
       uploadedDocuments = null;
 
@@ -618,6 +583,7 @@ export async function POST(request: NextRequest) {
 
     if (uploadedDocuments) {
       await removeVerificationDocuments(uploadedDocuments);
+      await Promise.all(memberDocuments.map(removeVerificationDocuments));
     }
 
     return NextResponse.json(
