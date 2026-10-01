@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { organizationLoginPath } from "@/lib/emanon/portalRouting";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -72,7 +73,7 @@ export default function OrganizationCommunicationCenterPage() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        window.location.href = "/entrepreneurs/login";
+        window.location.href = organizationLoginPath(profileCode, window.location.pathname);
         return;
       }
 

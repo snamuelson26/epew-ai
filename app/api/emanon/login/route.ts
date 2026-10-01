@@ -1,15 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
-export const runtime = "nodejs";
+import { staffRedirect } from "@/lib/emanon/portalRouting";
 
-function safeRedirect(value: unknown) {
-  return typeof value === "string" &&
-    (value.startsWith("/emanon/") || value.startsWith("/orgdh/")) &&
-    !value.startsWith("//")
-    ? value
-    : "/emanon/communication-center";
-}
+export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => null)) as
@@ -50,20 +44,26 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (body?.organizationCode) {
+  {
     const { data: organization } = await supabase
       .from("emanon_organizations")
       .select("organization_code")
       .eq("id", member.organization_id)
       .maybeSingle();
-    if (organization?.organization_code !== body.organizationCode) {
+    if (!organization || (body?.organizationCode && organization.organization_code !== body.organizationCode)) {
       await supabase.auth.signOut();
       return NextResponse.json(
         { error: "This account does not have access to the selected organization." },
         { status: 403 },
       );
     }
+    let redirectTo = staffRedirect(body?.redirectTo, organization.organization_code);
+    if (redirectTo.startsWith("/organizations/EMANON-001/")) {
+      const { data: portal } = await supabase.from("organization_portal_profiles")
+        .select("id").eq("auth_user_id", data.user.id)
+        .eq("profile_code", "EMANON-001").eq("status", "active").maybeSingle();
+      if (!portal) redirectTo = "/emanon/communication-center";
+    }
+    return NextResponse.json({ ok: true, redirectTo });
   }
-
-  return NextResponse.json({ ok: true, redirectTo: safeRedirect(body?.redirectTo) });
 }

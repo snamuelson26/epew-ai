@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { organizationLoginPath } from "@/lib/emanon/portalRouting";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -60,6 +61,7 @@ export default function OrganizationDashboardPage() {
   const params = useParams<{ profileCode: string }>();
   const profileCode = String(params?.profileCode || "");
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [isProgramDirector, setIsProgramDirector] = useState(false);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
@@ -73,7 +75,7 @@ export default function OrganizationDashboardPage() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        window.location.href = "/entrepreneurs/login";
+        window.location.href = organizationLoginPath(profileCode, window.location.pathname);
         return;
       }
 
@@ -91,6 +93,9 @@ export default function OrganizationDashboardPage() {
         return;
       }
       setProfile(data as Profile);
+      const { data: member } = await supabase.from("emanon_staff_members")
+        .select("role_code").eq("user_id", user.id).eq("status", "active").maybeSingle();
+      setIsProgramDirector(member?.role_code === "program_director");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Unable to load the organization portal.");
     } finally {
@@ -117,7 +122,7 @@ export default function OrganizationDashboardPage() {
               <p className="mt-3 text-xl font-bold">Profile: {profile.profile_code}</p>
               <p className="mt-2 text-white/90">External communication sender: <span className="font-bold">{profile.display_name} / {profile.external_sender}</span></p>
             </div>
-            <Link href="/entrepreneurs/login" className="rounded-xl bg-white px-5 py-3 font-extrabold text-[#10246f]">Switch Account</Link>
+            <Link href={organizationLoginPath(profileCode)} className="rounded-xl bg-white px-5 py-3 font-extrabold text-[#10246f]">Switch Account</Link>
           </div>
         </section>
 
@@ -125,8 +130,19 @@ export default function OrganizationDashboardPage() {
           <p className="font-bold text-slate-800">Choose one workspace. Each area opens separately so the main Emanon dashboard stays simple and uncluttered.</p>
         </section>
 
+        {isProgramDirector && profile.profile_code === "EMANON-001" && <Link href="/organizations/EMANON-001/program-management" className="block rounded-2xl bg-white p-6 shadow-sm">
+          <h2 className="text-2xl font-extrabold text-[#10246f]">Program Management</h2>
+          <p className="mt-2 text-slate-600">Review Emanon programs, manage status and record next actions.</p>
+        </Link>}
+
+        {profile.profile_code === "EMANON-001" && <section className="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+          <h2 className="text-2xl font-extrabold text-[#10246f]">Staff Communication &amp; Program Coordination</h2>
+          <p className="mt-2 text-slate-600">Open your authorized staff conversations, message history, assignments, follow-up instructions, reports and attachments.</p>
+          <Link href="/emanon/communication-center" className="mt-4 inline-flex rounded-xl bg-[#10246f] px-4 py-2 font-bold text-white">Open Staff Workspace</Link>
+        </section>}
+
         <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {MODULES.map((module) => (
+          {MODULES.filter((module) => profile.modules.includes(module.key.split("/")[0].replaceAll("-", "_"))).map((module) => (
             <Link
               key={module.key}
               href={`/organizations/${encodeURIComponent(profile.profile_code)}/${module.key}`}

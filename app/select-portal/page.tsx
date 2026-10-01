@@ -39,6 +39,7 @@ export default function SelectPortalPage() {
   }
 
   function goToPortal(role: string) {
+    if (role === "emanon_staff") router.push("/emanon/entry");
     if (role === "entrepreneur") router.push("/entrepreneurs/dashboard");
     if (role === "supporter") router.push("/supporters/dashboard");
     if (role === "coach") router.push("/coaches/dashboard");
