@@ -10,6 +10,7 @@
  */
 
 import path from "node:path";
+import ts from "typescript";
 
 import type { DiscoveredProjectFile } from "../file-scanner";
 
@@ -463,6 +464,7 @@ function looksLikeCode(value: string): boolean {
  */
 function shouldIgnoreText(input: {
   text: string;
+  kind: HardcodedTextKind;
   minimumTextLength: number;
   ignoredExactValues: Set<string>;
   ignoredPatterns: RegExp[];
@@ -485,7 +487,13 @@ function shouldIgnoreText(input: {
     return true;
   }
 
-  if (looksLikeCssClassList(normalized)) {
+  // Parsed JSX text and labeled attributes are visible prose, even when
+  // every word also happens to match a utility class token pattern.
+  if (
+    input.kind !== "jsx_text" &&
+    input.kind !== "jsx_attribute" &&
+    looksLikeCssClassList(normalized)
+  ) {
     return true;
   }
 
@@ -567,42 +575,53 @@ function isInsideTypeDeclaration(
  */
 function extractJsxTextCandidates(
   source: string,
+  filePath: string,
 ): HardcodedTextCandidate[] {
   const candidates: HardcodedTextCandidate[] = [];
 
-  const pattern = />([^<>{}]+)</g;
-  let match: RegExpExecArray | null;
+  // A text pattern like />...< also matches comparison operators in
+  // JavaScript. Parse JSX nodes so executable code never becomes a
+  // translation candidate or an English master entry.
+  if (!/\.(?:tsx|jsx)$/i.test(filePath)) {
+    return candidates;
+  }
 
-  while ((match = pattern.exec(source)) !== null) {
-    const rawText = match[1] ?? "";
-    const text = normalizeVisibleText(rawText);
+  const parsed = ts.createSourceFile(
+    filePath,
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    filePath.endsWith(".jsx") ? ts.ScriptKind.JSX : ts.ScriptKind.TSX,
+  );
 
-    if (!text) {
-      continue;
+  const visit = (node: ts.Node): void => {
+    if (ts.isJsxText(node)) {
+      const rawText = node.getText(parsed);
+      const text = normalizeVisibleText(rawText);
+
+      if (text) {
+        const parent = node.parent;
+        const htmlElement = ts.isJsxElement(parent)
+          ? parent.openingElement.tagName.getText(parsed)
+          : undefined;
+
+        candidates.push({
+          text,
+          kind: "jsx_text",
+          startIndex: node.getStart(parsed),
+          endIndex: node.getEnd(),
+          rawExpression: rawText,
+          htmlElement,
+          confidence: 0.98,
+          reason: "Visible text was found directly in a JSX text node.",
+        });
+      }
     }
 
-    const startOffset = match[0].indexOf(rawText);
-    const startIndex = match.index + Math.max(startOffset, 1);
+    ts.forEachChild(node, visit);
+  };
 
-    const openingTagStart = source.lastIndexOf("<", match.index);
-    const openingTag = source.slice(openingTagStart, match.index + 1);
-
-    const elementMatch = openingTag.match(
-      /<([A-Za-z][A-Za-z0-9._:-]*)\b/,
-    );
-
-    candidates.push({
-      text,
-      kind: "jsx_text",
-      startIndex,
-      endIndex: startIndex + rawText.length,
-      rawExpression: rawText,
-      htmlElement: elementMatch?.[1] ?? undefined,
-      confidence: 0.98,
-      reason:
-        "Visible text was found directly between JSX elements.",
-    });
-  }
+  visit(parsed);
 
   return candidates;
 }
@@ -1188,6 +1207,7 @@ function shouldIgnoreFile(
  */
 function collectCandidates(input: {
   source: string;
+  filePath: string;
   options: Required<
     Pick<
       HardcodedTextDetectorOptions,
@@ -1205,7 +1225,7 @@ function collectCandidates(input: {
   const candidates: HardcodedTextCandidate[] = [];
 
   if (input.options.detectJsxText) {
-    candidates.push(...extractJsxTextCandidates(input.source));
+    candidates.push(...extractJsxTextCandidates(input.source, input.filePath));
   }
 
   if (input.options.detectJsxAttributes) {
@@ -1326,6 +1346,7 @@ export function analyzeFileHardcodedText(input: {
 
     const candidates = collectCandidates({
       source: sourceWithoutComments,
+      filePath: input.file.relativePath,
       options,
       userFacingAttributes,
       userFacingProperties,
@@ -1336,6 +1357,7 @@ export function analyzeFileHardcodedText(input: {
         if (
           shouldIgnoreText({
             text: candidate.text,
+            kind: candidate.kind,
             minimumTextLength: options.minimumTextLength,
             ignoredExactValues,
             ignoredPatterns,
@@ -1346,6 +1368,7 @@ export function analyzeFileHardcodedText(input: {
         }
 
         if (
+          candidate.kind !== "jsx_text" &&
           isInsideTranslationFunctionCall({
             source: sourceWithoutComments,
             stringStartIndex: candidate.startIndex,
@@ -1357,6 +1380,7 @@ export function analyzeFileHardcodedText(input: {
         }
 
         if (
+          candidate.kind !== "jsx_text" &&
           isInsideImportStatement(
             sourceWithoutComments,
             candidate.startIndex,
@@ -1367,6 +1391,7 @@ export function analyzeFileHardcodedText(input: {
         }
 
         if (
+          candidate.kind !== "jsx_text" &&
           isInsideTypeDeclaration(
             sourceWithoutComments,
             candidate.startIndex,
