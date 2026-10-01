@@ -1,0 +1,17 @@
+{
+  "headings": {
+    "questionnaire_successfully_submitted": "Questionnaire Successfully Submitted",
+    "what_happens_next": "What Happens Next?",
+    "important_reminder": "Important Reminder"
+  },
+  "content": {
+    "thank_you_for_completing_your_entrepreneur_onboarding_questionnaire": "Thank you for completing your Entrepreneur Onboarding Questionnaire.",
+    "your_information_has_been_received_successfully_and_is": "Your information has been received successfully and is now being reviewed by your assigned EPEW Coach and the entrepreneur preparation team.",
+    "your_coach_may_contact_you_within_approximately_24": "Your coach may contact you within approximately 24 to 48 hours to schedule your first entrepreneur interview.",
+    "additional_preparation_steps_may_be_discussed_during_your": "Additional preparation steps may be discussed during your first interaction depending on your business idea, preparation needs, and entrepreneur development pathway.",
+    "delays_in_communication_incomplete_information_or_missed_interview": "Delays in communication, incomplete information, or missed interview appointments may delay the entrepreneur preparation process.",
+    "we_look_forward_to_supporting_your_entrepreneur_journey": "We look forward to supporting your entrepreneur journey with EPEW.",
+    "back_to_entrepreneurs": "Back to Entrepreneurs",
+    "view_faq": "View FAQ"
+  }
+}

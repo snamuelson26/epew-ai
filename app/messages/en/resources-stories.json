@@ -1,0 +1,21 @@
+{
+  "headings": {
+    "epew_stories": "EPEW Stories",
+    "entrepreneur_stories": "Entrepreneur Stories",
+    "supporter_stories": "Supporter Stories",
+    "new_stories_are_coming_soon": "New Stories Are Coming Soon"
+  },
+  "content": {
+    "discover_stories_that_show_how_entrepreneurship_mutual_participation": "Discover stories that show how entrepreneurship, mutual participation, and community support can strengthen businesses, families, and communities.",
+    "follow_entrepreneurs_as_they_move_from_an_idea": "Follow entrepreneurs as they move from an idea to preparation, qualification, business launch, and long-term growth.",
+    "learn_how_supporters_strengthen_entrepreneurs_and_communities_through": "Learn how supporters strengthen entrepreneurs and communities through structured participation and shared commitment.",
+    "as_entrepreneurs_and_supporters_begin_participating_in_the": "As entrepreneurs and supporters begin participating in the Entrepreneur Development Ecosystem, their stories and progress will be shared here.",
+    "return_to_epew_resources": "Return to EPEW Resources"
+  },
+  "image": {
+    "alt": {
+      "entrepreneur_stories": "Entrepreneur stories",
+      "supporter_stories": "Supporter stories"
+    }
+  }
+}

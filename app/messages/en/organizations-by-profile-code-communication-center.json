@@ -1,0 +1,31 @@
+{
+  "content": {
+    "loading_emanon_communication_center": "Loading Emanon Communication Center...",
+    "emanon_dashboard": "← Emanon Dashboard",
+    "grant_contacts": "Grant Contacts",
+    "tablet_project": "Tablet Project",
+    "names_first_communication_workspace_with_complete_conversation_history": "Names-first communication workspace with complete conversation history.",
+    "from_emanon_institute_lt": "From: Emanon Institute &lt;",
+    "gt": "&gt;",
+    "login_authentication_remains_separate_from_this_external_sender": "Login authentication remains separate from this external sender identity.",
+    "no_contacts_are_currently_assigned_to_emanon_communication": "No contacts are currently assigned to Emanon communication groups.",
+    "select_a_name_to_view_that_persons_complete": "Select a name to view that person’s complete conversation and send a new message.",
+    "no_communication_history_yet": "No communication history yet.",
+    "gt_reply_to": "&gt; · Reply-To:",
+    "outbound_messages_are_stored_in_the_contacts_emanon": "Outbound messages are stored in the contact’s Emanon conversation history. Delivery/open/click events will be added as provider tracking is connected."
+  },
+  "headings": {
+    "communication_center": "Communication Center",
+    "open_a_contact": "Open a contact",
+    "conversation_history": "Conversation History",
+    "new_message": "New Message"
+  },
+  "form": {
+    "placeholder": {
+      "write_your_message_here": "Write your message here..."
+    }
+  },
+  "buttons": {
+    "send_email": "Send Email"
+  }
+}

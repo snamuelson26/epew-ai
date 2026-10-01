@@ -1,0 +1,36 @@
+{
+  "content": {
+    "loading_payment_center": "Loading payment center...",
+    "manage_your_supporter_payment_activity_pending_commitments_and": "Manage your supporter payment activity, pending commitments, and future payment methods.",
+    "no_payment_commitments_found": "No payment commitments found.",
+    "credit_card": "Credit Card",
+    "coming_soon_with_stripe": "Coming soon with Stripe.",
+    "debit_card": "Debit Card",
+    "ach_bank_transfer": "ACH Bank Transfer",
+    "future_payment_option": "Future payment option.",
+    "up_to_6_annually": "Up to 6% Annually",
+    "see_epew_policies_and_program_performance": "See EPEW policies and program performance",
+    "stripe_checkout": "✅ Stripe Checkout",
+    "stripe_customer_portal": "✅ Stripe Customer Portal",
+    "recurring_payments": "✅ Recurring Payments",
+    "invoices": "✅ Invoices",
+    "receipts": "✅ Receipts",
+    "failed_payment_recovery": "✅ Failed Payment Recovery"
+  },
+  "headings": {
+    "payment_center": "Payment Center",
+    "current_balance": "Current Balance",
+    "pending_payments": "Pending Payments",
+    "active_commitments": "Active Commitments",
+    "total_commitment": "Total Commitment",
+    "upcoming_contributions": "Upcoming Contributions",
+    "payment_methods": "Payment Methods",
+    "participation_benefit": "Participation Benefit",
+    "future_stripe_integration": "Future Stripe Integration"
+  },
+  "buttons": {
+    "pay_now": "Pay Now",
+    "view_payment_history": "View Payment History",
+    "manage_payment_methods": "Manage Payment Methods"
+  }
+}

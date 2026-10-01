@@ -1,0 +1,33 @@
+{
+  "content": {
+    "epew_entrepreneur_communication_center": "EPEW Entrepreneur Communication Center",
+    "thank_you_for_submitting_your_epew_entrepreneur_application": "Thank you for submitting your EPEW Entrepreneur Application. While your application is under review, please complete this short form so EPEW can communicate with you in your preferred language and send you important application updates, reminders, and entrepreneurship information.",
+    "you_do_not_need_to_submit_another_entrepreneur": "You do not need to submit another entrepreneur application.",
+    "select_a_language": "Select a language",
+    "if_you_already_submitted_an_epew_entrepreneur_application": "If you already submitted an EPEW Entrepreneur Application, please use the same email address.",
+    "preferred_contact_method": "Preferred Contact Method *",
+    "text_message": "Text Message",
+    "i_agree_to_receive_epew_application_reminders_weekly": "I agree to receive EPEW application reminders, weekly entrepreneurship information, program updates, and related communications using the contact information and preferred method I selected.",
+    "successfully_submitted": "Successfully Submitted",
+    "thank_you_your_epew_communication_preferences_have_been": "Thank you. Your EPEW communication preferences have been saved successfully.",
+    "please_complete_your_entrepreneur_questionnaire_so_epew_can": "Please complete your Entrepreneur Questionnaire so EPEW can learn more about you, your business, your goals, your experience, and the support you may need.",
+    "this_information_will_help_epew_prepare_for_your": "This information will help EPEW prepare for your first entrepreneur meeting.",
+    "complete_entrepreneur_questionnaire": "Complete Entrepreneur Questionnaire"
+  },
+  "headings": {
+    "communication_preferences": "Communication Preferences",
+    "communication_preferences_successfully_submitted": "Communication Preferences Successfully Submitted",
+    "your_next_step": "Your Next Step"
+  },
+  "form": {
+    "labels": {
+      "preferred_epew_communication_language": "Preferred EPEW Communication Language *",
+      "additional_preferred_language": "Additional Preferred Language",
+      "email_address": "Email Address",
+      "phone_number": "Phone Number"
+    },
+    "placeholder": {
+      "your_phone_number": "Your phone number"
+    }
+  }
+}

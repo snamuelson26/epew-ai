@@ -1,0 +1,23 @@
+{
+  "content": {
+    "loading_tablet_project": "Loading Tablet Project...",
+    "emanon_dashboard": "← Emanon Dashboard",
+    "communication_center": "Communication Center",
+    "grant_contacts": "Grant Contacts",
+    "technology_is_managed_inside_the_tablet_project_hardware": "Technology is managed inside the Tablet Project. Hardware, connectivity, solar/power, learning technology, and device management all feed into one project record.",
+    "external_identity_emanon_institute": "External identity: Emanon Institute /",
+    "tablet_project": "Tablet Project →",
+    "open_all_five_technology_workspaces_and_manage_companies": "Open all five technology workspaces and manage companies, contacts, requests, quotes, costs, pilot suitability, compatibility, status, next actions, documents, and communication history.",
+    "open_technology": "Open Technology",
+    "official_standard": "Official Standard",
+    "the_official_emanon_specification_used_consistently_with_manufacturers": "The official Emanon specification used consistently with manufacturers, telecoms, power providers, learning-platform vendors, and device-management vendors.",
+    "view_requirements": "View Requirements",
+    "current_pilot_status": "Current pilot status:"
+  },
+  "headings": {
+    "tablet_project": "Tablet Project",
+    "technical_requirements": "Technical Requirements",
+    "50_100_students": "50–100 Students",
+    "tablet_project_technology": "Tablet Project → Technology"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "headings": {
+    "epew_automation_engine": "EPEW Automation Engine",
+    "automation_rules": "Automation Rules",
+    "growth_funding_eligibility": "Growth Funding Eligibility"
+  },
+  "content": {
+    "central_automation_control_for_daily_reporting_reminders_coach": "Central automation control for daily reporting, reminders, coach escalation, Kleernest accounting alerts, ORGDH promotion recommendations, quarterly reporting, and growth eligibility.",
+    "no_business_has_reached_6_months_of_operation": "No business has reached 6 months of operation yet.",
+    "days_operating": "Days Operating",
+    "health_score": "Health Score",
+    "reporting_records": "Reporting Records"
+  },
+  "attributes": {
+    "label": {
+      "active_businesses": "Active Businesses",
+      "missing_reports": "Missing Reports",
+      "coach_calls": "Coach Calls",
+      "admin_escalations": "Admin Escalations",
+      "low_health": "Low Health",
+      "orgdh_promotion": "ORGDH Promotion",
+      "expansion_eligible": "Expansion Eligible"
+    },
+    "title": {
+      "morning_opening_reminder": "Morning Opening Reminder",
+      "closing_time_reminder": "Closing Time Reminder",
+      "missing_report_reminder": "Missing Report Reminder",
+      "3_day_coach_intervention": "3-Day Coach Intervention",
+      "7_day_admin_escalation": "7-Day Admin Escalation",
+      "6_month_growth_eligibility": "6-Month Growth Eligibility",
+      "kleernest_financial_alert": "Kleernest Financial Alert",
+      "orgdh_promotion_recommendation": "ORGDH Promotion Recommendation",
+      "quarterly_report_scheduling": "Quarterly Report Scheduling",
+      "coach_intervention_queue": "Coach Intervention Queue",
+      "admin_escalation_queue": "Admin Escalation Queue",
+      "kleernest_financial_review_alerts": "Kleernest Financial Review Alerts",
+      "orgdh_promotion_recommendations": "ORGDH Promotion Recommendations"
+    },
+    "description": {
+      "send_a_reminder_at_the_business_opening_time": "Send a reminder at the business opening time to encourage daily reporting discipline.",
+      "if_no_report_is_submitted_by_closing_time": "If no report is submitted by closing time, send a closing reminder.",
+      "if_a_report_is_missing_continue_daily_reminders": "If a report is missing, continue daily reminders until the report is submitted.",
+      "after_3_missed_days_the_entrepreneur_must_receive": "After 3 missed days, the entrepreneur must receive a direct coach message or phone call.",
+      "after_7_missed_days_alert_epew_admin_for": "After 7 missed days, alert EPEW Admin for business monitoring intervention.",
+      "after_180_days_of_operation_the_business_becomes": "After 180 days of operation, the business becomes eligible for growth funding review based on metrics.",
+      "notify_kleernest_when_monthly_profit_loss_or_tax": "Notify Kleernest when monthly Profit & Loss or tax readiness review is needed.",
+      "recommend_promotion_when_health_score_is_low_or": "Recommend promotion when health score is low or sales trend is declining.",
+      "create_quarterly_reporting_checkpoints_after_business_opening": "Create quarterly reporting checkpoints after business opening."
+    }
+  }
+}

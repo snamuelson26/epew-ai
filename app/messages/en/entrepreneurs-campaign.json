@@ -1,0 +1,32 @@
+{
+  "content": {
+    "loading_your_campaign": "Loading your campaign...",
+    "return_to_main_page": "← Return to Main Page",
+    "private_entrepreneur_campaign_view": "Private Entrepreneur Campaign View",
+    "manage_your_campaign_progress_and_the_people_you": "Manage your campaign progress and the people you personally contacted for support.",
+    "add_potential_supporter": "+ Add Potential Supporter",
+    "view_public_support_page": "View Public Support Page",
+    "private_entrepreneur_view": "Private Entrepreneur View",
+    "people_you_personally_contacted_and_added_to_your": "People you personally contacted and added to your campaign message list. This section is visible only to you.",
+    "no_potential_supporters_have_been_added_yet": "No potential supporters have been added yet.",
+    "support_status": "Support Status",
+    "message_status": "Message Status",
+    "scheduled_sent": "Scheduled / Sent",
+    "email_open": "Email Open",
+    "open_detected": "Open detected",
+    "not_detected_yet": "Not detected yet"
+  },
+  "attributes": {
+    "label": {
+      "supported_units": "Supported Units",
+      "required_units": "Required Units",
+      "remaining_units": "Remaining Units",
+      "campaign_progress": "Campaign Progress",
+      "business_id": "Business ID",
+      "funding_approval": "Funding Approval"
+    }
+  },
+  "headings": {
+    "my_potential_supporters": "My Potential Supporters"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "headings": {
+    "supporter_dashboard": "Supporter Dashboard",
+    "auto_payment": "Auto Payment",
+    "active_support": "Active Support",
+    "annual_support": "Annual Support",
+    "my_participation_summary": "My Participation Summary",
+    "my_supported_entrepreneurs": "My Supported Entrepreneurs",
+    "disbursement_agreement": "Disbursement Agreement",
+    "disbursement_request_center": "Disbursement Request Center",
+    "request_details": "Request Details",
+    "disbursement_status": "Disbursement Status",
+    "disbursement_protection_process": "Disbursement Protection Process",
+    "coach_reminder_process": "Coach Reminder Process",
+    "escalation_reimbursement_procedure": "Escalation & Reimbursement Procedure",
+    "security_reserve_protection_notice": "Security Reserve Protection Notice"
+  },
+  "content": {
+    "welcome_to_your_epew_supporter_portal_track_your": "Welcome to your EPEW supporter portal. Track your participation, supported entrepreneurs, units, projected benefits, disbursement eligibility, fund release status, and communication updates.",
+    "pending_review": "Pending Review",
+    "setup_required": "Setup Required",
+    "3_entrepreneurs": "3 Entrepreneurs",
+    "total_units": "Total Units",
+    "weekly_units": "Weekly Units",
+    "monthly_units": "Monthly Units",
+    "annual_units": "Annual Units",
+    "participation_benefits_earned": "Participation Benefits Earned",
+    "projected_benefits": "Projected Benefits",
+    "projected_disbursement_date": "Projected Disbursement Date",
+    "support_type": "Support Type",
+    "annual_support": "Annual Support",
+    "john_doe": "John Doe",
+    "doe_coffee_shop": "Doe Coffee Shop",
+    "building_support_base": "Building Support Base",
+    "maria_louis": "Maria Louis",
+    "community_bakery": "Community Bakery",
+    "annual_meeting_pending": "Annual Meeting Pending",
+    "david_brown": "David Brown",
+    "auto_detail_center": "Auto Detail Center",
+    "in_preparation": "In Preparation",
+    "full_benefit_disbursement_requests_are_available_only_after": "Full benefit disbursement requests are available only after the supported business has completed one full year of operation. Automatic participation benefit disbursement begins one year after the business operation start date.",
+    "business_operation_start_date": "Business Operation Start Date:",
+    "one_year_eligibility_date": "One-Year Eligibility Date:",
+    "disbursement_status": "Disbursement Status:",
+    "not_eligible_yet": "Not Eligible Yet",
+    "amount_requested": "Amount Requested",
+    "request_date": "Request Date",
+    "fund_release_date": "Fund Release Date",
+    "fund_available_to_withdraw": "Fund Available to Withdraw",
+    "not_available_yet": "Not Available Yet",
+    "withdraw_fund_date": "Withdraw Fund Date",
+    "coach_reminds_entrepreneur_before_the_due_date": "✅ Coach reminds entrepreneur before the due date.",
+    "three_reminders_are_sent_within_the_24_hours": "✅ Three reminders are sent within the 24 hours before the disbursement date.",
+    "reminder_activity_is_recorded_in_the_system": "✅ Reminder activity is recorded in the system.",
+    "if_no_action_is_taken_the_case_is": "✅ If no action is taken, the case is escalated to EPEW.",
+    "if_a_benefit_disbursement_is_due_funds_are": "If a benefit disbursement is due, funds are available, and the entrepreneur does not complete the required disbursement, EPEW may escalate the matter, assist the supporter through available protection procedures, and place the entrepreneur into a reimbursement review process with the appropriate department.",
+    "epew_may_maintain_a_security_reserve_intended_to": "EPEW may maintain a security reserve intended to help reduce supporter risk and provide limited recovery assistance when a participating business fails to complete an approved benefit disbursement after proper notice, reminders, and escalation review.",
+    "security_reserve_assistance_is_subject_to_available_reserve": "Security reserve assistance is subject to available reserve funds, EPEW review, program rules, and documented eligibility."
+  },
+  "form": {
+    "placeholder": {
+      "amount_requested": "Amount Requested",
+      "request_date": "Request Date",
+      "projected_fund_release_date": "Projected Fund Release Date",
+      "fund_available_to_withdraw_date": "Fund Available to Withdraw Date",
+      "withdraw_fund_date": "Withdraw Fund Date"
+    }
+  },
+  "buttons": {
+    "request_disbursement": "Request Disbursement"
+  }
+}

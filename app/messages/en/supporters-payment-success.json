@@ -1,0 +1,35 @@
+{
+  "content": {
+    "confirming_your_epew_annual_support": "Confirming your EPEW annual support...",
+    "thank_you_for_your_epew_annual_support": "Thank you for your EPEW annual support.",
+    "we_were_unable_to_display_the_detailed_support": "We were unable to display the detailed support status on this page, but you can view your Supporter Portal for the latest information.",
+    "go_to_supporter_portal": "Go to Supporter Portal",
+    "your_secure_payment_has_returned_successfully_epew_is": "Your secure payment has returned successfully. EPEW is finalizing the payment record now. Your Supporter Portal will reflect the completed support shortly.",
+    "epew_annual_support": "EPEW Annual Support",
+    "your_one_time_annual_support_payment_has_been": "Your one-time annual support payment has been received successfully.",
+    "epew_will_now_review_qualified_businesses_and_select": "EPEW will now review qualified businesses and select an entrepreneur for your support.",
+    "your_entrepreneur_and_business_will_appear_in_your": "Your entrepreneur and business will appear in your Supporter Portal within 48 hours.",
+    "once_the_match_is_completed_epew_will_send": "Once the match is completed, EPEW will send you a special thank-you message and introduce you to the entrepreneur you are supporting.",
+    "explore_entrepreneurs": "Explore Entrepreneurs",
+    "participation_benefits_are_not_guaranteed_and_are_subject": "Participation benefits are not guaranteed and are subject to EPEW program terms.",
+    "thank_you_for_supporting": "Thank you for supporting",
+    "your_support_is_now_part_of_the_epew": "Your support is now part of the EPEW community support record for this business.",
+    "view_supported_business": "View Supported Business",
+    "thank_you_for_supporting_an_entrepreneur_through_the": "Thank you for supporting an entrepreneur through the EPEW Entrepreneur Development Ecosystem."
+  },
+  "headings": {
+    "payment_received": "Payment Received",
+    "we_are_finalizing_your_support_record": "We Are Finalizing Your Support Record",
+    "thank_you_for_your_support": "Thank You for Your Support",
+    "epew_is_selecting_your_entrepreneur": "EPEW Is Selecting Your Entrepreneur",
+    "your_support_is_confirmed": "Your Support Is Confirmed",
+    "payment_successful": "Payment Successful"
+  },
+  "attributes": {
+    "label": {
+      "support_units": "Support Units",
+      "annual_support": "Annual Support",
+      "business_selection": "Business Selection"
+    }
+  }
+}

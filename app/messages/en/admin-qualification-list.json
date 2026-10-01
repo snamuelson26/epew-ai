@@ -1,0 +1,51 @@
+{
+  "headings": {
+    "annual_meeting_qualification_list": "Annual Meeting Qualification List",
+    "annual_meeting_groups": "Annual Meeting Groups",
+    "qualification_priority_rules": "Qualification Priority Rules",
+    "row_1": "Row 1",
+    "row_2": "Row 2",
+    "row_3": "Row 3",
+    "row_4": "Row 4",
+    "row_1_20_units_supported_for_whole_year": "Row 1: 20 Units Supported for Whole Year",
+    "row_2_20_units_supported": "Row 2: 20 Units Supported",
+    "admin_exceptions": "Admin Exceptions",
+    "waiting_list": "Waiting List",
+    "admin_actions": "Admin Actions"
+  },
+  "content": {
+    "organize_qualified_entrepreneurs_into_annual_meeting_groups_of": "Organize qualified entrepreneurs into annual meeting groups of 50 entrepreneurs. Each entrepreneur may bring one guest.",
+    "entrepreneurs_per_group": "Entrepreneurs Per Group",
+    "guest_per_entrepreneur": "Guest Per Entrepreneur",
+    "total_attendance": "Total Attendance",
+    "current_group_progress": "Current Group Progress",
+    "group_1": "Group #1",
+    "50_50_qualified": "50 / 50 Qualified",
+    "ready_for_annual_meeting_scheduling": "Ready for annual meeting scheduling.",
+    "group_2": "Group #2",
+    "18_50_qualified": "18 / 50 Qualified",
+    "collecting_qualified_entrepreneurs": "Collecting qualified entrepreneurs.",
+    "group_3": "Group #3",
+    "not_open_yet": "Not Open Yet",
+    "opens_after_group_2_reaches_50": "Opens after Group #2 reaches 50.",
+    "entrepreneurs_with_20_units_supported_for_the_whole": "Entrepreneurs with 20 units supported for the whole year.",
+    "entrepreneurs_with_20_units_supported": "Entrepreneurs with 20 units supported.",
+    "admin_approved_exceptions": "Admin-approved exceptions.",
+    "waiting_list_and_not_yet_qualified_entrepreneurs": "Waiting list and not-yet-qualified entrepreneurs.",
+    "nadia_c_childcare_center": "Nadia C. — Childcare Center",
+    "exception_reason_strong_community_impact_and_high_readiness": "Exception reason: Strong community impact and high readiness score.",
+    "admin_status_approved_exception": "Admin Status: Approved Exception",
+    "alex_t_mobile_car_wash": "Alex T. — Mobile Car Wash",
+    "units_supported_14_20": "Units Supported: 14 / 20",
+    "status_waiting_for_qualification": "Status: Waiting for qualification",
+    "rose_m_catering_service": "Rose M. — Catering Service",
+    "units_supported_11_20": "Units Supported: 11 / 20",
+    "every_time_50_entrepreneurs_qualify_epew_may_create": "Every time 50 entrepreneurs qualify, EPEW may create a new annual meeting group for that cohort. Admin may approve exceptions based on readiness, community impact, or organizational priority."
+  },
+  "buttons": {
+    "send_invitations": "Send Invitations",
+    "confirm_guests": "Confirm Guests",
+    "create_new_group": "Create New Group",
+    "export_list": "Export List"
+  }
+}

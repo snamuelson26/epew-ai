@@ -1,0 +1,43 @@
+{
+  "content": {
+    "loading_annual_support": "Loading Annual Support...",
+    "epew_annual_support": "EPEW Annual Support",
+    "independent_support_from_500_one_time_100_weekly": "Independent support: from $500 one time, $100 weekly, or $400 monthly",
+    "choose_how_many_support_units_you_would_like": "Choose how many Support Units you would like to provide. After your one-time annual payment is completed, EPEW will select a qualified entrepreneur for your support within 48 hours.",
+    "1_epew_support_unit": "1 EPEW Support Unit",
+    "one_time_payment_for_one_year": "one-time payment for one year",
+    "annual_participation_benefit": "Annual Participation Benefit",
+    "up_to": "Up to",
+    "participation_benefits_are_subject_to_epew_program_terms": "Participation benefits are subject to EPEW program terms and are not guaranteed.",
+    "your_annual_payment_is_completed_first_epew_then": "Your annual payment is completed first. EPEW then reviews qualified businesses and selects an entrepreneur for your support.",
+    "your_selected_entrepreneur_and_business_will_appear_in": "Your selected entrepreneur and business will appear in your Supporter Portal within 48 hours.",
+    "total_due_today": "Total Due Today",
+    "this_is_optional_referral_information_may_help_epew": "This is optional. Referral information may help EPEW give first consideration to that person&apos;s qualified business.",
+    "referral_information_is_a_preference_only_epew_will": "Referral information is a preference only. EPEW will not assign support to an entrepreneur who is not qualified or otherwise eligible to receive support.",
+    "i_agree_to_the_epew_participation_agreement_i": "I agree to the EPEW Participation Agreement. I understand that this is a one-time annual support payment, that EPEW will select a qualified entrepreneur for my support within 48 hours, and that participation benefits are not guaranteed.",
+    "secure_one_time_payment_is_processed_by_stripe": "Secure one-time payment is processed by Stripe."
+  },
+  "headings": {
+    "let_epew_choose_a_qualified_business_for_you": "Let EPEW Choose a Qualified Business for You",
+    "annual_support_details": "Annual Support Details",
+    "how_epew_selection_works": "How EPEW Selection Works",
+    "choose_your_support": "Choose Your Support",
+    "were_you_referred_to_epew": "Were You Referred to EPEW?"
+  },
+  "form": {
+    "labels": {
+      "number_of_support_units": "Number of Support Units",
+      "name_of_the_person_who_referred_you": "Name of the Person Who Referred You",
+      "that_person_apos_s_business_name": "That Person&apos;s Business Name"
+    }
+  },
+  "attributes": {
+    "label": {
+      "support_units": "Support Units",
+      "price_per_unit": "Price Per Unit",
+      "support_term": "Support Term",
+      "payment_frequency": "Payment Frequency",
+      "annual_participation_benefit": "Annual Participation Benefit"
+    }
+  }
+}

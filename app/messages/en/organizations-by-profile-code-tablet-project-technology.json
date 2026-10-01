@@ -1,0 +1,28 @@
+{
+  "content": {
+    "loading_technology_workspace": "Loading Technology workspace...",
+    "tablet_project": "← Tablet Project",
+    "technical_requirements": "Technical Requirements",
+    "communication_center": "Communication Center",
+    "tablet_project_technology": "Tablet Project → Technology",
+    "external_identity_emanon_institute": "External identity: Emanon Institute /",
+    "focused_area": "Focused Area",
+    "no_contacts_have_been_added_to_this_technology": "No contacts have been added to this technology area yet.",
+    "open_a_company_to_see_its_practical_relationship": "Open a company to see its practical relationship details and communication history.",
+    "no_communication_events_are_linked_yet": "No communication events are linked yet."
+  },
+  "headings": {
+    "technology_relationship_workspace": "Technology Relationship Workspace",
+    "technology_contact": "Technology Contact",
+    "full_communication_history": "Full Communication History"
+  },
+  "attributes": {
+    "label": {
+      "what_we_asked_for": "What We Asked For",
+      "proposal_quote": "Proposal / Quote",
+      "pilot_suitability": "Pilot Suitability",
+      "technical_compatibility": "Technical Compatibility",
+      "next_action": "Next Action"
+    }
+  }
+}

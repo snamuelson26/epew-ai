@@ -1,0 +1,13 @@
+{
+  "content": {
+    "loading_organization_portal": "Loading organization portal...",
+    "organization_portal": "Organization Portal",
+    "external_communication_sender": "External communication sender:",
+    "switch_account": "Switch Account",
+    "choose_one_workspace_each_area_opens_separately_so": "Choose one workspace. Each area opens separately so the main Emanon dashboard stays simple and uncluttered.",
+    "open_workspace": "Open Workspace"
+  },
+  "headings": {
+    "organization_portal": "Organization Portal"
+  }
+}
