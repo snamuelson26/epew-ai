@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node --import tsx scripts/enterprise-translation/refresh-report.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
