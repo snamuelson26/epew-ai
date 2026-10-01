@@ -29,17 +29,10 @@ const LANGUAGE_NAMES: Record<TranslationLanguage, string> = {
 };
 
 const ARTIFACT_PATHS = {
-  manifest:
-    "data/enterprise/ibos/translation-center/generated/translation-manifest.json",
-
-  compliance:
-    "data/enterprise/ibos/translation-center/reports/translation-compliance-report.json",
-
-  certification:
-    "data/enterprise/ibos/translation-center/reports/translation-certification.json",
-
-  queue:
-    "data/enterprise/ibos/translation-center/registry/translation-queue.json",
+  manifest: "generated/translation-manifest.json",
+  compliance: "reports/translation-compliance-report.json",
+  certification: "reports/translation-certification.json",
+  queue: "registry/translation-queue.json",
 } as const;
 
 type QueueFilePayload = {
@@ -47,6 +40,7 @@ type QueueFilePayload = {
 };
 
 type DashboardData = {
+  checkedAt: number;
   manifest: TranslationManifest | null;
   compliance: TranslationComplianceReport | null;
   certification: TranslationCertification | null;
@@ -77,6 +71,10 @@ async function readJsonFile<T>(
 > {
   const absolutePath = path.join(
     process.cwd(),
+    "data",
+    "enterprise",
+    "ibos",
+    "translation-center",
     projectRelativePath,
   );
 
@@ -177,6 +175,7 @@ async function loadDashboardData(): Promise<DashboardData> {
   );
 
   return {
+    checkedAt: Date.now(),
     manifest: manifestResult.success
       ? manifestResult.data
       : null,
@@ -626,6 +625,13 @@ export default async function TranslationCenterPage() {
     certification?.issued ??
     statistics.deploymentReady;
 
+  const scanTimestamp = data.compliance?.generatedAt ?? manifest.generatedAt;
+  const scanDate = scanTimestamp ? new Date(scanTimestamp) : null;
+  const scanIsStale =
+    !scanDate ||
+    Number.isNaN(scanDate.getTime()) ||
+    data.checkedAt - scanDate.getTime() > 7 * 24 * 60 * 60 * 1000;
+
   return (
     <main className="min-h-screen bg-[#f5f7fb] px-5 py-10 md:px-8">
       <div className="mx-auto max-w-7xl">
@@ -646,6 +652,16 @@ export default async function TranslationCenterPage() {
                   page discovery, namespace compliance,
                   translation coverage, work queues, and
                   deployment certification.
+                </p>
+                <p className="mt-4 text-sm text-slate-300">
+                  Scan generated: {scanDate && !Number.isNaN(scanDate.getTime())
+                    ? new Intl.DateTimeFormat("en-US", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                        timeZone: "America/New_York",
+                      }).format(scanDate)
+                    : "Unknown"} ET
+                  {scanIsStale ? " · Report is over seven days old; rerun the scan." : ""}
                 </p>
               </div>
 
