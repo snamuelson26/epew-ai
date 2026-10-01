@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { organizationLoginPath } from "@/lib/emanon/portalRouting";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -36,7 +37,7 @@ export default function TechnicalRequirementsPage() {
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { window.location.href = "/entrepreneurs/login"; return; }
+      if (!user) { window.location.href = organizationLoginPath(profileCode, window.location.pathname); return; }
       const { data: p, error } = await supabase.from("organization_portal_profiles").select("display_name,external_sender,entity_id").eq("auth_user_id", user.id).eq("profile_code", profileCode).eq("status", "active").maybeSingle();
       if (error) throw error;
       if (!p) { setNotice("This organization profile is not available for your login."); return; }

@@ -35,6 +35,11 @@ export default function LoginPage() {
     });
 
   function redirectByRole(role: string) {
+    if (role === "emanon_staff") {
+      router.push("/emanon/entry");
+      return;
+    }
+
     if (role === "entrepreneur") {
       router.push("/entrepreneurs/dashboard");
       return;
