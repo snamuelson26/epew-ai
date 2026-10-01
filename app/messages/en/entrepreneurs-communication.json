@@ -1,0 +1,21 @@
+{
+  "content": {
+    "personal_communication_secretary": "Personal Communication Secretary",
+    "open_a_contact_to_review_your_private_conversation": "Open a contact to review your private conversation and complete communication history with that person.",
+    "select_a_name_to_open_the_conversation": "Select a name to open the conversation.",
+    "loading_contacts": "Loading contacts...",
+    "no_communication_contacts_yet": "No communication contacts yet.",
+    "select_a_contact_name_to_open_the_private": "Select a contact name to open the private conversation history.",
+    "private_entrepreneur_communication_history": "Private entrepreneur communication history",
+    "conversation_note": "Conversation Note",
+    "loading_conversation_history": "Loading conversation history...",
+    "no_messages_have_been_recorded_for_this_contact": "No messages have been recorded for this contact yet.",
+    "personal_secretary_message_controls": "Personal Secretary Message Controls",
+    "message_arranging_entrepreneur_review_scheduling_automatic_follow_up": "Message arranging, entrepreneur review, scheduling, automatic follow-up, and send controls will operate here for this selected contact so the conversation remains together in one place.",
+    "back_to_entrepreneur_portal": "← Back to Entrepreneur Portal",
+    "manage_potential_supporters": "Manage Potential Supporters"
+  },
+  "headings": {
+    "communication_center": "Communication Center"
+  }
+}

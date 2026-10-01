@@ -1,0 +1,43 @@
+{
+  "headings": {
+    "entrepreneur_participation_agreement": "Entrepreneur Participation Agreement",
+    "entrepreneur_program_participation": "Entrepreneur Program Participation",
+    "agreement_terms": "Agreement Terms",
+    "1_program_participation": "1. Program Participation",
+    "2_business_responsibility": "2. Business Responsibility",
+    "3_platform_role": "3. Platform Role",
+    "4_coach_communication": "4. Coach Communication",
+    "5_business_visibility_support": "5. Business Visibility Support",
+    "6_community_participation_structure": "6. Community Participation Structure",
+    "7_risk_acknowledgment": "7. Risk Acknowledgment",
+    "8_independent_business_operation": "8. Independent Business Operation",
+    "9_dispute_resolution": "9. Dispute Resolution"
+  },
+  "content": {
+    "this_agreement_outlines_the_entrepreneur_participation_terms_within": "This agreement outlines the entrepreneur participation terms within the Ekero Partners Empower Wealth (EPEW) entrepreneur ecosystem program.",
+    "epew_provides_entrepreneur_preparation_coaching_coordination_onboarding_support": "EPEW provides entrepreneur preparation, coaching coordination, onboarding support, campaign organization, and entrepreneur visibility assistance through its ecosystem development platform.",
+    "the_entrepreneur_agrees_to_participate_in_the_epew": "The Entrepreneur agrees to participate in the EPEW entrepreneur preparation ecosystem, including onboarding, training guidance, coaching communication, and campaign preparation activities.",
+    "the_entrepreneur_remains_fully_responsible_for_all_business": "The Entrepreneur remains fully responsible for all business activities, legal compliance, taxes, licensing, permits, operations, employees, and business decisions.",
+    "epew_acts_solely_as_a_platform_organizer_entrepreneur": "EPEW acts solely as a platform organizer, entrepreneur development coordinator, and ecosystem support provider.",
+    "epew_does_not_guarantee": "EPEW does not guarantee:",
+    "funding_approval": "funding approval",
+    "business_success": "business success",
+    "supporter_participation": "supporter participation",
+    "campaign_success": "campaign success",
+    "business_launch_outcomes": "business launch outcomes",
+    "the_entrepreneur_understands_that_a_personal_coach_may": "The Entrepreneur understands that a personal coach may contact the entrepreneur regarding onboarding, preparation steps, scheduling, questionnaire completion, business planning guidance, and campaign readiness activities.",
+    "one_of_epews_business_partners_may_also_be": "One of EPEW’s business partners may also be introduced during the entrepreneur preparation process to assist with business presentation preparation, media guidance, entrepreneur visibility materials, and communication support.",
+    "the_entrepreneur_understands_that_epew_uses_a_community": "The Entrepreneur understands that EPEW uses a community participation ecosystem model where supporters voluntarily participate in entrepreneur campaigns through structured participation units.",
+    "business_activities_involve_risk_campaign_participation_business_launch": "Business activities involve risk. Campaign participation, business launch, supporter participation, and business performance are not guaranteed.",
+    "the_entrepreneur_remains_an_independent_business_entity_and": "The Entrepreneur remains an independent business entity and is not an employee, legal representative, financial agent, or partner of EPEW.",
+    "any_dispute_related_to_entrepreneur_business_activities_shall": "Any dispute related to entrepreneur business activities shall remain the responsibility of the Entrepreneur.",
+    "if_issues_are_reported_to_epew_counselor_services": "If issues are reported to EPEW Counselor Services, EPEW may voluntarily provide general communication support, ecosystem guidance, and informal coordination assistance.",
+    "epew_does_not_provide_legal_representation_financial_advice": "EPEW does not provide legal representation, financial advice, judicial services, or binding arbitration.",
+    "i_confirm_that_the_information_provided_during_enrollment": "I confirm that the information provided during enrollment and onboarding is accurate.",
+    "i_understand_that_epew_does_not_guarantee_funding": "I understand that EPEW does not guarantee funding approval, business success, or campaign outcomes.",
+    "i_voluntarily_agree_to_participate_in_the_epew": "I voluntarily agree to participate in the EPEW entrepreneur ecosystem program."
+  },
+  "buttons": {
+    "accept_entrepreneur_participation_agreement": "Accept Entrepreneur Participation Agreement"
+  }
+}

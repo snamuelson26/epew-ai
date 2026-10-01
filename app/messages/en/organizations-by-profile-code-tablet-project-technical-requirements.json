@@ -1,0 +1,26 @@
+{
+  "content": {
+    "loading_technical_requirements": "Loading technical requirements...",
+    "tablet_project": "← Tablet Project",
+    "tablet_project_official_vendor_standard": "Tablet Project · Official Vendor Standard",
+    "this_is_the_official_emanon_baseline_specification_every": "This is the official Emanon baseline specification. Every technology vendor should receive the same requirements for evaluation and quotation.",
+    "external_identity_emanon_institute": "External identity: Emanon Institute /",
+    "a_vendor_proposal_should_be_evaluated_against_the": "A vendor proposal should be evaluated against the same baseline: 10–11 inch Android tablet, LTE/eSIM compatibility, large battery, 128 GB preferred storage, offline learning, automatic synchronization, MDM, English/Haitian Creole/French support, solar-compatible charging, and suitability for a 50–100 student pilot.",
+    "additional_notes": "Additional Notes"
+  },
+  "headings": {
+    "technical_requirements": "Technical Requirements",
+    "vendor_evaluation_rule": "Vendor Evaluation Rule"
+  },
+  "attributes": {
+    "label": {
+      "tablet_size": "Tablet Size",
+      "operating_system": "Operating System",
+      "offline_learning": "Offline Learning",
+      "automatic_synchronization": "Automatic Synchronization",
+      "device_management": "Device Management",
+      "solar_compatible_charging": "Solar-Compatible Charging",
+      "pilot_size": "Pilot Size"
+    }
+  }
+}

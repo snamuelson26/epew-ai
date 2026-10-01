@@ -1,0 +1,42 @@
+{
+  "accessibility": {
+    "epew_maintenance": "EPEW Maintenance"
+  },
+  "content": {
+    "ede_ibos": "EDE · IBOS",
+    "production_security_review": "Production Security Review",
+    "temporary_maintenance": "Temporary Maintenance",
+    "epew_platform": "EPEW platform.",
+    "the_epew_ede_ibos_platform_is_temporarily_unavailable": "The EPEW-EDE-IBOS platform is temporarily unavailable while our technical team completes final production security, authentication, and reliability verification.",
+    "this_temporary_measure_protects_our_entrepreneurs_supporters_coaches": "This temporary measure protects our entrepreneurs, supporters, coaches, partners, and organizational information while we prepare the platform for secure live operations.",
+    "platform_status": "Platform Status",
+    "core_organizational_configuration_and_production_data_remain_preserved": "Core organizational configuration and production data remain preserved while validation is completed.",
+    "thank_you_for_your_patience": "Thank you for your patience.",
+    "please_return_soon_for_the_reopening_of_the": "Please return soon for the reopening of the EPEW Entrepreneur Development Ecosystem.",
+    "epew_all_rights_reserved": "EPEW. All rights reserved.",
+    "build_your_community_build_your_business_build_your": "Build Your Community. Build Your Business. Build Your Wealth."
+  },
+  "headings": {
+    "we_are_strengthening_the": "We are strengthening the",
+    "maintenance_active": "Maintenance Active",
+    "your_information_remains_protected": "Your information remains protected"
+  },
+  "attributes": {
+    "title": {
+      "security_review": "Security Review",
+      "system_validation": "System Validation",
+      "launch_readiness": "Launch Readiness"
+    },
+    "description": {
+      "administrator_access_and_protected_routes": "Administrator access and protected routes.",
+      "production_workflows_and_platform_services": "Production workflows and platform services.",
+      "final_verification_before_reopening": "Final verification before reopening."
+    },
+    "label": {
+      "public_registration": "Public Registration",
+      "administrator_access": "Administrator Access",
+      "production_database": "Production Database",
+      "platform_configuration": "Platform Configuration"
+    }
+  }
+}

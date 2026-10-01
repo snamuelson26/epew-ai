@@ -1,0 +1,27 @@
+{
+  "content": {
+    "loading_appointment_scheduling": "Loading appointment scheduling...",
+    "your_epew_coach_assistant_will_call_your_registered": "Your EPEW Coach Assistant will call your registered phone number at the scheduled time. All Pre-Qualification appointment times are Eastern Time.",
+    "back_to_entrepreneur_portal": "Back to Entrepreneur Portal",
+    "appointments_may_be_selected_during_the_next_7": "Appointments may be selected during the next 7 days.",
+    "phone_call": "Phone Call",
+    "choose_a_start_time": "Choose a start time",
+    "return_to_my_dashboard": "Return to My Dashboard"
+  },
+  "image": {
+    "alt": {
+      "epew_ede_ibos_platform": "EPEW EDE IBOS Platform"
+    }
+  },
+  "headings": {
+    "choose_your_appointment": "Choose Your Appointment",
+    "select_your_date_and_time": "Select Your Date and Time"
+  },
+  "form": {
+    "labels": {
+      "meeting_method": "Meeting Method",
+      "desired_appointment_date": "Desired Appointment Date",
+      "desired_start_time_eastern_time": "Desired Start Time (Eastern Time)"
+    }
+  }
+}

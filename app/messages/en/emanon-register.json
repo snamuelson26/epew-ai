@@ -1,0 +1,14 @@
+{
+  "content": {
+    "verifying_your_invitation": "Verifying your invitation..."
+  },
+  "headings": {
+    "staff_access_registration": "Staff Access Registration"
+  },
+  "form": {
+    "placeholder": {
+      "create_password_12_characters": "Create password (12+ characters)",
+      "confirm_password": "Confirm password"
+    }
+  }
+}

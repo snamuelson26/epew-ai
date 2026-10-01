@@ -1,0 +1,30 @@
+{
+  "headings": {
+    "doe_coffee_shop": "Doe Coffee Shop",
+    "business_presentation": "Business Presentation",
+    "support_progress": "Support Progress",
+    "business_goal": "Business Goal",
+    "community_impact": "Community Impact",
+    "coach_status": "Coach Status",
+    "choose_participation_option": "Choose Participation Option",
+    "important_notice": "Important Notice"
+  },
+  "content": {
+    "john_doe_restaurant_brooklyn_ny": "John Doe • Restaurant • Brooklyn, NY",
+    "a_community_focused_coffee_shop_preparing_to_create": "A community-focused coffee shop preparing to create jobs, serve local families, and strengthen neighborhood business growth.",
+    "support_this_entrepreneur": "Support This Entrepreneur",
+    "video_presentation_placeholder": "Video Presentation Placeholder",
+    "watch_this_entrepreneur_explain_the_business_idea_the": "Watch this entrepreneur explain the business idea, the community need, the launch plan, and how supporter participation can help move the business forward.",
+    "14_20_units_supported": "14 / 20 Units Supported",
+    "this_entrepreneur_remains_listed_until_the_current_20": "This entrepreneur remains listed until the current 20-unit support goal is completed.",
+    "open_a_neighborhood_coffee_shop_that_serves_quality": "Open a neighborhood coffee shop that serves quality products, creates local jobs, and builds a welcoming community space.",
+    "this_business_aims_to_support_local_employment_community": "This business aims to support local employment, community connection, and neighborhood economic activity.",
+    "this_entrepreneur_is_working_through_the_epew_preparation": "This entrepreneur is working through the EPEW preparation and validation process with coach guidance.",
+    "participate_through_weekly_structured_contribution_options": "Participate through weekly structured contribution options.",
+    "up_to_6_annual_participation_benefit": "Up to 6% annual participation benefit",
+    "participate_through_monthly_structured_contribution_options": "Participate through monthly structured contribution options.",
+    "participate_with_52_units_one_time_annual_participation": "Participate with 52 units one-time annual participation.",
+    "up_to_7_annual_participation_benefit_consideration": "Up to 7% annual participation benefit consideration",
+    "epew_is_not_an_investment_platform_participation_benefits": "EPEW is not an investment platform. Participation benefits are not guaranteed and depend on entrepreneur performance, business activity, ecosystem conditions, and program structure."
+  }
+}

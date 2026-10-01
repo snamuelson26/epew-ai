@@ -1,0 +1,36 @@
+{
+  "headings": {
+    "doe_coffee_shop": "Doe Coffee Shop",
+    "your_support": "Your Support",
+    "business_stage": "Business Stage",
+    "business_progress_updates": "Business Progress Updates",
+    "message_entrepreneur": "Message Entrepreneur",
+    "quarterly_reports": "Quarterly Reports",
+    "important_notice": "Important Notice"
+  },
+  "content": {
+    "entrepreneur_john_doe_brooklyn_ny_restaurant_food": "Entrepreneur: John Doe • Brooklyn, NY • Restaurant / Food",
+    "annual_commitment": "Annual commitment",
+    "3_new": "3 New",
+    "june_12_2026": "June 12, 2026",
+    "business_registration_preparation_has_started": "Business registration preparation has started.",
+    "june_20_2026": "June 20, 2026",
+    "coach_reviewed_the_opening_budget_and_preparation_plan": "Coach reviewed the opening budget and preparation plan.",
+    "july_01_2026": "July 01, 2026",
+    "entrepreneur_is_preparing_vendor_and_equipment_information": "Entrepreneur is preparing vendor and equipment information.",
+    "conversation_preview": "Conversation preview",
+    "thank_you_for_supporting_my_business_journey": "Thank you for supporting my business journey.",
+    "i_am_excited_to_follow_your_progress": "I am excited to follow your progress.",
+    "reports_will_appear_here_when_the_entrepreneur_begins": "Reports will appear here when the entrepreneur begins formal reporting through the EPEW platform.",
+    "communication_is_available_only_between_supporters_and_entrepreneurs": "Communication is available only between supporters and entrepreneurs connected through an active participation record. EPEW may monitor platform communication for safety, accountability, and compliance with platform rules."
+  },
+  "form": {
+    "placeholder": {
+      "write_a_message": "Write a message..."
+    }
+  },
+  "buttons": {
+    "send_message": "Send Message",
+    "no_reports_yet": "No Reports Yet"
+  }
+}

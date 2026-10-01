@@ -1,0 +1,29 @@
+{
+  "content": {
+    "communication_center": "Communication Center...",
+    "private_one_to_one": "Private one-to-one",
+    "conversation_with": "conversation with",
+    "your_secure_account_is_active_the_direct_conversation": "Your secure account is active. The direct conversation will appear automatically after the other authorized",
+    "team_member_activates_their_account": "team member activates their account.",
+    "no_messages_yet": "No messages yet.",
+    "direct_message": "Direct Message",
+    "follow_up_instruction": "Follow-up Instruction",
+    "urgent_update": "Urgent Update"
+  },
+  "headings": {
+    "communication_center": "Communication Center",
+    "full_conversation_history": "Full Conversation History",
+    "new_communication": "New Communication"
+  },
+  "form": {
+    "labels": {
+      "recipient_contact": "Recipient / Contact",
+      "assignment_due_date": "Assignment due date",
+      "follow_up_date_optional": "Follow-up date (optional)",
+      "attachments_and_proposals": "Attachments and proposals"
+    },
+    "placeholder": {
+      "write_your_message_report_assignment_or_instructions": "Write your message, report, assignment, or instructions..."
+    }
+  }
+}

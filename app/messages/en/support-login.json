@@ -1,0 +1,29 @@
+{
+  "headings": {
+    "supporter_login": "Supporter Login"
+  },
+  "content": {
+    "access_your_supporter_dashboard_follow_entrepreneur_progress_review": "Access your supporter dashboard, follow entrepreneur progress, review participation activity, and manage your EPEW account securely.",
+    "remember_me": "Remember me",
+    "create_supporter_account": "Create Supporter Account",
+    "verify_2fa": "Verify 2FA",
+    "epew_uses_secure_account_protection_identity_verification_and": "EPEW uses secure account protection, identity verification, and structured participation systems to help maintain transparency, accountability, and ecosystem integrity."
+  },
+  "image": {
+    "alt": {
+      "supporter_login": "Supporter Login"
+    }
+  },
+  "form": {
+    "labels": {
+      "email_address": "Email Address"
+    },
+    "placeholder": {
+      "enter_your_email": "Enter your email",
+      "enter_your_password": "Enter your password"
+    }
+  },
+  "buttons": {
+    "login_securely": "Login Securely"
+  }
+}

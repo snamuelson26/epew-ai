@@ -1,0 +1,47 @@
+{
+  "headings": {
+    "ai_admin_backup_center": "AI Admin Backup Center",
+    "ai_admin_72_hour_rule": "AI Admin 72-Hour Rule",
+    "annual_meeting_automation": "Annual Meeting Automation",
+    "badge_invitation_rules": "Badge & Invitation Rules",
+    "72_hour_pending_task_queue": "72-Hour Pending Task Queue",
+    "urgent_escalation_sms": "Urgent Escalation SMS",
+    "ai_admin_approval_report": "AI Admin Approval Report",
+    "ai_admin_safety_rule": "AI Admin Safety Rule"
+  },
+  "content": {
+    "the_ai_admin_continuously_monitors_platform_operations_supports": "The AI Admin continuously monitors platform operations, supports administrative efficiency, reviews entrepreneur readiness, assists with annual meeting preparation, tracks disbursement readiness, generates reports, and escalates urgent matters requiring human attention. The AI Admin also monitors pending administrative tasks after 72 hours, supports annual meeting operations, coordinates qualification reviews, tracks attendance, manages invitations and badges, and helps ensure entrepreneurs move efficiently through the EPEW development and funding process.",
+    "if_a_human_admin_does_not_act_within": "If a human admin does not act within 72 hours, the AI Admin reviews the pending task. Routine annual meeting tasks may be completed automatically if all required information is present. Financial disbursement matters are reviewed and prepared for approval, but urgent or unclear cases are escalated by text message.",
+    "assign_qualified_entrepreneur_to_next_available_group": "✅ Assign qualified entrepreneur to next available group",
+    "track_entrepreneur_and_guest_attendance": "✅ Track entrepreneur and guest attendance",
+    "approve_guest_registration_when_information_is_complete": "✅ Approve guest registration when information is complete",
+    "send_invitation_with_date_time_and_address": "✅ Send invitation with date, time, and address",
+    "generate_two_printable_badges": "✅ Generate two printable badges",
+    "record_confirmed_attendance": "✅ Record confirmed attendance",
+    "move_entrepreneur_to_coach_funding_meeting": "✅ Move entrepreneur to Coach Funding Meeting",
+    "entrepreneur_badge": "Entrepreneur Badge",
+    "includes_entrepreneur_name_business_name_entrepreneur_id_annual": "Includes entrepreneur name, business name, entrepreneur ID, annual meeting group, date, time, and address.",
+    "guest_badge": "Guest Badge",
+    "includes_guest_name_linked_entrepreneur_guest_status_annual": "Includes guest name, linked entrepreneur, guest status, annual meeting group, date, time, and address.",
+    "john_doe_doe_coffee_shop": "John Doe — Doe Coffee Shop",
+    "task_assign_to_annual_meeting_group_2": "Task: Assign to Annual Meeting Group #2",
+    "status_all_criteria_met_ai_admin_may_assign": "Status: All criteria met • AI Admin may assign",
+    "maria_b_maria_bakery": "Maria B. — Maria Bakery",
+    "task_guest_approval_pending": "Task: Guest approval pending",
+    "status_guest_phone_number_missing_ai_admin_requests": "Status: Guest phone number missing • AI Admin requests information",
+    "green_auto_services": "Green Auto Services",
+    "task_disbursement_review": "Task: Disbursement review",
+    "status_compliance_issue_detected_urgent_sms_required": "Status: Compliance issue detected • urgent SMS required",
+    "alert_number": "Alert Number",
+    "if_the_ai_admin_finds_missing_documents_compliance": "If the AI Admin finds missing documents, compliance issues, disbursement risk, unclear approval authority, or system conflicts, it sends an urgent text message to the human admin and logs the issue.",
+    "the_ai_admin_may_complete_routine_annual_meeting": "The AI Admin may complete routine annual meeting operations when information is complete and rules are satisfied. If a case involves unclear facts, missing information, compliance concerns, or financial disbursement risk, the AI Admin must escalate the matter and create a written report before any final action."
+  },
+  "form": {
+    "placeholder": {
+      "ai_admin_report_will_summarize_task_reviewed_criteria": "AI Admin report will summarize task reviewed, criteria checked, action taken, and reason for approval or escalation."
+    }
+  },
+  "buttons": {
+    "generate_approval_report": "Generate Approval Report"
+  }
+}

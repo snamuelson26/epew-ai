@@ -1,0 +1,33 @@
+{
+  "headings": {
+    "supporter_updates_messages": "Supporter Updates & Messages",
+    "active_supporters": "Active Supporters",
+    "updates_posted": "Updates Posted",
+    "post_business_update": "Post Business Update",
+    "upload_quarterly_report": "Upload Quarterly Report",
+    "recent_supporter_messages": "Recent Supporter Messages",
+    "communication_guidelines": "Communication Guidelines"
+  },
+  "content": {
+    "share_business_progress_communicate_with_active_supporters_upload": "Share business progress, communicate with active supporters, upload reports, and keep your community informed.",
+    "upload_reports_when_required_to_keep_supporters_informed": "Upload reports when required to keep supporters informed about business preparation, launch progress, and operations.",
+    "supporter_message": "Supporter Message",
+    "i_am_excited_to_follow_your_progress_keep": "I am excited to follow your progress. Keep going!",
+    "thank_you_for_sharing_your_business_journey": "Thank you for sharing your business journey.",
+    "total_units_supported_6_20": "Total Units Supported: 6 / 20",
+    "total_units_remaining_14": "Total Units Remaining: 14",
+    "michael_r_2_units": "✅ Michael R. — 2 units",
+    "sarah_m_1_unit": "✅ Sarah M. — 1 unit",
+    "community_supporter_3_units": "✅ Community Supporter — 3 units",
+    "business_updates_should_be_honest_respectful_and_related": "Business updates should be honest, respectful, and related to preparation, launch, progress, or operations. EPEW may monitor communication for safety, accountability, and platform compliance."
+  },
+  "form": {
+    "placeholder": {
+      "share_business_progress_milestones_preparation_steps_or_important": "Share business progress, milestones, preparation steps, or important updates..."
+    }
+  },
+  "buttons": {
+    "post_update": "Post Update",
+    "upload_report": "Upload Report"
+  }
+}

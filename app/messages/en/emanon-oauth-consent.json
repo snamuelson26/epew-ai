@@ -1,0 +1,14 @@
+{
+  "content": {
+    "missing_authorization_request": "Missing authorization request.",
+    "epew": "· EPEW",
+    "is_requesting_access_to_the_authenticated": "is requesting access to the authenticated",
+    "account_below": "account below.",
+    "requested_permissions": "Requested permissions",
+    "read_and_send_messages_in_this_user_apos": "Read and send messages in this user&apos;s authorized",
+    "only_approve_this_on_the_correct_staff_member": "Only approve this on the correct staff member&apos;s ChatGPT account. Access remains limited by organization-scoped row-level security."
+  },
+  "headings": {
+    "authorize_communication_center": "Authorize Communication Center"
+  }
+}

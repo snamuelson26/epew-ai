@@ -1,0 +1,112 @@
+{
+  "headings": {
+    "preparing_first_meeting": "Preparing First Meeting...",
+    "first_meeting_unavailable": "First Meeting Unavailable",
+    "establishment_meeting": "Establishment Meeting",
+    "meeting_schedule": "Meeting Schedule",
+    "epew_mission_unity_and_support": "EPEW Mission — Unity and Support",
+    "ai_first_meeting_brief": "AI First Meeting Brief",
+    "ai_guidance_for_the_coach": "AI Guidance for the Coach",
+    "business_discovery_record": "Business Discovery Record",
+    "needs_risks_verification": "Needs, Risks & Verification",
+    "six_dimension_assessment": "Six-Dimension Assessment",
+    "coach_notes_meeting_outcome": "Coach Notes & Meeting Outcome",
+    "entrepreneur_understanding": "Entrepreneur Understanding",
+    "coach_conclusion_guidance": "Coach Conclusion Guidance",
+    "meeting_controls": "Meeting Controls"
+  },
+  "content": {
+    "emcc_is_loading_the_entrepreneur_file_and_meeting": "EMCC is loading the entrepreneur file and meeting brief.",
+    "epew_enterprise_meeting_coordination_center": "EPEW — Enterprise Meeting & Coordination Center",
+    "establish_the_coach_relationship_understand_the_entrepreneur_and": "Establish the Coach relationship, understand the entrepreneur and business, assess readiness, identify needs, and define the immediate next stage.",
+    "current_scheduled_time": "Current scheduled time:",
+    "mandatory_mission_opening": "Mandatory Mission Opening",
+    "epew_was_created_as_a_tool_that_everyone": "EPEW was created as a tool that everyone can use to help individuals, families, businesses, and communities grow financially.",
+    "our_larger_goal_is_to_reduce_poverty_and": "Our larger goal is to reduce poverty and expand financial opportunity for people from all economic backgrounds through entrepreneurship, participation, and community economic development.",
+    "unity_and_support": "Unity and Support",
+    "epew_promotes_unity_mutual_support_and_community_participation": ". EPEW promotes unity, mutual support, and community participation because lasting economic progress becomes stronger when people help one another succeed.",
+    "review_the_information_epew_already_knows_before_asking": "Review the information EPEW already knows before asking new questions.",
+    "enter_one_item_per_line": "Enter one item per line.",
+    "potential_tasks_are_recommendations_only_they_do_not": "Potential tasks are recommendations only. They do not become Vendor assignments until validated and transferred into ETVMC.",
+    "use_0_100_these_scores_support_development_planning": "Use 0–100. These scores support development planning and do not independently approve or reject an entrepreneur.",
+    "current_assessment_average": "Current Assessment Average",
+    "leave_empty_if_no_follow_up_is_required": "Leave empty if no follow-up is required.",
+    "requirements_were_reviewed_with_the_entrepreneur": "Requirements were reviewed with the entrepreneur.",
+    "the_entrepreneur_understands_the_work_that_must_be": "The entrepreneur understands the work that must be completed.",
+    "the_entrepreneur_understands_that_completion_will_be_reviewed": "The entrepreneur understands that completion will be reviewed at the second meeting.",
+    "conclude_by_explaining_only_the_entrepreneur_apos_s": "Conclude by explaining only the entrepreneur&apos;s immediate next stage and what should happen next. Do not present the full internal Coach meeting roadmap.",
+    "if_the_entrepreneur_asks_how_long_the_process": "If the entrepreneur asks how long the process takes, explain that timing depends on the entrepreneur&apos;s activity, preparation, responsiveness, and progress, but the process usually takes about three months. Do not present this timeframe as a guarantee.",
+    "the_meeting_cannot_be_completed_until_the_entrepreneur": "The meeting cannot be completed until the entrepreneur has acknowledged the EPEW mission and Unity and Support orientation."
+  },
+  "buttons": {
+    "back_to_entrepreneur_file": "Back to Entrepreneur File",
+    "entrepreneur_file": "← Entrepreneur File",
+    "schedule_meeting": "Schedule Meeting",
+    "start_meeting": "Start Meeting",
+    "complete_establishment_meeting": "Complete Establishment Meeting"
+  },
+  "attributes": {
+    "title": {
+      "coach_assignment": "Coach Assignment",
+      "entrepreneur_snapshot": "Entrepreneur Snapshot",
+      "business_snapshot": "Business Snapshot",
+      "entrepreneur_goals": "Entrepreneur Goals",
+      "missing_information": "Missing Information",
+      "recommended_questions": "Recommended Questions"
+    },
+    "label": {
+      "mission_presented": "Mission Presented",
+      "unity_support_explained": "Unity & Support Explained",
+      "entrepreneur_acknowledged": "Entrepreneur Acknowledged",
+      "preferred_language": "Preferred Language",
+      "priority_channel": "Priority Channel",
+      "funding_request": "Funding Request",
+      "entrepreneur_summary": "Entrepreneur Summary",
+      "business_summary": "Business Summary",
+      "primary_goal": "Primary Goal",
+      "current_business_status": "Current Business Status",
+      "market_customers": "Market / Customers",
+      "revenue_status": "Revenue Status",
+      "funding_need": "Funding Need",
+      "major_obstacles": "Major Obstacles",
+      "business_needs": "Business Needs",
+      "missing_documents": "Missing Documents",
+      "compliance_issues": "Compliance Issues",
+      "risks_concerns": "Risks / Concerns",
+      "verification_items": "Verification Items",
+      "potential_etvmc_tasks": "Potential ETVMC Tasks",
+      "business_potential": "Business Potential",
+      "private_coach_notes": "Private Coach Notes",
+      "meeting_summary": "Meeting Summary",
+      "coach_recommendations": "Coach Recommendations",
+      "work_required_before_second_meeting": "Work Required Before Second Meeting",
+      "immediate_next_stage_action": "Immediate Next Stage / Action"
+    }
+  },
+  "form": {
+    "placeholder": {
+      "summarize_the_entrepreneur_motivation_background_and_current_situation": "Summarize the entrepreneur, motivation, background, and current situation.",
+      "summarize_the_business_concept_existing_operations_or_proposed": "Summarize the business concept, existing operations, or proposed enterprise.",
+      "what_is_the_entrepreneur": "What is the entrepreneur",
+      "describe_the_current_stage_of_the_business": "Describe the current stage of the business.",
+      "who_are_the_target_customers_and_what_market": "Who are the target customers and what market will the business serve?",
+      "describe_current_or_expected_revenue_generation": "Describe current or expected revenue generation.",
+      "record_the_stated_funding_need_and_why_it": "Record the stated funding need and why it is needed. Do not promise funding.",
+      "example_nbusiness_not_registered_nno_operating_budget": "Example:\\nBusiness not registered\\nNo operating budget",
+      "example_nbusiness_registration_nbranding_nwebsite": "Example:\\nBusiness registration\\nBranding\\nWebsite",
+      "example_ngovernment_id_nlease_nbusiness_registration": "Example:\\nGovernment ID\\nLease\\nBusiness registration",
+      "example_nein_required_npermit_needs_verification": "Example:\\nEIN required\\nPermit needs verification",
+      "example_nunclear_startup_cost_nrevenue_assumptions_need_validation": "Example:\\nUnclear startup cost\\nRevenue assumptions need validation",
+      "example_nverify_registration_status_nconfirm_business_location": "Example:\\nVerify registration status\\nConfirm business location",
+      "example_nbusiness_registration_nlogo_design_nwebsite_development": "Example:\\nBusiness Registration\\nLogo Design\\nWebsite Development",
+      "internal_coach_notes_for_this_meeting": "Internal Coach notes for this meeting.",
+      "summarize_the_meeting_outcome_and_important_findings": "Summarize the meeting outcome and important findings.",
+      "record_the_coach": "Record the Coach",
+      "list_the_work_the_entrepreneur_must_complete_before": "List the work the entrepreneur must complete before the second meeting.\\nEnter one item per line.",
+      "explain_the_immediate_next_stage_what_the_entrepreneur": "Explain the immediate next stage, what the entrepreneur should do next, and who is responsible."
+    },
+    "labels": {
+      "follow_up_meeting_action_date": "Follow-Up Meeting / Action Date"
+    }
+  }
+}

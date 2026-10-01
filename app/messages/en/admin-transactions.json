@@ -1,0 +1,61 @@
+{
+  "headings": {
+    "enterprise_translation_center": "Enterprise Translation Center",
+    "translation_scan_required": "Translation scan required",
+    "missing_artifacts": "Missing artifacts",
+    "invalid_artifacts": "Invalid artifacts",
+    "translation_progress": "Translation Progress",
+    "compliance_findings": "Compliance Findings",
+    "translation_progress_by_portal": "Translation Progress by Portal",
+    "translation_priorities": "Translation Priorities",
+    "translation_center_actions": "Translation Center Actions"
+  },
+  "content": {
+    "the_translation_center_dashboard_is_ready_but_the": "The Translation Center dashboard is ready, but the generated scan artifacts are not available in this environment.",
+    "run_the_following_command_from_the_epew_project": "Run the following command from the EPEW project root:",
+    "npm_run_enterprise_translation_scan": "npm run enterprise:translation:scan",
+    "centralized_multilingual_monitoring_page_discovery_namespace_compliance_translation": "Centralized multilingual monitoring, page discovery, namespace compliance, translation coverage, work queues, and deployment certification.",
+    "scan_generated": "Scan generated:",
+    "language_coverage": "Language Coverage",
+    "translation_health": "Translation Health",
+    "compliant_namespaces": "Compliant namespaces",
+    "needs_translation": "Needs Translation",
+    "pending_namespaces": "Pending namespaces",
+    "missing_keys": "Missing Keys",
+    "translation_keys_missing": "Translation keys missing",
+    "hardcoded_text": "Hardcoded Text",
+    "findings_requiring_review": "Findings requiring review",
+    "enterprise_coverage": "Enterprise Coverage",
+    "work_queue": "Work Queue",
+    "pending_items": "Pending items",
+    "critical_priority": "Critical priority",
+    "high_priority": "High priority",
+    "phase_1": "Phase 1",
+    "scan_project": "Scan Project",
+    "npm_run_enterprise_translation_validate": "npm run enterprise:translation:validate",
+    "npm_run_enterprise_translation_build": "npm run enterprise:translation:build",
+    "npm_run_enterprise_translation_certify": "npm run enterprise:translation:certify",
+    "phase_1_is_monitoring_only": "Phase 1 is monitoring-only.",
+    "namespace_generation_language_file_generation_automatic_key_creation": "Namespace generation, language-file generation, automatic key creation, and translation actions will be activated in Phase 2.",
+    "deployment_certification": "Deployment Certification",
+    "deployment_ready": "Deployment Ready",
+    "back_to_admin": "Back to Admin",
+    "refresh_dashboard": "Refresh Dashboard"
+  },
+  "attributes": {
+    "description": {
+      "application_routes_automatically_discovered": "Application routes automatically discovered.",
+      "pages_registered_with_the_translation_center": "Pages registered with the Translation Center.",
+      "translation_namespaces_registered_across_the_platform": "Translation namespaces registered across the platform.",
+      "english_haitian_creole_french_and_spanish": "English, Haitian Creole, French, and Spanish.",
+      "current_multilingual_translation_coverage": "Current multilingual translation coverage.",
+      "enterprise_translation_compliance_score": "Enterprise translation compliance score.",
+      "namespaces_requiring_translation_or_compliance_action": "Namespaces requiring translation or compliance action.",
+      "missing_language_files_across_all_namespaces": "Missing language files across all namespaces."
+    },
+    "title": {
+      "pending_namespaces": "Pending Namespaces",
+      "missing_files": "Missing Files"
+    }
+  }
+}

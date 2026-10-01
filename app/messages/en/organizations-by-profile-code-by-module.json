@@ -1,0 +1,54 @@
+{
+  "headings": {
+    "module_not_found": "Module not found",
+    "open_a_contact": "Open a contact",
+    "conversation_history": "Conversation History",
+    "ai_arrange_message": "AI Arrange Message",
+    "follow_up_meetings": "Follow-Up & Meetings",
+    "grant_management": "Grant Management",
+    "haiti_connected_learning_tablet_project": "Haiti Connected Learning & Tablet Project",
+    "project_record": "Project Record",
+    "relationship_list": "Relationship List",
+    "emanon_document_center": "Emanon Document Center",
+    "meetings_follow_up_queue": "Meetings & Follow-Up Queue"
+  },
+  "content": {
+    "emanon_dashboard": "← Emanon Dashboard",
+    "external_identity_emanon_institute": "External identity: Emanon Institute /",
+    "no_emanon_contacts_have_been_added_to_an": "No Emanon contacts have been added to an Emanon group yet.",
+    "choose_any_name_to_see_the_complete_relationship": "Choose any name to see the complete relationship and conversation history.",
+    "no_communication_history_yet": "No communication history yet.",
+    "from_emanon_institute_lt": "From: Emanon Institute &lt;",
+    "gt": "&gt;",
+    "sending_will_always_use_the_emanon_external_identity": "Sending will always use the Emanon external identity. Delivery/read tracking appears in conversation history when the connected delivery channel provides it.",
+    "no_meetings_recorded_yet": "No meetings recorded yet.",
+    "track_each_opportunity_from_research_and_loi_through": "Track each opportunity from research and LOI through application, review, response, and follow-up.",
+    "funder_grant": "Funder / Grant",
+    "no_grant_opportunities_recorded_yet": "No grant opportunities recorded yet.",
+    "central_project_workspace_for_manufacturers_telecoms_solar_energy": "Central project workspace for manufacturers, telecoms, solar/energy, logistics, participating schools, sponsors, and implementation partners.",
+    "technical_requirements": "Technical requirements:",
+    "pilot_status": "Pilot status:",
+    "next_action": "Next action:",
+    "open_the_communication_center_for_full_history_this": "Open the Communication Center for full history. This workspace keeps the specialized relationship list focused on stage, priority, and next action.",
+    "have_been_added_yet": "have been added yet.",
+    "documents_remain_connected_to_the_institution_and_can": "Documents remain connected to the institution and can also be tied to a contact, grant, or project.",
+    "no_documents_recorded_yet": "No documents recorded yet.",
+    "open_document": "Open Document",
+    "one_place_to_see_what_emanon_must_do": "One place to see what Emanon must do next, what is scheduled, and what is waiting for a response.",
+    "no_meetings_or_follow_ups_are_scheduled_yet": "No meetings or follow-ups are scheduled yet.",
+    "status": "· Status:",
+    "open_meeting": "Open Meeting",
+    "follow_up_with": "Follow up with"
+  },
+  "form": {
+    "placeholder": {
+      "write_your_message_here": "Write your message here..."
+    },
+    "labels": {
+      "scheduled_follow_up": "Scheduled follow-up"
+    }
+  },
+  "buttons": {
+    "save_follow_up": "Save Follow-Up"
+  }
+}

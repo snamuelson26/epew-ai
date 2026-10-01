@@ -1,0 +1,43 @@
+{
+  "image": {
+    "alt": {
+      "orgdh_network": "ORGDH Network"
+    }
+  },
+  "content": {
+    "orgdh_network": "ORGDH Network",
+    "orgdh_network_builds_the_entrepreneur_apos_s_public": "ORGDH Network builds the entrepreneur&apos;s public image, promotes the business, and produces professional marketing materials.",
+    "describe_your_project": "Describe Your Project",
+    "support_orgdh_network": "Support ORGDH Network",
+    "start_your_project": "Start Your Project",
+    "tell_orgdh_network_about_your_business_audience_goals": "Tell ORGDH Network about your business, audience, goals, preferred services, and the result you want. The promotion and design team will use your description to prepare the next follow-up.",
+    "select_a_service_area": "Select a service area",
+    "multiple_services": "Multiple Services",
+    "not_sure_yet": "Not Sure Yet"
+  },
+  "headings": {
+    "business_promotion_media_services": "Business Promotion & Media Services",
+    "what_do_you_want_to_accomplish": "What do you want to accomplish?",
+    "request_received": "Request Received"
+  },
+  "buttons": {
+    "submit_another_request": "Submit Another Request"
+  },
+  "attributes": {
+    "label": {
+      "your_name": "Your Name",
+      "business_or_organization": "Business or Organization",
+      "email_address": "Email Address",
+      "phone_number": "Phone Number"
+    }
+  },
+  "form": {
+    "labels": {
+      "service_area": "Service Area",
+      "describe_what_you_want_to_accomplish": "Describe What You Want to Accomplish"
+    },
+    "placeholder": {
+      "describe_your_project_audience_goals_timeline_and_the": "Describe your project, audience, goals, timeline, and the materials you need..."
+    }
+  }
+}

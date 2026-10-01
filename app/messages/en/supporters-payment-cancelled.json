@@ -1,0 +1,10 @@
+{
+  "headings": {
+    "payment_cancelled": "Payment Cancelled"
+  },
+  "content": {
+    "your_payment_was_not_completed_you_may_return": "Your payment was not completed. You may return to the supporter page and try again when you are ready.",
+    "return_to_supporters_page": "Return to Supporters Page",
+    "go_home": "Go Home"
+  }
+}

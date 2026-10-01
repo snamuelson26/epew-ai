@@ -1,0 +1,44 @@
+{
+  "content": {
+    "epew_enterprise_task_vendor_management_center": "EPEW Enterprise Task & Vendor Management Center",
+    "apply_to_provide_professional_services_products_equipment_supplies": "Apply to provide professional services, products, equipment, supplies, technology, construction, promotion, or other approved business support within the EPEW ecosystem.",
+    "submitting_this_application_does_not_automatically_make_an": "Submitting this application does not automatically make an applicant an approved EPEW Vendor. Applications are reviewed before Vendor access, qualification, job matching, bidding, or assignment becomes available.",
+    "fields_marked_required_must_be_completed_before_submission": "Fields marked required must be completed before submission.",
+    "select_primary_service_category": "Select Primary Service Category *",
+    "speaking_ability": "Speaking Ability",
+    "writing_ability": "Writing Ability",
+    "participate_in_automatic_vendor_matching": "Participate in automatic Vendor matching",
+    "etvmc_may_identify_my_business_as_a_potential": "ETVMC may identify my business as a potential match when qualified jobs become available.",
+    "by_submitting_this_application_you_confirm_that_the": "By submitting this application, you confirm that the information provided is accurate. EPEW may request additional documentation, credentials, insurance, licenses, tax information, or other compliance records before approving Vendor participation."
+  },
+  "headings": {
+    "vendor_application": "Vendor Application",
+    "how_vendor_participation_works": "How Vendor participation works",
+    "candidate_vendor_application": "Candidate Vendor Application",
+    "business_information": "Business Information",
+    "primary_service_location": "Primary Service Location",
+    "service_expertise": "Service Expertise",
+    "etvmc_job_capacity": "ETVMC Job Capacity",
+    "why_epew": "Why EPEW?"
+  },
+  "form": {
+    "placeholder": {
+      "legal_business_or_professional_name": "Legal Business or Professional Name *",
+      "business_name": "Business Name",
+      "display_trade_name": "Display / Trade Name",
+      "primary_contact_name": "Primary Contact Name *",
+      "email_address": "Email Address *",
+      "phone_number": "Phone Number *",
+      "country": "Country *",
+      "state_region": "State / Region",
+      "describe_the_products_or_services_you_can_provide": "Describe the products or services you can provide to EPEW businesses *",
+      "years_in_business_professional_experience": "Years in Business / Professional Experience",
+      "coverage_area": "Coverage Area",
+      "licenses_certifications_credentials_or_professional_qualifications": "Licenses, Certifications, Credentials, or Professional Qualifications",
+      "why_do_you_want_to_become_an_epew": "Why do you want to become an EPEW Vendor?"
+    },
+    "labels": {
+      "maximum_active_jobs": "Maximum Active Jobs"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "content": {
+    "loading_potential_supporters": "Loading potential supporters...",
+    "entrepreneur_communication_system": "Entrepreneur Communication System",
+    "add_people_you_have_already_spoken_with_who": "Add people you have already spoken with who may support your business journey.",
+    "choose_the_business_account_for_this_potential_supporter": "Choose the business account for this potential supporter.",
+    "provide_an_email_address_a_phone_number_or": "Provide an email address, a phone number, or both.",
+    "no_potential_supporters_have_been_added_yet": "No potential supporters have been added yet.",
+    "back_to_entrepreneur_dashboard": "Back to Entrepreneur Dashboard",
+    "view_my_support_page": "View My Support Page"
+  },
+  "headings": {
+    "my_potential_supporters": "My Potential Supporters",
+    "business_account": "Business Account",
+    "add_a_potential_supporter": "Add a Potential Supporter",
+    "official_first_message_preview": "Official First Message Preview",
+    "potential_supporter_list": "Potential Supporter List"
+  },
+  "form": {
+    "labels": {
+      "preferred_language": "Preferred Language",
+      "phone_number": "Phone Number",
+      "email_address": "Email Address",
+      "relationship_to_entrepreneur": "Relationship to Entrepreneur",
+      "notes_from_the_conversation": "Notes From the Conversation"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "image": {
+    "alt": {
+      "epew_resources": "EPEW Resources",
+      "video_information": "Video Information",
+      "events_videos": "Events Videos",
+      "entrepreneur_stories": "Entrepreneur Stories",
+      "supporter_stories": "Supporter Stories"
+    }
+  },
+  "headings": {
+    "epew_resources": "EPEW Resources",
+    "video_information": "Video Information",
+    "faq_center": "FAQ Center",
+    "entrepreneur_faq": "Entrepreneur FAQ",
+    "supporter_faq": "Supporter FAQ",
+    "events_videos": "Events Videos",
+    "entrepreneur_stories": "Entrepreneur Stories",
+    "supporter_stories": "Supporter Stories",
+    "explore_the_epew_ecosystem": "Explore the EPEW Ecosystem"
+  },
+  "content": {
+    "explore_videos_faqs_event_updates_entrepreneur_stories_and": "Explore videos, FAQs, event updates, entrepreneur stories, and supporter stories designed to help you understand the EPEW ecosystem with confidence.",
+    "watch_official_epew_video_presentations_explaining_how_the": "Watch official EPEW video presentations explaining how the ecosystem works for entrepreneurs, supporters, coaches, and partners.",
+    "find_clear_answers_about_entrepreneurship_supporter_participation_transparency": "Find clear answers about entrepreneurship, supporter participation, transparency, reporting, and the EPEW program structure.",
+    "questions_and_answers_for_entrepreneurs_preparing_to_apply": "Questions and answers for entrepreneurs preparing to apply, qualify, receive coaching, and launch businesses.",
+    "questions_and_answers_for_supporters_about_participation_transparency": "Questions and answers for supporters about participation, transparency, benefits, reports, and community impact.",
+    "view_event_videos_community_updates_program_presentations_and": "View event videos, community updates, program presentations, and entrepreneur launch highlights.",
+    "discover_how_business_ideas_can_move_from_vision": "Discover how business ideas can move from vision to structure, from structure to launch, and from launch to growth.",
+    "learn_how_supporters_participate_in_strengthening_entrepreneurs_families": "Learn how supporters participate in strengthening entrepreneurs, families, and communities through structured participation.",
+    "about_epew": "About EPEW"
+  }
+}

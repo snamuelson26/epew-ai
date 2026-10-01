@@ -1,0 +1,42 @@
+{
+  "headings": {
+    "your_entrepreneur_dashboard_is_now_active": "Your Entrepreneur Dashboard Is Now Active",
+    "what_happens_next": "What Happens Next?",
+    "public_support_link": "Public Support Link",
+    "campaign_goal": "Campaign Goal",
+    "total_units_supported": "Total Units Supported",
+    "remaining_units": "Remaining Units",
+    "active_supporters": "Active Supporters",
+    "supporter_list": "Supporter List",
+    "marketplace_readiness": "Marketplace Readiness"
+  },
+  "content": {
+    "your_first_coach_meeting_has_been_completed_and": "Your first coach meeting has been completed, and your private entrepreneur dashboard is now active.",
+    "your_private_entrepreneur_portal_is_available": "✅ Your private entrepreneur portal is available.",
+    "your_coach_will_continue_guiding_your_preparation": "✅ Your coach will continue guiding your preparation.",
+    "business_video_and_presentation_preparation_may_begin": "✅ Business video and presentation preparation may begin.",
+    "you_will_review_and_approve_your_presentation_materials": "✅ You will review and approve your presentation materials.",
+    "your_public_support_page_may_go_live_after": "✅ Your public support page may go live after approval.",
+    "20_units_at_100_per_week": "20 units at $100 per week",
+    "to_help_you_open": "to help you open",
+    "doe_coffee_shop": "Doe Coffee Shop",
+    "share_your_support_link_with_friends_family_community": "Share your support link with friends, family, community members, and people who believe in your business vision.",
+    "michael_r": "Michael R.",
+    "active_supporter": "Active Supporter",
+    "2_units": "2 Units",
+    "sarah_m": "Sarah M.",
+    "1_unit": "1 Unit",
+    "community_supporter": "Community Supporter",
+    "3_units": "3 Units",
+    "coach_meeting": "Coach Meeting",
+    "business_video": "Business Video",
+    "pending_preparation": "Pending Preparation",
+    "marketplace_approval": "Marketplace Approval",
+    "pending_final_review": "Pending Final Review",
+    "go_to_dashboard": "Go to Dashboard",
+    "manage_supporter_updates": "Manage Supporter Updates"
+  },
+  "buttons": {
+    "copy_link": "Copy Link"
+  }
+}
