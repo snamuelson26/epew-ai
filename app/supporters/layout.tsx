@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { LanguageSelector, useEpewLanguage } from "@/app/components/EpewLanguage";
+import SupporterNavigation from "./SupporterNavigation";
 import SupporterWebsitePatch from "./SupporterWebsitePatch";
 import SupporterImageTranslations from "./SupporterImageTranslations";
 
@@ -22,7 +23,6 @@ export default function SupporterLayout({ children }: { children: ReactNode }) {
   const t = text[language];
 
   const [supporter, setSupporter] = useState<any>(null);
-  const [hasSupportedEntrepreneur, setHasSupportedEntrepreneur] = useState(false);
 
   const publicPages = [
     "/supporters",
@@ -52,23 +52,13 @@ export default function SupporterLayout({ children }: { children: ReactNode }) {
     }
     setSupporter(data);
 
-    try {
-      const response = await fetch("/api/supporters/annual-support/dashboard", { method: "GET", cache: "no-store" });
-      if (response.ok) {
-        const result = await response.json();
-        setHasSupportedEntrepreneur(Array.isArray(result?.allocations) && result.allocations.length > 0);
-      } else {
-        setHasSupportedEntrepreneur(false);
-      }
-    } catch (error) {
-      console.error("Unable to determine supporter allocation status:", error);
-      setHasSupportedEntrepreneur(false);
-    }
+
   }
 
   if (publicPages.includes(pathname)) {
     return (
       <>
+        <SupporterNavigation />
         {pathname === "/supporters" && <SupporterWebsitePatch />}
         {pathname === "/supporters" && <SupporterImageTranslations />}
         {children}
@@ -81,11 +71,11 @@ export default function SupporterLayout({ children }: { children: ReactNode }) {
     { title: `🏠 ${t.dashboard}`, href: "/supporters/dashboard" },
     { title: `🏢 ${t.supportedBusinesses}`, href: "/supporters/my-supported-businesses" },
     { title: `💬 ${t.communication}`, href: "/supporters/messages" },
-    ...(hasSupportedEntrepreneur ? [
+    ...([
       { title: `💳 ${t.financial}`, href: "/supporters/payment-center" },
       { title: `🔔 ${t.notifications}`, href: "/supporters/notifications" },
       { title: `🌟 ${t.stories}`, href: "/supporters/success-stories" },
-    ] : []),
+    ]),
     { title: `⚙️ ${t.settings}`, href: "/supporters/settings" },
   ];
 
@@ -119,6 +109,11 @@ export default function SupporterLayout({ children }: { children: ReactNode }) {
             </Link>
           ))}
         </nav>
+        <button type="button" className="mt-4 rounded-xl bg-white px-4 py-3 font-bold text-[#06245c]" onClick={async () => {
+          const { error } = await supabase.auth.signOut();
+          if (error) { window.alert("Unable to sign out. Please try again."); return; }
+          window.location.assign("/supporters/login");
+        }}>{({ en: "Sign out", fr: "Déconnexion", ht: "Dekonekte", es: "Cerrar sesión" })[language]}</button>
       </aside>
 
       <main className="w-full min-w-0 px-3 py-4 sm:px-5 sm:py-6 md:flex-1 md:p-8">

@@ -1,3 +1,4 @@
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { independentCheckout, independentInvoice, independentSubscription } from "@/lib/enterprise/supporters/IndependentSupportPaymentService";
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
@@ -41,6 +42,7 @@ export async function POST(req: Request) {
       case "checkout.session.completed":
       case "checkout.session.async_payment_succeeded": {
         const session: any = event.data.object;
+        if (session.payment_status !== "paid") break;
 
         const context = createEnterpriseContext({
           source: ENGINES.FINANCIAL,
@@ -123,6 +125,13 @@ export async function POST(req: Request) {
       case "checkout.session.async_payment_failed": {
         const session: any = event.data.object;
 
+        if (session.metadata?.support_flow === "annual_one_time" && session.metadata?.support_intent_id && session.metadata?.supporter_id) {
+          const result = await supabaseAdmin.from("epew_support_intents")
+            .update({status:"payment_failed",updated_at:new Date().toISOString()})
+            .eq("id",session.metadata.support_intent_id).eq("supporter_id",session.metadata.supporter_id)
+            .is("paid_at",null).eq("status","payment_pending");
+          if(result.error) throw result.error;
+        }
         console.error(
           "EPEW ACH payment failed:",
           {
