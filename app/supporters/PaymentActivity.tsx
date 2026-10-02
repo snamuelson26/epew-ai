@@ -45,6 +45,7 @@ export default function PaymentActivity({compact=false}:{compact?:boolean}) {
       <h3 className="text-xl font-bold">{p.businessName} — {money(Number(p.amount))}</h3>
       <p>Status: {p.status} · Payment record date: {date(p.paidDate)} · {p.frequency}</p>
       <p className="break-all text-sm">Reference: {p.id}</p>
+      {p.status==="paid"&&!p.schedule&&<p className="mt-3">Maturity date and participation-benefit terms: not yet recorded for this contribution.</p>}
       {p.schedule&&<>
         <p className="mt-3 font-semibold">Up to {p.schedule.rate}% annual participation benefit: {money(p.schedule.projectedTotal)}</p>
         <p>Contribution plus maximum projected benefit: {money(p.schedule.projectedCombined)}</p>

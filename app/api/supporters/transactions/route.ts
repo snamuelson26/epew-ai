@@ -45,7 +45,9 @@ export async function GET() {
       transactions:(payments.data||[]).map(p=>{
         const intent = intents.data?.find(i=>i.id===p.support_intent_id);
         const paidDate = intent?.paid_at || p.created_at;
-        const rate = Number(p.annual_benefit_rate || intent?.participation_benefit_rate || (["weekly","monthly"].includes(p.frequency)?6:8));
+        const rate = Number(p.units) > 0
+          ? (["weekly","monthly"].includes(p.frequency) ? 6 : Number(p.annual_benefit_rate || intent?.participation_benefit_rate || 8))
+          : 0; // Independent additional funds have no confirmed unit-benefit terms here.
         return {...p,businessName:name(p.entrepreneur_id),paidDate,schedule:p.status==="paid" ? benefitSchedule(Number(p.amount),rate,paidDate) : null};
       }),
       requests:(intents.data||[]).filter(i=>!i.paid_at && !(payments.data||[]).some(p=>p.support_intent_id===i.id && p.status==="paid")).map(i=>({...i,checkoutState:checkoutStates[i.id]||"unverified",businessName:name(i.supporter_selected_entrepreneur_id)}))
