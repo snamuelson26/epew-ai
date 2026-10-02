@@ -67,8 +67,8 @@ export default function SupporterLayout({ children }: { children: ReactNode }) {
   }
 
   const menu = [
-    { title: ({ en: "Independent Support", ht: "Sipò Endepandan", fr: "Soutien indépendant", es: "Apoyo independiente" })[language], href: "/supporters/independent-support" },
     { title: `🏠 ${t.dashboard}`, href: "/supporters/dashboard" },
+    { title: ({ en: "Independent Support", ht: "Sipò Endepandan", fr: "Soutien indépendant", es: "Apoyo independiente" })[language], href: "/supporters/independent-support" },
     { title: `🏢 ${t.supportedBusinesses}`, href: "/supporters/my-supported-businesses" },
     { title: `💬 ${t.communication}`, href: "/supporters/messages" },
     ...([
@@ -80,36 +80,37 @@ export default function SupporterLayout({ children }: { children: ReactNode }) {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f5f7fb] md:flex">
-      <aside className="w-full bg-[#06245c] px-4 py-5 text-white md:flex md:min-h-screen md:w-80 md:shrink-0 md:flex-col md:p-8">
-        <div className="flex items-center justify-between gap-3 md:block">
-          <div className="min-w-0 md:mb-6 md:text-center">
-            <h1 className="text-2xl font-extrabold sm:text-3xl md:text-4xl">{t.title}</h1>
+    <div className="min-h-screen bg-[#f5f7fb] md:flex md:items-start">
+      <aside className="w-full bg-[#06245c] p-4 text-white md:sticky md:top-0 md:flex md:h-dvh md:w-72 md:shrink-0 md:flex-col md:overflow-hidden md:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 md:block md:shrink-0">
+          <div className="min-w-0 md:mb-3">
+            <h1 className="text-xl font-extrabold sm:text-2xl">{t.title}</h1>
           </div>
 
-          <div className="w-44 shrink-0 md:mb-6 md:w-auto">
+          <div className="w-40 max-w-full shrink-0 md:w-full">
             <LanguageSelector />
           </div>
         </div>
 
-        <div className="mt-4 flex justify-center md:mb-10 md:mt-0">
-          <div className="flex w-28 items-center justify-center rounded-2xl bg-white p-2 shadow-lg sm:w-32 md:w-full md:rounded-3xl md:p-5 md:shadow-xl">
-            <img src="/images/epew-ede-ibos-logo.png" alt="EPEW-EDE-IBOS" className="max-h-20 w-auto object-contain md:max-h-40" />
+        <div className="mt-3 hidden justify-center md:mb-4 md:flex md:shrink-0">
+          <div className="flex w-full items-center justify-center rounded-xl bg-white p-2">
+            <img src="/images/epew-ede-ibos-logo.png" alt="EPEW-EDE-IBOS" className="h-16 w-auto object-contain" />
           </div>
         </div>
 
-        <nav className="mt-4 grid grid-cols-2 gap-2 md:mt-0 md:flex-1 md:grid-cols-1 md:space-y-3 md:overflow-y-auto">
+        <nav aria-label={t.title} className="mt-4 grid grid-cols-2 content-start gap-2 md:mt-0 md:flex md:min-h-0 md:flex-1 md:flex-col md:overflow-y-auto md:overscroll-contain md:pr-1">
           {menu.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className={`block rounded-xl px-3 py-3 text-center text-sm font-bold transition sm:text-base md:rounded-2xl md:px-5 md:py-4 md:text-left md:text-lg ${pathname === item.href ? "bg-green-600" : "bg-white/10 hover:bg-blue-800 md:bg-transparent"}`}
+              aria-current={pathname === item.href || pathname.startsWith(`${item.href}/`) ? "page" : undefined}
+              className={`block shrink-0 rounded-xl px-3 py-3 text-left text-sm font-semibold leading-snug transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:text-base ${(pathname === item.href || pathname.startsWith(`${item.href}/`)) ? "bg-green-600" : "bg-white/10 hover:bg-blue-800 md:bg-transparent"}`}
             >
               {item.title}
             </Link>
           ))}
         </nav>
-        <button type="button" className="mt-4 rounded-xl bg-white px-4 py-3 font-bold text-[#06245c]" onClick={async () => {
+        <button type="button" className="mt-4 w-full shrink-0 rounded-xl bg-white px-4 py-3 font-bold text-[#06245c] hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white" onClick={async () => {
           const { error } = await supabase.auth.signOut();
           if (error) { window.alert("Unable to sign out. Please try again."); return; }
           window.location.assign("/supporters/login");
