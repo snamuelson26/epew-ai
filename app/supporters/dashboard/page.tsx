@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 
 import Hero from "./components/Hero";
 import EntrepreneurPortfolio from "./components/EntrepreneurPortfolio";
+import PaymentActivity from "../PaymentActivity";
 import AnnualSupportStatus from "./components/AnnualSupportStatus";
 import Legacy from "./components/Legacy";
 
@@ -172,6 +173,7 @@ export default function SupporterDashboardPage() {
       </section>
 
       <section className="mb-10">
+        <PaymentActivity compact />
         <AnnualSupportStatus />
       </section>
 

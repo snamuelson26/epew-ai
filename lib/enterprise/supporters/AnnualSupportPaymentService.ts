@@ -292,16 +292,16 @@ export async function processAnnualSupportCheckout(
       transactionError ||
       !transaction
     ) {
-      throw new Error(
-        `Unable to record annual support transaction: ${
-          transactionError?.message ||
-          "Unknown transaction error."
-        }`
-      );
+      // A webhook and a return-page verification may arrive concurrently.
+      // The existing unique session constraint is the idempotency boundary.
+      if (transactionError?.code !== "23505") throw transactionError || new Error("Unable to record payment.");
+      const winner = await supabaseAdmin.from("supporter_transactions").select("id")
+        .eq("stripe_checkout_session_id",session.id).eq("supporter_id",supporterId).single();
+      if (winner.error || !winner.data) throw winner.error || new Error("Unable to read payment.");
+      transactionId = winner.data.id;
     }
 
-    transactionId =
-      transaction.id;
+    if (transaction) transactionId = transaction.id;
   }
 
   /*

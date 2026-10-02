@@ -1,3 +1,5 @@
+import { stripe } from "@/lib/stripe";
+import { verifyOwnedCheckout } from "@/lib/enterprise/supporters/checkoutVerification";
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { createClient } from "@/lib/supabase/server";
@@ -75,6 +77,16 @@ export async function GET(req: Request) {
       );
     }
 
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    if (session.metadata?.supporter_id !== supporter.id) {
+      return NextResponse.json({error: "Payment not found for your account."}, {status:404});
+    }
+    const verified = await verifyOwnedCheckout(session, supporter.id);
+    if (verified.state !== "paid") {
+      return NextResponse.json({found:false,pending:true,paymentStatus:verified.state,
+        message: verified.state === "processing" ? "Payment submitted — awaiting payment confirmation. Do not pay again." : "Finish your transaction or cancel the unpaid checkout in your Payment Center."});
+    }
+
     const {
       data: transaction,
       error: transactionError,
@@ -113,6 +125,8 @@ export async function GET(req: Request) {
         {
           found: false,
           pending: true,
+          paymentStatus: "paid",
+          message: "Stripe confirmed payment; your portal record is still synchronizing. Do not pay again.",
         }
       );
     }
