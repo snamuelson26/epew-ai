@@ -36,7 +36,7 @@ export async function messagingReadiness(createTemplates=false) {
   const senders=await client.messaging.v2.channelsSenders.list({channel:'whatsapp',pageSize:20,limit:100}).catch(async(error) => {
    if(error.code!==63100)throw error;
    // v2 JSON endpoints can reject the SDK's legacy capitalized query keys.
-   const response=await client.request({method:'GET',uri:'https://messaging.twilio.com/v2/Channels/Senders',params:{channel:'whatsapp',pageSize:20}});
+   const response=await client.request({method:'get',uri:'https://messaging.twilio.com/v2/Channels/Senders',params:{channel:'whatsapp',pageSize:20}});
    const body=typeof response.body==='string'?JSON.parse(response.body):response.body;
    if(response.statusCode>=400)throw Object.assign(new Error(body.message||'Sender lookup failed'),{code:body.code});
    return (body.senders||[]).map((item:{sid:string;status:string;sender_id:string;webhook?:{callback_url?:string}})=>({sid:item.sid,status:item.status,senderId:item.sender_id,webhook:{callbackUrl:item.webhook?.callback_url}}));
