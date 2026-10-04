@@ -40,6 +40,11 @@ export async function POST(request: NextRequest) {
     !/^(SM|MM)[0-9a-f]{32}$/i.test(sid)
   )
     return new NextResponse("Invalid message", { status: 400 });
+  if (/^(STOP|UNSUBSCRIBE|CANCEL|END|QUIT)$/i.test(String(params.Body || '').trim())) {
+    const {error} = await supabaseAdmin.from('epew_appointment_message_optouts').upsert({phone,channel:'whatsapp'},{onConflict:'phone,channel'});
+    if (error) return new NextResponse('Unavailable', {status:503});
+    return reply('EPEW appointment messages stopped. / Rapèl randevou yo sispann.');
+  }
   if (!whatsappReadiness().messaging)
     return reply(
       "EPEW WhatsApp interviews are awaiting activation. Please use your entrepreneur portal for assistance.",

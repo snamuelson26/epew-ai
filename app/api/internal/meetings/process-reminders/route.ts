@@ -1,3 +1,4 @@
+import {processMessageReminders} from '@/lib/appointments/processMessageReminders';
 import { createHash } from 'node:crypto';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { EPEW_EMAIL_FROM, resend } from '@/lib/email/resend';
@@ -20,6 +21,7 @@ export async function GET(request: Request) {
     return Response.json({error:'Unauthorized'}, {status:401});
   }
   try {
+    const messaging = await processMessageReminders().catch(() => ({error:'Messaging processor unavailable; email processing continues'}));
     if (!resend) throw new Error('Email delivery is not configured');
     const {data: queued,error: queueError} = await supabaseAdmin.rpc('epew_prepare_appointment_reminders');
     if (queueError) throw queueError;
@@ -76,7 +78,7 @@ export async function GET(request: Request) {
       // Stay below the provider's default requests/second limit.
       await new Promise(resolve=>setTimeout(resolve,600));
     }
-    return Response.json({queued,sent,failed,skipped},{headers:{'Cache-Control':'no-store'}});
+    return Response.json({queued,sent,failed,skipped,messaging},{headers:{'Cache-Control':'no-store'}});
   } catch {
     console.error('Appointment reminder processor failed');
     return Response.json({error:'Unable to process appointment reminders'},{status:500});
