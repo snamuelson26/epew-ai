@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { EPEW_EMAIL_FROM, resend } from '@/lib/email/resend';
 import { Appointment, reminderEmail } from '@/lib/appointments/reminderEmail';
@@ -7,7 +8,15 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   const secret = process.env.CRON_SECRET;
-  if (!secret || request.headers.get('authorization') !== `Bearer ${secret}`) {
+  const authorization = request.headers.get('authorization') || '';
+  let authorized = Boolean(secret && authorization === `Bearer ${secret}`);
+  if (!authorized && authorization.startsWith('Bearer ')) {
+    const hash = createHash('sha256').update(authorization.slice(7)).digest('hex');
+    const {data,error} = await supabaseAdmin.from('epew_internal_cron_tokens').select('id')
+      .eq('action_key','appointment-reminders').eq('token_hash',hash).eq('active',true).maybeSingle();
+    authorized = !error && Boolean(data);
+  }
+  if (!authorized) {
     return Response.json({error:'Unauthorized'}, {status:401});
   }
   try {
