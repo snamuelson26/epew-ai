@@ -29,7 +29,8 @@ function AccountCreationSurvey() {
   const router = useRouter();
   const params = useSearchParams();
   const roleParam = params.get("role");
-  const role: Role = roleParam && roleParam in destinations ? roleParam as Role : "entrepreneur";
+  const role: Role = roleParam && Object.prototype.hasOwnProperty.call(destinations, roleParam)
+    ? roleParam as Role : "entrepreneur";
   const requestedNext = params.get("next");
   // Only these local destinations are allowed; no external or arbitrary redirect.
   const next = requestedNext && (
