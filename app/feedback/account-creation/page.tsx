@@ -35,6 +35,7 @@ function AccountCreationSurvey() {
   const next = requestedNext && (
     requestedNext === destinations[role].home ||
     requestedNext === destinations[role].login ||
+    (role === "supporter" && /^\/supporters\/login\?ref=[a-zA-Z0-9_-]+$/.test(requestedNext)) ||
     (role === "supporter" && /^\/support\/[a-zA-Z0-9_-]+\/participation-agreement(?:\?ref=[a-zA-Z0-9_-]+)?$/.test(requestedNext))
   ) ? requestedNext : destinations[role].home;
 
@@ -129,6 +130,7 @@ function AccountCreationSurvey() {
       {loading ? <p className="mt-8">Loading...</p> : !userId ? <div className="mt-8 space-y-4">
         <p>Confirm your email if requested, then sign in to answer the survey. You can continue without it.</p>
         <Link className="inline-block rounded-xl bg-green-700 px-5 py-3 font-bold text-white" href={destinations[role].login}>Sign in</Link>
+        <Link className="ml-4 inline-block font-semibold underline" href={next}>Continue without survey</Link>
       </div> : finished ? <div className="mt-8 space-y-4">
         <p>Thank you. Your registration survey has already been recorded.</p>
         <Link href={next} className="font-bold text-green-700 underline">Continue to your account</Link>
