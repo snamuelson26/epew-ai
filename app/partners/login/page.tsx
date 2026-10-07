@@ -94,7 +94,10 @@ export default function PartnerLoginPage() {
         return;
       }
 
-      router.push("/partners");
+      const surveyRequested = new URLSearchParams(window.location.search).get("survey") === "account_creation";
+      router.push(surveyRequested
+        ? "/feedback/account-creation?role=partner&next=%2Fpartners"
+        : "/partners");
     } finally {
       setLoading(false);
     }
