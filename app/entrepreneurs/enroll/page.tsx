@@ -2944,6 +2944,15 @@ function SuccessPanel({
         </div>
       </div>
 
+      <div className="mt-8">
+        <Link
+          href="/feedback/account-creation?role=entrepreneur&next=%2Fentrepreneurs%2Fdashboard"
+          className="inline-block font-bold text-green-700 underline"
+        >
+          Tell us about your registration experience (optional)
+        </Link>
+      </div>
+
       <div className="mt-8 flex flex-col gap-4 md:flex-row">
         <Link
           href="/entrepreneurs/communication-preferences"

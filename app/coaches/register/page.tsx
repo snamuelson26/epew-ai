@@ -133,7 +133,7 @@ export default function CoachRegisterPage() {
     }
 
     setLoading(false);
-    router.push("/coaches/login");
+    router.push("/feedback/account-creation?role=coach&next=%2Fcoaches%2Flogin");
   }
 
   return (

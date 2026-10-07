@@ -115,12 +115,20 @@ export default function EntrepreneurLoginPage() {
 
   function openAccount(account: SelectableAccount) {
     if (account.kind === "organization" && account.profileCode) {
-      window.location.href = `/organizations/${encodeURIComponent(account.profileCode)}/dashboard`;
+      const destination = `/organizations/${encodeURIComponent(account.profileCode)}/dashboard`;
+      const surveyRequested = new URLSearchParams(window.location.search).get("survey") === "account_creation";
+      window.location.href = surveyRequested
+        ? `/feedback/account-creation?role=entrepreneur&next=${encodeURIComponent(destination)}`
+        : destination;
       return;
     }
 
     if (account.applicationId) {
-      window.location.href = `/entrepreneurs/dashboard?applicationId=${encodeURIComponent(String(account.applicationId))}`;
+      const destination = `/entrepreneurs/dashboard?applicationId=${encodeURIComponent(String(account.applicationId))}`;
+      const surveyRequested = new URLSearchParams(window.location.search).get("survey") === "account_creation";
+      window.location.href = surveyRequested
+        ? `/feedback/account-creation?role=entrepreneur&next=${encodeURIComponent(destination)}`
+        : destination;
     }
   }
 
