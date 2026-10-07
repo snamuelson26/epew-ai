@@ -90,9 +90,10 @@ export default function CoachLoginPage() {
         return;
       }
 
-      router.push(
-        "/coaches/dashboard",
-      );
+      const surveyRequested = new URLSearchParams(window.location.search).get("survey") === "account_creation";
+      router.push(surveyRequested
+        ? "/feedback/account-creation?role=coach&next=%2Fcoaches%2Fdashboard"
+        : "/coaches/dashboard");
     } finally {
       setLoading(false);
     }
