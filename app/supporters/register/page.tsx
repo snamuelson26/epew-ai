@@ -337,18 +337,14 @@ function SupporterRegisterContent() {
       "Supporter registered successfully. Please check your email if confirmation is required, then sign in to continue.",
     );
 
-    if (selectedBusinessId) {
-      const referralQuery = validatedReferrerCode
-        ? `?ref=${encodeURIComponent(validatedReferrerCode)}`
-        : "";
-
-      window.location.href =
-        `/support/${selectedBusinessId}/participation-agreement${referralQuery}`;
-    } else {
-      window.location.href = validatedReferrerCode
+    const destination = selectedBusinessId
+      ? `/support/${selectedBusinessId}/participation-agreement${validatedReferrerCode ? `?ref=${encodeURIComponent(validatedReferrerCode)}` : ""}`
+      : validatedReferrerCode
         ? `/supporters/login?ref=${encodeURIComponent(validatedReferrerCode)}`
         : "/supporters/login";
-    }
+
+    window.location.href =
+      `/feedback/account-creation?role=supporter&next=${encodeURIComponent(destination)}`;
   }
 
   return (
