@@ -36,9 +36,18 @@ function AccountCreationSurvey() {
   const next = requestedNext && (
     requestedNext === destinations[role].home ||
     requestedNext === destinations[role].login ||
+    (role === "entrepreneur" && /^\/entrepreneurs\/dashboard\?applicationId=\d+$/.test(requestedNext)) ||
+    (role === "entrepreneur" && /^\/organizations\/[a-zA-Z0-9_-]+\/dashboard$/.test(requestedNext)) ||
     (role === "supporter" && /^\/supporters\/login\?ref=[a-zA-Z0-9_-]+$/.test(requestedNext)) ||
     (role === "supporter" && /^\/support\/[a-zA-Z0-9_-]+\/participation-agreement(?:\?ref=[a-zA-Z0-9_-]+)?$/.test(requestedNext))
   ) ? requestedNext : destinations[role].home;
+  const surveyPath = `/feedback/account-creation?role=${role}&next=${encodeURIComponent(next)}`;
+  const loginHref = role === "supporter"
+    ? `${destinations[role].login}?next=${encodeURIComponent(surveyPath)}`
+    : `${destinations[role].login}?survey=account_creation`;
+  const continueHref = role === "supporter" && next.startsWith("/support/")
+    ? `${destinations[role].login}?next=${encodeURIComponent(next)}`
+    : destinations[role].login;
 
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -130,8 +139,8 @@ function AccountCreationSurvey() {
       <p className="mt-3 text-slate-700">This seven-question survey is optional. Your account is ready whether you answer or skip it.</p>
       {loading ? <p className="mt-8">Loading...</p> : !userId ? <div className="mt-8 space-y-4">
         <p>Confirm your email if requested, then sign in to answer the survey. You can continue without it.</p>
-        <Link className="inline-block rounded-xl bg-green-700 px-5 py-3 font-bold text-white" href={destinations[role].login}>Sign in</Link>
-        <Link className="ml-4 inline-block font-semibold underline" href={next}>Continue without survey</Link>
+        <Link className="inline-block rounded-xl bg-green-700 px-5 py-3 font-bold text-white" href={loginHref}>Sign in and return to survey</Link>
+        <Link className="ml-4 inline-block font-semibold underline" href={continueHref}>Continue without survey</Link>
       </div> : finished ? <div className="mt-8 space-y-4">
         <p>Thank you. Your registration survey has already been recorded.</p>
         <Link href={next} className="font-bold text-green-700 underline">Continue to your account</Link>
