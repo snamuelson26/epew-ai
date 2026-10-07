@@ -329,6 +329,12 @@ function PartnerRegisterContent() {
         {messageType === "success" && (
           <div className="mb-8 text-center">
             <a
+              href="/feedback/account-creation?role=partner&next=%2Fpartners%2Flogin"
+              className="mr-6 text-xl font-bold text-green-700 underline"
+            >
+              Give optional registration feedback
+            </a>
+            <a
               href="/partners/login"
               className="text-xl font-bold text-blue-700 underline"
             >
