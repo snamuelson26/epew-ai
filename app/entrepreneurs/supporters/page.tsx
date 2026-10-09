@@ -273,9 +273,10 @@ export default function PotentialSupportersPage() {
           businessCode,
         ),
         sender_voice: "entrepreneur",
-        delivery_status: "draft",
+        delivery_status: "queued",
+        scheduled_for: new Date().toISOString(),
       })
-      .select("delivery_status,scheduled_for,sent_at")
+      .select("id,delivery_status,scheduled_for,sent_at")
       .single();
 
     if (messageError || !message) {
@@ -285,6 +286,24 @@ export default function PotentialSupportersPage() {
       return;
     }
 
+    let delivery = message;
+    let deliveryWarning = "";
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if (!token) throw new Error("Your session expired. The saved request will be retried automatically.");
+      const response = await fetch("/api/entrepreneurs/supporters/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ messageId: message.id }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Delivery will be retried automatically.");
+      delivery = { ...message, ...result };
+    } catch (sendError) {
+      deliveryWarning = sendError instanceof Error ? sendError.message : "Delivery will be retried automatically.";
+    }
+
     setName("");
     setPhone("");
     setEmail("");
@@ -292,12 +311,12 @@ export default function PotentialSupportersPage() {
     setRelationship("");
     setNotes("");
 
-    if (message.sent_at || message.delivery_status === "sent" || message.delivery_status === "delivered") {
-      setNotice(`Potential supporter added. Message sent successfully${message.sent_at ? ` at ${formatEastern(message.sent_at)} Eastern` : ""}.`);
-    } else if (message.delivery_status === "queued") {
-      setNotice(`Potential supporter added. Your message is scheduled to be sent at ${formatEastern(message.scheduled_for)} Eastern.`);
+    if (delivery.sent_at || delivery.delivery_status === "sent" || delivery.delivery_status === "delivered") {
+      setNotice(`Potential supporter added. Message sent successfully${delivery.sent_at ? ` at ${formatEastern(delivery.sent_at)} Eastern` : ""}.`);
+    } else if (delivery.delivery_status === "queued" || delivery.delivery_status === "sending") {
+      setNotice(`Potential supporter added. ${deliveryWarning || "Your request is being sent. If delivery is delayed, it will be retried automatically."}`);
     } else {
-      setNotice(`Potential supporter added. Message status: ${message.delivery_status}.`);
+      setNotice(`Potential supporter added. Message status: ${delivery.delivery_status}.`);
     }
 
     setSaving(false);
@@ -389,7 +408,7 @@ export default function PotentialSupportersPage() {
                     <div className="mt-4 rounded-xl bg-slate-50 p-3 text-sm font-bold text-slate-700">
                       {!message && "First message: not prepared"}
                       {message?.sent_at && `First message: Sent ${formatEastern(message.sent_at)} Eastern`}
-                      {!message?.sent_at && message?.delivery_status === "queued" && `First message: Scheduled for ${formatEastern(message.scheduled_for)} Eastern`}
+                      {!message?.sent_at && message?.delivery_status === "queued" && "First message: Awaiting delivery; automatic retry enabled"}
                       {!message?.sent_at && message && message.delivery_status !== "queued" && `First message: ${message.delivery_status}`}
                     </div>
                   </article>

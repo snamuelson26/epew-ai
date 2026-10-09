@@ -13,6 +13,7 @@ type SendEpewEmailInput = {
   from?: string;
   replyTo?: string | string[];
   senderIdentityId?: string | null;
+  retryFailed?: boolean;
 };
 
 export async function sendEpewEmail(input: SendEpewEmailInput) {
@@ -28,6 +29,7 @@ export async function sendEpewEmail(input: SendEpewEmailInput) {
     from = EPEW_EMAIL_FROM,
     replyTo,
     senderIdentityId = null,
+    retryFailed = false,
   } = input;
 
   if (!resend) {
@@ -44,7 +46,7 @@ export async function sendEpewEmail(input: SendEpewEmailInput) {
     throw existingError;
   }
 
-  if (existing) {
+  if (existing && !(retryFailed && existing.status === "failed")) {
     return {
       ok: existing.status === "sent" || existing.status === "delivered",
       duplicate: true,
@@ -54,24 +56,36 @@ export async function sendEpewEmail(input: SendEpewEmailInput) {
     };
   }
 
-  const { data: delivery, error: insertError } = await supabaseAdmin
-    .from("epew_email_deliveries")
-    .insert({
-      application_id: applicationId,
-      recipient_email: recipientEmail,
-      recipient_name: recipientName,
-      message_type: messageType,
-      subject,
-      idempotency_key: idempotencyKey,
-      sender_identity_id: senderIdentityId,
-      status: "pending",
-      metadata,
-    })
-    .select("id")
-    .single();
-
-  if (insertError) {
-    throw insertError;
+  let delivery: { id: string };
+  if (existing && retryFailed && existing.status === "failed") {
+    const { data: claimed, error: claimError } = await supabaseAdmin
+      .from("epew_email_deliveries")
+      .update({ status: "pending", error_message: null, updated_at: new Date().toISOString() })
+      .eq("id", existing.id)
+      .eq("status", "failed")
+      .select("id")
+      .maybeSingle();
+    if (claimError) throw claimError;
+    if (!claimed) return { ok: false, duplicate: true, deliveryId: existing.id, status: "pending", providerMessageId: existing.provider_message_id };
+    delivery = claimed;
+  } else {
+    const { data: inserted, error: insertError } = await supabaseAdmin
+      .from("epew_email_deliveries")
+      .insert({
+        application_id: applicationId,
+        recipient_email: recipientEmail,
+        recipient_name: recipientName,
+        message_type: messageType,
+        subject,
+        idempotency_key: idempotencyKey,
+        sender_identity_id: senderIdentityId,
+        status: "pending",
+        metadata,
+      })
+      .select("id")
+      .single();
+    if (insertError) throw insertError;
+    delivery = inserted;
   }
 
   try {
@@ -81,7 +95,7 @@ export async function sendEpewEmail(input: SendEpewEmailInput) {
       subject,
       html,
       ...(replyTo ? { replyTo } : {}),
-    });
+    }, { idempotencyKey });
 
     if (result.error || !result.data?.id) {
       const message =
