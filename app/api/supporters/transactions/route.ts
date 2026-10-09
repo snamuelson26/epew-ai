@@ -4,6 +4,7 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { stripe } from "@/lib/stripe";
 import { findIntentCheckout, verifyOwnedCheckout } from "@/lib/enterprise/supporters/checkoutVerification";
 import { benefitSchedule } from "@/lib/enterprise/supporters/paymentPresentation";
+import { certificateEligible } from "@/lib/enterprise/supporters/certificateEligibility";
 
 async function owner() {
   const client = await createClient();
@@ -48,7 +49,7 @@ export async function GET() {
         const rate = Number(p.units) > 0
           ? (["weekly","monthly"].includes(p.frequency) ? 6 : Number(p.annual_benefit_rate || intent?.participation_benefit_rate || 8))
           : 0; // Independent additional funds have no confirmed unit-benefit terms here.
-        return {...p,businessName:name(p.entrepreneur_id),paidDate,schedule:p.status==="paid" ? benefitSchedule(Number(p.amount),rate,paidDate) : null};
+        return {...p,certificateAvailable:certificateEligible(p),businessName:name(p.entrepreneur_id),paidDate,schedule:p.status==="paid" ? benefitSchedule(Number(p.amount),rate,paidDate) : null};
       }),
       requests:(intents.data||[]).filter(i=>!i.paid_at && !(payments.data||[]).some(p=>p.support_intent_id===i.id && p.status==="paid")).map(i=>({...i,checkoutState:checkoutStates[i.id]||"unverified",businessName:name(i.supporter_selected_entrepreneur_id)}))
     },{headers:{"Cache-Control":"private, no-store"}});

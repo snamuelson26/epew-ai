@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { benefitSchedule } from "@/lib/enterprise/supporters/paymentPresentation";
 
-type Payment = {id:string;businessName:string;amount:number;status:string;frequency:string;paidDate:string;schedule:ReturnType<typeof benefitSchedule>};
+type Payment = {id:string;certificateAvailable?:boolean;businessName:string;amount:number;status:string;frequency:string;paidDate:string;schedule:ReturnType<typeof benefitSchedule>};
 type PaymentRequest = {id:string;businessName:string;total_amount:number;unit_count:number;status:string;created_at:string;checkoutState:string};
 const money = (value:number) => new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(value);
 const date = (value:string) => new Date(value.endsWith("Z") || /[+-]\d\d:\d\d$/.test(value)?value:`${value}Z`).toLocaleDateString("en-US");
@@ -12,6 +12,7 @@ export default function PaymentActivity({compact=false}:{compact?:boolean}) {
   const [error,setError] = useState("");
   const [message,setMessage] = useState("");
   const [busy,setBusy] = useState<string|null>(null);
+  const [certificateLanguage,setCertificateLanguage] = useState("en");
   async function load() {
     setError("");
     try {
@@ -45,6 +46,14 @@ export default function PaymentActivity({compact=false}:{compact?:boolean}) {
       <h3 className="text-xl font-bold">{p.businessName} — {money(Number(p.amount))}</h3>
       <p>Status: {p.status} · Payment record date: {date(p.paidDate)} · {p.frequency}</p>
       <p className="break-all text-sm">Reference: {p.id}</p>
+      {p.certificateAvailable&&<div className="mt-4 rounded-xl border border-green-200 bg-green-50 p-4">
+        <h4 className="font-bold">{certificateLanguage==="ht"?"Sètifika patisipasyon sipò":"Support participation certificate"}</h4>
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <label>Language / Lang <select className="ml-2 rounded border bg-white p-2" value={certificateLanguage} onChange={e=>setCertificateLanguage(e.target.value)}><option value="en">English</option><option value="ht">Kreyòl ayisyen</option></select></label>
+          <a className="rounded-lg bg-green-800 px-4 py-2 font-bold text-white" target="_blank" rel="noopener noreferrer" href={`/api/supporters/certificates?transactionId=${encodeURIComponent(p.id)}&language=${certificateLanguage}`}>{certificateLanguage==="ht"?"Louvri epi enprime sètifika":"Open and print certificate"}</a>
+        </div>
+        <p className="mt-2 text-sm">{certificateLanguage==="ht"?"Nan PDF la, chwazi Enprime. Itilize papye Letter, oryantasyon orizontal ak Ajiste nan paj la.":"In the PDF viewer, choose Print. Use Letter paper, landscape orientation and Fit to page."}</p>
+      </div>}
       {p.status==="paid"&&!p.schedule&&<p className="mt-3">Maturity date and participation-benefit terms: not yet recorded for this contribution.</p>}
       {p.schedule&&<>
         <p className="mt-3 font-semibold">Up to {p.schedule.rate}% annual participation benefit: {money(p.schedule.projectedTotal)}</p>
