@@ -104,6 +104,9 @@ export default function LoginPage() {
         return;
       }
 
+      const staffAccess = await fetch("/api/staff/supporter-relations/access");
+      if (staffAccess.ok) { router.push("/staff/supporter-relations"); return; }
+
       const {
         data: roles,
         error: roleError,

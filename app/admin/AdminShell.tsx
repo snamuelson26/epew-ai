@@ -92,6 +92,7 @@ export default function AdminShell({
       title: "Communication",
       links: [
         { name: "Messages", href: "/admin/messages" },
+        { name: "Supporter Communications", href: "/staff/supporter-relations" },
         { name: "Notifications", href: "/admin/notifications" },
         { name: "Support Tickets", href: "/admin/support-tickets" },
       ],

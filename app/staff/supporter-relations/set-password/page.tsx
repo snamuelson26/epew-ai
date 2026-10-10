@@ -1,0 +1,4 @@
+"use client";
+import {useState,FormEvent} from "react";
+import {supabase} from "@/lib/supabase";
+export default function SetPassword(){const [password,setPassword]=useState(""),[message,setMessage]=useState("");async function submit(e:FormEvent){e.preventDefault();const r=await supabase.auth.updateUser({password});if(r.error)setMessage("Unable to update password. Request a new link.");else window.location.assign("/staff/supporter-relations");}return <main className="mx-auto max-w-lg p-8"><h1 className="text-2xl font-bold">Set your staff password</h1><form onSubmit={submit}><label>New password<input className="my-4 block w-full border p-3" required type="password" minLength={12} autoComplete="new-password" value={password} onChange={e=>setPassword(e.target.value)}/></label><button className="rounded bg-green-800 p-3 text-white">Save password</button></form><p role="status">{message}</p></main>;}
