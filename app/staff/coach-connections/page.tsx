@@ -1,0 +1,11 @@
+import {redirect} from "next/navigation";
+import {communicationAccess} from "@/lib/communications/supporterAccess";
+import {supabaseAdmin} from "@/lib/supabaseAdmin";
+export const dynamic="force-dynamic";
+export default async function Connections(){
+ const a=await communicationAccess();if(!a?.staff||a.staff.role!=="director"||a.staff.user_id!==a.user.id)redirect("/staff/supporter-relations/login");
+ const {data,error}=await supabaseAdmin.from("epew_coach_agent_accounts").select("coach_id,user_id,active,invited_at,connected_at,epew_coaches(full_name,email,coach_code)");
+ if(error)throw new Error("Unable to load coach connection readiness.");
+ const rows=[];for(const row of data??[]){const coach:any=row.epew_coaches;const user=row.user_id?(await supabaseAdmin.auth.admin.getUserById(row.user_id)).data.user:null;rows.push({...row,coach,confirmed:!!user?.email_confirmed_at});}
+ return <main className="mx-auto max-w-5xl p-8"><a href="/staff/supporter-relations" className="underline">Team Communications</a><h1 className="my-6 text-3xl font-bold">EPEW Coach Connection Readiness</h1><p>Each coach must activate privately, then authorize and verify the correct ChatGPT connection. OAuth approval records do not prove every tool or channel has been tested.</p><table className="my-6 w-full border-collapse text-left"><thead><tr>{["Coach","Email","Account","Email verified","OAuth approved"].map(h=><th className="border p-3" key={h}>{h}</th>)}</tr></thead><tbody>{rows.map(r=><tr key={r.coach_id}><td className="border p-3">{r.coach?.full_name}</td><td className="border p-3">{r.coach?.email}</td><td className="border p-3">{r.user_id?"Created":"Pending setup"}</td><td className="border p-3">{r.confirmed?"Yes":"Pending activation"}</td><td className="border p-3">{r.connected_at?new Date(r.connected_at).toLocaleDateString():"Not yet"}</td></tr>)}</tbody></table><p>MCP server: <code>https://www.epew.us/api/coaches/mcp</code> · OAuth authentication</p><p className="my-4">Activate each account from its own mailbox. In the coach’s ChatGPT room, select that coach’s connection, run <code>epew_coach_profile</code>, and check the returned name and email. Keep Samuel’s primary connection.</p><a href="/coaches/login" className="underline">Coach sign-in</a></main>;
+}

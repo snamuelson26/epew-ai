@@ -93,6 +93,7 @@ export default function AdminShell({
       links: [
         { name: "Messages", href: "/admin/messages" },
         { name: "Supporter Communications", href: "/staff/supporter-relations" },
+        { name: "Coach Connections", href: "/staff/coach-connections" },
         { name: "Notifications", href: "/admin/notifications" },
         { name: "Support Tickets", href: "/admin/support-tickets" },
       ],

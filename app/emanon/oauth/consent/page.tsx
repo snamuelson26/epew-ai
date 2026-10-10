@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { coachAccess } from "@/lib/coaches/agentAccess";
 import { communicationAccess } from "@/lib/communications/supporterAccess";
 import { createClient } from "@/lib/supabase/server";
 
@@ -18,7 +19,7 @@ export default async function ConsentPage({
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) {
     const target = `/emanon/oauth/consent?authorization_id=${encodeURIComponent(authorizationId)}`;
-    return <main className="mx-auto max-w-xl p-8"><h1 className="text-3xl font-bold">Sign in to authorize your connection</h1><p className="my-4">Choose the account workspace for this connection.</p><a className="block my-4 underline" href={`/staff/supporter-relations/login?authorization_id=${encodeURIComponent(authorizationId)}`}>EPEW Supporter Relations — Yamiley Noslen</a><a className="block my-4 underline" href={`/emanon/login?redirect=${encodeURIComponent(target)}`}>Emanon / ORGDH staff</a></main>;
+    return <main className="mx-auto max-w-xl p-8"><h1 className="text-3xl font-bold">Sign in to authorize your connection</h1><p className="my-4">Choose the account workspace for this connection.</p><a className="block my-4 underline" href={`/staff/supporter-relations/login?authorization_id=${encodeURIComponent(authorizationId)}`}>EPEW Supporter Relations — Yamiley Noslen</a><a className="block my-4 underline" href={`/coaches/login?authorization_id=${encodeURIComponent(authorizationId)}`}>EPEW Entrepreneur Coaches</a><a className="block my-4 underline" href={`/emanon/login?redirect=${encodeURIComponent(target)}`}>Emanon / ORGDH staff</a></main>;
   }
 
   const { data: member } = await supabase
@@ -27,6 +28,13 @@ export default async function ConsentPage({
     .eq("user_id", userData.user.id)
     .eq("status", "active")
     .maybeSingle();
+  const coach = !member ? await coachAccess() : null;
+  if (coach) {
+    const {data: details,error} = await supabase.auth.oauth.getAuthorizationDetails(authorizationId);
+    if(error || !details) return <main className="p-8">Invalid authorization request.</main>;
+    if (!("authorization_id" in details)) redirect(details.redirect_url);
+    return <main className="mx-auto max-w-xl p-8"><h1 className="text-3xl font-bold">Authorize EPEW Entrepreneur Coach</h1><p className="my-6">{details.client.name} requests access as <strong>{coach.profile.name}</strong> ({coach.profile.email}).</p><p>Only your current assigned entrepreneurs, portal conversations, private notes, tasks, documents and referrals to Samuel are accessible. Financial approvals, account changes and platform administration are excluded. Approve only in the intended coach’s ChatGPT account.</p><form action="/api/coaches/oauth/decision" method="POST" className="mt-6 flex gap-6"><input type="hidden" name="authorization_id" value={authorizationId}/><button name="decision" value="deny">Deny</button><button name="decision" value="approve">Approve connection</button></form></main>;
+  }
   const access = await communicationAccess();
   if (!member && access?.staff && access.staff.user_id === userData.user.id) {
     const {data: details,error} = await supabase.auth.oauth.getAuthorizationDetails(authorizationId);

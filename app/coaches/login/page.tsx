@@ -58,42 +58,21 @@ export default function CoachLoginPage() {
         return;
       }
 
-      const user = data.user;
-
-      const {
-        data: coachData,
-        error: coachError,
-      } = await supabase
-        .from("coaches")
-        .select("*")
-        .eq("email", cleanEmail)
-        .maybeSingle();
-
-      if (coachError) {
-        setMessage(
-          `${translate(
-            "coach.verifyError",
-          )} ${coachError.message}`,
-        );
-        return;
-      }
-
-      if (!coachData) {
+      const access = await fetch("/api/coaches/agent-workspace");
+      if (!access.ok) {
         await supabase.auth.signOut();
-
-        setMessage(
-          translate(
-            "coach.accessDenied",
-          ),
-        );
-
+        setMessage("Your verified account is not connected to an active EPEW coach identity.");
         return;
       }
-
+      const authorizationId = new URLSearchParams(window.location.search).get("authorization_id");
+      if (authorizationId) {
+        window.location.assign(`/emanon/oauth/consent?authorization_id=${encodeURIComponent(authorizationId)}`);
+        return;
+      }
       const surveyRequested = new URLSearchParams(window.location.search).get("survey") === "account_creation";
       router.push(surveyRequested
-        ? "/feedback/account-creation?role=coach&next=%2Fcoaches%2Fdashboard"
-        : "/coaches/dashboard");
+        ? "/feedback/account-creation?role=coach&next=%2Fcoaches%2Fagent-workspace"
+        : "/coaches/agent-workspace");
     } finally {
       setLoading(false);
     }
