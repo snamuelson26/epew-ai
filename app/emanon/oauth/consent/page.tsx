@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { communicationAccess } from "@/lib/communications/supporterAccess";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -17,16 +18,23 @@ export default async function ConsentPage({
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) {
     const target = `/emanon/oauth/consent?authorization_id=${encodeURIComponent(authorizationId)}`;
-    redirect(`/emanon/login?redirect=${encodeURIComponent(target)}`);
+    return <main className="mx-auto max-w-xl p-8"><h1 className="text-3xl font-bold">Sign in to authorize your connection</h1><p className="my-4">Choose the account workspace for this connection.</p><a className="block my-4 underline" href={`/staff/supporter-relations/login?authorization_id=${encodeURIComponent(authorizationId)}`}>EPEW Supporter Relations — Yamiley Noslen</a><a className="block my-4 underline" href={`/emanon/login?redirect=${encodeURIComponent(target)}`}>Emanon / ORGDH staff</a></main>;
   }
 
+  const access = await communicationAccess();
+  if (access?.staff && access.staff.user_id === userData.user.id) {
+    const {data: details,error} = await supabase.auth.oauth.getAuthorizationDetails(authorizationId);
+    if(error || !details) return <main className="p-8">Invalid authorization request.</main>;
+    if (!("authorization_id" in details)) redirect(details.redirect_url);
+    return <main className="mx-auto max-w-xl p-8"><h1 className="text-3xl font-bold">Authorize EPEW Supporter Relations</h1><p className="my-6">{details.client.name} requests access as <strong>{access.staff.display_name}</strong> ({access.staff.email}).</p><p>Access includes supporter conversations, portal messages, private documents, team referrals and activity history. Financial approvals, account changes and platform administration are excluded. Only approve in the intended agent’s ChatGPT account.</p><form action="/api/epew/oauth/decision" method="POST" className="mt-6 flex gap-6"><input type="hidden" name="authorization_id" value={authorizationId}/><button name="decision" value="deny">Deny</button><button name="decision" value="approve">Approve connection</button></form></main>;
+  }
   const { data: member } = await supabase
     .from("emanon_staff_members")
     .select("display_name,title,email,status,organization_id")
     .eq("user_id", userData.user.id)
     .eq("status", "active")
     .maybeSingle();
-  if (!member) redirect("/emanon/login");
+  if (!member) redirect(`/staff/supporter-relations/login?authorization_id=${encodeURIComponent(authorizationId)}`);
   const { data: organization } = await supabase
     .from("emanon_organizations")
     .select("organization_code,display_name")

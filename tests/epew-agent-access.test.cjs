@@ -1,0 +1,16 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const Module=require('node:module');const original=Module._load;
+let user,staff,writes;
+const admin={auth:{getUser:async()=>({data:{user},error:null})},from(table){const q={select(){return q},eq(){return q},maybeSingle:async()=>({data:table==='epew_supporter_staff'?staff:{id:'11111111-1111-4111-8111-111111111111',internal:false,supporter_id:'22222222-2222-4222-8222-222222222222'},error:null}),insert(){writes++;return q},update(){writes++;return q},then(resolve){return Promise.resolve({data:null,error:null}).then(resolve)}};return q;}};
+Module._load=function(name,parent,isMain){if(name==='@/lib/supabaseAdmin')return {supabaseAdmin:admin};if(name==='@/lib/communications/supporterAccess')return {communicationLog:async()=>{writes++}};return original.apply(this,arguments)};
+const {POST}=require('../app/api/epew/mcp/route.ts');
+function request(method='tools/call',token=true,name='epew_profile',args={}){return new Request('https://www.epew.us/api/epew/mcp',{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer test'}:{})},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params:{name,arguments:args}})})}
+function reset(){user={id:'user',email:'ynoslen@epew.us',email_confirmed_at:'2026-10-10'};staff={user_id:'user',email:user.email,display_name:'Yamiley Noslen',role:'advisor'};writes=0;}
+test('discovery advertises OAuth on all tools',async()=>{reset();const r=await POST(request('tools/list',false));const j=await r.json();assert.ok(j.result.tools.length>=10);assert.ok(j.result.tools.every(t=>t.securitySchemes[0].type==='oauth2'));assert.equal(writes,0)});
+test('anonymous invocation returns resource metadata challenge',async()=>{reset();const r=await POST(request('tools/call',false));assert.equal(r.status,401);assert.match(r.headers.get('www-authenticate'),/api\/epew\/mcp/);assert.equal(writes,0)});
+test('unconfirmed identity is denied',async()=>{reset();user.email_confirmed_at=null;assert.equal((await POST(request())).status,401)});
+test('unrelated authenticated account is denied',async()=>{reset();staff=null;assert.equal((await POST(request())).status,403)});
+test('mismatched bound identity cannot access staff tools',async()=>{reset();staff.user_id='other';assert.equal((await POST(request())).status,403)});
+test('advisor profile exposes restrictions and no admin tool',async()=>{reset();const j=await(await POST(request())).json();assert.match(j.result.content[0].text,/no financial approval/);const unknown=await POST(request('tools/call',true,'approve_payment'));assert.equal(unknown.status,400);assert.equal(writes,0)});
+test('invalid message identifiers cannot mutate data',async()=>{reset();const j=await(await POST(request('tools/call',true,'epew_send_message',{thread_id:'invalid',body:'test'}))).json();assert.equal(j.result.isError,true);assert.equal(writes,0)});
+
+test('authorized portal reply records the message and activity',async()=>{reset();const j=await(await POST(request('tools/call',true,'epew_send_message',{thread_id:'11111111-1111-4111-8111-111111111111',body:'Test reply'}))).json();assert.equal(j.result.isError,undefined);assert.equal(JSON.parse(j.result.content[0].text).sent,true);assert.equal(writes,3)});
