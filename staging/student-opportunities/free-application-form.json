@@ -1,0 +1,635 @@
+{
+  "stage_only": true,
+  "production_authorized": false,
+  "original_form_id": 2494,
+  "account_creation_requires_existing_identity_mapping": true,
+  "uploads_require_authenticated_private_storage_adapter": true,
+  "notifications_disabled_until_delivery_test": true,
+  "form": {
+    "fields": {
+      "1": {
+        "id": "1",
+        "type": "name",
+        "label": "Student Name",
+        "format": "first-last",
+        "description": "",
+        "required": "1",
+        "size": "medium",
+        "simple_placeholder": "",
+        "simple_default": "",
+        "first_placeholder": "",
+        "first_default": "",
+        "middle_placeholder": "",
+        "middle_default": "",
+        "last_placeholder": "",
+        "last_default": "",
+        "css": ""
+      },
+      "2": {
+        "id": "2",
+        "type": "date-time",
+        "label": "Student Date of Birth",
+        "format": "date",
+        "description": "This six-month IES program is for students aged 18 and older. Enter your own date of birth. Admission staff will verify eligibility.",
+        "required": "1",
+        "size": "medium",
+        "date_type": "datepicker",
+        "date_format": "m/d/Y",
+        "date_placeholder": "",
+        "date_limit_days_mon": "1",
+        "date_limit_days_tue": "1",
+        "date_limit_days_wed": "1",
+        "date_limit_days_thu": "1",
+        "date_limit_days_fri": "1",
+        "time_interval": "30",
+        "time_format": "g:i A",
+        "time_placeholder": "",
+        "time_limit_hours_start_hour": "09",
+        "time_limit_hours_start_min": "00",
+        "time_limit_hours_start_ampm": "am",
+        "time_limit_hours_end_hour": "06",
+        "time_limit_hours_end_min": "00",
+        "time_limit_hours_end_ampm": "pm",
+        "css": ""
+      },
+      "3": {
+        "id": "3",
+        "type": "text",
+        "label": "Previous Education or Highest Grade Completed",
+        "description": "Enter your highest completed grade or previous school qualification to support your academic record review.",
+        "required": "1",
+        "size": "medium",
+        "placeholder": "",
+        "limit_count": "1",
+        "limit_mode": "characters",
+        "default_value": "",
+        "input_mask": "",
+        "css": "",
+        "map_position": "above"
+      },
+      "4": {
+        "id": "4",
+        "type": "address",
+        "label": "Home Address for School Registration",
+        "scheme": "international",
+        "description": "",
+        "required": "1",
+        "size": "medium",
+        "address1_placeholder": "",
+        "address1_default": "",
+        "address2_placeholder": "",
+        "address2_default": "",
+        "city_placeholder": "",
+        "city_default": "",
+        "state_placeholder": "",
+        "state_default": "",
+        "postal_placeholder": "",
+        "postal_default": "",
+        "country_placeholder": "",
+        "country_default": "",
+        "css": "",
+        "map_position": "above"
+      },
+      "8": {
+        "id": "8",
+        "type": "radio",
+        "label": "School Registration Type",
+        "choices": {
+          "1": {
+            "default": "1",
+            "label": "New Student School Registration",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "2": {
+            "label": "Returning Student School Registration",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "3": {
+            "label": "Transfer Student School Registration",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "4": {
+            "label": "Other School Registration Type",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          }
+        },
+        "other_size": "medium",
+        "other_placeholder": "",
+        "choices_images_style": "modern",
+        "choices_icons_color": "#066aab",
+        "choices_icons_size": "large",
+        "choices_icons_style": "default",
+        "description": "",
+        "required": "1",
+        "input_columns": "",
+        "dynamic_choices": "",
+        "css": ""
+      },
+      "9": {
+        "id": "9",
+        "type": "textarea",
+        "label": "Additional Registration Notes",
+        "description": "Share relevant academic background or support requests. Please do not enter medical details or passwords.",
+        "size": "medium",
+        "placeholder": "",
+        "limit_count": "1",
+        "limit_mode": "characters",
+        "default_value": "",
+        "css": ""
+      },
+      "11": {
+        "id": "11",
+        "type": "checkbox",
+        "label": "Additional Career Interests (Optional)",
+        "choices": {
+          "1": {
+            "label": "Agriculture Management",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "2": {
+            "label": "Computer Technology",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "3": {
+            "label": "Creative Art and Media",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "4": {
+            "label": "Culinary Arts",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "5": {
+            "label": "Finance",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "6": {
+            "label": "Health Management",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "7": {
+            "label": "Hospitality",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "8": {
+            "label": "Information Technology (IT)",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "9": {
+            "label": "Skilled Trade",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "10": {
+            "label": "Social Work",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "11": {
+            "label": "Logistics and Supply Chain",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "12": {
+            "label": "Law",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          }
+        },
+        "choices_images_style": "modern",
+        "choices_icons_color": "#066aab",
+        "choices_icons_size": "large",
+        "choices_icons_style": "default",
+        "description": "You may indicate additional areas of interest. Choose one preferred specialization in the final section; availability is confirmed during admission review.",
+        "input_columns": "",
+        "choice_limit": "",
+        "dynamic_choices": "",
+        "css": ""
+      },
+      "12": {
+        "id": "12",
+        "type": "phone",
+        "label": "Student Phone",
+        "format": "smart",
+        "description": "",
+        "size": "medium",
+        "placeholder": "",
+        "default_value": "",
+        "css": ""
+      },
+      "13": {
+        "id": "13",
+        "type": "email",
+        "label": "Student Email",
+        "description": "",
+        "required": "1",
+        "confirmation": "1",
+        "size": "medium",
+        "placeholder": "",
+        "confirmation_placeholder": "",
+        "default_value": "",
+        "filter_type": "",
+        "allowlist": "",
+        "denylist": "",
+        "css": ""
+      },
+      "15": {
+        "id": "15",
+        "type": "file-upload",
+        "label": "Upload Picture ID",
+        "description": "Upload a clear image of a valid identification document (e.g., driver’s license, passport, or school ID).",
+        "extensions": "jpg,jpeg,png,gif,webp",
+        "max_size": "",
+        "max_file_number": "1",
+        "style": "modern",
+        "css": "",
+        "media_library": "0",
+        "camera_enabled": "1",
+        "camera_format": "photo",
+        "camera_aspect_ratio": "original",
+        "camera_ratio_width": "4",
+        "camera_ratio_height": "3",
+        "camera_time_limit_minutes": "1",
+        "camera_time_limit_seconds": "30"
+      },
+      "16": {
+        "id": "16",
+        "type": "camera",
+        "label": "Student Photo",
+        "description": "Take or upload a recent photo of the student for school records.",
+        "camera_enabled": "1",
+        "camera_format": "photo",
+        "camera_aspect_ratio": "original",
+        "camera_ratio_width": "4",
+        "camera_ratio_height": "3",
+        "camera_time_limit_minutes": "1",
+        "camera_time_limit_seconds": "30",
+        "max_size": "",
+        "style": "button",
+        "button_link_text": "Capture With Your Camera",
+        "css": ""
+      },
+      "20": {
+        "id": "20",
+        "type": "pagebreak",
+        "position": "",
+        "title": "",
+        "next": "Next",
+        "prev": "",
+        "css": ""
+      },
+      "21": {
+        "id": "21",
+        "type": "pagebreak",
+        "position": "top",
+        "indicator": "progress",
+        "indicator_color": "#066aab",
+        "progress_text": "Step {current_page} of {last_page}",
+        "title": "",
+        "nav_align": "left",
+        "css": ""
+      },
+      "22": {
+        "id": "22",
+        "type": "pagebreak",
+        "position": "bottom",
+        "prev": ""
+      },
+      "24": {
+        "id": "24",
+        "type": "pagebreak",
+        "position": "",
+        "title": "",
+        "next": "Next",
+        "prev": "",
+        "css": ""
+      },
+      "25": {
+        "id": "25",
+        "type": "pagebreak",
+        "position": "",
+        "title": "",
+        "next": "Next",
+        "prev": "",
+        "css": ""
+      },
+      "34": {
+        "id": "34",
+        "type": "select",
+        "label": "Preferred Trade Specialization (Choose One)",
+        "choices": {
+          "1": {
+            "label": "Website Content and Maintenance (Information Technology)",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "2": {
+            "label": "Digital Design (Creative Art and Media)",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "3": {
+            "label": "Inventory and Order Processing (Logistics and Supply Chain)",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "4": {
+            "label": "Bookkeeping Support (Finance)",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "5": {
+            "label": "Customer Service and Reservations (Hospitality)",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "6": {
+            "label": "Menu Costing and Food Business Planning (Culinary Arts)",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          },
+          "7": {
+            "label": "Undecided — I need guidance",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          }
+        },
+        "description": "Choose one preference or Undecided. These are planned online specializations; final availability and placement are confirmed during admission review.",
+        "required": "1",
+        "style": "classic",
+        "size": "medium",
+        "placeholder": "",
+        "dynamic_choices": "",
+        "css": ""
+      },
+      "35": {
+        "id": "35",
+        "type": "checkbox",
+        "label": "Adult Program Age Confirmation",
+        "choices": {
+          "1": {
+            "label": "I confirm that I am 18 years of age or older and am applying for the six-month adult IES program.",
+            "value": "",
+            "image": "",
+            "icon": "face-smile",
+            "icon_style": "regular"
+          }
+        },
+        "choices_images_style": "modern",
+        "choices_icons_color": "#066aab",
+        "choices_icons_size": "large",
+        "choices_icons_style": "default",
+        "description": "Admission staff will review your date of birth and academic records before confirming admission.",
+        "required": "1",
+        "input_columns": "",
+        "choice_limit": "",
+        "dynamic_choices": "",
+        "css": ""
+      },
+      "39": {
+        "id": "39",
+        "type": "radio",
+        "label": "Financial Assistance Request",
+        "required": "1",
+        "choices": {
+          "1": {
+            "label": "No assistance requested"
+          },
+          "2": {
+            "label": "Partial assistance requested"
+          },
+          "3": {
+            "label": "Full assistance requested"
+          }
+        },
+        "description": "Request assistance without making a payment. Emanon reviews and approves assistance separately."
+      },
+      "40": {
+        "id": "40",
+        "type": "checkbox",
+        "label": "Application Privacy Acknowledgment",
+        "required": "1",
+        "choices": {
+          "1": {
+            "label": "I have reviewed the Emanon Privacy Policy and authorize use of my submitted information for admissions review."
+          }
+        },
+        "description": "Marketing and public-profile publication consent are separate and optional."
+      }
+    },
+    "field_id": 41,
+    "search_terms": "",
+    "settings": {
+      "themes": {
+        "wpformsTheme": "default",
+        "isCustomTheme": "",
+        "themeName": "",
+        "fieldSize": "medium",
+        "fieldBorderStyle": "solid",
+        "fieldBorderSize": "1",
+        "fieldBorderRadius": "3",
+        "fieldBackgroundColor": "#ffffff",
+        "fieldBorderColor": "rgba(0, 0, 0, 0.25)",
+        "fieldTextColor": "rgba(0, 0, 0, 0.7)",
+        "labelSize": "medium",
+        "labelColor": "rgba(0, 0, 0, 0.85)",
+        "labelSublabelColor": "rgba(0, 0, 0, 0.55)",
+        "labelErrorColor": "#d63637",
+        "buttonSize": "medium",
+        "buttonBorderStyle": "none",
+        "buttonBorderSize": "1",
+        "buttonBorderRadius": "3",
+        "buttonBackgroundColor": "#066aab",
+        "buttonBorderColor": "#066aab",
+        "buttonTextColor": "#ffffff",
+        "containerPadding": "0",
+        "containerBorderStyle": "none",
+        "containerBorderWidth": "1",
+        "containerBorderRadius": "3",
+        "containerBorderColor": "#000000",
+        "containerShadowSize": "none",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "backgroundImage": "none",
+        "backgroundSize": "cover",
+        "backgroundUrl": "url()",
+        "fieldMenuColor": "#ffffff",
+        "pageBreakColor": "#066aab",
+        "customCss": "",
+        "copyPasteJsonValue": "{\"themeName\":\"\",\"isCustomTheme\":\"\",\"wpformsTheme\":\"default\",\"customCss\":\"\",\"containerPadding\":\"0\",\"containerBorderStyle\":\"none\",\"containerBorderWidth\":\"1\",\"containerBorderRadius\":\"3\",\"containerShadowSize\":\"none\",\"containerBorderColor\":\"#000000\",\"fieldSize\":\"medium\",\"fieldBorderStyle\":\"solid\",\"fieldBorderRadius\":\"3\",\"fieldBorderSize\":\"1\",\"fieldBackgroundColor\":\"#ffffff\",\"fieldBorderColor\":\"rgba(0, 0, 0, 0.25)\",\"fieldTextColor\":\"rgba(0, 0, 0, 0.7)\",\"fieldMenuColor\":\"#ffffff\",\"pageBreakColor\":\"#066aab\",\"labelSize\":\"medium\",\"labelColor\":\"rgba(0, 0, 0, 0.85)\",\"labelSublabelColor\":\"rgba(0, 0, 0, 0.55)\",\"labelErrorColor\":\"#d63637\",\"buttonSize\":\"medium\",\"buttonBorderStyle\":\"none\",\"buttonBorderSize\":\"1\",\"buttonBorderRadius\":\"3\",\"buttonBackgroundColor\":\"#066aab\",\"buttonBorderColor\":\"#066aab\",\"buttonTextColor\":\"#ffffff\",\"backgroundColor\":\"rgba(0, 0, 0, 0)\",\"backgroundPosition\":\"center center\",\"backgroundUrl\":\"url()\",\"backgroundRepeat\":\"no-repeat\",\"backgroundSize\":\"cover\",\"backgroundSizeMode\":\"cover\",\"backgroundWidth\":\"100\",\"backgroundHeight\":\"100\",\"backgroundImage\":\"none\"}"
+      },
+      "form_title": "STAGING ONLY — Emanon IES Free Adult Application",
+      "form_desc": "Application submission is free. Semester 1 registration is $100 after academic review and conditional acceptance, subject to approved assistance or waiver. Semester 2 re-enrollment is a separate $100 fee. Tuition is free; exams are $25 per course per semester; graduation is $100 when applicable.",
+      "submit_text": "Submit Free Application",
+      "submit_text_processing": "Sending...",
+      "qr_code": "none",
+      "qr_code_page_id": 0,
+      "qr_code_url": "",
+      "qr_code_logo": "wpforms",
+      "qr_code_logo_id": 0,
+      "qr_code_generated": "",
+      "form_class": "",
+      "submit_class": "",
+      "ajax_submit": "1",
+      "purge_entries_days": "365",
+      "notification_enable": "0",
+      "notifications": {
+        "1": {
+          "enable": "1",
+          "notification_name": "Default Notification",
+          "email": "{admin_email}",
+          "subject": "New Emanon IES Registration Application — Ages 18+",
+          "sender_name": "Emanon Institute",
+          "sender_address": "{admin_email}",
+          "replyto": "",
+          "message": "New school registration submission received:\r\n\r\n{all_fields}",
+          "template": "",
+          "file_upload_attachment_fields": [],
+          "entry_csv_attachment_entry_information": [],
+          "entry_csv_attachment_file_name": "entry-details"
+        }
+      },
+      "confirmations": {
+        "1": {
+          "name": "Free application received",
+          "type": "message",
+          "message": "<p>Your free application has been received for academic review. Submission does not confirm admission, payment or course enrollment. After conditional acceptance, Emanon will provide registration payment or financial assistance instructions.</p>"
+        }
+      },
+      "antispam_v3": "1",
+      "akismet": "1",
+      "anti_spam": {
+        "time_limit": {
+          "duration": "2"
+        },
+        "filtering_store_spam": "1",
+        "country_filter": {
+          "action": "allow",
+          "country_codes": [],
+          "message": "Sorry, this form does not accept submissions from your country."
+        },
+        "keyword_filter": {
+          "message": "Sorry, your message can't be submitted because it contains prohibited words."
+        }
+      },
+      "registration_enable": "0",
+      "registration_role": "subscriber",
+      "registration_name": "1",
+      "registration_username": "1",
+      "registration_nickname": "1",
+      "registration_display_name": "",
+      "registration_email": "13",
+      "registration_password": "",
+      "registration_website": "",
+      "registration_bio": "",
+      "registration_profile_picture": "",
+      "registration_activation_method": "user",
+      "registration_email_user_activation_subject": "{site_name} Activation Required",
+      "registration_email_user_activation_message": "IMPORTANT: You must activate your account before you can log in.\r\nPlease visit the link below.\r\n\r\n{url_user_activation}",
+      "registration_activation_confirmation": "517",
+      "registration_auto_log_in": "0",
+      "registration_hide": "1",
+      "registration_hide_message": "Hi {user_first_name}, you’re already logged in. <a href=\" {url_logout} \">Log out</a>.",
+      "registration_email_admin": "1",
+      "registration_email_admin_subject": "{site_name} New User Registration",
+      "registration_email_admin_message": "New user registration on your site {site_name}:\r\n\r\nUsername: {user_registration_login}\r\nEmail: {user_registration_email}",
+      "registration_email_user": "1",
+      "registration_email_user_subject": "{site_name} Your username and password info",
+      "registration_email_user_message": "Username: {user_registration_login}\r\nAfter activation, use the password reset option at https://emanoninstitute.org/login/ to set your password privately.",
+      "registration_email_user_after_activation": "1",
+      "registration_email_user_after_activation_subject": "{site_name} Your account was successfully activated",
+      "registration_email_user_after_activation_message": "You can log in with your credentials now.\r\n\r\n{url_login}",
+      "registration_role_update": "preserve",
+      "registration_name_update": "",
+      "registration_username_update": "",
+      "registration_nickname_update": "",
+      "registration_display_name_update": "",
+      "registration_email_update": "",
+      "registration_password_update": "",
+      "registration_website_update": "",
+      "registration_bio_update": "",
+      "registration_profile_picture_update": "",
+      "registration_profile_picture_width_update": "150",
+      "registration_profile_picture_height_update": "150",
+      "form_tags": [],
+      "store_spam_entries": "0",
+      "form_locker_verification_type": "password",
+      "form_locker_password": "",
+      "form_locker_age": "18",
+      "form_locker_age_criteria": ">=",
+      "form_locker_password_message": "",
+      "form_locker_age_message": "",
+      "form_locker_email_message": "",
+      "form_locker_schedule_start_date": "",
+      "form_locker_schedule_start_time": "",
+      "form_locker_schedule_end_date": "",
+      "form_locker_schedule_end_time": "",
+      "form_locker_schedule_message": "",
+      "form_locker_user_message": "",
+      "form_locker_entry_limit": "",
+      "form_locker_entry_limit_message": "",
+      "form_locker_user_entry_email_field": "",
+      "form_locker_user_entry_limit": "",
+      "form_locker_user_entry_email_duration": "day_start",
+      "form_locker_user_entry_message_limited": ""
+    },
+    "providers": {},
+    "payments": {}
+  }
+}
