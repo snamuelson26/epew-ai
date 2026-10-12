@@ -6,6 +6,7 @@ import tempfile
 from pathlib import Path
 from admissions import Admissions, POLICY
 from service import Service, Invalid
+from document_scanner import SyntheticFixtureScanner
 
 
 def run():
@@ -16,7 +17,7 @@ def run():
             reviewer = service.fixture('synthetic-reviewer', 'reviewer')
             finance = service.fixture('synthetic-finance', 'finance')
             director = service.fixture('synthetic-director', 'director')
-            admissions = Admissions(service, Path(folder) / 'private')
+            admissions = Admissions(service, Path(folder) / 'private', scanner=SyntheticFixtureScanner())
             app = admissions.submit(student, cohort='DEMO', program='Computer Technology', dob='1995-01-01', background='Synthetic academic background', country='Haiti', assistance='partial', consent_version='APPLICATION-PRIVACY-2026-10-11', consent=True)
             steps = [{'step': 'Application submitted', 'charge_usd': 0, 'state': admissions.private(student, app)['state']}]
             for kind in ('identity', 'academic'):

@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 from admissions import Admissions, POLICY
 from service import Service, Denied, Invalid
+from document_scanner import SyntheticFixtureScanner
 
 
 class AdmissionsTests(unittest.TestCase):
@@ -18,7 +19,7 @@ class AdmissionsTests(unittest.TestCase):
         self.finance = self.s.fixture('finance', 'finance')
         self.director = self.s.fixture('director', 'director')
         self.now = 1791705600.0
-        self.a = Admissions(self.s, Path(self.tmp.name) / 'private', lambda: self.now)
+        self.a = Admissions(self.s, Path(self.tmp.name) / 'private', lambda: self.now, scanner=SyntheticFixtureScanner())
         self.payload = dict(cohort='2027-first', program='Computer Technology', dob='1995-01-01', background='Grade 10', country='Haiti', assistance='partial', consent_version='APPLICATION-PRIVACY-2026-10-11', consent=True)
         self.app = self.a.submit(self.student, **self.payload)
 

@@ -11,7 +11,7 @@ Requires Python 3.12 and dependencies in `requirements.txt`.
 ```sh
 python -m venv .venv
 .venv/bin/pip install -r requirements.txt
-.venv/bin/python -m unittest -v test_service.py test_http.py test_admissions.py
+.venv/bin/python -m unittest -v test_service.py test_http.py test_admissions.py test_integration_adapters.py
 .venv/bin/python admissions_demo.py
 .venv/bin/python demo.py
 ```
@@ -86,6 +86,23 @@ secure uploads/sharing links, photo publication, consent document registry, full
 role granularity, production notification adapters, correction/resubmission flows
 and a complete UI. PDF layout is verified for the short synthetic fixture only;
 production text wrapping and localization still need implementation.
+
+## Hosted integration phase
+
+`wordpress_identity.py` resolves identity from an exact configured HTTPS staging
+origin's authenticated current-user endpoint. It rejects production origins,
+redirects and unauthenticated results, creates no WordPress accounts and grants
+no staff roles. Tests use synthetic transports; real staging login remains untested.
+
+`document_scanner.py` provides a ClamAV daemon-client adapter. Admissions uploads
+must pass scanning before a readable document record is created. Missing scanner,
+infection, timeout or error rejects release and deletes the temporary file.
+Subprocess behavior is tested with mocks; a real daemon, current definitions and
+clean-file/EICAR tests are still required. Synthetic demos explicitly select a
+fixture scanner, which must never be configured for real intake. Production PDF
+parsing, resource limits and retention policies remain integration gates.
+
+See `HOSTED_STAGING_RUNBOOK.md`. No hosted installation has been performed.
 
 Before hosted staging: resolve canonical identity and ownership; provision isolated
 storage; implement adapters and server-side authorization; add database access,

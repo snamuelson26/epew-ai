@@ -11,6 +11,7 @@ import time
 from datetime import date
 from pathlib import Path
 from service import Denied, Invalid
+from document_scanner import UnavailableScanner, ScanRejected
 
 POLICY = {
     "version": "IES-FEES-2026-10-11",
@@ -24,10 +25,11 @@ POLICY = {
 
 
 class Admissions:
-    def __init__(self, service, vault, clock=time.time):
+    def __init__(self, service, vault, clock=time.time, scanner=None):
         self.s = service
         self.db = service.db
         self.clock = clock
+        self.scanner = scanner if scanner is not None else UnavailableScanner()
         self.vault = Path(vault)
         self.vault.mkdir(parents=True, exist_ok=True, mode=0o700)
         self.vault.chmod(0o700)
@@ -127,7 +129,7 @@ class Admissions:
             raise Denied('Upload not permitted')
         if kind not in {'identity', 'academic'} or not isinstance(data, bytes) or not data or len(data) > 5 * 1024 * 1024:
             raise Invalid('Invalid document')
-        # This synthetic fixture accepts PDFs only; malware scanning is an adapter gate.
+        # Scanning is mandatory before a record becomes readable by admissions.
         if not data.startswith(b'%PDF-'):
             raise Invalid('PDF document required')
         digest = hashlib.sha256(data).hexdigest()
@@ -138,10 +140,15 @@ class Admissions:
             with path.open('xb') as file:
                 file.write(data)
             path.chmod(0o600)
+            try:
+                self.scanner.scan(path)
+            except ScanRejected:
+                raise Invalid('Document not released: scan failed or unavailable') from None
             with self.db:
                 self.db.execute('INSERT INTO admission_documents VALUES(?,?,?,?,?)',
                                 (identifier, application_id, kind, digest, key))
                 self.s.log(actor['id'], 'private_document_uploaded:' + kind, identifier)
+                self.s.log(actor['id'], 'document_scan_cleared', identifier)
         except Exception:
             path.unlink(missing_ok=True)
             raise

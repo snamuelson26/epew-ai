@@ -3,9 +3,10 @@
 Date: October 11, 2026. Scope: isolated SQLite domain service and loopback HTTP
 demonstration; all identities and contributions are synthetic.
 
-Command: `python -m unittest -v test_service.py test_http.py test_admissions.py`
+Command: `python -m unittest -v test_service.py test_http.py test_admissions.py test_integration_adapters.py`
 
-Result: **41 tests passed** (22 original checks and 19 admissions-policy checks).
+Result: **48 tests passed** (22 original checks, 19 admissions-policy checks and
+7 integration-adapter checks).
 The HTTP test launches the actual demo in a separate
 process and shuts it down after verification.
 
@@ -49,6 +50,16 @@ published and no production database schema was changed.
 6. Submit the hosted demonstration, test evidence and rollback plan for review.
 
 Production authorization has not been requested.
+
+## Integration adapter checks
+
+Seven additional local tests passed: WordPress current-user identity mapping,
+production-origin/invalid-session rejection, credential redirect rejection,
+ClamAV clean status, infection/error/missing-executable/timeout rejection, no
+document release when scanning is unavailable, and synthetic-fixture restrictions.
+Transport and scanner subprocess tests use mocks. No actual WordPress staging
+student, real malware scanner, live email, payment sandbox or Tutor enrollment
+write has been tested. These tests do not satisfy hosted staging acceptance.
 
 ## October 11 approved fee-policy implementation
 
