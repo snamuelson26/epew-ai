@@ -1,3 +1,24 @@
+# Authenticated staging checkpoint — October 12, 2026
+
+The staging connection was approved and an authenticated read succeeded at
+https://staging.emanoninstitute.org. WordPress 7.1.3/PHP 8.3.35, WPVibe 1.20.3
+and Tutor LMS 4.1.1 are verified. Tutor's initial installation response redirected
+to its setup wizard; a fresh plugin read verified active installation, with no
+repeat installation. Loginizer remains active.
+
+Verified settings: blog_public=0 (updated and read back), DISABLE_WP_CRON=true,
+one fresh administrator in staging, table prefix wphl_. No synthetic student
+account, WPForms Pro/add-ons, actual registration, email delivery, payment-provider
+connection or Tutor enrollment test has been completed. Separate database names
+and unauthorized Directory Privacy behavior are not independently verified.
+A public research fetch could not access staging; that alone is not proof of
+access protection. No real student records or live payment configuration were
+introduced in this phase.
+
+The WordPress connector reached its rolling daily limit during the next read.
+Two banked resets are available but the tool requires the user's instruction
+before consuming one. Resume via an authorized reset or when capacity returns.
+
 # Current policy revision — October 12
 
 Samuel confirmed a $100 application fee after email verification, replacing the
@@ -12,8 +33,8 @@ Checked October 11, 2026, Eastern time. Hosted demonstration remains incomplete.
 
 ## Verified infrastructure and identity findings
 
-- Only the production WordPress site is registered in the available connection.
-  No cPanel/SSH provisioning connector or isolated WordPress staging is available.
+- Production and fresh staging WordPress are now connected. No cPanel/SSH
+  provisioning connector is available. Hosted workflow integration remains pending.
 - Tutor LMS 4.1.1 and WPForms/User Registration are active; Tutor Pro, WooCommerce
   and Form Locker are inactive. Configured Form Locker age settings therefore do
   not establish an active age gate.

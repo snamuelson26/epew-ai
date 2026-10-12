@@ -100,3 +100,12 @@ or failed mail delivery, and guardian review before minor enrollment. Code deliv
 is captured by a synthetic test callback; no real email was sent. The HTML preview
 is a disconnected screen simulation; browser/device accessibility and integration
 tests remain outstanding.
+
+## Hosted setup checkpoint — October 12
+
+Authenticated staging read, active WPVibe/Tutor installation, one-administrator
+count, disabled WordPress cron and disabled indexing were verified. These are
+infrastructure checks, not a completed student journey. WPForms/account/OTP,
+private document intake, verified provider payments, real course enrollment,
+anonymous access protection and rollback remain untested. The connector's rolling
+daily limit paused further WordPress work. Production remains unchanged.
