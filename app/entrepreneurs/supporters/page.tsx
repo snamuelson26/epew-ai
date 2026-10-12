@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { supportLink as buildSupportLink } from "@/lib/entrepreneurs/supportLink";
 import { supabase } from "@/lib/supabase";
 
 const LANGUAGES = [
@@ -33,6 +34,7 @@ type Contact = {
   relationship: string | null;
   conversation_notes: string | null;
   status: string;
+  opted_out_at: string | null;
 };
 
 type MessageMeta = {
@@ -79,6 +81,7 @@ function formatEastern(value: string | null) {
 }
 
 export default function PotentialSupportersPage() {
+  const [resendingId, setResendingId] = useState<string | null>(null);
   const [applications, setApplications] = useState<Profile[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [business, setBusiness] = useState<Business | null>(null);
@@ -143,7 +146,7 @@ export default function PotentialSupportersPage() {
 
     const { data: contactData, error: contactError } = await supabase
       .from("epew_entrepreneur_communication_contacts")
-      .select("id,prospect_name,phone,email,preferred_language,relationship,conversation_notes,status")
+      .select("id,prospect_name,phone,email,preferred_language,relationship,conversation_notes,status,opted_out_at")
       .eq("entrepreneur_user_id", user.id)
       .eq("entrepreneur_application_id", String(selectedApplication.id))
       .order("created_at", { ascending: false });
@@ -182,10 +185,10 @@ export default function PotentialSupportersPage() {
   }
 
   const businessName = business?.business_name || profile?.business_name || "my business";
-  const businessCode = business?.public_business_id || (Number(profile?.id) === 27 ? "FFR-001" : "EPEW");
+  const businessCode = business?.public_business_id || "";
   const website = business?.business_website_url || (businessCode === "FFR-001" ? "www.foodfans.org" : "");
   const displayWebsite = website.replace(/^https?:\/\//, "");
-  const supportLink = `https://www.epew.us/support/${businessCode}`;
+  const supportLink = buildSupportLink(businessCode);
 
   const preview = useMemo(
     () => messageFor(
@@ -200,11 +203,41 @@ export default function PotentialSupportersPage() {
     [language, name, profile, businessName, displayWebsite, supportLink, businessCode],
   );
 
+  async function copyForContact(contact: Contact, message: boolean) {
+    try {
+      await navigator.clipboard.writeText(message
+        ? messageFor(contact.preferred_language, contact.prospect_name, profile?.full_name || "Entrepreneur", businessName, displayWebsite || "your business website", supportLink, businessCode)
+        : supportLink);
+      setNotice(message ? "Message and support link copied. Paste them into your text message." : "Support link copied.");
+    } catch { setNotice("Unable to copy. You can copy the support link from the message preview."); }
+  }
+
+  async function resend(contact: Contact) {
+    if (resendingId || !businessCode || contact.opted_out_at) return;
+    setResendingId(contact.id);
+    try {
+      const { data } = await supabase.auth.getSession();
+      const token = data.session?.access_token;
+      if (!token) throw new Error("Please sign in again.");
+      const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
+      const response = await fetch("/api/entrepreneurs/supporters/resend", { method: "POST", headers, body: JSON.stringify({ contactId: contact.id, businessCode }) });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unable to resend.");
+      setNotice(result.alreadyQueued ? "This request is already awaiting delivery." : "Support request saved for delivery.");
+      if (result.messageId && !result.alreadyQueued) {
+        const delivery = await fetch("/api/entrepreneurs/supporters/send", { method: "POST", headers, body: JSON.stringify({ messageId: result.messageId }) });
+        const status = await delivery.json();
+        setNotice(delivery.ok && status.sent_at ? "Support request sent." : "Support request saved. Delivery is awaiting confirmation; check the status below.");
+      }
+    } catch (error) { setNotice(error instanceof Error ? error.message : "Unable to resend."); }
+    finally { await loadPage(true); setResendingId(null); }
+  }
+
   async function addProspect(event: FormEvent) {
     event.preventDefault();
     setNotice("");
 
-    if (!profile) {
+    if (!profile || !supportLink) {
       setNotice("Please select the business account for this potential supporter.");
       return;
     }
@@ -405,11 +438,16 @@ export default function PotentialSupportersPage() {
                     {contact.email && <p className="break-all text-sm text-slate-600">Email: {contact.email}</p>}
                     {contact.relationship && <p className="mt-2 text-sm font-semibold text-slate-700">{contact.relationship}</p>}
                     {contact.conversation_notes && <p className="mt-2 text-sm text-slate-600">{contact.conversation_notes}</p>}
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <button type="button" disabled={!!resendingId || !supportLink || !!contact.opted_out_at || !message || ["queued", "sending"].includes(message.delivery_status)} onClick={() => resend(contact)} className="rounded-lg bg-blue-950 px-3 py-2 text-sm font-bold text-white disabled:opacity-50">{resendingId === contact.id ? "Sending…" : "Resend Support Request"}</button>
+                      <button type="button" disabled={!supportLink} onClick={() => copyForContact(contact, false)} className="rounded-lg border px-3 py-2 text-sm font-bold">Copy Support Link</button>
+                      <button type="button" disabled={!supportLink} onClick={() => copyForContact(contact, true)} className="rounded-lg border px-3 py-2 text-sm font-bold">Copy Message & Link</button>
+                    </div>
                     <div className="mt-4 rounded-xl bg-slate-50 p-3 text-sm font-bold text-slate-700">
-                      {!message && "First message: not prepared"}
-                      {message?.sent_at && `First message: Sent ${formatEastern(message.sent_at)} Eastern`}
-                      {!message?.sent_at && message?.delivery_status === "queued" && "First message: Awaiting delivery; automatic retry enabled"}
-                      {!message?.sent_at && message && message.delivery_status !== "queued" && `First message: ${message.delivery_status}`}
+                      {!message && "Latest request: not prepared"}
+                      {message?.sent_at && `Latest request: Sent ${formatEastern(message.sent_at)} Eastern`}
+                      {!message?.sent_at && message?.delivery_status === "queued" && "Latest request: Awaiting delivery; automatic retry enabled"}
+                      {!message?.sent_at && message && message.delivery_status !== "queued" && `Latest request: ${message.delivery_status}`}
                     </div>
                   </article>
                 );
@@ -420,7 +458,7 @@ export default function PotentialSupportersPage() {
 
         <div className="flex flex-col gap-3 sm:flex-row">
           <Link href={`/entrepreneurs/dashboard?applicationId=${encodeURIComponent(String(profile?.id || ""))}`} className="rounded-xl bg-blue-950 px-5 py-3 text-center font-bold text-white">Back to Entrepreneur Dashboard</Link>
-          <Link href={supportLink.replace("https://www.epew.us", "")} className="rounded-xl bg-green-700 px-5 py-3 text-center font-bold text-white">View My Support Page</Link>
+          {supportLink && <Link href={supportLink.replace("https://www.epew.us", "")} className="rounded-xl bg-green-700 px-5 py-3 text-center font-bold text-white">View My Support Page</Link>}
         </div>
       </div>
     </main>

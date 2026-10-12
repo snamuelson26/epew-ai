@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 
 const ENTREPRENEUR_CAMPAIGN_PATH = "/entrepreneurs/campaign";
-const FOOD_FANS_SUPPORT_PATH = "/support/FFR-001";
 const POTENTIAL_SUPPORTERS_PATH = "/entrepreneurs/supporters";
 const COMMUNICATION_CENTER_PATH = "/entrepreneurs/communication";
 
@@ -73,45 +72,10 @@ export default function CampaignActionsFix() {
     });
     observer.observe(document.body, { childList: true, subtree: true });
 
-    const onClick = async (event: MouseEvent) => {
-      const target = event.target as HTMLElement | null;
-      const button = target?.closest("button");
-      if (!button) return;
-
-      const label = (button.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
-      if (!label.includes("share my vision")) return;
-
-      event.preventDefault();
-      event.stopPropagation();
-
-      const url = `${window.location.origin}${FOOD_FANS_SUPPORT_PATH}`;
-      const shareData = {
-        title: "Food Fans Restaurant",
-        text: "I am building Food Fans Restaurant with EPEW. Please take a look at my business journey and support page.",
-        url,
-      };
-
-      try {
-        if (navigator.share) {
-          await navigator.share(shareData);
-          return;
-        }
-
-        await navigator.clipboard.writeText(url);
-        window.alert("Your Food Fans Restaurant support link was copied. You can now share it by text, email, WhatsApp, or social media.");
-      } catch (error) {
-        if ((error as DOMException)?.name === "AbortError") return;
-        window.prompt("Copy and share your Food Fans Restaurant support link:", url);
-      }
-    };
-
-    document.addEventListener("click", onClick, true);
-
     return () => {
       window.clearTimeout(timer1);
       window.clearTimeout(timer2);
       observer.disconnect();
-      document.removeEventListener("click", onClick, true);
     };
   }, []);
 
