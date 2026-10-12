@@ -73,10 +73,6 @@ export default function EntrepreneurCampaignPage() {
   const [notice, setNotice] = useState("");
   const [resendingId, setResendingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    void loadPage();
-  }, []);
-
   async function loadPage() {
     setLoading(true);
     setNotice("");
@@ -158,6 +154,10 @@ export default function EntrepreneurCampaignPage() {
 
     setLoading(false);
   }
+
+  useEffect(() => {
+    void loadPage();
+  }, []);
 
   async function resendMessage(contact: Contact) {
     const businessCode = business?.public_business_id;
@@ -288,18 +288,25 @@ export default function EntrepreneurCampaignPage() {
                     <th className="border-b border-slate-200 px-3 py-3">Message Status</th>
                     <th className="border-b border-slate-200 px-3 py-3">Scheduled / Sent</th>
                     <th className="border-b border-slate-200 px-3 py-3">Email Open</th>
-                    <th className="border-b border-slate-200 px-3 py-3">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {contacts.map((contact) => {
                     const message = messages[contact.id];
                     const dateValue = message?.sent_at || message?.scheduled_for;
-                    const isQueued = message?.delivery_status === "queued";
+                    const isQueued = ["queued", "sending"].includes(message?.delivery_status || "");
                     const isEmail = message?.delivery_channel === "email";
                     return (
                       <tr key={contact.id} className="align-top">
-                        <td className="border-b border-slate-100 px-3 py-4 font-black text-slate-900">{contact.prospect_name}</td>
+                        <td className="border-b border-slate-100 px-3 py-4 font-black text-slate-900"><div>{contact.prospect_name}</div><div className="mt-3">                          <button
+                            type="button"
+                            onClick={() => void resendMessage(contact)}
+                            disabled={!!resendingId || isQueued || !message}
+                            className="rounded-lg bg-blue-950 px-4 py-2 text-sm font-black text-white transition hover:bg-blue-900 disabled:cursor-not-allowed disabled:bg-slate-300"
+                          >
+                            {resendingId === contact.id ? "Queuing..." : isQueued ? "Queued" : "Resend"}
+                          </button>
+</div></td>
                         <td className="border-b border-slate-100 px-3 py-4 text-slate-700">
                           {contact.phone && <div>{contact.phone}</div>}
                           {contact.email && <div className="break-all">{contact.email}</div>}
@@ -321,16 +328,7 @@ export default function EntrepreneurCampaignPage() {
                             <span className="text-slate-400">—</span>
                           )}
                         </td>
-                        <td className="border-b border-slate-100 px-3 py-4">
-                          <button
-                            type="button"
-                            onClick={() => void resendMessage(contact)}
-                            disabled={resendingId === contact.id || isQueued || !message}
-                            className="rounded-lg bg-blue-950 px-4 py-2 text-sm font-black text-white transition hover:bg-blue-900 disabled:cursor-not-allowed disabled:bg-slate-300"
-                          >
-                            {resendingId === contact.id ? "Queuing..." : isQueued ? "Queued" : "Resend"}
-                          </button>
-                        </td>
+
                       </tr>
                     );
                   })}
