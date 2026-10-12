@@ -74,10 +74,9 @@ export default function EntrepreneurCampaignPage() {
   const [resendingId, setResendingId] = useState<string | null>(null);
 
   async function loadPage() {
+    const { data: authData } = await supabase.auth.getUser();
     setLoading(true);
     setNotice("");
-
-    const { data: authData } = await supabase.auth.getUser();
     const user = authData.user;
 
     if (!user) {
@@ -156,6 +155,8 @@ export default function EntrepreneurCampaignPage() {
   }
 
   useEffect(() => {
+    // Load authenticated campaign data from the external service on mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadPage();
   }, []);
 
