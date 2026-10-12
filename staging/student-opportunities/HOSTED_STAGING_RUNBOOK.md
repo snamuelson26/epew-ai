@@ -1,3 +1,11 @@
+# Current policy revision — October 12
+
+Samuel confirmed a $100 application fee after email verification, replacing the
+October 11 free-application timing. Keep this revision in staging only. The prior
+staging subdomain and fresh WordPress installation have been reported created by
+Samuel, but authenticated connectivity/DNS/HTTPS are not yet independently verified.
+The last reported DNS setup was BasicDNS A record staging → 198.54.115.153.
+
 # Emanon IES hosted staging preparation
 
 Checked October 11, 2026, Eastern time. Hosted demonstration remains incomplete.
@@ -47,7 +55,7 @@ Checked October 11, 2026, Eastern time. Hosted demonstration remains incomplete.
 - Bind application references to the authenticated WordPress issuer/user-ID tuple;
   reconcile the institutional academic ID separately. Never derive staff authority
   from student-provided roles or create a duplicate WordPress account.
-- Apply the free form only in staging. Wire authenticated scanned document intake,
+- Apply the simplified application only in staging. Wire authenticated scanned document intake,
   explicit privacy acknowledgment, international addresses, applicant status,
   staff review and duplicate handling. Keep marketing consent separate.
 - Record academic review before conditional acceptance. Finance verifies funding
@@ -66,13 +74,15 @@ Checked October 11, 2026, Eastern time. Hosted demonstration remains incomplete.
 Record environment URL, synthetic account, timestamps, relevant event/request IDs,
 actual database/LMS state and observed pass/fail for every test:
 
-1. Existing authenticated student submits one free application without charge,
+1. Existing authenticated student starts one application without automatic charge,
    duplicate account or new course access; duplicate/cross-student requests fail.
 2. Clean documents pass actual scanning; anonymous/direct-file/cross-student/
    traversal access fails. EICAR, scanner outage, malformed/oversize PDFs fail.
 3. Acknowledgment, activation and recovery emails reach the controlled inbox;
    reused/expired links fail and existing login/registration still work.
-4. Ineligible/rejected/incomplete applications cannot create payments/enrollment.
+4. Unverified/rejected applicants cannot create payment requests. A verified applicant
+   may pay the $100 application fee before review; course enrollment requires
+   academic approval and covered fee.
 5. Provider test cases cover success, failure, pending, cancel, replay, wrong account,
    delayed/out-of-order events, partial/full refund and disputes; receipts reconcile.
 6. Full assistance, verified sponsorship, waiver and partial assistance plus payment

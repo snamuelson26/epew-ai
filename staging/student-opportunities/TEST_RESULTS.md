@@ -1,12 +1,12 @@
 # Emanon prototype test results
 
-Date: October 11, 2026. Scope: isolated SQLite domain service and loopback HTTP
+Date: October 12, 2026. Scope: isolated SQLite domain service and loopback HTTP
 demonstration; all identities and contributions are synthetic.
 
-Command: `python -m unittest -v test_service.py test_http.py test_admissions.py test_integration_adapters.py`
+Command: `python -m unittest -v test_service.py test_http.py test_admissions.py test_integration_adapters.py test_intake.py`
 
-Result: **48 tests passed** (22 original checks, 19 admissions-policy checks and
-7 integration-adapter checks).
+Result: **55 tests passed** (22 original checks, 19 revised admissions checks,
+7 integration-adapter checks and 7 simplified-intake checks).
 The HTTP test launches the actual demo in a separate
 process and shuts it down after verification.
 
@@ -61,16 +61,18 @@ Transport and scanner subprocess tests use mocks. No actual WordPress staging
 student, real malware scanner, live email, payment sandbox or Tutor enrollment
 write has been tested. These tests do not satisfy hosted staging acceptance.
 
-## October 11 approved fee-policy implementation
+## October 12 revised application policy
 
 Additional passing checks cover:
 
-- Free application submission without payment requests or duplicate accounts.
+- Starting an application creates no automatic charge or duplicate account; the
+  $100 application fee becomes payable after email verification.
 - Preserved fee schedule, international residence and assistance selections.
 - Adult eligibility, required privacy acknowledgment and duplicate cohort intake.
 - Authorized private document reads; rejected cross-student reads and invalid types.
 - Academic review requires all eligibility checks and required documents.
-- Conditional acceptance before fee requests; no student self-approval.
+- Email verification before fee requests; payment before academic review does not
+  activate enrollment. No student self-approval.
 - Full assistance, sponsorship and waiver combinations; partial assistance reduces
   the balance and cancels stale pending payment requests.
 - Applicant-bound expiring payment tokens stored only as hashes.
@@ -80,7 +82,7 @@ Additional passing checks cover:
 - Financial approval authority remains separate from enrollment activation authority.
 - Separate Semester 2 charge, without automatic billing or copied Semester 1 waiver.
 - Staging form has no initial payment controls or enabled automatic account creation.
-- Executable demonstration covers free application → review → partial assistance →
+- Executable demonstration covers verified applicant → review → partial assistance →
   confirmed synthetic payment → enrollment decision → separate Semester 2 waiver.
 
 The production form's payment settings were **not changed**. The WPForms-configured
@@ -88,3 +90,13 @@ Stripe account ID differs from the only Stripe account exposed in this session;
 that difference does not establish Emanon ownership. Real provider test mode,
 hosted staging, authentic student-account integration, private WordPress uploads,
 live activation emails/password recovery and LMS enrollment remain acceptance gates.
+
+## Simplified intake checks
+
+Seven additional passing local tests cover adult eligibility and three distinct
+ranked choices, regular grades/guardian requirements, single-use applicant-bound
+codes, expiry/attempt/resend limits, unverified portal/payment rejection, missing
+or failed mail delivery, and guardian review before minor enrollment. Code delivery
+is captured by a synthetic test callback; no real email was sent. The HTML preview
+is a disconnected screen simulation; browser/device accessibility and integration
+tests remain outstanding.

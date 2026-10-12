@@ -19,11 +19,14 @@ class HTTPTests(unittest.TestCase):
             self.assertIn("Synthetic local demo", process.stdout.readline())
             opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
             origin = "http://127.0.0.1:8765"
-            for path in ("/", "/support-student/IES-S-000001", "/demo-qr.svg"):
+            for path in ("/", "/apply", "/support-student/IES-S-000001", "/demo-qr.svg"):
                 with opener.open(origin + path, timeout=5) as response:
                     self.assertEqual(response.status, 200)
                     self.assertEqual(response.headers["Cache-Control"], "no-store")
                     self.assertTrue(response.read())
+                    if path == '/apply':
+                        self.assertIn("form-action 'none'", response.headers['Content-Security-Policy'])
+                        self.assertNotIn('unsafe-inline', response.headers['Content-Security-Policy'])
             with opener.open(origin + "/demo-letter.pdf", timeout=5) as response:
                 pdf = PdfReader(BytesIO(response.read()))
                 self.assertEqual(len(pdf.pages), 1)

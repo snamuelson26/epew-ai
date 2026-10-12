@@ -1,4 +1,4 @@
-# Emanon Student Opportunities — isolated local prototype
+# Emanon IES — simplified application staging prototype
 
 This executable demonstration uses synthetic students, role sessions and payments.
 It is not a hosted staging deployment or a production backend. Do not import real
@@ -11,7 +11,7 @@ Requires Python 3.12 and dependencies in `requirements.txt`.
 ```sh
 python -m venv .venv
 .venv/bin/pip install -r requirements.txt
-.venv/bin/python -m unittest -v test_service.py test_http.py test_admissions.py test_integration_adapters.py
+.venv/bin/python -m unittest -v test_service.py test_http.py test_admissions.py test_integration_adapters.py test_intake.py
 .venv/bin/python admissions_demo.py
 .venv/bin/python demo.py
 ```
@@ -50,34 +50,41 @@ verification through the service API. There is no interactive application UI yet
 
 ## Explicit limitations and deployment gates
 
-The approved October 11 fee workflow is implemented in `admissions.py`, exercised
-by `test_admissions.py` and demonstrated end to end by `admissions_demo.py`.
-It preserves both $100 semester fees, free applications and tuition, $25 exam
-fees per course per semester and $100 graduation when applicable. Free submission
-creates no charge or new identity. Conditional acceptance requires documented
-eligibility checks and identity/academic documents. Finance approves assistance,
-sponsorship or waivers; payment requests reflect only the remaining amount.
-Opaque requests are applicant-bound, expire and store only token hashes. Confirmed
-synthetic events produce demonstration receipts; pending payment cannot activate
-enrollment. Refunds/disputes place the enrollment decision on financial hold.
-Semester 2 requires a separate obligation and never charges automatically.
+The current staged policy reflects Samuel's October 12 correction: application
+fee $100 after email verification. This supersedes the October 11 free-application
+and after-acceptance payment timing. No live payment settings have changed.
 
-`free-application-form.json` is a **staging configuration**, derived from the live
-form but not applied to WordPress. Initial payment fields are removed and full/
-partial assistance and privacy acknowledgment added. International address
-configuration replaces the US-only scheme. Account creation, notifications and
-providers are disabled pending adapter tests. Media-library upload is disabled;
-this alone does not make WPForms upload URLs private, so it must not be launched
-without the authenticated storage adapter. The local model stores synthetic PDF
-documents outside public routes with restricted permissions and checked reads.
+The simplified flow is APPLY NOW (first/last name and email), account details
+(country/date of birth/program), secure institutional password setup, email code
+verification, then the applicant portal with the $100 application-fee overview.
+Adult applicants rank three distinct careers: Business Administration, Computer
+Science, Education, General Studies, Health Science, Law, Language or Skilled
+Trades. Regular applicants choose grade 9, 10, 11 or 12. Guardian-consent review
+is required before enrolling a minor.
 
-The registration template retains the adult pathway; a regular high-school/minor
-application needs its own eligibility and guardian workflow. Real course
-enrollment is not changed: `activate` records the authorized staging decision;
-the LMS adapter remains to be built and tested. Actual payment request URLs,
-provider receipts and mail are not connected. Synthetic PDF signature checks are
-not malware scans. Secure production document intake requires file scanning,
-access policies and validated storage/backup retention.
+`intake.py` implements details and verification for existing fixture identities.
+Codes are cryptographically generated, HMAC-protected, valid for ten minutes,
+limited to five verification attempts, with a sixty-second resend cooldown and
+an hourly limit. No plaintext code is persisted or logged. No mail provider means
+no verification; delivery failure consumes the challenge. The key is process-local;
+production needs a stable protected secret and transactional cross-worker limits.
+
+`simple-application-form.json` replaces the old free template. Required privacy
+acknowledgment and optional update consent are separate. Institution-owned password
+setup remains an adapter gate: no password is accepted or stored by this model.
+`simple-application-preview.html` is a clickable screen preview, not connected to
+accounts, email or payments. Use invented details and a sample password only.
+
+Email verification permits applicant-portal access, not course enrollment. The
+$100 initial obligation is the same charge, not an additional $100 Semester 1 fee.
+Payment may occur before academic approval, but actual course enrollment still
+requires approved academic review, a covered fee and applicable guardian review.
+Assistance, sponsorship and waivers remain available. Prior Semester 2/assessment
+rules are not represented as removed by hiding them from the simplified screen.
+
+Bank/card/PayPal controls, processing surcharges and real payment URLs remain
+inactive pending ownership/provider/fee verification. No bank numbers are invented,
+and the proposed $5 charge is not represented as a verified Stripe processing fee.
 
 The SQLite service is a domain prototype, not Postgres migrations/RLS or real SSO.
 Its synthetic HMAC event handler is **not Stripe webhook verification**. It lacks

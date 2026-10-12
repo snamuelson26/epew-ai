@@ -7,6 +7,7 @@ from pathlib import Path
 from admissions import Admissions, POLICY
 from service import Service, Denied, Invalid
 from document_scanner import SyntheticFixtureScanner
+from intake import Intake
 
 
 class AdmissionsTests(unittest.TestCase):
@@ -20,6 +21,11 @@ class AdmissionsTests(unittest.TestCase):
         self.director = self.s.fixture('director', 'director')
         self.now = 1791705600.0
         self.a = Admissions(self.s, Path(self.tmp.name) / 'private', lambda: self.now, scanner=SyntheticFixtureScanner())
+        self.messages = []
+        self.intake = Intake(self.a, lambda email, code, identifier: self.messages.append(code))
+        self.intake.apply(self.student, 'Synthetic', 'Student', 'student@example.invalid', True)
+        challenge = self.intake.send_code(self.student)
+        self.intake.verify(self.student, challenge['challenge'], self.messages[-1])
         self.payload = dict(cohort='2027-first', program='Computer Technology', dob='1995-01-01', background='Grade 10', country='Haiti', assistance='partial', consent_version='APPLICATION-PRIVACY-2026-10-11', consent=True)
         self.app = self.a.submit(self.student, **self.payload)
 
@@ -40,7 +46,7 @@ class AdmissionsTests(unittest.TestCase):
         self.a.provider_event(body, hmac.new(self.s.webhook_secret, body, hashlib.sha256).hexdigest())
 
     def test_policy_preserves_fees(self):
-        self.assertEqual(POLICY['application'], 0)
+        self.assertEqual(POLICY['application'], 10000)
         self.assertEqual(POLICY['semester_1'], 10000)
         self.assertEqual(POLICY['semester_2'], 10000)
         self.assertEqual(POLICY['tuition'], 0)
@@ -48,14 +54,13 @@ class AdmissionsTests(unittest.TestCase):
         self.assertEqual(POLICY['graduation_when_applicable'], 10000)
 
     def test_staging_form_has_no_initial_payment_or_auto_enrollment(self):
-        template = json.loads((Path(__file__).parent / 'free-application-form.json').read_text())
+        template = json.loads((Path(__file__).parent / 'simple-application-form.json').read_text())
         form = template['form']
         self.assertTrue(template['stage_only'])
         self.assertFalse(template['production_authorized'])
         self.assertEqual(form['payments'], {})
         self.assertFalse(any(field['type'].startswith(('payment-', 'stripe-')) for field in form['fields'].values()))
-        self.assertEqual(form['settings']['submit_text'], 'Submit Free Application')
-        self.assertEqual(form['fields']['15']['media_library'], '0')
+        self.assertEqual(form['settings']['submit_text'], 'APPLY NOW')
         self.assertEqual(form['fields']['40']['required'], '1')
         self.assertEqual(form['settings']['registration_enable'], '0')
 
@@ -67,7 +72,7 @@ class AdmissionsTests(unittest.TestCase):
         self.assertEqual(result['steps'][3]['enrollment_activation'], 'blocked')
         self.assertEqual(result['steps'][-1]['enrollment_decision'], 'active')
 
-    def test_free_submission_no_charge_no_duplicate_identity(self):
+    def test_starting_application_no_automatic_charge_no_duplicate_identity(self):
         self.assertEqual(self.s.db.execute('SELECT COUNT(*) FROM payment_requests').fetchone()[0], 0)
         self.assertEqual(self.s.db.execute('SELECT COUNT(*) FROM identities').fetchone()[0], 5)
         self.assertEqual(self.a.private(self.student, self.app)['state'], 'Submitted')
@@ -99,9 +104,12 @@ class AdmissionsTests(unittest.TestCase):
         with self.assertRaises(Invalid):
             self.a.upload(self.student, self.app, 'identity', b'<script>bad</script>')
 
-    def test_no_payment_or_enrollment_before_review(self):
+    def test_payment_before_review_does_not_allow_enrollment(self):
+        obligation = self.a.open_semester(self.director, self.app, 1)
+        request = self.a.request_payment(self.finance, obligation)
+        self.event(request)
         with self.assertRaises(Invalid):
-            self.a.open_semester(self.director, self.app, 1)
+            self.a.activate(self.director, obligation)
         with self.assertRaises(Denied):
             self.a.review(self.student, self.app, accepted=True, age_verified=True, academics_verified=True, documents_verified=True, program_verified=True, evidence='self approval')
 

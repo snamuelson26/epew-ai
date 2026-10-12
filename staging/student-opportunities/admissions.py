@@ -14,8 +14,8 @@ from service import Denied, Invalid
 from document_scanner import UnavailableScanner, ScanRejected
 
 POLICY = {
-    "version": "IES-FEES-2026-10-11",
-    "application": 0,
+    "version": "IES-FEES-2026-10-12-APPLICATION",
+    "application": 10000,
     "semester_1": 10000,
     "semester_2": 10000,
     "tuition": 0,
@@ -92,7 +92,7 @@ class Admissions:
             raise Denied('Private application')
         return application
 
-    def submit(self, token, *, cohort, program, dob, background, country, assistance, consent_version, consent):
+    def submit(self, token, *, cohort, program, dob, background, country, assistance, consent_version, consent, pathway='adult'):
         actor = self.actor(token, {'student'})
         if consent is not True or not consent_version:
             raise Invalid('Application privacy consent required')
@@ -106,15 +106,15 @@ class Admissions:
             raise Invalid('Invalid date of birth')
         today = date.fromtimestamp(self.clock())
         age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
-        if age < 18 or age > 120:
-            raise Invalid('This staging application covers the adult IES pathway only')
+        if pathway not in {'adult', 'regular'} or age < 0 or age > 120 or (pathway == 'adult' and age < 18):
+            raise Invalid('Program age eligibility not met')
         identifier = secrets.token_urlsafe(18)
         with self.db:
             self.db.execute('INSERT INTO applications VALUES(?,?,?,?,?,?,?,?,?,?,?,NULL,NULL,NULL)',
                             (identifier, actor['id'], cohort, program, dob, background, country,
                              assistance, consent_version, self.s_now(), 'Submitted'))
-            self.s.log(actor['id'], 'free_application_submitted:' + POLICY['version'], identifier)
-            self.s.notify(actor['id'], 'Application received — no payment required', identifier)
+            self.s.log(actor['id'], 'application_started:' + POLICY['version'], identifier)
+            self.s.notify(actor['id'], 'Application started — email verification and application fee or assistance required', identifier)
         # Intentionally creates neither a payment request nor a new identity.
         return identifier
 
@@ -183,9 +183,14 @@ class Admissions:
     def open_semester(self, token, application_id, semester):
         actor = self.actor(token, {'director'})
         application = self.get('applications', application_id)
-        if application['state'] != 'Conditional Acceptance' or type(semester) is not int or semester not in (1, 2):
-            raise Invalid('Conditional acceptance and valid semester required')
+        if type(semester) is not int or semester not in (1, 2):
+            raise Invalid('Valid semester required')
+        if semester == 1:
+            if application['state'] == 'Rejected' or not self.email_verified(application['owner']):
+                raise Invalid('Verified applicant email required before application fee')
         if semester == 2:
+            if application['state'] != 'Conditional Acceptance':
+                raise Invalid('Conditional acceptance required')
             row = self.db.execute('SELECT o.id,e.state FROM semester_obligations o LEFT JOIN enrollment_decisions e ON e.obligation=o.id WHERE o.application=? AND o.semester=1', (application_id,)).fetchone()
             if not row or row['state'] != 'active':
                 raise Invalid('Semester 1 enrollment must be active first')
@@ -193,7 +198,7 @@ class Admissions:
         with self.db:
             self.db.execute('INSERT INTO semester_obligations VALUES(?,?,?,?,?,?)',
                             (identifier, application_id, semester, 10000, actor['id'], POLICY['version']))
-            self.s.log(actor['id'], 'registration_fee_due:semester:' + str(semester), identifier)
+            self.s.log(actor['id'], ('application_fee_due' if semester == 1 else 'reenrollment_fee_due'), identifier)
         return identifier
 
     def balance(self, obligation_id):
@@ -219,7 +224,10 @@ class Admissions:
     def request_payment(self, token, obligation_id, ttl=86400):
         actor = self.actor(token, {'finance'})
         obligation = self.get('semester_obligations', obligation_id)
-        if self.get('applications', obligation['application'])['state'] != 'Conditional Acceptance':
+        application = self.get('applications', obligation['application'])
+        if application['state'] == 'Rejected' or not self.email_verified(application['owner']):
+            raise Invalid('Verified applicant email and non-rejected application required')
+        if obligation['semester'] == 2 and application['state'] != 'Conditional Acceptance':
             raise Invalid('Not conditionally accepted')
         amount = self.balance(obligation_id)
         if amount <= 0 or type(ttl) is not int or not 60 <= ttl <= 7 * 86400:
@@ -280,8 +288,17 @@ class Admissions:
     def activate(self, token, obligation_id):
         actor = self.actor(token, {'director'})
         obligation = self.get('semester_obligations', obligation_id)
-        if self.get('applications', obligation['application'])['state'] != 'Conditional Acceptance' or self.balance(obligation_id) != 0:
+        application = self.get('applications', obligation['application'])
+        if application['state'] != 'Conditional Acceptance' or not self.email_verified(application['owner']) or self.balance(obligation_id) != 0:
             raise Invalid('Verified payment, approved sponsorship or waiver must cover the fee')
+        birth = date.fromisoformat(application['dob'])
+        today = date.fromtimestamp(self.clock())
+        age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
+        if age < 18:
+            exists = self.db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='intake_details'").fetchone()
+            guardian = self.db.execute('SELECT guardian_status FROM intake_details WHERE owner=?', (application['owner'],)).fetchone() if exists else None
+            if not guardian or guardian[0] != 'approved':
+                raise Invalid('Verified guardian consent required before minor enrollment')
         with self.db:
             self.db.execute("INSERT INTO enrollment_decisions VALUES(?,'active',?,?) ON CONFLICT(obligation) DO UPDATE SET state='active',approver=excluded.approver,at=excluded.at", (obligation_id, actor['id'], self.s_now()))
             self.s.log(actor['id'], 'enrollment_activation_authorized', obligation_id)
@@ -298,3 +315,11 @@ class Admissions:
         result['current_payment_state'] = request['state']
         result['demonstration_only'] = True
         return result
+
+    def email_verified(self, owner):
+        # Intake owns verification. Absent adapter/table never implies verified.
+        exists = self.db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='intake_contacts'").fetchone()
+        if not exists:
+            return False
+        row = self.db.execute('SELECT verified_at FROM intake_contacts WHERE owner=?', (owner,)).fetchone()
+        return bool(row and row[0])

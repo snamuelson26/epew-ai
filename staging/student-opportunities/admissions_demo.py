@@ -7,6 +7,7 @@ from pathlib import Path
 from admissions import Admissions, POLICY
 from service import Service, Invalid
 from document_scanner import SyntheticFixtureScanner
+from intake import Intake
 
 
 def run():
@@ -18,8 +19,13 @@ def run():
             finance = service.fixture('synthetic-finance', 'finance')
             director = service.fixture('synthetic-director', 'director')
             admissions = Admissions(service, Path(folder) / 'private', scanner=SyntheticFixtureScanner())
+            messages = []
+            intake = Intake(admissions, lambda email, code, identifier: messages.append(code))
+            intake.apply(student, 'Synthetic', 'Student', 'student@example.invalid', True)
+            challenge = intake.send_code(student)
+            intake.verify(student, challenge['challenge'], messages[-1])
             app = admissions.submit(student, cohort='DEMO', program='Computer Technology', dob='1995-01-01', background='Synthetic academic background', country='Haiti', assistance='partial', consent_version='APPLICATION-PRIVACY-2026-10-11', consent=True)
-            steps = [{'step': 'Application submitted', 'charge_usd': 0, 'state': admissions.private(student, app)['state']}]
+            steps = [{'step': 'Application started and email verified', 'charge_usd': 0, 'application_fee_due_usd': 100, 'state': admissions.private(student, app)['state']}]
             for kind in ('identity', 'academic'):
                 admissions.upload(student, app, kind, ('%PDF-1.4 SYNTHETIC ' + kind).encode())
             admissions.review(reviewer, app, accepted=True, age_verified=True, academics_verified=True, documents_verified=True, program_verified=True, evidence='Synthetic review evidence')
