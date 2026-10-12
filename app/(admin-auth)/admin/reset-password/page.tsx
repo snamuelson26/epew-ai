@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
+import { hasVerifiedPasswordResetSession } from "@/lib/auth/password-reset-session";
 
 export default function AdminResetPasswordPage() {
   const router = useRouter();
@@ -16,35 +17,38 @@ export default function AdminResetPasswordPage() {
   const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
-    let recoveryDetected = false;
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "PASSWORD_RECOVERY" && session?.user) {
-        recoveryDetected = true;
-        setMessage("");
-        setReady(true);
+    let cancelled = false;
+    let signedOut = false;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") {
+        signedOut = true;
+        setReady(false);
       }
     });
 
-    const timer = window.setTimeout(() => {
-      if (!recoveryDetected) {
-        setReady(false);
-        setMessage(
-          "Your password reset session is missing or has expired. Please request a new password reset link.",
-        );
-      }
-    }, 2500);
+    // getSession waits for Supabase's callback initialization. A late-mounted
+    // page may receive INITIAL_SESSION rather than PASSWORD_RECOVERY.
+    const query = new URLSearchParams(window.location.search);
+    const fragment = new URLSearchParams(window.location.hash.slice(1));
+    const linkFailed = query.has("error") || query.has("error_code")
+      || fragment.has("error") || fragment.has("error_code");
+    void (async () => {
+      const valid = !linkFailed && await hasVerifiedPasswordResetSession(supabase.auth);
+      if (cancelled || signedOut) return;
+      setReady(valid);
+      setMessage(valid ? "" : "Your password reset session is missing or has expired. Please request a new password reset link.");
+    })();
 
     return () => {
-      window.clearTimeout(timer);
+      cancelled = true;
       subscription.unsubscribe();
     };
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (!ready || updating) return;
 
     setMessage("");
     setIsSuccess(false);
