@@ -62,7 +62,7 @@ export default function SupporterPlatformParticipationAgreementPage() {
       );
 
       const responseText = await response.text();
-      let result: { error?: string } = {};
+      let result: { error?: string; accepted?: boolean; acceptanceId?: string; persistencePending?: boolean } = {};
 
       try {
         result = responseText ? JSON.parse(responseText) : {};
@@ -70,7 +70,7 @@ export default function SupporterPlatformParticipationAgreementPage() {
         throw new Error(copy.acceptanceServerError);
       }
 
-      if (!response.ok) {
+      if (!response.ok || result.accepted !== true || !result.acceptanceId || result.persistencePending) {
         throw new Error(result.error || copy.acceptanceServerError);
       }
 
