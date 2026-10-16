@@ -136,7 +136,7 @@ export default function EntrepreneurCampaignPage() {
         .from("epew_entrepreneur_communication_messages")
         .select("contact_id,delivery_status,delivery_channel,scheduled_for,sent_at,opened_at,open_count,created_at")
         .in("contact_id", ids)
-        .eq("message_type", "introduction")
+        .in("message_type", ["introduction", "supporter_follow_up"])
         .order("created_at", { ascending: false });
 
       const byContact: Record<string, MessageMeta> = {};
@@ -186,22 +186,10 @@ export default function EntrepreneurCampaignPage() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Unable to resend this message.");
 
-      setMessages((current) => ({
-        ...current,
-        [contact.id]: {
-          contact_id: contact.id,
-          delivery_status: "queued",
-          delivery_channel: null,
-          scheduled_for: data.scheduledFor || new Date().toISOString(),
-          sent_at: null,
-          opened_at: null,
-          open_count: 0,
-        },
-      }));
-
+      await loadPage();
       setNotice(
         data.alreadyQueued
-          ? `A resend to ${contact.prospect_name} is already queued.`
+          ? `The latest message to ${contact.prospect_name} is ${formatStatus(data.status).toLowerCase()}. No duplicate was created.`
           : `Message to ${contact.prospect_name} has been queued to resend.`,
       );
     } catch (error) {
