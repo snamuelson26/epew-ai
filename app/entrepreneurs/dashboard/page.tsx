@@ -1,5 +1,7 @@
 "use client";
 
+import { supportLink } from "@/lib/entrepreneurs/supportLink";
+
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -252,7 +254,8 @@ export default function EntrepreneurDashboardPage() {
     ) : null;
 
   const campaignSlug = entrepreneur?.campaign_slug || entrepreneur?.entrepreneur_code || entrepreneur?.id || "";
-  const campaignUrl = typeof window !== "undefined" ? `${window.location.origin}/campaign/${campaignSlug}` : `/campaign/${campaignSlug}`;
+  const campaignUrl = supportLink(entrepreneur?.public_business_id || entrepreneur?.business_code || entrepreneur?.entrepreneur_code);
+  const shareText = `Please support ${entrepreneur?.business_name || "my business"} through EPEW. Participation is voluntary.\n${campaignUrl}`;
   const unitsSupported = Number(entrepreneur?.community_units_supported ?? entrepreneur?.units_supported ?? 0);
   const unitsRequired = Number(entrepreneur?.community_units_required ?? entrepreneur?.units_required ?? 20);
   const progress = unitsRequired > 0 ? Math.min(100, Math.round((unitsSupported / unitsRequired) * 100)) : 0;
@@ -271,9 +274,20 @@ export default function EntrepreneurDashboardPage() {
   async function copyCampaignLink() {
     try {
       await navigator.clipboard.writeText(campaignUrl);
-      setMessage("Campaign link copied successfully.");
+      setMessage("Support link copied. You can paste it into a text message.");
     } catch {
       setMessage("Unable to copy the link. Please copy it manually.");
+    }
+  }
+
+  async function shareSupport() {
+    if (!campaignUrl) return;
+    try {
+      if (navigator.share) await navigator.share({ title: entrepreneur?.business_name || "Support my business", text: shareText });
+      else { await navigator.clipboard.writeText(shareText); setMessage("Support message and link copied."); }
+      await recordShare();
+    } catch (error) {
+      if ((error as DOMException)?.name !== "AbortError") setMessage("Unable to share. Please copy the support link below.");
     }
   }
 
@@ -692,13 +706,13 @@ export default function EntrepreneurDashboardPage() {
 
         <section className="rounded-2xl bg-white p-6 shadow">
           <h2 className="mb-4 text-xl font-bold text-slate-900">{isOrgdhPartner ? "ORGDH Promotion & Support Center" : "Campaign Center"}</h2>
-          <div className="rounded-xl bg-slate-50 p-4"><p className="text-sm font-bold text-slate-500">Your Campaign Link</p><p className="mt-2 break-all font-semibold text-blue-700">{campaignUrl}</p></div>
+          <div className="rounded-xl bg-slate-50 p-4"><p className="text-sm font-bold text-slate-500">Your Support Link</p><p className="mt-2 break-all font-semibold text-blue-700">{campaignUrl ? <a href={campaignUrl} target="_blank" rel="noopener noreferrer" className="underline">{campaignUrl}</a> : "Your business support link is not available yet."}</p></div>
           <div className="mt-5 flex flex-wrap gap-3">
             {isOrgdhPartner && <Link href="/support/ORGDH-001" className="rounded-xl bg-green-700 px-5 py-3 font-bold text-white hover:bg-green-800">🤝 Support ORGDH Network</Link>}
             {isOrgdhPartner && <Link href="/services/orgdh-network" className="rounded-xl bg-amber-500 px-5 py-3 font-bold text-slate-950 hover:bg-amber-400">🎨 Request Promotion & Design Services</Link>}
             <Link href={`/campaign/${campaignSlug}`} className="rounded-xl bg-blue-700 px-5 py-3 font-bold text-white hover:bg-blue-800">🌐 View My Campaign</Link>
-            <button type="button" onClick={copyCampaignLink} className="rounded-xl bg-green-700 px-5 py-3 font-bold text-white hover:bg-green-800">🔗 Copy Campaign Link</button>
-            <button type="button" onClick={recordShare} className="rounded-xl bg-purple-700 px-5 py-3 font-bold text-white hover:bg-purple-800">📤 Share My Vision</button>
+            <button type="button" disabled={!campaignUrl} onClick={copyCampaignLink} className="rounded-xl bg-green-700 px-5 py-3 font-bold text-white hover:bg-green-800">🔗 Copy Support Link</button>
+            <button type="button" disabled={!campaignUrl} onClick={shareSupport} className="rounded-xl bg-purple-700 px-5 py-3 font-bold text-white hover:bg-purple-800">📤 Share My Vision</button>
             <Link href={`/entrepreneurs/supporters?applicationId=${encodeURIComponent(String(entrepreneur.id))}`} className="rounded-xl bg-slate-800 px-5 py-3 font-bold text-white hover:bg-slate-900">👥 Founding Supporters</Link>
           </div>
         </section>
