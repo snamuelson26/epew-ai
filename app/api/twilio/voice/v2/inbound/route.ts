@@ -395,12 +395,11 @@ export async function POST(
           }
         );
 
-        response.say(
-          {
-            voice: "Polly.Matthew",
-            language: "en-US",
-          },
-          "Thank you for calling EPEW. I did not find an existing entrepreneur account for this phone number. The new caller assistance flow will continue here."
+        // Continue with the established intake handler. A Say-only TwiML
+        // response ends the call even though the session says prospect_intake.
+        response.redirect(
+          { method: "POST" },
+          `${publicBaseUrl}/api/twilio/voice/inbound?lang=${language}`
         );
 
         return twimlResponse(response);
