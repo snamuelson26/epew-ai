@@ -146,6 +146,8 @@ async function processScheduledCalls() {
         from: normalizeUsPhone(from),
         url: `${publicBaseUrl}/api/twilio/voice/prequalification-establishment?applicationId=${encodeURIComponent(String(application.id))}`,
         method: "POST",
+        fallbackUrl: `${publicBaseUrl}/api/twilio/voice/prequalification-fallback?applicationId=${encodeURIComponent(String(application.id))}`,
+        fallbackMethod: "POST",
         timeout: 45,
       });
 

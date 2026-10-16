@@ -7,6 +7,7 @@ import OpenAI from "openai";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 15;
 
 type HaitianTtsPayload = {
   text: string;
@@ -133,6 +134,8 @@ export async function GET(request: NextRequest) {
 
     const client = new OpenAI({
       apiKey,
+      timeout: 8000,
+      maxRetries: 0,
     });
 
     const speech =
@@ -168,7 +171,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error(
       "Haitian dynamic TTS error:",
-      error
+      { name: error instanceof Error ? error.name : "UnknownError" }
     );
 
     return new NextResponse(
