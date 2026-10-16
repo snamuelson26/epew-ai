@@ -33,14 +33,12 @@ function acceptanceStorageUnavailable(error: unknown) {
   );
 }
 
-function pendingPersistenceResponse() {
+function storageUnavailableResponse() {
   return NextResponse.json({
-    accepted: true,
-    alreadyAccepted: false,
-    persistencePending: true,
-    agreementType: AGREEMENT_TYPE,
-    agreementVersion: AGREEMENT_VERSION,
-  });
+    accepted: false,
+    code: "AGREEMENT_STORAGE_UNAVAILABLE",
+    error: "Your agreement could not be saved. Please try again later or contact support.",
+  }, { status: 503 });
 }
 
 export async function POST(req: Request) {
@@ -119,7 +117,7 @@ export async function POST(req: Request) {
       );
 
       if (acceptanceStorageUnavailable(existingAcceptanceError)) {
-        return pendingPersistenceResponse();
+        return storageUnavailableResponse();
       }
 
       return NextResponse.json(
@@ -172,7 +170,7 @@ export async function POST(req: Request) {
       console.error("Supporter agreement acceptance insert error:", acceptanceError);
 
       if (acceptanceStorageUnavailable(acceptanceError)) {
-        return pendingPersistenceResponse();
+        return storageUnavailableResponse();
       }
 
       return NextResponse.json(
