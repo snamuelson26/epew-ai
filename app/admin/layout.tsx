@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 
 import AdminShell from "./AdminShell";
+import HelpStaffNotice from "@/app/components/applicant-help/HelpStaffNotice";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -37,5 +38,5 @@ export default async function AdminLayout({
     redirect("/admin/login?error=unauthorized");
   }
 
-  return <AdminShell>{children}</AdminShell>;
+  return <AdminShell><HelpStaffNotice />{children}</AdminShell>;
 }

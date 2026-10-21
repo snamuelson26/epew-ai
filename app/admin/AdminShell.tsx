@@ -95,6 +95,7 @@ export default function AdminShell({
         { name: "Supporter Communications", href: "/staff/supporter-relations" },
         { name: "Coach Connections", href: "/staff/coach-connections" },
         { name: "Notifications", href: "/admin/notifications" },
+        { name: "Applicant Help", href: "/admin/applicant-help" },
         { name: "Support Tickets", href: "/admin/support-tickets" },
       ],
     },
