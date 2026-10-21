@@ -17,7 +17,7 @@ async function operation(request: Request, action: string, input: Record<string,
     const user = await identity(request);
     if (!user) return NextResponse.json({ error: "verified_login_required" }, { status: 401, headers });
     const { data, error } = await supabaseAdmin.rpc("epew_applicant_help_operation", {
-      p_actor: user.id, p_action: action, p_input: input,
+      p_actor: user.id, p_action: action, p_input: { ...input, _verified_email: user.email },
     });
     if (error) {
       const status = error.code === "42501" ? 403 : error.code === "P0001" ? 429 : ["22023", "22P02", "23514", "23502"].includes(error.code) ? 400 : 503;

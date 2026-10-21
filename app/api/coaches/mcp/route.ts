@@ -47,7 +47,7 @@ export async function POST(request:Request){
   if(action==="profile")value=profile;
   else if(action==="help_requests" || action==="help_reply") {
    if(action==="help_reply" && !["open","in_progress","waiting_on_applicant","resolved"].includes(a.status)) throw new Error("Valid status required.");
-   const result=await supabaseAdmin.rpc("epew_applicant_help_operation",{p_actor:user.id,p_action:action==="help_requests"?"staff_list":"update",p_input:action==="help_requests"?{}:{case_id:uuid(a.case_id),body:body(a.body,5000),status:a.status}});
+   const result=await supabaseAdmin.rpc("epew_applicant_help_operation",{p_actor:user.id,p_action:action==="help_requests"?"staff_list":"update",p_input:action==="help_requests"?{_verified_email:user.email}:{case_id:uuid(a.case_id),body:body(a.body,5000),status:a.status,_verified_email:user.email}});
    if(result.error)throw new Error("Help request unavailable or outside your current assignments.");
    value=result.data;
   }

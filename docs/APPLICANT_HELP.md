@@ -16,7 +16,7 @@ There are no external email/SMS/WhatsApp sends, mass applicant invitations, auto
 
 ## Database and release
 
-Apply `supabase/migrations/20261021031813_applicant_help_cases.sql` before enabling the new pages. Tables have RLS enabled and all direct public/anon/authenticated access revoked. RPCs use SECURITY INVOKER and service-role-only execution. The server derives actor identity from verified auth rather than posted owner IDs. Mutation API checks same origin and does not return cached private data. The only legacy email fallback applies to unlinked applications and the actor's verified email; all current applications were observed to have linked user IDs.
+Apply both applicant-help migrations (20261021031813 and 20261021033905) before enabling the new pages. The identity follow-up uses the server-verified email and does not grant SELECT on auth.users. Tables have RLS enabled and all direct public/anon/authenticated access revoked. RPCs use SECURITY INVOKER and service-role-only execution. The server derives actor identity from verified auth rather than posted owner IDs. Mutation API checks same origin and does not return cached private data. The only legacy email fallback applies to unlinked applications and the actor's verified email; all current applications were observed to have linked user IDs.
 
 Test with `npm run test:applicant-help`. The isolated PGlite fixture executes the actual migration and RPCs without live applicant data. Tests cover cross-applicant isolation, current coach binding, unassigned applicants, admin visibility, idempotency, atomic rollback when alerts cannot save, private grants/RLS, saved replies and reopening. HTTP tests cover anonymous/cross-origin denial, actor spoofing, missing persistence and invalid input.
 
@@ -26,7 +26,7 @@ Rollback: restore the previous application deployment. Preserve assistance table
 
 ## Verification for this change
 
-- 18 applicant-help API/database tests passed using isolated PostgreSQL (PGlite).
+- 19 applicant-help API/database tests passed using isolated PostgreSQL (PGlite).
 - 16 coach connector access/regression tests passed, including the new help tools.
 - TypeScript and targeted ESLint checks passed.
 - Full Next.js production build passed with synthetic configuration and external email disabled. An existing `/test-supabase` diagnostic route retried once before completion.

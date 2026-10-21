@@ -25,11 +25,13 @@ before(async () => {
  insert into epew_coach_agent_accounts values('${id(10)}','${id(4)}',true);
  insert into coach_assignments values(1,'${id(10)}',null,'assigned');`);
  await db.exec(fs.readFileSync('supabase/migrations/20261021031813_applicant_help_cases.sql','utf8'));
+ await db.exec(fs.readFileSync('supabase/migrations/20261021033905_applicant_help_verified_identity.sql','utf8'));
+ await db.exec('revoke select on auth.users from service_role');
 });
 after(async()=>{await db.close()});
 async function op(actor, action, values={}) {
  await db.exec('set role service_role');
- try { return (await db.query('select public.epew_applicant_help_operation($1,$2,$3) as result',[id(actor),action,JSON.stringify(values)])).rows[0].result; }
+ try { return (await db.query('select public.epew_applicant_help_operation($1,$2,$3) as result',[id(actor),action,JSON.stringify({...values,_verified_email:({1:'one@example.invalid',2:'two@example.invalid',3:'admin@example.invalid',4:'coach@example.invalid',5:'wrong@example.invalid'})[actor]??null})])).rows[0].result; }
  finally { await db.exec('reset role'); }
 }
 const input = (key=20, app=1) => ({application_id:app,request_key:id(key),category:'coach',description:'I have not heard from my coach.',help_needed:'Please help arrange a conversation.',locale:'ht'});
