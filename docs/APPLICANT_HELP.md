@@ -23,3 +23,11 @@ Test with `npm run test:applicant-help`. The isolated PGlite fixture executes th
 Release order: review exact commit, apply additive migration, verify RLS/grants, deploy reviewed code, confirm authenticated applicant submission and staff reply on an explicitly authorized test account, check all four languages and mobile/desktop. Do not claim external delivery or that a case is resolved without evidence.
 
 Rollback: restore the previous application deployment. Preserve assistance tables and case history; do not drop populated tables. No legacy data migration or financial update is required.
+
+## Verification for this change
+
+- 18 applicant-help API/database tests passed using isolated PostgreSQL (PGlite).
+- 16 coach connector access/regression tests passed, including the new help tools.
+- TypeScript and targeted ESLint checks passed.
+- Full Next.js production build passed with synthetic configuration and external email disabled. An existing `/test-supabase` diagnostic route retried once before completion.
+- No production migration, production release, authenticated browser test, or external messaging is represented by these checks.
