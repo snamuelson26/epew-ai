@@ -16,7 +16,8 @@
     "enterprise:translation:validate": "npm run translation:validate",
     "enterprise:translation:build": "npm run translation:build",
     "enterprise:translation:certify": "npm run translation:certify",
-    "voice:worker": "node --env-file=.env.local --import tsx worker/twilio-voice/index.ts"
+    "voice:worker": "node --env-file=.env.local --import tsx worker/twilio-voice/index.ts",
+    "test:applicant-help": "node --import tsx --test tests/applicant-help.test.cjs tests/applicant-help-route.test.cjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",
@@ -33,6 +34,7 @@
     "ws": "^8.21.3"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.3.14",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
