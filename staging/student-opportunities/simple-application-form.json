@@ -1,0 +1,25 @@
+{
+  "stage_only": true,
+  "production_authorized": false,
+  "policy_version": "IES-FEES-2026-10-12-APPLICATION",
+  "original_form_id": 2494,
+  "form": {
+    "settings": {"form_title": "Emanon Institute — Apply Now", "submit_text": "APPLY NOW", "registration_enable": "0", "notification_enable": "0"},
+    "fields": {
+      "1": {"id": "1", "type": "text", "label": "First name", "required": "1"},
+      "2": {"id": "2", "type": "text", "label": "Last name", "required": "1"},
+      "13": {"id": "13", "type": "email", "label": "Email", "required": "1"},
+      "40": {"id": "40", "type": "checkbox", "label": "I acknowledge that I have read and agree to the Emanon Institute Privacy Policy.", "required": "1"},
+      "41": {"id": "41", "type": "checkbox", "label": "I consent to receive school updates by email and, when I provide a phone number and the applicable consent, phone and text.", "required": "0", "default": false}
+    },
+    "payments": {}
+  },
+  "steps": [
+    {"name": "CREATE YOUR ACCOUNT", "fields": ["Country of residence", "Date of birth", "Program"], "programs": ["High School Adult Program", "Regular High School Program"]},
+    {"condition": "adult", "fields": ["Career priority 1", "Career priority 2", "Career priority 3"], "unique_choices_required": true, "choices": ["Business Administration", "Computer Science", "Education", "General Studies", "Health Science", "Law", "Language", "Skilled Trades"]},
+    {"condition": "regular", "field": "Grade", "choices": [9, 10, 11, 12]},
+    {"name": "SET UP A SECURE PASSWORD", "button": "CREATE MY ACCOUNT", "handler": "existing institutional authentication; no password email"},
+    {"name": "Secure Your Account", "message": "Please check your email for a one-time verification code to confirm your email address.", "field": "Verification Code", "required": true},
+    {"name": "Portal", "application_fee_minor": 10000, "currency": "usd", "show_other_fees": false, "processing_fees": "unverified; disabled", "payment_methods": "only verified providers may be enabled", "financial_assistance": true, "enrollment_requires": ["admissions approval", "verified payment or approved assistance", "guardian consent where applicable"]}
+  ]
+}
