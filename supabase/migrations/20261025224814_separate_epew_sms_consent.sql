@@ -10,7 +10,7 @@ alter table public.entrepreneur_reminder_contacts
   add column sms_disclosure text,
   add column sms_preference_updated_at timestamptz,
   add constraint explicit_sms_evidence check (not sms_consent or (
-    user_id is not null and phone is not null and sms_consent_phone is not null and sms_consent_phone = phone and
+    phone is not null and sms_consent_phone is not null and sms_consent_phone = phone and
     sms_consent_phone ~ '^\+[1-9][0-9]{7,14}$' and
     sms_consented_at is not null and sms_consent_source is not null and
     sms_consent_language is not null and sms_disclosure_version is not null and

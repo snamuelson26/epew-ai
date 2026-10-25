@@ -46,6 +46,9 @@ test('database denies legacy consent, persists evidence, preserves STOP and inva
  assert.equal(await allowed(),false);
  await db.exec('update entrepreneur_reminder_contacts set sms_preference_updated_at=now() where sms_consent');
  assert.equal(await allowed(),true);
+ await db.exec('update entrepreneur_reminder_contacts set user_id=null where sms_consent');
+ assert.equal(await allowed(),false); // auth.users ON DELETE SET NULL must remain possible
+ await db.exec("update entrepreneur_reminder_contacts set user_id='00000000-0000-4000-8000-000000000001' where sms_consent");
  await db.exec("insert into epew_appointment_message_optouts values('+12025550123','sms')");
  assert.equal(await allowed(),false);
  await db.exec("update entrepreneur_reminder_contacts set sms_preference_updated_at=now() where sms_consent");

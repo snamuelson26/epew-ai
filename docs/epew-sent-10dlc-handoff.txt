@@ -1,3 +1,6 @@
+RELEASE ADDENDUM — OCTOBER 25, 2026
+Samuel approved the prepared code release in this conversation. PR #18 was updated to include commit 429dc5f and its description now covers the full change. An authorized Vercel preview build is in progress; production has not yet changed. Release checks caught and corrected a constraint that would have blocked the existing auth.users ON DELETE SET NULL behavior. Consent eligibility still requires a non-null verified actor, so account deletion disables SMS eligibility. The 11 local tests pass including this case. Statements below describing unpublished/unattached work are the earlier preparation snapshot, not the current PR attachment state. Campaign resubmission and chargeable message tests remain separately gated.
+
 EPEW — SENT 10DLC CORRECTION HANDOFF FOR SAMARTHA
 Prepared October 25, 2026 (America/New_York)
 Status: reviewable code prepared; NOT deployed, NOT resubmitted, NOT carrier-approved.
