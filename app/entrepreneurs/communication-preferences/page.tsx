@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
+import { SMS_DISCLOSURE, SMS_DISCLOSURE_VERSION } from "@/lib/communications/smsConsentPolicy";
 
 const LANGUAGES = [
   "English",
@@ -18,7 +19,8 @@ export default function CommunicationPreferencesPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [priorityChannel, setPriorityChannel] = useState("");
-  const [consent, setConsent] = useState(false);
+  const [smsConsent, setSmsConsent] = useState(false);
+  const [emailConsent, setEmailConsent] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -46,7 +48,9 @@ export default function CommunicationPreferencesPage() {
             email,
             phone,
             priority_channel: priorityChannel,
-            weekly_information_consent: consent,
+            sms_consent: smsConsent,
+            email_information_consent: emailConsent,
+            sms_disclosure_version: SMS_DISCLOSURE_VERSION,
           }),
         },
       );
@@ -121,6 +125,9 @@ export default function CommunicationPreferencesPage() {
                   onSubmit={handleSubmit}
                   className="mt-10 space-y-8"
                 >
+                  <p className="text-base text-gray-700">
+                    <a className="underline" href="/entrepreneurs/login">Sign in to your EPEW account</a> to save your own preferences. SMS consent is optional and is not required to continue your application.
+                  </p>
                   <div>
                     <label
                       htmlFor="communicationLanguage"
@@ -216,7 +223,9 @@ export default function CommunicationPreferencesPage() {
                       onChange={(event) =>
                         setPhone(event.target.value)
                       }
-                      placeholder="Your phone number"
+                      placeholder="+1 202 555 0123"
+                      autoComplete="tel"
+                      required={smsConsent || priorityChannel === "text"}
                       className="mt-3 w-full rounded-xl border border-gray-300 px-4 py-4 text-lg text-gray-900"
                     />
                   </div>
@@ -266,23 +275,28 @@ export default function CommunicationPreferencesPage() {
                   </fieldset>
 
                   <label className="flex items-start gap-4 rounded-2xl bg-blue-50 p-6">
-                    <input
-                      type="checkbox"
-                      checked={consent}
-                      onChange={(event) =>
-                        setConsent(event.target.checked)
-                      }
-                      required
-                      className="mt-1 h-5 w-5"
-                    />
-
-                    <span className="text-base leading-relaxed text-gray-700">
-                      I agree to receive EPEW application reminders,
-                      weekly entrepreneurship information, program updates,
-                      and related communications using the contact information
-                      and preferred method I selected.
-                    </span>
+                    <input type="checkbox" checked={emailConsent}
+                      onChange={(event) => setEmailConsent(event.target.checked)}
+                      className="mt-1 h-5 w-5 shrink-0" />
+                    <span>Send me application reminders, entrepreneurship information and program updates by email (optional).</span>
                   </label>
+
+                  <div className="rounded-2xl bg-blue-50 p-6">
+                    <label className="flex items-start gap-4">
+                      <input id="smsConsent" name="sms_consent" type="checkbox"
+                        checked={smsConsent}
+                        onChange={(event) => setSmsConsent(event.target.checked)}
+                        aria-describedby="smsPolicies"
+                        className="mt-1 h-5 w-5 shrink-0" />
+                      <span className="text-base leading-relaxed text-gray-700">{SMS_DISCLOSURE}</span>
+                    </label>
+                    <p id="smsPolicies" className="mt-3 text-base">
+                      <a href="/legal/privacy-policy" className="underline">Privacy Policy</a>
+                      {" · "}
+                      <a href="/legal/terms-of-use" className="underline">Terms of Use</a>
+                    </p>
+                    <p className="mt-3 text-sm text-gray-600">Selecting Text Message above does not subscribe you. Leave SMS consent unchecked to save without SMS. This consent does not cover marketing or donation requests.</p>
+                  </div>
 
                   <button
                     type="submit"

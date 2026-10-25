@@ -1,3 +1,4 @@
+import {canSendApplicationSms} from "@/lib/communications/canSendApplicationSms";
 import {supabaseAdmin} from '@/lib/supabaseAdmin';
 import {messageClient} from './messageProvider';
 import {appointmentMessage} from './messageText';
@@ -16,6 +17,7 @@ export async function processMessageReminders() {
    const {data:config,error:configError}=await supabaseAdmin.from('epew_appointment_message_config').select('value').eq('key',row.channel).maybeSingle();
    if(configError)throw configError;
    if(!config?.value?.ready) {await update({status:'blocked',error_code:'sender_not_ready',next_attempt_at:new Date(Date.now()+300000).toISOString()});stats.blocked++;continue;}
+   if(row.channel==='sms' && !(await canSendApplicationSms(row.phone))) {await update({status:'cancelled',error_code:'sms_consent_missing_or_suppressed'});continue;}
    const message=appointmentMessage(row.payload.language,row.hours_before,row.starts_at);
    const statusCallback=`https://www.epew.us/api/twilio/appointment-message-status?id=${row.id}`;
    let options;
