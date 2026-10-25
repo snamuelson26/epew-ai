@@ -11,11 +11,11 @@ const NAMESPACE = "privacy-policy";
 
 export default function PrivacyPolicyContent() {
   const { t } = useTranslation();
-  const { loadNamespaces } = useLanguage();
+  const { loadNamespaces, locale } = useLanguage();
 
   useEffect(() => {
     void loadNamespaces([NAMESPACE]);
-  }, [loadNamespaces]);
+  }, [loadNamespaces, locale]);
 
   const translate = (key: string) =>
     t(key, { namespace: NAMESPACE });
