@@ -219,7 +219,7 @@ export async function POST(request: NextRequest) {
       priority_channel: priorityChannel,
       weekly_information_consent: emailConsent,
       email_information_consent: emailConsent,
-      ...consentRecord(smsConsent, phone, communicationLanguage),
+      ...consentRecord(smsConsent, phone),
       application_reminders_active: applicationRemindersActive,
       consented_at: emailConsent ? new Date().toISOString() : null,
       source: applicationId

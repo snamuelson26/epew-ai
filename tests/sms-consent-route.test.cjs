@@ -33,3 +33,8 @@ test('phone, disclosure, identity and origin validation fail closed',async()=>{
 test('database failure never reports successful preference capture',async()=>{
  storageError={code:'unavailable'};assert.equal((await POST(req(valid))).status,500);storageError=null;
 });
+
+test('disclosure language remains English when the preferred communication language is Haitian Creole',async()=>{
+ writes=[];assert.equal((await POST(req({...valid,communication_language:'Haitian Creole',sms_consent:true}))).status,200);
+ assert.equal(writes[0].communication_language,'ht');assert.equal(writes[0].sms_consent_language,'en');
+});

@@ -8,13 +8,14 @@ export function normalizeSmsPhone(value: string) {
   return /^\+[1-9]\d{7,14}$/.test(normalized) ? normalized : "";
 }
 
-export function consentRecord(granted: boolean, phone: string, language: string, now = new Date().toISOString()) {
+export function consentRecord(granted: boolean, phone: string, now = new Date().toISOString()) {
   return {
     sms_consent: granted,
     sms_consent_phone: granted ? phone : null,
     sms_consented_at: granted ? now : null,
     sms_consent_source: SMS_SOURCE,
-    sms_consent_language: language,
+    // This version of the checkbox is displayed in English; preferred language is stored separately.
+    sms_consent_language: "en",
     sms_disclosure_version: SMS_DISCLOSURE_VERSION,
     sms_disclosure: SMS_DISCLOSURE,
     sms_preference_updated_at: now,

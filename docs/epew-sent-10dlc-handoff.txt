@@ -1,113 +1,70 @@
-RELEASE ADDENDUM — OCTOBER 25, 2026
-Samuel approved the prepared code release in this conversation. PR #18 was updated to include commit 429dc5f and its description now covers the full change. An authorized Vercel preview build is in progress; production has not yet changed. Release checks caught and corrected a constraint that would have blocked the existing auth.users ON DELETE SET NULL behavior. Consent eligibility still requires a non-null verified actor, so account deletion disables SMS eligibility. The 11 local tests pass including this case. Statements below describing unpublished/unattached work are the earlier preparation snapshot, not the current PR attachment state. Campaign resubmission and chargeable message tests remain separately gated.
+EPEW SMS RELEASE AND EXISTING SENT CAMPAIGN HANDOFF
+October 25, 2026 — America/New_York
+Next owner: Samartha for remaining verification; Samuel for exact campaign/fee approval.
 
-EPEW — SENT 10DLC CORRECTION HANDOFF FOR SAMARTHA
-Prepared October 25, 2026 (America/New_York)
-Status: reviewable code prepared; NOT deployed, NOT resubmitted, NOT carrier-approved.
+RELEASED / VERIFIED
+Samuel approved the code release. PR #18 was merged: https://github.com/snamuelson26/epew-ai/pull/18
+Initial release merge: 4d784fd72581663600aa14de5a7690c44f6311ef.
+Privacy language refresh and original production capture: 5dcbeaaa1bd2c05f85292c0d2b5e3f0d945207a8.
+Production Vercel project: epew-ai / prj_2ORP3LcMhyUnA7sQDRVHjVh6nAz6; team team_dHQTzQf1McZ01Ukb3VdOuYiv.
+Both production builds reached READY and the epew.us/www.epew.us aliases. No production errors/fatal logs returned in the first release's scanned window. The final commit also records the English disclosure language separately from the user's preferred communication language; verify its final deployment status before treating that follow-up as published.
 
-Samuel's release boundary
-Preserve the existing campaign. No additional campaigns, number purchases, deployment (including automatic preview deployment), paid resubmission, or chargeable message tests without authorization. Obtain Samuel's approval before merge/deployment. Show him the exact campaign update and confirm any fee before resubmission. After authorization and genuine production evidence, reply to Klane in the original thread.
+Live form: https://www.epew.us/entrepreneurs/communication-preferences
+Live policy: https://www.epew.us/legal/privacy-policy
+Live terms: https://www.epew.us/legal/terms-of-use
+Genuine production screenshot: https://www.epew.us/compliance/epew-sms-opt-in-20261025.jpg
+Anonymous screenshot retrieval returned HTTP 200, image/jpeg, 81718 bytes; exact original Git blob e494cc97803afb955813f18e50bf5a4ba02a2cdd. Capture shows EPEW branding, empty phone field, unchecked SMS, full disclosure, legal links and submit button. No personal information, mockup or preview content is included. The screenshot is review evidence, not proof of campaign approval or live delivery.
 
-Review base and implementation
-Existing privacy-only draft PR: https://github.com/snamuelson26/epew-ai/pull/18
-Base: d8b1207f6f3606921556707cdff492613676e4e4, fix/sent-mobile-privacy-20261024.
-The new commit builds on that PR and includes its four privacy translations. PR #18 itself is unchanged. The commit is stored without moving any branch ref, because the existing PR has a Vercel preview integration. Do not attach/push it to a deployment-triggering branch without approval.
+FORM AND PROCESSING
+- SMS and email subscriptions are separate and optional; both checkboxes start unchecked. Selecting Text Message alone does not subscribe the person.
+- Verified EPEW sign-in and same-origin writes protect preference capture. Server verifies the actor; entering someone else's email cannot overwrite their record.
+- Saving without either subscription is allowed by the handler and database. SMS consent is not required to continue an application.
+- Server saves normalized phone, SMS grant/decline, timestamp, source URL, disclosure version, full text and disclosure language. Preferred communication language is recorded separately; this disclosure version is English.
+- Legacy combined communications consent never grants SMS. All eight prior contacts remained SMS=false; no historical consent was converted.
+- Application SMS requires current explicit evidence and a send-time suppression check. Old queued messages are rechecked. Supporter SMS fallback is removed because this disclosure excludes marketing and donation requests.
+- STOP suppression persists across preference saves. START does not manufacture consent or erase suppression.
+- New /api/twilio/sms validates Twilio signatures, stores STOP before confirmation and provides HELP without duplicate provider-handled replies. This is a Twilio endpoint, NOT a Sent webhook. Do not point Sent at a Twilio signature-specific endpoint.
 
-Prepared changes
-1. app/entrepreneurs/communication-preferences/page.tsx
-- Separate optional email and SMS checkboxes, both initially unchecked.
-- No required SMS checkbox. Saving without either subscription is allowed.
-- Full requested SMS disclosure, adjacent clickable privacy/terms links, phone input and submit button.
-- Text Message preference is not SMS consent. Application-update consent excludes marketing and donation requests.
-- Page explains verified EPEW sign-in is needed to save the user's own preferences. This closes the prior public endpoint's ability to overwrite someone else's preferences by entering their email.
+DATABASE
+Production project pblwtbwrmcvyiaqqzkhc was verified against the public login bundle.
+Migration separate_epew_sms_consent applied successfully. New evidence fields, private consent-event table, service-only eligibility function and updated SMS recipient view are present.
+Contact preferences and consent events have RLS enabled; anon/authenticated cannot SELECT either table. No new security advisor finding for consent objects; new unused-index informational finding is expected before activity.
+Controlled service-role transaction: decline blocked SMS; explicit test evidence allowed eligibility; STOP blocked it; two evidence events recorded. Entire transaction rolled back. Readback: eight contacts, zero consent events, zero explicit SMS grants and zero test-number suppression rows. No customer preference changes or outbound messages persisted from the test.
+User deletion retains the existing auth.users ON DELETE SET NULL behavior and makes SMS ineligible.
 
-2. app/api/entrepreneurs/reminder-contact/route.ts
-- Same-origin writes, verified server-side user, matching email, actor-scoped application/current preference record.
-- Ignores legacy weekly_information_consent as an SMS grant.
-- Independent email_information_consent and sms_consent. Compatibility weekly_information_consent reflects email only, never SMS.
-- Normalized phone, server timestamp/source/language/version/full disclosure saved independently. Current version required to grant SMS. No client-forged timestamp/source trusted.
-- Schema/storage failures do not report successful capture.
-- Updating current actor record also invalidates the old phone's consent when a phone is changed. Saving does not clear STOP suppression.
+TEST RESULTS
+12 local tests passed, 0 failed. TypeScript and targeted ESLint passed.
+Coverage: actual server-rendered checkbox defaults/disclosure/links; no-subscription save; explicit independent evidence; legacy-consent exclusion; actor/origin/phone/version validation; storage failure; preferred-vs-disclosure language; local Postgres migration/eligibility/latest actor preference/phone change/STOP/privacy; Twilio signature rejection/STOP persistence/HELP/no duplicate reply.
+The original local build lacked environment configuration. Configured Vercel preview and two production builds subsequently reached READY. Full follow-up deployment must also be checked.
+Live form default was read as checked=false, required=false; email/phone empty. Form and both legal URLs returned HTTP 200. Anonymous save returned 401; cross-origin save returned 403, without writes.
+Live English, Haitian Creole, French and Spanish policy bodies were individually rendered and the non-sharing sentence verified after correcting namespace refresh on language change.
+No signed-in browser-to-database production save test, actual mobile viewport test, Sent end-to-end STOP/HELP test or chargeable message test has been completed. Local and rolled-back database checks do not substitute for those.
 
-3. supabase/migrations/20261025224814_separate_epew_sms_consent.sql
-- Defaults every old record's new SMS grant to FALSE. No conversion/backfill of general consent.
-- Separate evidence columns and append-only event table, service-only access, RLS enabled, trigger records each submitted preference version.
-- Service-only epew_can_send_application_sms(phone) checks explicit current application-update evidence and persistent STOP suppression. The latest actor preference wins even if concurrent duplicate records exist.
-- Appointment recipient view now requires explicit SMS eligibility; WhatsApp remains a separate channel.
-- Migration has NOT been applied to any external database.
+POLICY / DATA HANDLING
+English contains exactly: No mobile information will be sold or shared with third parties for promotional or marketing purposes.
+HT/FR/ES equivalents are published and browser-verified. Text opt-in information excludes general sharing except where messaging service providers need it for delivery on EPEW's behalf.
+Repository and database access checks confirm the new evidence is private and the identified unsupported SMS fallback is removed. They do not attest every outside vendor, staff export or operational practice. Samartha must confirm those practices match the policy before compliance resubmission.
 
-4. lib/appointments/processMessageReminders.ts
-- Rechecks SMS consent immediately before provider submission, including already queued messages; fails closed on database errors.
+EXISTING SENT CAMPAIGN — PRESERVE IT
+Authenticated account: Ekero Partners Empower Wealth, epew.platform@gmail.com.
+Organization ID: 6318afbb-beb3-4007-ae43-dc1af34241ab.
+ONBOARDED is account onboarding, NOT carrier approval. Connector lists zero child profiles, which does not establish absence of an organization campaign.
+Existing campaign name: Campaign 1 (from correspondence). Campaign ID, CURRENT status, uses, samples, current flow, provider keyword configuration and any resubmission fee remain UNVERIFIED. Last correspondence described Changes requested.
+The Sent dashboard's bot-verification check blocked this browser after one reload. No campaign edits, resubmission or additional campaign creation occurred. EPEW's separately approved Twilio toll-free number does not establish Sent 10DLC approval.
 
-5. lib/communications/processSupporterOutreach.ts
-- Removes automatic SMS fallback for supporter outreach. This form's application consent does not authorize supporter marketing/donation requests. Email/WhatsApp behavior otherwise unchanged.
+EXACT PROPOSED CTA / OPT-IN DESCRIPTION — DRAFT, NOT SUBMITTED
+Applicants visit https://www.epew.us/entrepreneurs/communication-preferences and sign in to their verified EPEW account to save their own preferences. They enter their mobile number, choose their preferred communication language and contact method, and may independently select an optional SMS checkbox that is unchecked by default. Selecting Text Message alone does not grant SMS consent. Users may save without SMS or email subscription. The SMS checkbox displays: I agree to receive SMS messages from Ekero Partners Empower Wealth (EPEW) about my application, reminders, entrepreneurship information, and program updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help. SMS consent is optional. Clickable Privacy Policy and Terms of Use links are adjacent. Explicit SMS consent and its phone number, server timestamp, source, disclosure version and disclosure language are recorded separately from email preferences and preferred communication language. General legacy consent does not authorize SMS. Application SMS is gated on valid explicit evidence and suppression status. Genuine live screenshot: https://www.epew.us/compliance/epew-sms-opt-in-20261025.jpg . Privacy: https://www.epew.us/legal/privacy-policy . Terms: https://www.epew.us/legal/terms-of-use .
 
-6. app/api/twilio/sms/route.ts
-- Validates provider signature, persists STOP suppression before confirming, supports HELP with support details.
-- Avoids duplicate replies when provider Advanced Opt-Out already handled the keyword.
-- START does not create consent or erase suppression.
-- Local behavior tested only. This is a Twilio webhook, NOT a Sent webhook. Sent STOP/HELP configuration and delivery to application suppression must be inspected/verified before claiming Sent integration complete. Do not point a Sent webhook to this signature-specific endpoint.
+Reconcile this exact draft against the existing campaign's uses and actual Sent STOP/HELP behavior before presenting the final update for approval. Do not overwrite unseen fields or supply an invented campaign ID, volume, fee or status.
+Scope of this form: application updates, reminders, entrepreneurship information and program updates. Frequency varies. Marketing and donation requests are excluded. If the existing campaign includes them, disclose and reconcile the exact purpose and samples before resubmission; keep this existing campaign.
+Candidate samples for review against existing samples:
+1. EPEW: Your application status has changed. Sign in at https://www.epew.us/entrepreneurs/dashboard to review the next step. Reply STOP to opt out or HELP for help.
+2. EPEW: Your appointment is tomorrow. Sign in at https://www.epew.us/entrepreneurs/dashboard for details. Reply STOP to opt out or HELP for help.
+Local HELP wording: EPEW application updates: For help, contact support@epew.us or visit https://epew.us. Message frequency varies. Msg & data rates may apply. Reply STOP to opt out.
+Local STOP wording: EPEW: You are unsubscribed and will receive no more SMS messages. For help, contact support@epew.us.
 
-Privacy review
-PR #18 is still OPEN, DRAFT and UNMERGED. Its English description includes exactly:
-“No mobile information will be sold or shared with third parties for promotional or marketing purposes.”
-English, Haitian Creole, French and Spanish JSON parsed successfully and the non-sharing rule is present with the service-delivery exception for text opt-in data. Wording reviewed for equivalent meaning; independent language sign-off remains available to Samuel.
-Actual production/vendor handling is NOT fully attested. Repository changes limit access to new consent evidence and prevent the identified SMS fallback, but neither unpublished code nor a policy sentence proves all downstream vendors, exports and staff practices comply. Samartha must confirm those practices before publication.
-
-Validation completed locally
-Command: node --import tsx --test tests/sms-*.test.cjs
-Result: 11 tests passed, 0 failed.
-- Actual server-rendered form: unchecked optional SMS; full disclosure; phone input, legal links, submit.
-- Handler: save without SMS/email; legacy consent ignored; explicit evidence; identity/origin/phone/version errors; storage fail closed.
-- Local Postgres (PGlite): migration executes; old consent denied; genuine evidence grants application SMS; STOP persists; phone change invalidates old eligibility; anonymous evidence access denied.
-- Keyword handler: signature rejection; STOP persistence and database failure; HELP; START no grant; no duplicate provider response.
-TypeScript: npx tsc --noEmit --pretty false passed.
-Targeted ESLint: form, preference route, consent helpers, supporter-outreach and SMS webhook passed.
-git diff --check passed.
-Production build: compiled successfully and Next TypeScript completed, then FAILED collecting /admin/coach-assignments/automatic because this checkout lacks Supabase environment configuration (supabaseUrl is required). Full build is NOT a pass. Prebuild reported existing translation inventory issues (2276); generated inventory files are excluded from this change.
-No live database writes, customer tests, chargeable messages, mobile-browser layout test or production delivery tests performed. Mocked API and local database checks are NOT production evidence.
-
-Account/campaign verification
-Sent account confirmed through authenticated connector:
-Name: Ekero Partners Empower Wealth
-Email: epew.platform@gmail.com
-Organization ID: 6318afbb-beb3-4007-ae43-dc1af34241ab
-Onboarding: ONBOARDED (does NOT mean campaign active).
-Connector returned 0 child sender profiles; this does NOT mean no organization campaign exists.
-Existing campaign: Campaign 1, last described as “Changes requested” in original correspondence. Current campaign ID, current status, registered uses, samples, opt-in flow and resubmission fee remain UNVERIFIED.
-Sent dashboard at https://app.sent.dm/auth remained blocked by its bot-verification check after one reload. No campaign fields changed.
-Do not confuse EPEW's separately approved Twilio toll-free number with this Sent 10DLC campaign.
-
-Public URLs
-Form: https://epew.us/entrepreneurs/communication-preferences
-Privacy: https://epew.us/legal/privacy-policy
-Terms: https://epew.us/legal/terms-of-use
-The live form was inspected and still has the old combined checkbox. These code changes are NOT published at those URLs. Legal links exist on the current site, but publication of PR #18 wording has NOT been verified.
-Production screenshot review link: NOT AVAILABLE; capture only after the authorized release and production tests. No mockup or preview was submitted or hosted as evidence.
-
-Proposed campaign text — DRAFT ONLY, NOT READY TO SUBMIT
-Do not alter the existing campaign ID/name or other registered fields until read and reconciled with Samuel.
-Proposed Call to Action / Opt-in Process Description:
-“Applicants visit https://epew.us/entrepreneurs/communication-preferences and sign in to their verified EPEW account to save preferences. They enter their phone number, choose their communication language and preferred contact method, and may independently select an optional SMS checkbox that is unchecked by default. Selecting Text Message alone does not grant consent. Applicants may save and continue without SMS or email subscription. Beside the SMS checkbox the form displays: I agree to receive SMS messages from Ekero Partners Empower Wealth (EPEW) about my application, reminders, entrepreneurship information, and program updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help. SMS consent is optional. Clickable Privacy Policy and Terms of Use links are adjacent. On explicit submission, EPEW stores the normalized phone, SMS consent timestamp, source URL, language and disclosure version separately from email preferences. Legacy general communications consent does not grant SMS consent. SMS sends require recorded valid consent and are blocked after STOP. Genuine live form screenshot: [PENDING AUTHORIZED PUBLICATION AND ANONYMOUSLY ACCESSIBLE HTTPS EVIDENCE LINK].”
-This wording describes the prepared implementation after release; do not represent it as live yet.
-Proposed scope: application notifications, reminders, entrepreneurship information, program updates; frequency varies. Marketing/donation messages are excluded from this form. If the existing campaign includes marketing or donation requests, stop and reconcile exact uses/disclosures/samples before resubmission, preserving this campaign.
-Proposed example samples to reconcile against existing registered samples:
-“EPEW: Your application status has changed. Sign in at https://epew.us/entrepreneurs/dashboard to review the next step. Reply STOP to opt out or HELP for help.”
-“EPEW: Your appointment is tomorrow. Sign in at https://epew.us/entrepreneurs/dashboard for details. Reply STOP to opt out or HELP for help.”
-HELP draft: EPEW application updates: For help, contact support@epew.us or visit https://epew.us. Message frequency varies. Msg & data rates may apply. Reply STOP to opt out.
-STOP draft: EPEW: You are unsubscribed and will receive no more SMS messages. For help, contact support@epew.us.
-No final Sent API payload is asserted: existing campaign ID/use cases and Sent keyword integration must first be verified. No fee amount is known or authorized.
-
-Next owners and release sequence
-SAMARTHA: review this implementation and PR #18; confirm deployed database project; run full build in securely configured environment; review actual data sharing and four policy languages. Verify current campaign in Sent and copy its exact ID, status, uses, samples, keywords, existing flow and any fee into the handoff. Inspect Sent STOP/HELP callbacks and implement its documented signed webhook integration if needed; do not claim Twilio tests prove Sent behavior. Check the sign-in/return-to-form flow and mobile layout in an authorized environment.
-SAMUEL: review concrete code and unresolved findings; approve the exact merge/migration/deployment plan before publication. Authorization for a PR does not authorize automatic preview deployment.
-SAMARTHA AFTER APPROVAL: apply approved migration before the code release; publish only approved changes; repeat controlled no-SMS and explicit-consent persistence tests; verify STOP/HELP in Sent using approved chargeable tests only; verify all four live privacy versions and legal links.
-THEN: capture actual production form with brand, empty phone input, unchecked checkbox, complete disclosure, legal links and submit button. Exclude all personal information. Upload to an approved stable HTTPS host, open anonymously, record the review link. Add that URL and the verified real opt-in sequence to the EXISTING campaign. Match purpose/samples/frequency/policies exactly. Show Samuel the final before/after and fee; resubmit only after authorization.
-THEN: reply to Klane in original Gmail thread 1a15ed262d51874c (subject Re: [MSG-COMPLIANCE] EPEW: requested corrections for US 10DLC brand/campaign and SMS routing failure). Verified original sender klane@s.dm; compliance CC msgcompliance@sent.dm. No new email has been sent.
-
-Conditional reply for original thread — DO NOT SEND UNTIL TRUE AND AUTHORIZED
-Hi Klane,
-We corrected the existing EPEW campaign's opt-in process and published the separate optional SMS consent form and revised privacy policy. Please review the genuine live-form screenshot at [VERIFIED PUBLIC SCREENSHOT URL]. The form is at https://epew.us/entrepreneurs/communication-preferences and the privacy policy is at https://epew.us/legal/privacy-policy. The screenshot link and actual opt-in steps are included in the existing campaign [VERIFIED CAMPAIGN ID]. [DESCRIBE ONLY THE VERIFIED CAMPAIGN ACTION/STATUS.] Please confirm whether these corrections satisfy the requested review.
-Thank you,
-Samuel Nelson
-EPEW
+NEXT ACTIONS / OWNERS
+SAMARTHA: verify the final follow-up production commit/build; complete a controlled signed-in API persistence test and mobile layout check; verify Sent campaign ID/status/uses/samples/fee; inspect Sent keyword handling and its documented callback integration to application suppression; confirm outside data handling. A local Twilio endpoint does not prove Sent callbacks are connected.
+SAMUEL: review the exact existing-campaign before/after and confirmed fee before resubmission. Separately authorize any chargeable live message test.
+AFTER THOSE CHECKS AND AUTHORIZATION: update only the existing campaign's correction fields, retain its identity, then send the verified evidence in the original Klane thread. No paid resubmission, number purchase, new campaign, live outreach or chargeable test was performed.
+Original Gmail thread: 1a15ed262d51874c. Subject: Re: [MSG-COMPLIANCE] EPEW: requested corrections for US 10DLC brand/campaign and SMS routing failure. Verified original sender klane@s.dm; compliance CC msgcompliance@sent.dm. No reply has been sent in this release work.
