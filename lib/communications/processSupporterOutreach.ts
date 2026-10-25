@@ -43,21 +43,6 @@ function getTwilioClient() {
   return twilio(accountSid, authToken);
 }
 
-function getSmsConfig() {
-  const from =
-    process.env.TWILIO_MESSAGING_SERVICE_SID?.trim() ||
-    process.env.TWILIO_PHONE_NUMBER?.trim() ||
-    process.env.TWILIO_FROM_NUMBER?.trim() ||
-    process.env.EPEW_TWILIO_PHONE_NUMBER?.trim();
-
-  if (!from) return null;
-
-  return {
-    from,
-    useMessagingService: from.startsWith("MG"),
-  };
-}
-
 function getWhatsAppFrom() {
   const raw =
     process.env.TWILIO_WHATSAPP_FROM_NUMBER?.trim() ||
@@ -65,28 +50,6 @@ function getWhatsAppFrom() {
 
   if (!raw) return null;
   return raw.startsWith("whatsapp:") ? raw : `whatsapp:${normalizeUsPhone(raw)}`;
-}
-
-async function sendSms(to: string, body: string) {
-  const client = getTwilioClient();
-  const sms = getSmsConfig();
-  if (!client || !sms) {
-    throw new Error("Twilio SMS delivery is not configured.");
-  }
-
-  if (sms.useMessagingService) {
-    await client.messages.create({
-      to,
-      body,
-      messagingServiceSid: sms.from,
-    });
-  } else {
-    await client.messages.create({
-      to,
-      body,
-      from: sms.from,
-    });
-  }
 }
 
 async function tryWhatsApp(to: string, body: string) {
@@ -102,7 +65,7 @@ async function tryWhatsApp(to: string, body: string) {
     });
     return true;
   } catch (error) {
-    console.warn("WhatsApp supporter outreach unavailable; falling back to SMS", error);
+    console.warn("WhatsApp supporter outreach unavailable; SMS fallback is disabled", error);
     return false;
   }
 }
@@ -199,8 +162,7 @@ export async function processDueMessages(
         if (whatsappSent) {
           channel = "whatsapp";
         } else {
-          await sendSms(to, phoneBody);
-          channel = "sms";
+          throw new Error("Supporter SMS is disabled: application-update consent does not authorize supporter marketing or donation requests.");
         }
       } else {
         throw new Error("Contact has no deliverable email address or phone number.");
