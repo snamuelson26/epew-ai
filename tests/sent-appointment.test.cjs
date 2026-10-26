@@ -26,6 +26,7 @@ test('current channel eligibility and any historical STOP block the Sent path',a
 });
 test('approved-language configuration is required and accepted IDs bind durably',async()=>{
  process.env.EPEW_SENT_APPOINTMENT_LIVE_ENABLED='true';template=null;const before=sendCalls;
+ await assert.rejects(processSentAppointment({...row,payload:{language:'pt'}}),/language_template_missing/);
  await assert.rejects(processSentAppointment(row),/language_template_missing/);assert.equal(sendCalls,before);
  template={id:'00000000-0000-4000-8000-000000000002'};writes=[];
  await processSentAppointment(row);assert.deepEqual(writes.map(x=>x.name),['epew_reserve_sent_appointment','epew_bind_sent_appointment']);

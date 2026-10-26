@@ -24,6 +24,10 @@ export async function sentAppointmentEligible(row: Delivery) {
 
 export async function processSentAppointment(row: Delivery) {
   if (process.env.EPEW_SENT_APPOINTMENT_LIVE_ENABLED !== "true") throw new SentRequestError("sent_live_sending_disabled");
+  const language = String(row.payload.language || "").trim().toLowerCase().split(/[-_]/)[0];
+  if (!["en","english","fr","french","français","ht","haitian creole","kreyòl","kreyòl ayisyen","kreyol ayisyen","creole","es","spanish","español"].includes(language)) {
+    throw new SentRequestError("sent_language_template_missing");
+  }
   const message = appointmentMessage(row.payload.language, row.hours_before, row.starts_at);
   const { data: config, error } = await supabaseAdmin.from("epew_appointment_message_config")
     .select("value").eq("key", `sent:template:${message.lang}`).maybeSingle();
