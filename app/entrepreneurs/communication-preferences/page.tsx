@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { SMS_DISCLOSURE, SMS_DISCLOSURE_VERSION } from "@/lib/communications/smsConsentPolicy";
@@ -13,6 +13,29 @@ const LANGUAGES = [
 ];
 
 export default function CommunicationPreferencesPage() {
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    let unsubscribe: (() => void) | undefined;
+
+    void import("@/lib/supabase/client").then(async ({ supabase }) => {
+      if (!active) return;
+      const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (active) setSignedIn(Boolean(session?.user));
+      });
+      unsubscribe = () => subscription.subscription.unsubscribe();
+      const { data, error } = await supabase.auth.getUser();
+      if (active) setSignedIn(!error && Boolean(data.user));
+    }).catch(() => {
+      if (active) setSignedIn(false);
+    });
+
+    return () => {
+      active = false;
+      unsubscribe?.();
+    };
+  }, []);
   const [communicationLanguage, setCommunicationLanguage] = useState("");
   const [additionalPreferredLanguage, setAdditionalPreferredLanguage] =
     useState("");
@@ -126,7 +149,14 @@ export default function CommunicationPreferencesPage() {
                   className="mt-10 space-y-8"
                 >
                   <p className="text-base text-gray-700">
-                    <a className="underline" href="/entrepreneurs/login">Sign in to your EPEW account</a> to save your own preferences. SMS consent is optional and is not required to continue your application.
+                    {signedIn === true ? (
+                      "You are signed in. You can save your own communication preferences. "
+                    ) : signedIn === false ? (
+                      <><a className="underline" href="/entrepreneurs/login">Sign in to your EPEW account</a> to save your own preferences. </>
+                    ) : (
+                      "Checking your sign-in status. "
+                    )}
+                    SMS consent is optional and is not required to continue your application.
                   </p>
                   <div>
                     <label
