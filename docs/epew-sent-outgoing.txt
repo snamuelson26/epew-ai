@@ -1,0 +1,15 @@
+EPEW outgoing Sent transport — preparation stage
+
+sendSentTemplate is an internal server helper, not a public route or scheduled sender. No existing website workflow calls it. Twilio sending is unchanged. Do not describe this stage as a completed provider migration.
+
+The transport defaults to sandbox, requires explicit live enablement, pins one channel, requires a current eligible(phone,channel) check immediately before POST, uses a stable logical-id idempotency key, validates a current approved Utility template owned by EPEW, checks exact variable names/channel content, and returns accepted plus messageId rather than claiming delivered. It performs no automatic resend. On timeout/5xx the worker must preserve the logical ID and reconcile acceptance before a retry; 429 exposes Retry-After. Credentials and provider message text are not logged.
+
+Before wiring a worker: establish EPEW-scoped secure API credentials; complete actual sandbox validation of the REST template representation; create/review a Utility template for the specific workflow; map logical sends to message IDs durably; replay early webhook events after binding; enforce independent SMS/WhatsApp permission and suppression; preserve existing queue idempotency across cutover; reconcile Sent status events with the delivery projection and retries. Do not activate live sending without the existing chargeable-message authorization requirement being satisfied. SMS requires carrier approval separately.
+
+Suggested appointment Utility template for review (English; no provider submission performed):
+EPEW appointment reminder: your appointment is in {{0:variable}}, on {{1:variable}} (New York time). Sign in at https://www.epew.us/entrepreneurs/dashboard to review the details. Reply STOP to opt out or HELP for help.
+Variables: 0 timeUntil (sample: 24 hours); 1 appointmentDate (sample: October 30, 2026 at 10:00 AM).
+
+This appointment template is separate from applicant-status messages. Existing approved EPEW templates are categorized Marketing and must not be silently substituted. French, Haitian Creole and Spanish appointment variants need separate preparation and review before those language workflows switch providers.
+
+Validation: node --import tsx --test tests/sent-send.test.cjs tests/sent-webhook.test.cjs tests/sms-*.test.cjs; TypeScript; targeted ESLint. Tests use synthetic mocked HTTP and make no Sent API request or chargeable send.
