@@ -29,7 +29,16 @@ export async function POST(request: Request) {
   const body = Buffer.concat(chunks);
   if (!verifySentWebhook(body, request.headers, secret, endpointId)) return new NextResponse("Unauthorized", { status: 401 });
   let event;
-  try { event = parseSentEvent(JSON.parse(body.toString("utf8")), sender); }
+  try {
+    const decoded = JSON.parse(body.toString("utf8"));
+    // Sent's signed dashboard health tests use a zero account placeholder.
+    // Acknowledge them without recording delivery truth or applying consent.
+    if (decoded?.field === "message" && typeof decoded.event === "string" && decoded.event.startsWith("message.") &&
+      decoded.payload?.account_id === "00000000-0000-0000-0000-000000000000") {
+      return NextResponse.json({ received: true, synthetic: true });
+    }
+    event = parseSentEvent(decoded, sender);
+  }
   catch { return new NextResponse("Invalid event", { status: 400 }); }
   // Durable event storage and suppression commit together before acknowledgement.
   // Sent already handles keyword replies; never send a duplicate reply here.

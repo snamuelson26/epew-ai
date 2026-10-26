@@ -55,6 +55,11 @@ test('route fails closed without config/signature and acknowledges only after du
  assert.equal((await POST(request(body))).status,200);assert.equal(calls[0].args.p_stop_phone,'+12025550123');
  databaseError={code:'unavailable'};assert.equal((await POST(request(body))).status,503);databaseError=null;
  const bad=JSON.stringify({...event(),value:{...event().value,account_id:'wrong'}});assert.equal((await POST(request(bad))).status,400);
+ const synthetic=JSON.stringify({field:'message',event:'message.received',payload:{...sample.value,account_id:'00000000-0000-0000-0000-000000000000'}});
+ const count=calls.length;
+ const health=await POST(request(synthetic));assert.equal(health.status,200);assert.equal((await health.json()).synthetic,true);
+ assert.equal(calls.length,count); // health tests cannot create real events or STOP suppression
+ assert.equal((await POST(request(synthetic,new Headers()))).status,401);
  assert.equal((await POST(request('x'.repeat(65537)))).status,413);
 });
 test('durable receiver deduplicates, preserves both channels and STOP across START, and restricts private data',async()=>{
