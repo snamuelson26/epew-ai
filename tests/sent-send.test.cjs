@@ -4,7 +4,7 @@ const id='00000000-0000-4000-8000-000000000001';
 const input={logicalId:'appointment:controlled:24h:sms',phone:'+12025550123',channel:'sms',templateId:id,parameters:{timeUntil:'24 hours'}};
 function fixture(overrides={}){
  const calls=[];let consentChecks=0;
- const template={id,customer_id:'6318afbb-beb3-4007-ae43-dc1af34241ab',status:'APPROVED',category:'UTILITY',definition:{body:{multiChannel:{template:'Your appointment is in {{0:variable}}.',variables:[{name:'timeUntil'}]}}}};
+ const template={id,customer_id:'6318afbb-beb3-4007-ae43-dc1af34241ab',status:'APPROVED',category:'UTILITY',is_published:true,channels:['sms','whatsapp'],variables:['timeUntil']};
  const options={apiKey:'synthetic-test-key',liveEnabled:false,smsApproved:false,
   eligible:async()=>{consentChecks++;return true;},
   fetcher:async(url,options)=>{calls.push({url,options});return new Response(JSON.stringify({success:true,data:url.endsWith('/messages')?{recipients:[{message_id:id,to:input.phone,channel:input.channel}]}:template}),{status:url.endsWith('/messages')?202:200});},...overrides};

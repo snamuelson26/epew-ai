@@ -48,13 +48,14 @@ export async function sendSentTemplate(input: Input, options: Options) {
   const template = templateResult.data;
   if (templateResult.success !== true || !template || template.id !== input.templateId ||
     template.customer_id !== "6318afbb-beb3-4007-ae43-dc1af34241ab" ||
-    String(template.status).toUpperCase() !== "APPROVED" || template.category !== "UTILITY") {
+    String(template.status).toUpperCase() !== "APPROVED" || template.category !== "UTILITY" || template.is_published !== true) {
     throw new SentRequestError("sent_utility_template_not_approved");
   }
-  const body = template.definition?.body?.[input.channel] || template.definition?.body?.multiChannel;
-  if (!body?.template) throw new SentRequestError("sent_template_channel_missing");
-  const variables: Array<{ name?: string }> = body.variables || [];
-  const names = variables.map(v => v.name);
+  // The REST detail response exposes channels and variable names directly;
+  // the MCP's richer definition object is not the REST response contract.
+  if (!Array.isArray(template.channels) || !template.channels.includes(input.channel)) throw new SentRequestError("sent_template_channel_missing");
+  if (!Array.isArray(template.variables) || template.variables.some((name: unknown) => typeof name !== "string")) throw new SentRequestError("sent_template_parameters_mismatch");
+  const names: string[] = template.variables;
   if (names.some(name => !name || !Object.hasOwn(input.parameters, name)) ||
     Object.keys(input.parameters).some(name => !names.includes(name))) {
     throw new SentRequestError("sent_template_parameters_mismatch");
