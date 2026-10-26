@@ -6,9 +6,9 @@ export async function POST(request:NextRequest) {
  if(!valid)return new Response('Forbidden',{status:403});
  const id=new URL(request.url).searchParams.get('id');
  if(!id||!/^(SM|MM)[a-f0-9]{32}$/i.test(params.MessageSid||''))return new Response('Invalid',{status:400});
- const {data:row,error}=await supabaseAdmin.from('epew_appointment_message_deliveries').select('id,phone,channel,status,provider_message_id').eq('id',id).maybeSingle();
+ const {data:row,error}=await supabaseAdmin.from('epew_appointment_message_deliveries').select('id,phone,channel,status,provider_message_id,provider').eq('id',id).maybeSingle();
  if(error)return new Response('Retry',{status:503});
- if(!row||params.To!==`${row.channel==='whatsapp'?'whatsapp:':''}${row.phone}`||(row.provider_message_id&&row.provider_message_id!==params.MessageSid))return new Response('Not found',{status:404});
+ if(!row||row.provider!=='twilio'||params.To!==`${row.channel==='whatsapp'?'whatsapp:':''}${row.phone}`||(row.provider_message_id&&row.provider_message_id!==params.MessageSid))return new Response('Not found',{status:404});
  const status=params.MessageStatus;
  const mapped=status==='read'?'read':status==='delivered'?'delivered':['failed','undelivered','canceled'].includes(status)?'failed':'accepted';
  // Ignore out-of-order callbacks that would regress a delivered/read message.
