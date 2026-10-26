@@ -1,6 +1,6 @@
 EPEW Sent integration — receiver stage
 
-Scope: verified POST /api/webhooks/sent receiver, private event history, and channel-specific STOP suppression. No sending adapter/cutover, replies or live tests are enabled by this change.
+Scope: verified POST /api/webhooks/sent receiver, private event history, and channel-specific STOP suppression. The later appointment-worker integration adds durable binding and status projection but remains paused; see epew-sent-appointment-worker.txt. No live Sent sends are enabled.
 
 Envelope: current https://docs.sent.dm/start/webhooks/event-types uses payload. The parser accepts payload or the older value envelope (not both), validates account identity, and normalizes a private value field for the database function. Original payload is preserved. Bundled reference examples using only value are not the production contract.
 

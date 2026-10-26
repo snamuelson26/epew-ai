@@ -1,6 +1,6 @@
 EPEW outgoing Sent transport — preparation stage
 
-sendSentTemplate is an internal server helper, not a public route or scheduled sender. No existing website workflow calls it. Twilio sending is unchanged. Do not describe this stage as a completed provider migration.
+sendSentTemplate is an internal server helper, not a public route. The appointment worker has a Sent branch that remains paused until explicit provider selection and live enablement. Current production provider selection is unchanged. See epew-sent-appointment-worker.txt for binding, callback projection and launch gates. Do not describe this stage as a completed provider migration.
 
 The transport defaults to sandbox, requires explicit live enablement, pins one channel, requires a current eligible(phone,channel) check immediately before POST, uses a stable logical-id idempotency key, validates a current approved Utility template owned by EPEW, checks exact variable names/channel content, and returns accepted plus messageId rather than claiming delivered. It performs no automatic resend. On timeout/5xx the worker must preserve the logical ID and reconcile acceptance before a retry; 429 exposes Retry-After. Credentials and provider message text are not logged.
 

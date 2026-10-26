@@ -25,7 +25,7 @@ export class SentRequestError extends Error {
   }
 }
 
-// This transport has no public route and does not enable any scheduled workflow.
+// This transport has no public route and cannot enable a scheduled workflow.
 // Do not retry automatically: the worker must retain the same logicalId and
 // classify an ambiguous acceptance before attempting another request.
 export async function sendSentTemplate(input: Input, options: Options) {
@@ -63,19 +63,22 @@ export async function sendSentTemplate(input: Input, options: Options) {
   // Perform this after network lookups, immediately before the mutating request.
   if (!(await options.eligible(input.phone, input.channel))) throw new SentRequestError("sent_consent_missing_or_suppressed");
   const key = "epew_" + createHash("sha256").update(input.logicalId).digest("hex");
-  const response = await fetcher("https://api.sent.dm/v3/messages", {
+  let response: Response;
+  try { response = await fetcher("https://api.sent.dm/v3/messages", {
     method: "POST", headers: { ...headers, "Idempotency-Key": key },
     body: JSON.stringify({ to: [input.phone], channel: [input.channel],
       template: { id: input.templateId, parameters: input.parameters }, sandbox }),
     signal: AbortSignal.timeout(10000),
-  });
+  }); } catch { throw new SentRequestError("sent_acceptance_unknown"); }
   if (!response.ok) {
+    if (response.status >= 500 || response.status === 409) throw new SentRequestError("sent_acceptance_unknown", response.status);
     const retryAfter = Number(response.headers.get("Retry-After"));
     // Provider error messages may contain private data. Return only safe codes.
     throw new SentRequestError("sent_send_rejected", response.status,
       response.status === 429 && Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter : undefined);
   }
-  const result = await response.json();
+  let result;
+  try { result = await response.json(); } catch { throw new SentRequestError("sent_acceptance_unconfirmed"); }
   const recipients = result.data?.recipients;
   if (result.success !== true || !Array.isArray(recipients) || recipients.length !== 1 ||
     recipients[0].to !== input.phone || !/^[0-9a-f-]{36}$/i.test(recipients[0].message_id || "") ||
