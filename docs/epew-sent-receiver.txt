@@ -1,0 +1,15 @@
+EPEW Sent integration — receiver stage
+
+Scope: verified POST /api/webhooks/sent receiver, private event history, and channel-specific STOP suppression. No sending adapter/cutover, replies or live tests are enabled by this change.
+
+Required server configuration (never public or committed): SENT_DM_WEBHOOK_SECRET, SENT_DM_WEBHOOK_ID, SENT_DM_SENDER_NUMBER. Receiver returns 503 until all are present. Expected organization is EPEW 6318afbb-beb3-4007-ae43-dc1af34241ab. The currently connected WhatsApp number is +18667200014. Confirm the SMS route/sender separately after carrier approval.
+
+Apply 20261026041000_sent_event_receiver.sql before connecting the endpoint. Sent registration should subscribe to message events with received, sent, delivered, read, failed, filtered, blocked, scheduled, queued and routed as required. Persist its one-time signing secret securely and set the endpoint ID. Never point Sent at the Twilio webhook.
+
+Security: raw-byte HMAC, endpoint-id match, timestamp window 300 seconds, bounded 64 KiB body, EPEW account and inbound destination validation. Events and STOP suppression are committed atomically. Duplicate inbound events do not duplicate history. HELP/START are retained but do not produce replies or grant consent; Sent handles protected auto-replies. No webhook secrets or payloads are logged. Event payloads are private service-role data and may contain personal information; do not expose as public evidence. Event retention and staff review workflow still need an operational policy.
+
+Release checks: node --import tsx --test tests/sent-webhook.test.cjs tests/sms-*.test.cjs; npx tsc --noEmit; targeted ESLint.
+
+Remaining launch work: secure credentials and endpoint registration; signed provider webhook test; outgoing adapter and mapping to website workflows; correct template purpose/category and language support; SMS carrier approval; controlled authorized live delivery/reply/STOP/HELP tests; mobile and real browser preference-saving tests. Existing Twilio sending and callbacks are unchanged.
+
+Template finding: EPEW Applicant Status Update (8f21d4c4-c806-4e34-aee6-0afb7ae47546) is APPROVED, published and sending-approved but category MARKETING. Its content describes applicant status. Reconcile category/purpose with actual consent before using it. Do not treat template approval as carrier approval or proof of website integration.
