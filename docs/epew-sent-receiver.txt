@@ -2,6 +2,8 @@ EPEW Sent integration — receiver stage
 
 Scope: verified POST /api/webhooks/sent receiver, private event history, and channel-specific STOP suppression. No sending adapter/cutover, replies or live tests are enabled by this change.
 
+Envelope: current https://docs.sent.dm/start/webhooks/event-types uses payload. The parser accepts payload or the older value envelope (not both), validates account identity, and normalizes a private value field for the database function. Original payload is preserved. Bundled reference examples using only value are not the production contract.
+
 Required server configuration (never public or committed): SENT_DM_WEBHOOK_SECRET, SENT_DM_WEBHOOK_ID, SENT_DM_SENDER_NUMBER. Receiver returns 503 until all are present. Expected organization is EPEW 6318afbb-beb3-4007-ae43-dc1af34241ab. The currently connected WhatsApp number is +18667200014. Confirm the SMS route/sender separately after carrier approval.
 
 Apply 20261026041000_sent_event_receiver.sql before connecting the endpoint. Sent registration should subscribe to message events with received, sent, delivered, read, failed, filtered, blocked, scheduled, queued and routed as required. Persist its one-time signing secret securely and set the endpoint ID. Never point Sent at the Twilio webhook.

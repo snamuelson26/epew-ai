@@ -35,6 +35,10 @@ test('raw-body HMAC rejects tampering, expired/future signatures, wrong endpoint
  h.set('x-webhook-signature','v1,bad');assert.equal(verifySentWebhook(body,h,secret,endpoint),false);
 });
 test('inbound identity and channel are scoped; STOP suppresses the matching channel; HELP and START do not grant consent',()=>{
+ const modern=event();modern.payload=modern.value;delete modern.value;
+ assert.equal(parseSentEvent(modern,sender).stopPhone,'+12025550123');
+ assert.equal(parseSentEvent(modern,sender).key,parseSentEvent(event(),sender).key);
+ assert.throws(()=>parseSentEvent({...modern,value:event().value},sender));
  for(const channel of ['sms','whatsapp'])assert.equal(parseSentEvent(event('STOP',channel),sender).stopPhone,'+12025550123');
  for(const text of ['HELP','INFO','START','UNSTOP'])assert.equal(parseSentEvent(event(text),sender).stopPhone,null);
  const wrong=event();wrong.value.account_id='other';assert.throws(()=>parseSentEvent(wrong,sender));
@@ -45,7 +49,7 @@ test('inbound identity and channel are scoped; STOP suppresses the matching chan
  assert.notEqual(first.key,parseSentEvent(outbound,sender).key);
 });
 test('route fails closed without config/signature and acknowledges only after durable storage',async()=>{
- calls=[];configure();const body=JSON.stringify(event());
+ calls=[];configure();const sample=event();const body=JSON.stringify({field:sample.field,event:sample.event,payload:sample.value});
  delete process.env.SENT_DM_WEBHOOK_SECRET;assert.equal((await POST(request(body))).status,503);configure();
  assert.equal((await POST(request(body,new Headers()))).status,401);assert.equal(calls.length,0);
  assert.equal((await POST(request(body))).status,200);assert.equal(calls[0].args.p_stop_phone,'+12025550123');

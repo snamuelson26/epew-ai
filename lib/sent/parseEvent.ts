@@ -8,8 +8,12 @@ const phone = /^\+[1-9][0-9]{7,14}$/;
 export function parseSentEvent(input: unknown, senderNumber: string) {
   if (!input || typeof input !== "object" || Array.isArray(input)) throw new Error("Invalid event");
   const event = input as Record<string, unknown>;
-  if (!event.value || typeof event.value !== "object" || Array.isArray(event.value)) throw new Error("Invalid value");
-  const value = event.value as Record<string, unknown>;
+  // Current Sent docs use payload. Accept the older value envelope explicitly,
+  // but never let two conflicting envelopes choose different account identities.
+  if (event.payload && event.value) throw new Error("Ambiguous envelope");
+  const envelope = event.payload ?? event.value;
+  if (!envelope || typeof envelope !== "object" || Array.isArray(envelope)) throw new Error("Invalid payload");
+  const value = envelope as Record<string, unknown>;
   if (value.account_id !== EPEW_ACCOUNT) throw new Error("Account mismatch");
   const field = String(event.field || "").slice(0, 80);
   const name = String(event.event || "").slice(0, 100);
@@ -23,5 +27,5 @@ export function parseSentEvent(input: unknown, senderNumber: string) {
   // Ignore transport formatting; distinct delivery transitions remain separate.
   const identity = inbound ? [value.account_id, messageId, "received"] : messageId || value.template_id ? [value.account_id, field, name, messageId, value.template_id, channel, value.message_status, value.status, value.updated_at] : event;
   const key = createHash("sha256").update(JSON.stringify(identity)).digest("hex");
-  return { key, field, name, messageId, channel, payload: event, stopPhone: keyword === "stop" ? contact : null };
+  return { key, field, name, messageId, channel, payload: { ...event, value }, stopPhone: keyword === "stop" ? contact : null };
 }
