@@ -731,7 +731,12 @@ function AnnualSupportCheckoutPage({ initialUnits = 1 }: { initialUnits?: number
             <div className="mt-6 rounded-3xl border-2 border-amber-300 bg-amber-50 p-6 text-center">
               <p className="text-sm font-black uppercase tracking-[0.18em] text-amber-800">{t.supportOptions}</p>
               <p className="mt-2 text-2xl font-black text-[#06245c]">{t.annualPaidOnly}</p>
-              <p className="mx-auto mt-2 max-w-2xl font-semibold text-gray-700">{t.annualPaidOnlyBody}</p>
+              <p className="mx-auto mt-2 max-w-2xl font-semibold text-gray-700">{businessId === 'FFR-002' ? ({
+                en: 'You selected annual paid-in-full support. Review the agreements below before paying. Weekly, monthly, and lump-sum options are available on the FFR-002 support page.',
+                ht: 'Ou chwazi sipò anyèl peye anplen. Revize akò ki anba yo anvan ou peye. Opsyon chak semèn, chak mwa ak yon sèl peman disponib sou paj sipò FFR-002 la.',
+                fr: 'Vous avez choisi le soutien annuel payé intégralement. Examinez les accords ci-dessous avant de payer. Les options hebdomadaires, mensuelles et de versement unique sont disponibles sur la page de soutien FFR-002.',
+                es: 'Ha elegido el apoyo anual pagado en su totalidad. Revise los acuerdos antes de pagar. Las opciones semanales, mensuales y de pago único están disponibles en la página de apoyo FFR-002.',
+              }[locale]) : t.annualPaidOnlyBody}</p>
             </div>
 
             <section className="mt-8 rounded-3xl border border-gray-200 bg-white p-6 shadow-lg md:p-8">
