@@ -141,6 +141,29 @@ export default function SupportEntrepreneurPage() {
           </div>
         </section>
 
+        <section className="grid gap-6 rounded-3xl bg-white p-7 shadow-xl lg:grid-cols-2 lg:items-center">
+          <div>
+            <h2 className="text-3xl font-black text-slate-900">The EPEW Community Pledge</h2>
+            <div className="mt-5 space-y-3 text-lg text-slate-800">
+              <p>✅ I believe in this entrepreneur&apos;s vision.</p>
+              <p>✅ I believe successful businesses are built through community.</p>
+              <p>✅ I believe my support can help create opportunity.</p>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <Link href={loginHref} className="inline-block w-full rounded-2xl bg-green-700 px-8 py-5 text-xl font-black text-white shadow-lg transition hover:bg-green-800">
+              {isOrgdhPartner ? "Support ORGDH Network →" : "Support This Entrepreneur →"}
+            </Link>
+            {isOrgdhPartner && (
+              <Link href="/services/orgdh-network" className="mt-4 inline-block w-full rounded-2xl bg-[#06245c] px-8 py-5 text-xl font-black text-white shadow-lg transition hover:bg-blue-900">
+                Request Promotion & Design Services →
+              </Link>
+            )}
+            <p className="mt-4 font-bold text-slate-600">{businessId === 'FFR-001' ? 'Secure • $5,200 per unit, paid in full' : businessId === 'FFR-002' ? 'Secure • Weekly, monthly, annual, or lump sum from $500' : 'Secure • Weekly, Monthly, or Yearly • Impactful'}</p>
+          </div>
+        </section>
+
         <section className="grid gap-6 lg:grid-cols-2">
           <div className="rounded-3xl bg-white p-7 shadow-xl">
             <h2 className="text-3xl font-black text-slate-900">Entrepreneur Story</h2>
@@ -162,29 +185,6 @@ export default function SupportEntrepreneurPage() {
               <Benefit title={businessId === 'FFR-002' ? 'Choose the payment schedule that works for you.' : businessId === 'FFR-001' ? 'Paid-in-full support units are $5,200 each.' : 'You may receive participation benefits of up to 6% annually.'} text={businessId === 'FFR-002' ? 'Weekly, monthly, annual, or a lump sum of $500 or more. Review your payment terms before continuing.' : 'Participation benefits depend on business performance and applicable participation agreements.'} />
               <Benefit title="Your support creates jobs, strengthens communities, and helps build the next generation of entrepreneurs." text="" />
             </div>
-          </div>
-        </section>
-
-        <section className="grid gap-6 rounded-3xl bg-white p-7 shadow-xl lg:grid-cols-2 lg:items-center">
-          <div>
-            <h2 className="text-3xl font-black text-slate-900">The EPEW Community Pledge</h2>
-            <div className="mt-5 space-y-3 text-lg text-slate-800">
-              <p>✅ I believe in this entrepreneur&apos;s vision.</p>
-              <p>✅ I believe successful businesses are built through community.</p>
-              <p>✅ I believe my support can help create opportunity.</p>
-            </div>
-          </div>
-
-          <div className="text-center">
-            <Link href={loginHref} className="inline-block w-full rounded-2xl bg-green-700 px-8 py-5 text-xl font-black text-white shadow-lg transition hover:bg-green-800">
-              {isOrgdhPartner ? "Support ORGDH Network →" : "Support This Entrepreneur →"}
-            </Link>
-            {isOrgdhPartner && (
-              <Link href="/services/orgdh-network" className="mt-4 inline-block w-full rounded-2xl bg-[#06245c] px-8 py-5 text-xl font-black text-white shadow-lg transition hover:bg-blue-900">
-                Request Promotion & Design Services →
-              </Link>
-            )}
-            <p className="mt-4 font-bold text-slate-600">{businessId === 'FFR-001' ? 'Secure • $5,200 per unit, paid in full' : businessId === 'FFR-002' ? 'Secure • Weekly, monthly, annual, or lump sum from $500' : 'Secure • Weekly, Monthly, or Yearly • Impactful'}</p>
           </div>
         </section>
 
