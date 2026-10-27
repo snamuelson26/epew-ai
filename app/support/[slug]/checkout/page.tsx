@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import FlexibleSupport from "./FlexibleSupport";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import {
   LanguageSelector,
@@ -342,6 +343,18 @@ const copy: Record<
 };
 
 export default function SupportCheckoutPage() {
+  return <Suspense fallback={<p>Loading...</p>}><CheckoutChoice /></Suspense>;
+}
+
+function CheckoutChoice() {
+  const params = useParams();
+  const search = useSearchParams();
+  return params.slug === 'FFR-002' && search.get('annual') !== 'full'
+    ? <FlexibleSupport />
+    : <AnnualSupportCheckoutPage initialUnits={Math.min(20, Math.max(1, Math.floor(Number(search.get('units')) || 1)))} />;
+}
+
+function AnnualSupportCheckoutPage({ initialUnits = 1 }: { initialUnits?: number }) {
   const params = useParams();
   const router = useRouter();
   const { locale } = useLocale();
@@ -353,7 +366,7 @@ export default function SupportCheckoutPage() {
 
   const [business, setBusiness] = useState<any>(null);
   const [supporter, setSupporter] = useState<any>(null);
-  const [units, setUnits] = useState(1);
+  const [units, setUnits] = useState(initialUnits);
   const [referrerName, setReferrerName] = useState("");
   const [referrerBusinessName, setReferrerBusinessName] = useState("");
   const [entrepreneurAgreementAccepted, setEntrepreneurAgreementAccepted] =
@@ -718,7 +731,12 @@ export default function SupportCheckoutPage() {
             <div className="mt-6 rounded-3xl border-2 border-amber-300 bg-amber-50 p-6 text-center">
               <p className="text-sm font-black uppercase tracking-[0.18em] text-amber-800">{t.supportOptions}</p>
               <p className="mt-2 text-2xl font-black text-[#06245c]">{t.annualPaidOnly}</p>
-              <p className="mx-auto mt-2 max-w-2xl font-semibold text-gray-700">{t.annualPaidOnlyBody}</p>
+              <p className="mx-auto mt-2 max-w-2xl font-semibold text-gray-700">{businessId === 'FFR-002' ? ({
+                en: 'You selected annual paid-in-full support. Review the agreements below before paying. Weekly, monthly, and lump-sum options are available on the FFR-002 support page.',
+                ht: 'Ou chwazi sipò anyèl peye anplen. Revize akò ki anba yo anvan ou peye. Opsyon chak semèn, chak mwa ak yon sèl peman disponib sou paj sipò FFR-002 la.',
+                fr: 'Vous avez choisi le soutien annuel payé intégralement. Examinez les accords ci-dessous avant de payer. Les options hebdomadaires, mensuelles et de versement unique sont disponibles sur la page de soutien FFR-002.',
+                es: 'Ha elegido el apoyo anual pagado en su totalidad. Revise los acuerdos antes de pagar. Las opciones semanales, mensuales y de pago único están disponibles en la página de apoyo FFR-002.',
+              }[locale]) : t.annualPaidOnlyBody}</p>
             </div>
 
             <section className="mt-8 rounded-3xl border border-gray-200 bg-white p-6 shadow-lg md:p-8">
