@@ -118,7 +118,7 @@ export async function POST(req: Request) {
       await supabaseAdmin
         .from("entrepreneurs")
         .select(
-          "id,business_name,full_name,units_supported,units_required"
+          "id,public_business_id,business_name,full_name,units_supported,units_required"
         )
         .eq("id", entrepreneurId)
         .maybeSingle();
@@ -144,6 +144,10 @@ export async function POST(req: Request) {
         },
         { status: 404 }
       );
+    }
+
+    if (['FFR-001', 'FFR-002'].includes(entrepreneur.public_business_id)) {
+      return NextResponse.json({ error: 'Use this Food Fans campaign’s support page to select an authorized checkout.' }, { status: 400 });
     }
 
     const unitsAvailable =

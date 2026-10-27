@@ -159,7 +159,7 @@ export default function SupportEntrepreneurPage() {
             <div className="mt-6 space-y-5 text-green-950">
               <Benefit title={isOrgdhPartner ? "You help entrepreneurs become visible and ready for growth." : "You become part of this entrepreneur's success story."} text={isOrgdhPartner ? "Your support strengthens professional promotion, design, and campaign services for entrepreneurs." : "You will be recognized as a Founding Supporter and be part of their journey and legacy."} />
               <Benefit title={isOrgdhPartner ? "You support an EPEW partner entrepreneur." : "You help launch a real business that serves its community."} text={isOrgdhPartner ? "ORGDH Network helps businesses communicate their vision through promotion and design." : "Your support helps turn a vision into a business that creates value, serves people, and builds opportunity."} />
-              <Benefit title="You may receive participation benefits of up to 6% annually." text="Participation benefits depend on business performance and EPEW policies and regulations." />
+              <Benefit title={businessId === 'FFR-002' ? 'Choose the payment schedule that works for you.' : businessId === 'FFR-001' ? 'Paid-in-full support units are $5,200 each.' : 'You may receive participation benefits of up to 6% annually.'} text={businessId === 'FFR-002' ? 'Weekly, monthly, annual, or a lump sum of $500 or more. Review your payment terms before continuing.' : 'Participation benefits depend on business performance and applicable participation agreements.'} />
               <Benefit title="Your support creates jobs, strengthens communities, and helps build the next generation of entrepreneurs." text="" />
             </div>
           </div>
@@ -184,7 +184,7 @@ export default function SupportEntrepreneurPage() {
                 Request Promotion & Design Services →
               </Link>
             )}
-            <p className="mt-4 font-bold text-slate-600">🔒 Secure • Weekly, Monthly, or Yearly • Impactful</p>
+            <p className="mt-4 font-bold text-slate-600">{businessId === 'FFR-001' ? 'Secure • $5,200 per unit, paid in full' : businessId === 'FFR-002' ? 'Secure • Weekly, monthly, annual, or lump sum from $500' : 'Secure • Weekly, Monthly, or Yearly • Impactful'}</p>
           </div>
         </section>
 

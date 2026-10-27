@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import FlexibleSupport from "./FlexibleSupport";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import {
   LanguageSelector,
@@ -342,6 +343,18 @@ const copy: Record<
 };
 
 export default function SupportCheckoutPage() {
+  return <Suspense fallback={<p>Loading...</p>}><CheckoutChoice /></Suspense>;
+}
+
+function CheckoutChoice() {
+  const params = useParams();
+  const search = useSearchParams();
+  return params.slug === 'FFR-002' && search.get('annual') !== 'full'
+    ? <FlexibleSupport />
+    : <AnnualSupportCheckoutPage initialUnits={Math.min(20, Math.max(1, Math.floor(Number(search.get('units')) || 1)))} />;
+}
+
+function AnnualSupportCheckoutPage({ initialUnits = 1 }: { initialUnits?: number }) {
   const params = useParams();
   const router = useRouter();
   const { locale } = useLocale();
@@ -353,7 +366,7 @@ export default function SupportCheckoutPage() {
 
   const [business, setBusiness] = useState<any>(null);
   const [supporter, setSupporter] = useState<any>(null);
-  const [units, setUnits] = useState(1);
+  const [units, setUnits] = useState(initialUnits);
   const [referrerName, setReferrerName] = useState("");
   const [referrerBusinessName, setReferrerBusinessName] = useState("");
   const [entrepreneurAgreementAccepted, setEntrepreneurAgreementAccepted] =
