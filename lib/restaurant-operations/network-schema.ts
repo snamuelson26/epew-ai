@@ -300,7 +300,12 @@ export const networkSchemas: Record<string, {label:string;fields:NetworkField[]}
   "drawing": {
     "label": "Independent anniversary drawings",
     "fields": [
-      {"key":"rules_approved","label":"ORGDH rules approved with reference","type":"boolean","required":false},
+      {
+        "key": "rules_approved",
+        "label": "ORGDH rules approved with reference",
+        "type": "boolean",
+        "required": false
+      },
       {
         "key": "drawing_id",
         "label": "ORGDH drawing ID",
@@ -639,6 +644,274 @@ export const networkSchemas: Record<string, {label:string;fields:NetworkField[]}
         "label": "Verified member/account ownership evidence",
         "type": "text",
         "required": true
+      }
+    ]
+  },
+  "translation": {
+    "label": "Translation readiness",
+    "fields": [
+      {
+        "key": "page_id",
+        "label": "Page ID",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "translation_key",
+        "label": "Translation key",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "language_code",
+        "label": "Language code (en, ht, fr, es, or future language)",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "text",
+        "label": "Translation text",
+        "type": "textarea",
+        "required": false
+      },
+      {
+        "key": "reviewed",
+        "label": "Reviewed",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "approved",
+        "label": "Approved",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "review_reference",
+        "label": "Review evidence",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "approval_reference",
+        "label": "Approval evidence",
+        "type": "text",
+        "required": false
+      }
+    ]
+  },
+  "qr": {
+    "label": "QR registry",
+    "fields": [
+      {
+        "key": "qr_id",
+        "label": "QR ID",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "purpose",
+        "label": "Purpose",
+        "type": "select",
+        "required": true,
+        "options": [
+          "order",
+          "support"
+        ]
+      },
+      {
+        "key": "business_id",
+        "label": "Business / restaurant unit ID",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "support_campaign_id",
+        "label": "Separate EPEW support campaign ID",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "destination_url",
+        "label": "Destination URL",
+        "type": "url",
+        "required": true
+      },
+      {
+        "key": "version",
+        "label": "QR version",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "generated_at",
+        "label": "Date generated (ISO timestamp, blank if unknown)",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "scan_tested",
+        "label": "Embedded QR decoded",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "tested",
+        "label": "Destination and fulfillment tested",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "test_evidence",
+        "label": "Test evidence / unresolved verification",
+        "type": "textarea",
+        "required": false
+      },
+      {
+        "key": "approved",
+        "label": "Approved for production use",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "approval_reference",
+        "label": "Approval evidence",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "print_status",
+        "label": "Print status",
+        "type": "select",
+        "required": true,
+        "options": [
+          "not_printed",
+          "held",
+          "ready",
+          "printed"
+        ]
+      },
+      {
+        "key": "notes",
+        "label": "Notes",
+        "type": "textarea",
+        "required": false
+      }
+    ]
+  },
+  "sign": {
+    "label": "47 \u00d7 87 sign artwork",
+    "fields": [
+      {
+        "key": "sign_id",
+        "label": "Sign ID",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "side",
+        "label": "Side",
+        "type": "select",
+        "required": true,
+        "options": [
+          "A",
+          "B"
+        ]
+      },
+      {
+        "key": "width_inches",
+        "label": "Width in inches",
+        "type": "number",
+        "required": true
+      },
+      {
+        "key": "height_inches",
+        "label": "Height in inches",
+        "type": "number",
+        "required": true
+      },
+      {
+        "key": "artwork_version",
+        "label": "Artwork version",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "artwork_file_id",
+        "label": "Private artwork attachment UUID",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "sha256",
+        "label": "Artwork SHA-256",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "source_library_id",
+        "label": "Source file reference",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "content_approved",
+        "label": "Content approved by Samuel",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "content_approval_reference",
+        "label": "Content approval evidence",
+        "type": "textarea",
+        "required": false
+      },
+      {
+        "key": "print_approved",
+        "label": "Print release approved",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "print_approval_reference",
+        "label": "Print approval evidence",
+        "type": "textarea",
+        "required": false
+      },
+      {
+        "key": "print_status",
+        "label": "Print status",
+        "type": "select",
+        "required": true,
+        "options": [
+          "held",
+          "ready",
+          "printed"
+        ]
+      },
+      {
+        "key": "order_qr_id",
+        "label": "Order QR ID",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "support_qr_id",
+        "label": "Support QR ID",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "includes",
+        "label": "Required content and promotional times",
+        "type": "textarea",
+        "required": false
+      },
+      {
+        "key": "qa_notes",
+        "label": "Artwork / print QA and blockers",
+        "type": "textarea",
+        "required": false
       }
     ]
   }

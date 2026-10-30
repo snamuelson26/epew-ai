@@ -14,10 +14,11 @@ export async function GET(request:Request){
  supabaseAdmin.from('epew_ffr_management_summary').select('*').order('restaurant_unit_id'),
  supabaseAdmin.from('epew_ffr_expansion_report').select('*').eq('restaurant_unit_id',unit).order('member_count',{ascending:false}).range(page*100,page*100+99),
  supabaseAdmin.from('epew_ffr_member_segments').select('*').eq('restaurant_unit_id',unit).order('members',{ascending:false}).range(page*100,page*100+99),
- supabaseAdmin.from('epew_ffr_network_revisions').select('id,kind,record_key,version,reason,created_at').eq('restaurant_unit_id',unit).eq('kind',kind).order('created_at',{ascending:false}).limit(30)
+ supabaseAdmin.from('epew_ffr_network_revisions').select('id,kind,record_key,version,reason,created_at').eq('restaurant_unit_id',unit).eq('kind',kind).order('created_at',{ascending:false}).limit(30),
+ supabaseAdmin.from('epew_ffr_translation_readiness').select('*').eq('restaurant_unit_id',unit).order('page_id').order('translation_key').range(page*100,page*100+99)
  ]);
  if(results.some(r=>r.error))return reply({error:"Network records could not be loaded."},503);
- return reply({records:results[0].data,total:results[0].count,summary:results[1].data,expansion:results[2].data,segments:results[3].data,history:results[4].data,page});
+ return reply({records:results[0].data,total:results[0].count,summary:results[1].data,expansion:results[2].data,segments:results[3].data,history:results[4].data,translations:results[5].data,page});
  }catch{return reply({error:"Network service unavailable."},503);}
 }
 export async function POST(request:Request){

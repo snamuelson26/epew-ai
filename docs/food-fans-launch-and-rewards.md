@@ -94,3 +94,38 @@ All writes use an administrator-only, same-origin route, optimistic revision
 checks, request idempotency, and an append-only before/after revision log. Network
 records, histories and report views are unavailable through public/authenticated
 Data API roles; service access is kept server-side.
+
+## Translation, QR and sign records — October 30, 2026
+
+The network register now supports one translation record per page, string key and
+BCP-47-style language code. English, Haitian Creole, French and Spanish appear in
+the readiness matrix; every additional language is retained in its dynamic
+language map without a database redesign. Reviewed/approved states require
+references. Editing a translation clears its prior review and approval. This
+tracks readiness; it does not claim that the public Food Fans website has been
+translated. The initial inventory covers 17 supplied sign strings, with the
+English source and the other three language slots awaiting review/translation.
+
+QR records keep restaurant unit and support campaign separate. Both original
+signs decode to the supplied order candidate and FFR-002 support URL. Browser
+verification established the support page identifies Food Fans, Cambria Heights.
+The ordering page showed FOOD FANS / NEWYORK CITY, closed and no food; it did not
+establish Cambria Heights fulfillment mapping for restaurant ID 1. The ordering
+QR remains held. No payment or test order was submitted. Changing a QR destination
+or version resets test/approval and holds printing.
+
+The two supplied PNG originals are privately attached to FFR-001 Marketing,
+with SHA-256 and original content-approval evidence retained in the sign records.
+Both are 1106 × 2048 pixels with no DPI metadata; 47 × 87 inches is the requested
+physical format, not a claim of print resolution. Printer proof remains needed.
+Side A's original TOUT JOU is superseded by Samuel's ALL DAYS correction. The
+corrected image draft is stored separately: its support code decodes but its
+order code did not decode. It is explicitly held, not a production master.
+No original is overwritten. Final print release requires approved artwork,
+verified QR destinations and printer proof. Artwork version changes clear print
+approval. Sign records link to administrator-only attachment downloads.
+
+Free coffee 6 AM–9 AM and free house drink 10 AM–12 PM / 5 PM–8 PM are recorded
+as supplied sign copy. They do not silently introduce new reward eligibility or
+redemption rules. Broader language QA, printer proof, QR repair and ordering
+fulfillment verification are still pending.
