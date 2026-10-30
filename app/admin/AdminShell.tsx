@@ -54,6 +54,7 @@ export default function AdminShell({
     {
       title: "Operations",
       links: [
+        { name: "Food Fans Operations", href: "/admin/restaurant-operations" },
         { name: "Marketplace", href: "/admin/marketplace" },
         { name: "ETVMC", href: "/admin/etvmc" },
         { name: "Vendors", href: "/admin/vendors" },

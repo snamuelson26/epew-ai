@@ -1,0 +1,17 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const Module=require('node:module');
+const original=Module._load;
+let actor={id:'verified-admin',email:'admin@example.invalid',email_confirmed_at:'2026-10-30'},admin=true,calls=[],dbError=null;
+const client={auth:{getUser:async()=>({data:{user:actor},error:null})},from:()=>({select:()=>({eq:()=>({ilike:async()=>({data:admin?[{user_id:'verified-admin',email:'admin@example.invalid',role:'administrator'}]:[],error:null})})})}),rpc:async(name,args)=>{calls.push(args);return {data:dbError?null:{saved:true},error:dbError}}};
+Module._load=function(name){if(name==='@/lib/supabase/server')return {createClient:async()=>client};if(name==='@/lib/supabaseAdmin')return {supabaseAdmin:client};return original.apply(this,arguments)};
+const {POST}=require('../app/api/admin/restaurant-operations/[unit]/route.ts');
+const {validateWorkInput}=require('../lib/restaurant-operations/validation.ts');
+const valid={action:'create_task',request_id:'00000000-0000-4000-8000-000000000020',title:'POS',description:'Connect receipts',owner:'Technical Director',reason:'Authorized work',p_actor:'forged',p_actor_email:'forged@example.invalid'};
+const context={params:Promise.resolve({unit:'FFR-001'})};
+const req=(body=valid,origin='https://example.invalid')=>new Request('https://example.invalid/api/admin/restaurant-operations/FFR-001',{method:'POST',headers:{origin,'content-type':'application/json'},body:JSON.stringify(body)});
+test('cross-origin writes cannot reach storage',async()=>{calls=[];assert.equal((await POST(req(valid,'https://attacker.invalid'),context)).status,403);assert.equal(calls.length,0)});
+test('anonymous and non-administrators are rejected',async()=>{actor=null;assert.equal((await POST(req(),context)).status,403);actor={id:'verified-admin',email:'admin@example.invalid',email_confirmed_at:'2026-10-30'};admin=false;assert.equal((await POST(req(),context)).status,403);admin=true});
+test('server derives actor identity and strips caller claims',async()=>{calls=[];const response=await POST(req(),context);assert.equal(response.status,200);assert.equal(response.headers.get('cache-control'),'private, no-store');assert.equal(calls[0].p_actor,'verified-admin');assert.equal(calls[0].p_actor_email,'admin@example.invalid');assert.equal(calls[0].p_input.p_actor,undefined)});
+test('database conflict is reported without false success',async()=>{dbError={code:'40001'};const response=await POST(req(),context);assert.equal(response.status,409);assert.equal((await response.json()).saved,undefined);dbError=null});
+test('invalid reasons, correction targets and unsafe evidence links are rejected',()=>{assert.equal(validateWorkInput({...valid,reason:''}),null);const entry={action:'add_entry',request_id:valid.request_id,task_id:valid.request_id,kind:'evidence',reason:'Proof'};for(const evidence_url of ['javascript:alert(1)','http://example.invalid','https://user:password@example.invalid'])assert.equal(validateWorkInput({...entry,evidence_url}),null);assert.equal(validateWorkInput({...entry,kind:'correction'}),null)});
