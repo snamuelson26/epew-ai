@@ -1,0 +1,42 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const {readFileSync}=require('node:fs');
+const {PGlite}=require('@electric-sql/pglite');
+const {randomUUID}=require('node:crypto');
+const admin='10000000-0000-4000-8000-000000000001';
+const outsider='10000000-0000-4000-8000-000000000002';
+test('restaurant work log enforces authorization, isolation, retries, concurrency, and immutable audit',async()=>{
+ const db=new PGlite();
+ try {
+ await db.exec(`create role anon; create role authenticated; create role service_role bypassrls; create schema auth; create schema private; create function auth.uid() returns uuid language sql as 'select null::uuid'; create table public.entrepreneurs(public_business_id text unique); insert into public.entrepreneurs values ('FFR-001'),('FFR-002'); create table public.user_roles(user_id uuid,email text,role text); insert into public.user_roles values ('${admin}','admin@example.invalid','administrator'); grant select on public.user_roles to service_role; grant usage on schema auth to service_role; grant execute on function auth.uid() to service_role;`);
+ await db.exec(readFileSync('supabase/migrations/20261030042530_ffr_restaurant_unit_master_and_audit.sql','utf8'));
+ const migration=readFileSync('supabase/migrations/20261030043415_ffr_restaurant_work_log.sql','utf8');
+ await db.exec(migration);
+ await db.exec(readFileSync('supabase/migrations/20261030043646_ffr_restaurant_audit_access_hardening.sql','utf8'));
+ await db.exec(`select set_config('epew.change_reason','Test fixture',false),set_config('epew.change_executor','Test harness',false),set_config('epew.change_authorization','Test only',false); insert into public.epew_restaurant_units(restaurant_unit_id,business_name,location_name,address,phone,business_type,brand,network,operational_status,marketplace_status,marketplace_launch_status,epew_support_campaign_id,support_url) values ('FFR-001','Food Fans','Cambria Heights','Test','Test','Restaurant','Food Fans','Marketplace','Pre-Opening','Active','Pending Launch','FFR-002','https://example.invalid/support/FFR-002'),('FFR-999','Other store','Other','Test','Test','Restaurant','Food Fans','Marketplace','Pre-Opening','Active','Pending Launch','FFR-001','https://example.invalid/support/FFR-001'); set role service_role;`);
+ const op=async(action,input,unit='FFR-001',actor=admin,email='admin@example.invalid')=>(await db.query('select public.epew_restaurant_work_operation($1,$2,$3,$4,$5::jsonb) as result',[actor,email,unit,action,JSON.stringify(input)])).rows[0].result;
+ const input={request_id:randomUUID(),title:'Connect POS',description:'Verify transactions',owner:'Technical Director',reason:'Approved integration work'};
+ await assert.rejects(op('create_task',input,'FFR-001',outsider,'other@example.invalid'),/Administrator required/);
+ const created=await op('create_task',input); assert.equal(created.saved,true);
+ const repeated=await op('create_task',input); assert.equal(repeated.task_id,created.task_id); assert.equal(repeated.replayed,true);
+ await assert.rejects(op('create_task',{...input,title:'Changed request'}),/different input/);
+ assert.equal((await db.query('select count(*)::int as n from public.epew_restaurant_work_items')).rows[0].n,1);
+ const task=(await db.query('select * from public.epew_restaurant_work_items where id=$1',[created.task_id])).rows[0];
+ const status={request_id:randomUUID(),task_id:task.id,status:'in_progress',expected_updated_at:task.updated_at,reason:'Started verification'};
+ await assert.rejects(op('update_task',status,'FFR-999'),/Task not found/);
+ await op('update_task',status);
+ await assert.rejects(op('update_task',{...status,request_id:randomUUID(),status:'completed'}),/Task changed/);
+ const note=await op('add_entry',{request_id:randomUUID(),task_id:task.id,kind:'evidence',reason:'Validation record',evidence_url:'https://example.invalid/evidence'});
+ await assert.rejects(op('add_entry',{request_id:randomUUID(),task_id:task.id,kind:'correction',corrects_entry_id:randomUUID(),reason:'Fix reference'}),/Correction must reference/);
+ await op('add_entry',{request_id:randomUUID(),task_id:task.id,kind:'correction',corrects_entry_id:note.entry_id,reason:'Corrected interpretation'});
+ await assert.rejects(db.exec('update public.epew_restaurant_unit_audit set reason=reason'),/permission denied|append-only/);
+ await assert.rejects(db.exec('delete from public.epew_restaurant_work_entries'),/permission denied|append-only/);
+ await assert.rejects(db.exec('truncate public.epew_restaurant_units cascade'),/permission denied/);
+ const count=(await db.query('select count(*)::int as n from public.epew_restaurant_work_entries')).rows[0].n; assert.equal(count,4);
+ const audit=(await db.query("select actor_user_id,old_record,new_record from public.epew_restaurant_unit_audit where table_name='epew_restaurant_work_items' and operation='UPDATE'")).rows[0];
+ assert.equal(audit.actor_user_id,admin); assert.equal(audit.old_record.status,'planned'); assert.equal(audit.new_record.status,'in_progress');
+ await db.exec('reset role; set role anon;');
+ await assert.rejects(db.query('select * from public.epew_restaurant_work_items'),/permission denied/);
+ await assert.rejects(op('create_task',{...input,request_id:randomUUID()}),/permission denied/);
+ } finally {await db.close();}
+});
