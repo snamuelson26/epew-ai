@@ -1,22 +1,25 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { entryKinds, workStatuses } from "@/lib/restaurant-operations/validation";
 
-type Task = { id: string; title: string; description: string; owner_label: string; status: string; due_at: string | null; updated_at: string };
+type Task = { id: string; title: string; description: string; owner_label: string; status: string; due_at: string | null; start_at: string | null; completed_at: string | null; workstream_code: string | null; approval_status: string; notes: string; blocker: string; next_action: string; updated_at: string };
 type Entry = { id: string; task_id: string; entry_kind: string; body: string; evidence_url: string | null; corrects_entry_id: string | null; actor_email: string; created_at: string };
 type Audit = { id: string; table_name: string; operation: string; executor: string; reason: string; occurred_at: string; old_record: unknown; new_record: unknown };
 type Implementation = { id: string; event_name: string; event_description: string; actor_name: string; executed_by: string; occurred_at: string; metadata: unknown };
+type WorkFile = { id: string; task_id: string; file_name: string; size_bytes: number; reason: string; uploaded_by_email: string; created_at: string };
 type Snapshot = {
   master: Record<string, unknown>;
   campaigns: { epew_support_campaign_id: string; relationship_status: string; notes: string }[];
-  tasks: Task[]; entries: Entry[]; audit: Audit[]; implementation: Implementation[]; history_limit: number;
+  tasks: Task[]; entries: Entry[]; audit: Audit[]; implementation: Implementation[]; files: WorkFile[]; history_limit: number;
 };
 const endpoint = "/api/admin/restaurant-operations/FFR-001";
 const field = "w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900";
 const button = "rounded-lg bg-[#06245c] px-5 py-3 font-semibold text-white disabled:opacity-50";
 const pretty = (s: string) => s.replaceAll("_", " ");
 const date = (s: string) => new Date(s).toLocaleString("en-US", { timeZone: "America/New_York", dateStyle: "medium", timeStyle: "short" });
+const localDate = (s: string | null) => s ? new Date(Date.parse(s) - new Date(s).getTimezoneOffset()*60000).toISOString().slice(0,16) : "";
 async function readSnapshot(): Promise<Snapshot> {
   const response = await fetch(endpoint, { cache: "no-store" });
   const result = await response.json();
@@ -61,7 +64,8 @@ export default function RestaurantOperations() {
   return <div className="mx-auto max-w-6xl space-y-8 p-4 md:p-8">
     <header>
       <p className="text-sm font-bold uppercase tracking-wide text-emerald-700">Food Fans Marketplace</p>
-      <h1 className="mt-2 text-3xl font-bold text-[#06245c]">FFR-001 · Cambria Heights</h1>
+      <h1 className="mt-2 text-3xl font-bold text-[#06245c]">FFR-001 · Cambria Heights Launch</h1>
+      <Link className="mt-3 inline-block font-semibold text-blue-800 underline" href="/admin/food-fans-rewards">Open Food Fans Rewards Membership</Link>
       <p className="mt-2 text-slate-600">Restaurant master record, work tracking, and audit history. All displayed times use New York time.</p>
     </header>
     {error && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-800">{error} <button type="button" className="ml-3 underline" disabled={busy} onClick={() => { setError(""); load().catch(e => setError(e.message)); }}>Reload records</button></div>}
@@ -101,14 +105,25 @@ export default function RestaurantOperations() {
         </form>
       </section>
       <section className="rounded-2xl border border-slate-200 bg-white p-6">
-        <h2 className="text-xl font-bold">Work register</h2>
+        <h2 className="text-xl font-bold">Launch workstreams and work register</h2>
         <p className="mt-2 text-sm text-slate-600">Latest {data.history_limit} tasks. Completed work still requires evidence and review where applicable.</p>
         {!data.tasks.length && <p className="mt-4">No work items recorded yet.</p>}
-        <div className="mt-4 space-y-3">{data.tasks.map(t => <button type="button" key={t.id} onClick={() => setTaskId(t.id)} className={`block w-full rounded-xl border p-4 text-left ${taskId === t.id ? "border-blue-700 bg-blue-50" : "border-slate-200"}`}><span className="font-semibold">{t.title}</span><span className="ml-3 rounded bg-slate-100 px-2 py-1 text-sm">{pretty(t.status)}</span><p className="mt-2 text-sm">{t.description}</p><p className="mt-2 text-sm text-slate-600">Owner: {t.owner_label} · Due: {t.due_at ? date(t.due_at) : "Not set"}</p></button>)}</div>
+        <div className="mt-4 space-y-3">{data.tasks.map(t => <button type="button" key={t.id} onClick={() => setTaskId(t.id)} className={`block w-full rounded-xl border p-4 text-left ${taskId === t.id ? "border-blue-700 bg-blue-50" : "border-slate-200"}`}><span className="font-semibold">{t.title}</span><span className="ml-3 rounded bg-slate-100 px-2 py-1 text-sm">{pretty(t.status)}</span><p className="mt-2 text-sm">{t.description}</p><p className="mt-2 text-sm text-slate-600">Owner: {t.owner_label} · Start: {t.start_at ? date(t.start_at) : "Not set"} · Due: {t.due_at ? date(t.due_at) : "Not set"} · Approval: {pretty(t.approval_status)}
+        {t.completed_at && <span className="block">Completed: {date(t.completed_at)}</span>}
+        {t.blocker && <span className="block text-red-800">Blocker: {t.blocker}</span>}
+        <span className="block">Next: {t.next_action || "Not set"}</span></p></button>)}</div>
         {task && <div className="mt-6 grid gap-6 border-t pt-6 lg:grid-cols-2">
-          <form className="space-y-4" key={`status-${task.id}-${task.updated_at}`} onSubmit={e => { e.preventDefault(); const form = e.currentTarget; const f = new FormData(form); void save({ action: "update_task", task_id: task.id, expected_updated_at: task.updated_at, status: f.get("status"), reason: f.get("reason") }, form); }}>
+          <form className="space-y-4" key={`status-${task.id}-${task.updated_at}`} onSubmit={e => { e.preventDefault(); const form = e.currentTarget; const f = new FormData(form); void save({ action: "update_task", task_id: task.id, expected_updated_at: task.updated_at, status: f.get("status"), reason: f.get("reason"), owner:f.get("owner"), notes:f.get("notes"), approval_status:f.get("approval_status"), blocker:f.get("blocker"), next_action:f.get("next_action"), start_at:f.get("start_at")?new Date(String(f.get("start_at"))).toISOString():"", due_at:f.get("due_at")?new Date(String(f.get("due_at"))).toISOString():"" }, form); }}>
             <h3 className="font-semibold">Update status · {task.title}</h3>
             <label className="block">Status<select name="status" defaultValue={task.status} className={field}>{workStatuses.map(s => <option key={s} value={s}>{pretty(s)}</option>)}</select></label>
+            <label className="block">Assigned person / role<input name="owner" required maxLength={200} defaultValue={task.owner_label} className={field}/></label>
+            <label className="block">Start (device local time)<input name="start_at" type="datetime-local" defaultValue={localDate(task.start_at)} className={field}/></label>
+            <label className="block">Due (device local time)<input name="due_at" type="datetime-local" defaultValue={localDate(task.due_at)} className={field}/></label>
+            <p className="text-sm">Completion date: {task.completed_at?date(task.completed_at):"Set automatically when completed"}</p>
+            <label className="block">Approval status<select name="approval_status" defaultValue={task.approval_status} className={field}>{["not_requested","pending","approved","rejected"].map(v=><option key={v} value={v}>{pretty(v)}</option>)}</select></label>
+            <label className="block">Notes<textarea name="notes" maxLength={4000} defaultValue={task.notes} className={field}/></label>
+            <label className="block">Blocker<textarea name="blocker" maxLength={4000} defaultValue={task.blocker} className={field}/></label>
+            <label className="block">Next action<textarea name="next_action" maxLength={4000} defaultValue={task.next_action} className={field}/></label>
             <label className="block">Progress and reason<textarea name="reason" required maxLength={4000} className={field} rows={3} /></label>
             <button className={button} disabled={busy}>Save status</button>
           </form>
@@ -121,6 +136,15 @@ export default function RestaurantOperations() {
             <button className={button} disabled={busy}>Record entry</button>
           </form>
         </div>}
+      </section>
+      <section className="rounded-2xl border border-slate-200 bg-white p-6">
+        <h2 className="text-xl font-bold">Private evidence files</h2>
+        <p className="mt-2 text-sm text-slate-600">Select a workstream above to attach supporting documents. Downloads require administrator access.</p>
+        {task && <form className="mt-4 space-y-4" onSubmit={async e=>{e.preventDefault();const form=e.currentTarget;const body=new FormData(form);body.set("task_id",task.id);setBusy(true);setError("");setNotice("");try{const r=await fetch(endpoint+"/files",{method:"POST",body});const result=await r.json();if(!r.ok||!result.saved)throw new Error(result.error||"Upload not confirmed.");form.reset();setNotice("Private evidence file saved with an audit entry.");await load();}catch(e){setError(e instanceof Error?e.message:"Upload failed.");}finally{setBusy(false);}}}>
+          <p className="font-semibold">Attach to {task.title}</p><label className="block">File (up to 20 MB)<input name="file" required type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.csv,.docx,.xlsx" className={field}/></label>
+          <label className="block">Evidence description<textarea name="reason" required maxLength={4000} className={field}/></label><button disabled={busy} className={button}>Upload private evidence</button>
+        </form>}
+        <ul className="mt-4 space-y-3">{data.files.map(f=><li key={f.id} className="rounded border p-3"><a className="font-medium text-blue-800 underline" href={endpoint+"/files/"+f.id} target="_blank" rel="noopener noreferrer">{f.file_name}</a><p>{f.reason}</p><p className="text-xs text-slate-500">{data.tasks.find(t=>t.id===f.task_id)?.title||f.task_id} · {f.uploaded_by_email} · {date(f.created_at)} · {Math.ceil(f.size_bytes/1024)} KB</p></li>)}</ul>
       </section>
       <section className="rounded-2xl border border-slate-200 bg-white p-6">
         <h2 className="text-xl font-bold">Work history</h2><p className="mt-2 text-sm text-slate-600">Latest {data.history_limit} entries. Corrections reference the original entry and never replace it.</p>
