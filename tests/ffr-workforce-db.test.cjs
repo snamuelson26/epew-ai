@@ -2,7 +2,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),{readFile
 const admin='10000000-0000-4000-8000-000000000001';
 test('Workforce keeps planned training honest, protects records and exports only approved matching time once',async()=>{const db=new PGlite();try{
  await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;create table public.user_roles(user_id uuid,email text,role text);insert into public.user_roles values('${admin}','admin@example.invalid','administrator');create table public.epew_restaurant_units(restaurant_unit_id text primary key);insert into public.epew_restaurant_units values('FFR-001'),('FFR-009');create table public.epew_restaurant_work_files(id uuid,restaurant_unit_id text);grant select on public.user_roles,public.epew_restaurant_units,public.epew_restaurant_work_files to service_role;`);
- await db.exec(readFileSync('supabase/migrations/20261030144211_ffr_workforce_v1.sql','utf8'));
+ await db.exec(readFileSync('supabase/migrations/20261030144918_ffr_workforce_v1.sql','utf8'));
  assert.equal((await db.query("select count(*)::int n from public.epew_ffr_workforce_records where kind='training_plan' and data->>'planned_date'='2026-11-09' and data->>'status'='planned'")).rows[0].n,9);
  await db.exec('set role service_role');
  const save=async(kind,key,data,version=0,id=randomUUID(),unit='FFR-001')=>(await db.query('select public.epew_ffr_workforce_save($1,$2,$3,$4::jsonb) r',[admin,'admin@example.invalid',unit,JSON.stringify({kind,record_key:key,data,expected_version:version,request_id:id,reason:'Synthetic test evidence'})])).rows[0].r;
