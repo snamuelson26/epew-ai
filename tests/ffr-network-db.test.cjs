@@ -17,6 +17,7 @@ test('Network records enforce independent raffles, audited revisions and complet
  await db.exec(read('20261030045716_ffr_launch_evidence_files.sql'));
  await db.exec(`create table auth.users(id uuid primary key,email_confirmed_at timestamptz);grant select on auth.users to service_role;insert into auth.users values('${admin}',now());`);
  await db.exec(read('20261030053528_ffr_network_operations.sql'));
+ await db.exec(read('20261030121419_ffr_translation_qr_sign_registry.sql'));
  await db.exec('set role service_role');
  const save=async(kind,key,data,version=0,request=randomUUID())=>(await db.query('select public.epew_ffr_network_save($1,$2,$3,$4::jsonb) as r',[admin,'manager@example.invalid','FFR-001',JSON.stringify({kind,record_key:key,data,expected_version:version,request_id:request,reason:'Synthetic verification only'})])).rows[0].r;
  const op=async(action,input)=>(await db.query('select public.epew_ffr_rewards_operation($1,$2,$3,$4,$5::jsonb) as r',[admin,'manager@example.invalid','FFR-001',action,JSON.stringify({...input,request_id:randomUUID(),reason:'Synthetic verification only'})])).rows[0].r;
@@ -33,6 +34,22 @@ test('Network records enforce independent raffles, audited revisions and complet
  await assert.rejects(save('raffle',member+':DRAW-2027',raffle),/Record changed/);
  const status=(await db.query('select * from public.epew_ffr_raffle_status')).rows[0];assert.equal(status.current_confirmed_tickets,3);assert.equal(status.expired,false);
  await assert.rejects(save('drawing','DRAW-2027',{...drawing,raffle_year:2026},1),/year mismatch/);
+ // Extensible languages and evidence-dependent approvals, with stale approvals reset on edits.
+ const translation={page_id:'home',translation_key:'grab_go',language_code:'ht',text:'Draft translation',reviewed:true,approved:true,review_reference:'Synthetic review',approval_reference:'Synthetic approval'};
+ await save('translation','home.grab_go:ht',translation);
+ await save('translation','home.grab_go:ht',{...translation,text:'Revised draft'},1);
+ assert.equal((await db.query("select (data->>'approved')::boolean as approved from public.epew_ffr_network_records where kind='translation'")).rows[0].approved,false);
+ await save('translation','home.grab_go:ja',{...translation,language_code:'ja'});
+ assert.ok((await db.query('select languages from public.epew_ffr_translation_readiness')).rows[0].languages.ja);
+ await assert.rejects(save('translation','home.empty:es',{...translation,translation_key:'empty',language_code:'es',text:null}),/evidence required/);
+ const qr={qr_id:'FFR-001-ORDER',purpose:'order',business_id:'FFR-001',support_campaign_id:null,destination_url:'https://example.invalid/order',version:'1',generated_at:null,scan_tested:true,tested:false,test_evidence:'Decoded fixture only; fulfillment unverified',approved:false,approval_reference:null,print_status:'held',notes:''};
+ await save('qr','FFR-001-ORDER',qr);
+ await assert.rejects(save('qr','FFR-001-ORDER',{...qr,approved:true,print_status:'ready'},1),/evidence required/);
+ await save('qr','FFR-001-ORDER',{...qr,tested:true,approved:true,approval_reference:'Synthetic approval'},1);
+ await save('qr','FFR-001-ORDER',{...qr,destination_url:'https://example.invalid/other',tested:true,approved:true,approval_reference:'Old evidence'},2);
+ assert.equal((await db.query("select (data->>'approved')::boolean as approved from public.epew_ffr_network_records where kind='qr'")).rows[0].approved,false);
+ await assert.rejects(save('qr','FFR-001-SUPPORT',{...qr,qr_id:'FFR-001-SUPPORT',purpose:'support',support_campaign_id:'WRONG'}),/campaign required/);
+ await assert.rejects(save('sign','SIGN-A',{sign_id:'SIGN-A',side:'A',width_inches:47,height_inches:87,artwork_version:'1',artwork_file_id:randomUUID(),sha256:'a'.repeat(64),source_library_id:null,content_approved:true,content_approval_reference:'Supplied approval',print_approved:false,print_approval_reference:null,print_status:'held',order_qr_id:'FFR-001-ORDER',support_qr_id:'FFR-001-SUPPORT',includes:'Approved copy',qa_notes:'Pending'}),/must be attached/);
  // Moving the fixture drawing into the past must expire every confirmed ticket without deleting history.
  await db.exec('reset role');await db.query("update public.epew_ffr_network_records set data=jsonb_set(data,'{draw_at}',to_jsonb((now()-interval '1 minute')::text)) where kind='drawing'");await db.exec('set role service_role');
  assert.equal((await db.query('select current_confirmed_tickets,expired from public.epew_ffr_raffle_status')).rows[0].current_confirmed_tickets,0);
