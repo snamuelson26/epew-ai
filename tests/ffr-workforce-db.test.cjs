@@ -3,6 +3,7 @@ const admin='10000000-0000-4000-8000-000000000001';
 test('Workforce keeps planned training honest, protects records and exports only approved matching time once',async()=>{const db=new PGlite();try{
  await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;create table public.user_roles(user_id uuid,email text,role text);insert into public.user_roles values('${admin}','admin@example.invalid','administrator');create table public.epew_restaurant_units(restaurant_unit_id text primary key);insert into public.epew_restaurant_units values('FFR-001'),('FFR-009');create table public.epew_restaurant_work_files(id uuid,restaurant_unit_id text);grant select on public.user_roles,public.epew_restaurant_units,public.epew_restaurant_work_files to service_role;`);
  await db.exec(readFileSync('supabase/migrations/20261030144918_ffr_workforce_v1.sql','utf8'));
+ await db.exec(readFileSync('supabase/migrations/20261030145206_ffr_workforce_training_keys.sql','utf8'));
  assert.equal((await db.query("select count(*)::int n from public.epew_ffr_workforce_records where kind='training_plan' and data->>'planned_date'='2026-11-09' and data->>'status'='planned'")).rows[0].n,9);
  await db.exec('set role service_role');
  const save=async(kind,key,data,version=0,id=randomUUID(),unit='FFR-001')=>(await db.query('select public.epew_ffr_workforce_save($1,$2,$3,$4::jsonb) r',[admin,'admin@example.invalid',unit,JSON.stringify({kind,record_key:key,data,expected_version:version,request_id:id,reason:'Synthetic test evidence'})])).rows[0].r;
@@ -13,8 +14,10 @@ test('Workforce keeps planned training honest, protects records and exports only
  assert.equal((await db.query("select data->>'trainer' t from public.epew_ffr_workforce_records where kind='training' and data->>'topic'='POS'")).rows[0].t,'Guy');
  await assert.rejects(save('employee','E1',emp),/Record changed/);
  await assert.rejects(save('employee','E2',{...emp,ssn:'FORBIDDEN'}),/Unknown field/);
- const training={employee_id:'E1',topic:'POS',planned_date:'2026-11-09',trainer:'Guy',status:'completed',training_date:null,assessment:null};await assert.rejects(save('training','E1:pos',training,1),/Actual training/);
- await assert.rejects(save('training','E1:pos',{...training,training_date:'2099-01-01',assessment:'claimed'},1),/Actual training/);
+ const posKey=(await db.query("select record_key from public.epew_ffr_workforce_records where kind='training' and data->>'topic'='POS'")).rows[0].record_key;
+ assert.equal((await db.query("select count(*)::int n from public.epew_ffr_workforce_records where kind='training' and record_key!~'^[A-Za-z0-9_.:-]{1,100}$'")).rows[0].n,0);
+ const training={employee_id:'E1',topic:'POS',planned_date:'2026-11-09',trainer:'Guy',status:'completed',training_date:null,assessment:null};await assert.rejects(save('training',posKey,training,1),/Actual training/);
+ await assert.rejects(save('training',posKey,{...training,training_date:'2099-01-01',assessment:'claimed'},1),/Actual training/);
  await assert.rejects(save('training','T',{...training,status:'planned'},0,randomUUID(),'FFR-009'),/Employee not found/);
  const time={employee_id:'E1',clock_in:'2026-01-05T09:00:00-05:00',clock_out:'2026-01-05T17:00:00-05:00',unpaid_break_minutes:30,status:'pending',approval_evidence:null};await save('time_entry','TIME-1',time);
  await assert.rejects(save('time_entry','TIME-2',time),/Overlapping/);
