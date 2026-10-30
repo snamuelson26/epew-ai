@@ -1,4 +1,4 @@
-export const workStatuses = ["planned", "in_progress", "blocked", "ready_for_review", "completed"] as const;
+export const workStatuses = ["not_started", "in_progress", "waiting", "blocked", "ready_for_review", "approved", "completed"] as const;
 export const entryKinds = ["progress", "evidence", "decision", "correction"] as const;
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const text = (v: unknown, max: number) => typeof v === "string" && v.trim().length > 0 && v.trim().length <= max ? v.trim() : null;
@@ -23,6 +23,21 @@ export function validateWorkInput(value: unknown): { action: string; values: Rec
     if (v.action === "update_task") {
       if (!workStatuses.includes(v.status as typeof workStatuses[number]) || typeof v.expected_updated_at !== "string" || !Number.isFinite(Date.parse(v.expected_updated_at))) return null;
       Object.assign(values, { status: v.status, expected_updated_at: v.expected_updated_at });
+      if (v.owner !== undefined) { const owner = text(v.owner, 200); if (!owner) return null; values.owner = owner; }
+      for (const key of ["notes", "blocker", "next_action"] as const) {
+        if (v[key] !== undefined) { if (typeof v[key] !== "string" || v[key].length > 4000) return null; values[key] = v[key]; }
+      }
+      if (v.approval_status !== undefined) {
+        if (!["not_requested", "pending", "approved", "rejected"].includes(String(v.approval_status))) return null;
+        values.approval_status = v.approval_status;
+      }
+      for (const key of ["start_at", "due_at"] as const) {
+        if (v[key] !== undefined) {
+          if (v[key] === "") values[key] = "";
+          else if (typeof v[key] === "string" && Number.isFinite(Date.parse(v[key])) && /^\d{4}-\d{2}-\d{2}T.*(Z|[+-]\d{2}:\d{2})$/.test(v[key])) values[key] = new Date(v[key]).toISOString();
+          else return null;
+        }
+      }
     } else {
       if (!entryKinds.includes(v.kind as typeof entryKinds[number])) return null;
       values.kind = v.kind;

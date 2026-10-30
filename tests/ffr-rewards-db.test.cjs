@@ -1,0 +1,76 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const {readFileSync}=require('node:fs');
+const {PGlite}=require('@electric-sql/pglite');
+const {randomUUID}=require('node:crypto');
+const admin='10000000-0000-4000-8000-000000000001';
+const read=p=>readFileSync('supabase/migrations/'+p,'utf8');
+test('FFR launch workspace and rewards preserve audited, idempotent accounting',async()=>{
+ const db=new PGlite();
+ try{
+ await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;create schema auth;create schema private;create schema storage;create function auth.uid() returns uuid language sql as 'select null::uuid';create table public.entrepreneurs(public_business_id text unique);insert into public.entrepreneurs values('FFR-001'),('FFR-002');create table public.user_roles(user_id uuid,email text,role text);insert into public.user_roles values('${admin}','manager@example.invalid','administrator');grant select on public.user_roles to service_role;grant usage on schema auth,storage to service_role;grant execute on function auth.uid() to service_role;create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);create table storage.objects(bucket_id text,name text);grant select on storage.objects to service_role;`);
+ await db.exec(read('20261030042530_ffr_restaurant_unit_master_and_audit.sql'));
+ await db.exec(read('20261030043415_ffr_restaurant_work_log.sql'));
+ await db.exec(read('20261030043646_ffr_restaurant_audit_access_hardening.sql'));
+ await db.exec(`select set_config('epew.change_reason','Test fixture',false),set_config('epew.change_executor','Test harness',false),set_config('epew.change_authorization','Test only',false);insert into public.epew_restaurant_units(restaurant_unit_id,business_name,location_name,address,phone,business_type,brand,network,operational_status,marketplace_status,marketplace_launch_status,epew_support_campaign_id,support_url) values('FFR-001','Food Fans','Cambria Heights','Test','Test','Restaurant','Food Fans','Marketplace','Pre-Opening','Active','Pending Launch','FFR-002','https://example.invalid/support/FFR-002');`);
+ await db.exec(read('20261030045715_ffr_launch_workspace_and_rewards.sql'));
+ await db.exec(read('20261030045716_ffr_launch_evidence_files.sql'));
+ await db.exec('set role service_role');
+ assert.equal((await db.query('select count(*)::int as n from public.epew_restaurant_work_items where workstream_code is not null')).rows[0].n,15);
+ const launch=(await db.query("select * from public.epew_restaurant_work_items where workstream_code='pos'")).rows[0];
+ assert.equal(launch.status,'not_started');assert.equal(launch.owner_label,'Unassigned');assert.equal(launch.due_at,null);
+ const work=await db.query('select public.epew_restaurant_work_operation($1,$2,$3,$4,$5::jsonb) as result',[admin,'manager@example.invalid','FFR-001','update_task',JSON.stringify({request_id:randomUUID(),task_id:launch.id,expected_updated_at:launch.updated_at,status:'waiting',owner:'Technical Director',start_at:'2026-11-01T12:00:00Z',due_at:'2026-11-02T12:00:00Z',notes:'Await verified provider',approval_status:'pending',blocker:'Provider not selected',next_action:'Verify provider',reason:'Launch planning'})]);
+ assert.equal(work.rows[0].result.saved,true);
+ const op=async(action,input,actor=admin,email='manager@example.invalid')=>(await db.query('select public.epew_ffr_rewards_operation($1,$2,$3,$4,$5::jsonb) as result',[actor,email,'FFR-001',action,JSON.stringify(input)])).rows[0].result;
+ const enrollment={request_id:randomUUID(),reason:'Member enrollment',full_name:'Synthetic Test Member',mobile_number:'+15555550123',email:'member@example.invalid',zip_code:'11411',preferred_language:'English',sms_consent:false,email_consent:false,raffle_opt_in:false,consent_evidence:'No promotional consent'};
+ await assert.rejects(op('enroll',enrollment,randomUUID(),'outsider@example.invalid'),/Authorized manager/);
+ await assert.rejects(op('enroll',{...enrollment,request_id:randomUUID(),zip_code:''}),/check constraint/);
+ const member=(await op('enroll',enrollment)).member_id;
+ assert.equal((await op('enroll',enrollment)).member_id,member);
+ const balance=async(id=member)=>(await db.query('select * from public.epew_ffr_reward_balances where member_id=$1',[id])).rows[0];
+ const orderInput=(id,quantity,extra={})=>({request_id:randomUUID(),member_id:member,reason:'Manager verified paid receipt',order_id:id,payment_status:'paid',order_status:'completed',receipt_reference:'Synthetic receipt '+id,lines:[{kind:'meal',is_reward:false,quantity,unit_price_cents:1600}],...extra});
+ const first=orderInput('TEST-24',24);await op('record_order',first);
+ assert.equal((await balance()).current_qualifying_meal_count,24);
+ await op('record_order',first);await op('record_order',{...first,request_id:randomUUID()});
+ assert.equal((await balance()).lifetime_qualifying_meals,24);
+ await op('record_order',orderInput('TEST-25',1));
+ assert.equal((await balance()).current_qualifying_meal_count,0);assert.equal((await balance()).free_meals_currently_available,1);
+ await op('record_order',orderInput('CANCELED',3,{order_status:'canceled'}));
+ await op('record_order',orderInput('UNPAID',3,{payment_status:'unpaid'}));
+ await op('record_order',orderInput('EXCLUDED',1,{lines:[{kind:'meal',is_reward:false,quantity:2,unit_price_cents:1500},{kind:'meal',is_reward:true,quantity:1,unit_price_cents:1800},{kind:'addon',is_reward:false,quantity:1,unit_price_cents:2000}]}));
+ assert.equal((await balance()).lifetime_qualifying_meals,25);
+ // Refund an unused earned reward: preserve original transactions, revoke grant,
+ // and restore only the 24 remaining qualifying meal credits.
+ await op('refund_order',{request_id:randomUUID(),member_id:member,order_id:'TEST-25',quantity:1,receipt_reference:'Synthetic refund',reason:'One meal refunded'});
+ assert.equal((await balance()).current_qualifying_meal_count,24);assert.equal((await balance()).free_meals_currently_available,0);assert.equal((await balance()).lifetime_qualifying_meals,24);
+ await assert.rejects(op('refund_order',{request_id:randomUUID(),member_id:member,order_id:'TEST-25',quantity:1,receipt_reference:'duplicate refund',reason:'Attempt duplicate'}),/Invalid refund/);
+ await op('record_order',orderInput('EARN-AGAIN',1));
+ const grant=(await db.query("select * from public.epew_ffr_reward_grants where member_id=$1 and status='available'",[member])).rows[0];
+ await db.query("update public.epew_ffr_reward_grants set earned_at=clock_timestamp()-interval '3 hours',expires_at=clock_timestamp()+interval '69 hours' where id=$1",[grant.id]);
+ const now=Date.now();
+ const redeem={request_id:randomUUID(),member_id:member,grant_id:grant.id,order_id:'ONLINE-REWARD',receipt_reference:'Synthetic verified online order',online_requested_at:new Date(now-150*60000).toISOString(),fulfillment_at:new Date(now-60000).toISOString(),fulfillment_method:'pickup',reason:'Verified completed free meal'};
+ await assert.rejects(op('redeem',{...redeem,request_id:randomUUID(),online_requested_at:new Date(now-30*60000).toISOString()}),/two-hour/);
+ await op('redeem',redeem);await op('redeem',redeem);
+ assert.equal((await balance()).free_meals_redeemed,1);
+ await assert.rejects(op('redeem',{...redeem,request_id:randomUUID()}),/Redemption requires/);
+ await op('refund_order',{request_id:randomUUID(),member_id:member,order_id:'EARN-AGAIN',quantity:1,receipt_reference:'Refund after redemption',reason:'Verified refund'});
+ assert.equal((await balance()).current_qualifying_meal_count,-1);assert.equal((await balance()).free_meals_currently_available,0);
+ await op('record_order',orderInput('REPAY-DEFICIT',1));assert.equal((await balance()).current_qualifying_meal_count,0);assert.equal((await balance()).free_meals_currently_available,0);
+ await op('record_order',orderInput('MULTIPLE-MEALS',27));assert.equal((await balance()).current_qualifying_meal_count,2);assert.equal((await balance()).free_meals_currently_available,1);
+ const snapshot=(await db.query('select * from public.epew_ffr_members where member_id=$1',[member])).rows[0];
+ assert.equal(snapshot.raffle_eligibility_year,null);assert.equal(snapshot.sms_consent,false);
+ await op('update_member',{request_id:randomUUID(),member_id:member,expected_updated_at:snapshot.updated_at,membership_status:'inactive',sms_consent:false,email_consent:false,raffle_opt_in:false,consent_evidence:'Pause account',reason:'Member requested pause'});
+ assert.equal((await balance()).current_qualifying_meal_count,2);assert.equal((await balance()).free_meals_currently_available,0);
+ await assert.rejects(op('record_order',orderInput('INACTIVE',1)),/not active/);
+ assert.equal((await db.query("select rules->>'active_member_credits_expire' as expiry from public.epew_ffr_program_rules")).rows[0].expiry,'false');
+ const ledger=(await db.query('select * from public.epew_ffr_reward_ledger where member_id=$1 order by created_at,transaction_id',[member])).rows;
+ assert.ok(ledger.length>10);for(const row of ledger){assert.equal(row.balance_after,row.balance_before+row.credit_delta);assert.equal(row.recorded_by_user_id,admin);assert.ok(row.reason);}
+ const geo=(await db.query("select * from public.epew_ffr_member_geography where zip_code='11411'")).rows[0];assert.equal(geo.member_count,1);
+ await assert.rejects(db.exec('delete from public.epew_ffr_reward_ledger'),/permission denied|append-only/);
+ await db.exec('reset role');await assert.rejects(db.exec('update public.epew_ffr_reward_ledger set quantity=quantity'),/append-only/);
+ assert.equal((await db.query("select public from storage.buckets where id='epew-restaurant-evidence'")).rows[0].public,false);
+ const key=`FFR-001/${launch.id}/${randomUUID()}.pdf`;await db.query('insert into storage.objects values($1,$2)',['epew-restaurant-evidence',key]);await db.exec('set role service_role');
+ const attached=(await db.query('select public.epew_restaurant_attach_file($1,$2,$3,$4,$5,$6,$7,$8,$9) as id',[admin,'manager@example.invalid','FFR-001',launch.id,key,'test.pdf','application/pdf',100,'Synthetic evidence'])).rows[0];assert.ok(attached.id);
+ await db.exec('reset role;set role anon');await assert.rejects(db.query('select * from public.epew_ffr_members'),/permission denied/);await assert.rejects(op('record_order',orderInput('NO-ACCESS',1)),/permission denied/);
+ }finally{await db.close();}
+});
