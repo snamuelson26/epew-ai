@@ -62,7 +62,7 @@ export default function RestaurantOperations() {
 
   const task = data?.tasks.find(t => t.id === taskId);
   return <div className="mx-auto max-w-6xl space-y-8 p-4 md:p-8">
-    <header>
+    <header><Link className="block mb-3 text-blue-800 underline" href="/admin/food-fans-network">Network records, raffle and expansion reports</Link>
       <p className="text-sm font-bold uppercase tracking-wide text-emerald-700">Food Fans Marketplace</p>
       <h1 className="mt-2 text-3xl font-bold text-[#06245c]">FFR-001 · Cambria Heights Launch</h1>
       <Link className="mt-3 inline-block font-semibold text-blue-800 underline" href="/admin/food-fans-rewards">Open Food Fans Rewards Membership</Link>

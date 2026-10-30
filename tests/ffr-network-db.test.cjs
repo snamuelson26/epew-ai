@@ -1,0 +1,51 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const {readFileSync}=require('node:fs');
+const {PGlite}=require('@electric-sql/pglite');
+const {randomUUID}=require('node:crypto');
+const admin='10000000-0000-4000-8000-000000000001';
+const read=p=>readFileSync('supabase/migrations/'+p,'utf8');
+test('Network records enforce independent raffles, audited revisions and complete analytics',async()=>{
+ const db=new PGlite();
+ try{
+ await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;create schema auth;create schema private;create schema storage;create function auth.uid() returns uuid language sql as 'select null::uuid';create table public.entrepreneurs(public_business_id text unique);insert into public.entrepreneurs values('FFR-001'),('FFR-002');create table public.user_roles(user_id uuid,email text,role text);insert into public.user_roles values('${admin}','manager@example.invalid','administrator');grant select on public.user_roles to service_role;grant usage on schema auth,storage to service_role;grant execute on function auth.uid() to service_role;create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);create table storage.objects(bucket_id text,name text);grant select on storage.objects to service_role;`);
+ await db.exec(read('20261030042530_ffr_restaurant_unit_master_and_audit.sql'));
+ await db.exec(read('20261030043415_ffr_restaurant_work_log.sql'));
+ await db.exec(read('20261030043646_ffr_restaurant_audit_access_hardening.sql'));
+ await db.exec(`select set_config('epew.change_reason','Test fixture',false),set_config('epew.change_executor','Test harness',false),set_config('epew.change_authorization','Test only',false);insert into public.epew_restaurant_units(restaurant_unit_id,business_name,location_name,address,phone,business_type,brand,network,operational_status,marketplace_status,marketplace_launch_status,epew_support_campaign_id,support_url) values('FFR-001','Food Fans','Cambria Heights','Test','Test','Restaurant','Food Fans','Marketplace','Pre-Opening','Active','Pending Launch','FFR-002','https://example.invalid/support/FFR-002');`);
+ await db.exec(read('20261030045715_ffr_launch_workspace_and_rewards.sql'));
+ await db.exec(read('20261030045716_ffr_launch_evidence_files.sql'));
+ await db.exec(`create table auth.users(id uuid primary key,email_confirmed_at timestamptz);grant select on auth.users to service_role;insert into auth.users values('${admin}',now());`);
+ await db.exec(read('20261030053528_ffr_network_operations.sql'));
+ await db.exec('set role service_role');
+ const save=async(kind,key,data,version=0,request=randomUUID())=>(await db.query('select public.epew_ffr_network_save($1,$2,$3,$4::jsonb) as r',[admin,'manager@example.invalid','FFR-001',JSON.stringify({kind,record_key:key,data,expected_version:version,request_id:request,reason:'Synthetic verification only'})])).rows[0].r;
+ const op=async(action,input)=>(await db.query('select public.epew_ffr_rewards_operation($1,$2,$3,$4,$5::jsonb) as r',[admin,'manager@example.invalid','FFR-001',action,JSON.stringify({...input,request_id:randomUUID(),reason:'Synthetic verification only'})])).rows[0].r;
+ const member=(await op('enroll',{full_name:'Synthetic member',mobile_number:'+15555550123',email:'member@example.invalid',zip_code:'11411',preferred_language:'English',sms_consent:false,email_consent:false,raffle_opt_in:false,consent_evidence:'No consent'})).member_id;
+ const drawing={rules_approved:true,drawing_id:'DRAW-2027',raffle_year:2027,draw_at:'2027-11-21T17:00:00-05:00',rules_reference:'Synthetic ORGDH rules',venue:'TBA',notes:''};
+ await save('drawing','DRAW-2027',drawing);
+ const raffle={member_id:member,drawing_id:'DRAW-2027',raffle_year:2027,eligible:true,opted_in:true,entry_confirmed:true,date_entered:new Date().toISOString(),orgdh_reference_id:'SYNTHETIC-REFERENCE',confirmed_ticket_count:3,notes:''};
+ await assert.rejects(save('raffle',member+':DRAW-2027',raffle),/valid paid membership/);
+ const tier={member_id:member,level:'ELITE',state_code:'NY',starts_at:new Date(Date.now()-86400000).toISOString(),expires_at:new Date(Date.now()+300*86400000).toISOString(),payment_reference:'SYNTHETIC-PAID-VERIFICATION',notes:''};
+ await save('membership',member,tier);
+ await save('membership',member,{...tier,state_code:'FL'},1);await assert.rejects(save('raffle',member+':DRAW-2027',raffle),/scope does not cover/);await save('membership',member,tier,2);
+ await save('location','FFR-001',{state_code:'NY',country_code:'US',latitude:null,longitude:null,operating:false,evidence:'Synthetic location review'},1);
+ const req=randomUUID();await save('raffle',member+':DRAW-2027',raffle,0,req);assert.equal((await save('raffle',member+':DRAW-2027',raffle,0,req)).replayed,true);
+ await assert.rejects(save('raffle',member+':DRAW-2027',raffle),/Record changed/);
+ const status=(await db.query('select * from public.epew_ffr_raffle_status')).rows[0];assert.equal(status.current_confirmed_tickets,3);assert.equal(status.expired,false);
+ await assert.rejects(save('drawing','DRAW-2027',{...drawing,raffle_year:2026},1),/year mismatch/);
+ // Moving the fixture drawing into the past must expire every confirmed ticket without deleting history.
+ await db.exec('reset role');await db.query("update public.epew_ffr_network_records set data=jsonb_set(data,'{draw_at}',to_jsonb((now()-interval '1 minute')::text)) where kind='drawing'");await db.exec('set role service_role');
+ assert.equal((await db.query('select current_confirmed_tickets,expired from public.epew_ffr_raffle_status')).rows[0].current_confirmed_tickets,0);
+ await op('record_order',{member_id:member,order_id:'SYNTHETIC-25',payment_status:'paid',order_status:'completed',receipt_reference:'Synthetic receipt',lines:[{kind:'meal',is_reward:false,quantity:25,unit_price_cents:1600}]});
+ assert.equal((await db.query("select count(*)::int as n from public.epew_ffr_network_records where kind='raffle'")).rows[0].n,1);
+ assert.equal((await db.query('select current_confirmed_tickets from public.epew_ffr_raffle_status')).rows[0].current_confirmed_tickets,0);
+ const summary=(await db.query('select * from public.epew_ffr_management_summary')).rows[0];assert.equal(summary.total_members,1);assert.equal(summary.meals_credited,25);assert.equal(summary.free_meals_earned,1);assert.equal(summary.outstanding_free_meals,1);
+ const geo=(await db.query('select * from public.epew_ffr_expansion_report')).rows[0];assert.equal(geo.currently_served,'unknown');assert.equal(geo.nearest_location,null);assert.equal(geo.total_qualifying_meals,25);assert.equal(geo.order_count,1);
+ await save('portal_link',member,{member_id:member,auth_user_id:admin,identity_evidence:'Synthetic verified ownership'});
+ await assert.rejects(save('portal_link','OTHER',{member_id:member,auth_user_id:admin,identity_evidence:'Duplicate ownership'}),/Verified account required|duplicate/);
+ await assert.rejects(save('membership',member,{...tier,expires_at:new Date(Date.now()+800*86400000).toISOString()},3),/one year/);
+ await assert.rejects(save('menu','ITEM',{menu_item_id:'ITEM',name:'Draft item',version:'1',price:20}),/Unknown field/);
+ await assert.rejects(db.exec('delete from public.epew_ffr_network_revisions'),/permission denied|append-only/);
+ await db.exec('reset role;set role anon');await assert.rejects(db.exec('select * from public.epew_ffr_network_records'),/permission denied/);await assert.rejects(db.exec('select * from public.epew_ffr_raffle_status'),/permission denied/);
+ }finally{await db.close();}
+});

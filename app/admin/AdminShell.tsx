@@ -56,6 +56,7 @@ export default function AdminShell({
       links: [
         { name: "Food Fans Operations", href: "/admin/restaurant-operations" },
         { name: "Food Fans Rewards", href: "/admin/food-fans-rewards" },
+        { name: "Food Fans Network Records", href: "/admin/food-fans-network" },
         { name: "Marketplace", href: "/admin/marketplace" },
         { name: "ETVMC", href: "/admin/etvmc" },
         { name: "Vendors", href: "/admin/vendors" },

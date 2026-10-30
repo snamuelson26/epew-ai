@@ -41,3 +41,56 @@ Run `node --import tsx --test tests/restaurant-operations-db.test.cjs tests/rest
 Tests cover launch fields, authorization and origin checks, required ZIP and explicit consent, forged identities, duplicate requests/receipts, qualifying meal thresholds, multiple meals, canceled/unpaid/reward/add-on exclusions, earning, unused-reward revocation, post-redemption refunds, credit-deficit repayment, redemption lead time, immutable history, private evidence metadata, and public-access denial. All synthetic members, receipts and rewards exist only in an in-memory test database.
 
 Real authenticated browser save/upload/download and real POS/ordering acceptance tests remain separate verification steps.
+
+## Network records, member view and expansion reporting — October 30, 2026
+
+Sections 7–14 are implemented in `/admin/food-fans-network` and `/food-fans/member`.
+The separate paid annual levels are MEMBER ($25, one restaurant), ELITE ($100,
+one verified state) and AMBASSADOR ($500, USA and beyond). Free meal rewards remain
+free. No payment collection or renewal is enabled. Managers record external payment
+verification; no eligibility follows automatically from a payment reference alone.
+
+ORGDH confirmations and independent drawing records never create meal credits.
+Purchases never generate raffle tickets. Confirmed entries require opt-in,
+eligibility, verified membership term, approved ORGDH rules and a reference ID.
+Ticket counts come only from ORGDH. Each drawing expires its own current entries
+at its drawing timestamp. Historical entries and all revisions are retained.
+ELITE scope is checked against verified restaurant state; AMBASSADOR spans units.
+The member dashboard totals current externally confirmed counts while retaining a
+per-drawing breakdown. Expired membership labels revert to FREE REWARDS; existing
+raffle entries still expire at their applicable drawing, not a new purchase date.
+No cross-drawing reassignment, ticket issue, drawing execution or prize payout is implemented.
+The previously announced FFR-001 November 21, 2027, 5 PM New York drawing is stored
+as a draft with rules unapproved and venue TBA. It cannot accept confirmed entries
+until ORGDH rules approval is recorded.
+
+Member access is restricted to a manager-verified mapping of member ID to an
+existing confirmed EPEW account. The member API derives the account ID from the
+verified server session; caller member IDs or email addresses cannot select an
+account. It returns only that member's profile, balances, recent qualifying
+orders and raffle statuses. No members were created or linked for live testing.
+
+Admin totals aggregate the complete register, using Monday/week and calendar-month
+boundaries in New York. ZIP and language segmentation and the expansion report
+paginate in pages of 100. Repeat order rate is repeat ordering members divided by
+members with an order. Order counts use existing paid/completed verified receipt
+records; refunded qualifying quantities reduce meal totals. The order integration
+register separately captures channel, external POS/marketplace references, reward
+use, timestamp, status and optional member; metadata does not manufacture credits
+or inflate verified-order analytics. Automated POS/webhook ingestion and nonmember
+order analytics remain pending a verified provider.
+
+Nearest restaurants, currently served ZIPs and expansion flags require source
+verification. No geocoder, radius or activity threshold is invented; unknowns remain
+pending. No second physical restaurant is created: FFR-002 remains a campaign ID
+for Cambria Heights. Future actual units need their own verified master record.
+
+Opening-menu records and separate recipe standards include the requested fields;
+no actual menu, ingredients, cooking temperatures, allergen clearance, prices or
+approvals are invented. Recipe approval requires approver/date evidence. Pricing
+and costing fields are excluded. Website records track PR, branch, commit, review,
+staging, mobile/desktop/language QA, Samuel approval and production evidence.
+All writes use an administrator-only, same-origin route, optimistic revision
+checks, request idempotency, and an append-only before/after revision log. Network
+records, histories and report views are unavailable through public/authenticated
+Data API roles; service access is kept server-side.
