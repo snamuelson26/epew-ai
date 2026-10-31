@@ -45,7 +45,7 @@ export default function FlexibleSupport() {
    <p className="font-bold text-green-700">FFR-002 · Cambria Heights, NY</p>
    <h1 className="mt-3 text-3xl font-black">{t.title}</h1><p className="mt-4">{t.intro}</p>
    {search.get('payment') === 'submitted' && <p role="status" className="mt-4 rounded-xl bg-blue-50 p-4">{payment === 'confirmed' ? t.confirmed : payment === 'pending' ? t.pending : t.submitted}</p>}
-   {session && payment === 'confirmed' && <Link href="/support/FFR-002/checkout?frequency=one-time" className="mt-4 inline-block rounded-xl bg-green-700 px-5 py-3 font-bold text-white">{t.another}</Link>}
+   {session && payment === 'confirmed' && <a href="/support/FFR-002/checkout?frequency=one-time" className="mt-4 inline-block rounded-xl bg-green-700 px-5 py-3 font-bold text-white">{t.another}</a>}
    {search.get('payment') === 'cancelled' && <p role="status" className="mt-4">{t.cancelled}</p>}
    <form onSubmit={submit} className="mt-6 space-y-5">
     <fieldset className="space-y-3"><legend className="sr-only">{t.intro}</legend>
