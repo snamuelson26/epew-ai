@@ -1,4 +1,5 @@
 "use client";
+import DateOfBirthFields from "@/app/components/supporters/DateOfBirthFields";
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -26,6 +27,7 @@ const countries = [
 ];
 
 export default function SupporterSettingsPage() {
+  const [birthDateValid, setBirthDateValid] = useState(true);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -82,6 +84,7 @@ export default function SupporterSettingsPage() {
   }
 
   async function saveProfile() {
+    if (!birthDateValid) return;
     if (!supporter) {
       alert("Supporter profile not found.");
       return;
@@ -95,7 +98,7 @@ export default function SupporterSettingsPage() {
         full_name: fullName,
         phone,
         country_of_citizenship: countryOfCitizenship,
-        date_of_birth: dateOfBirth,
+        date_of_birth: dateOfBirth || null,
         place_of_birth: placeOfBirth,
         country,
         address_country: country,
@@ -193,12 +196,7 @@ export default function SupporterSettingsPage() {
               ))}
             </select>
 
-            <input
-              type="date"
-              value={dateOfBirth}
-              onChange={(e) => setDateOfBirth(e.target.value)}
-              className="border rounded-2xl p-4 text-lg"
-            />
+            <DateOfBirthFields value={dateOfBirth} onChange={setDateOfBirth} onValidityChange={setBirthDateValid} required={false} />
 
             <input
               value={placeOfBirth}
@@ -250,7 +248,7 @@ export default function SupporterSettingsPage() {
           <button
             type="button"
             onClick={saveProfile}
-            disabled={saving}
+            disabled={saving || !birthDateValid}
             className="mt-8 bg-green-700 text-white px-8 py-4 rounded-2xl text-xl font-bold hover:bg-[#06245c] transition"
           >
             {saving ? "Saving..." : "Save Profile"}

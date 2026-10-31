@@ -1,13 +1,22 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useEpewLanguage } from "@/app/components/EpewLanguage";
+import { repeatContribution } from "@/lib/enterprise/supporters/contributionNavigation";
 import type { benefitSchedule } from "@/lib/enterprise/supporters/paymentPresentation";
 
-type Payment = {id:string;certificateAvailable?:boolean;businessName:string;amount:number;status:string;frequency:string;paidDate:string;schedule:ReturnType<typeof benefitSchedule>};
+type Payment = {id:string;publicBusinessId?:string|null;certificateAvailable?:boolean;businessName:string;amount:number;status:string;frequency:string;paidDate:string;schedule:ReturnType<typeof benefitSchedule>};
 type PaymentRequest = {id:string;businessName:string;total_amount:number;unit_count:number;status:string;created_at:string;checkoutState:string};
 const money = (value:number) => new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(value);
 const date = (value:string) => new Date(value.endsWith("Z") || /[+-]\d\d:\d\d$/.test(value)?value:`${value}Z`).toLocaleDateString("en-US");
 export default function PaymentActivity({compact=false}:{compact?:boolean}) {
+  const { language } = useEpewLanguage();
+  const actions = {
+    en: { add: 'Add a contribution', choose: 'Choose a business to support', independent: 'One-time support — $500 or more', note: 'With independent support, EPEW selects the entrepreneur. Each new contribution has its own amount and checkout.', again: 'Support this business again', foodFans: 'Add flexible support to this Food Fans store (FFR-002)' },
+    ht: { add: 'Ajoute yon kontribisyon', choose: 'Chwazi yon biznis pou sipòte', independent: 'Sipò yon sèl fwa — $500 oswa plis', note: 'Pou sipò endepandan, EPEW chwazi antreprenè a. Chak nouvo kontribisyon gen pwòp montan ak peman pa li.', again: 'Sipòte biznis sa a ankò', foodFans: 'Ajoute sipò fleksib pou restoran Food Fans sa a (FFR-002)' },
+    fr: { add: 'Ajouter une contribution', choose: 'Choisir une entreprise à soutenir', independent: 'Soutien unique — 500 $ ou plus', note: 'Pour le soutien indépendant, EPEW choisit l’entrepreneur. Chaque nouvelle contribution a son propre montant et paiement.', again: 'Soutenir cette entreprise à nouveau', foodFans: 'Ajouter un soutien flexible à ce restaurant Food Fans (FFR-002)' },
+    es: { add: 'Añadir una contribución', choose: 'Elegir un negocio para apoyar', independent: 'Apoyo único — $500 o más', note: 'En el apoyo independiente, EPEW elige al emprendedor. Cada nueva contribución tiene su propio importe y pago.', again: 'Apoyar este negocio de nuevo', foodFans: 'Añadir apoyo flexible a este restaurante Food Fans (FFR-002)' },
+  }[language];
   const [data,setData] = useState<{transactions:Payment[];requests:PaymentRequest[]}|null>(null);
   const [error,setError] = useState("");
   const [message,setMessage] = useState("");
@@ -36,6 +45,11 @@ export default function PaymentActivity({compact=false}:{compact?:boolean}) {
     finally {setBusy(null);}
   }
   return <section className="my-6 rounded-2xl bg-white p-5 text-[#06245c] shadow sm:p-8">
+    <div className="mb-6 rounded-xl border border-green-200 bg-green-50 p-5">
+      <h2 className="text-xl font-bold">{actions.add}</h2>
+      <div className="mt-3 flex flex-wrap gap-3"><Link href="/supporters/marketplace" className="rounded-xl bg-green-700 px-4 py-3 font-bold text-white">{actions.choose}</Link><Link href="/supporters/independent-support" className="rounded-xl border border-green-700 px-4 py-3 font-bold">{actions.independent}</Link></div>
+      <p className="mt-3 text-sm">{actions.note}</p>
+    </div>
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-2xl font-bold">My transactions</h2><button className="rounded border px-4 py-2" onClick={()=>void load()}>Refresh records</button></div>
     <p className="mt-2">Only confirmed payments appear as paid. Submitted bank payments may still be processing.</p>
     {error&&<p role="alert" className="my-4 rounded bg-red-50 p-4 text-red-800">{error}</p>}
@@ -46,6 +60,7 @@ export default function PaymentActivity({compact=false}:{compact?:boolean}) {
       <h3 className="text-xl font-bold">{p.businessName} — {money(Number(p.amount))}</h3>
       <p>Status: {p.status} · Payment record date: {date(p.paidDate)} · {p.frequency}</p>
       <p className="break-all text-sm">Reference: {p.id}</p>
+      {p.status === "paid" && repeatContribution(p.publicBusinessId) && <Link href={repeatContribution(p.publicBusinessId)!.href} className="mt-3 inline-block rounded-lg bg-green-700 px-4 py-3 font-bold text-white">{repeatContribution(p.publicBusinessId)!.foodFans ? actions.foodFans : actions.again}</Link>}
       {p.certificateAvailable&&<div className="mt-4 rounded-xl border border-green-200 bg-green-50 p-4">
         <h4 className="font-bold">{certificateLanguage==="ht"?"Sètifika patisipasyon sipò":"Support participation certificate"}</h4>
         <div className="mt-3 flex flex-wrap items-center gap-3">

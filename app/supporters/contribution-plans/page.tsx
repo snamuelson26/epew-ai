@@ -3,13 +3,13 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { foodFansCheckout } from "@/lib/enterprise/supporters/contributionNavigation";
 import StripeCheckoutButton from "@/app/components/StripeCheckoutButton";
 
 type Frequency =
   | "weekly"
   | "monthly"
-  | "annual"
-  | "one-time";
+  | "annual";
 
 export default function ContributionPlansPage() {
   return (
@@ -90,6 +90,8 @@ function ContributionPlansContent() {
         alert("Entrepreneur not found.");
         setEntrepreneur(null);
       } else {
+        const campaignCheckout = foodFansCheckout(entrepreneurData.public_business_id);
+        if (campaignCheckout) { window.location.replace(campaignCheckout); return; }
         setEntrepreneur(entrepreneurData);
       }
     } else {
@@ -222,11 +224,6 @@ function ContributionPlansContent() {
                 value: "annual",
                 text: "$5,200 per unit / year",
               },
-              {
-                label: "One-Time",
-                value: "one-time",
-                text: "$100 per unit once",
-              },
             ].map((plan) => (
               <button
                 key={plan.value}
@@ -251,6 +248,10 @@ function ContributionPlansContent() {
             ))}
           </div>
 
+          <div className="mb-6 rounded-xl bg-blue-50 p-4">
+            <a href="/supporters/independent-support" className="font-bold underline">Make a one-time contribution of $500 or more</a>
+            <p className="mt-2 text-sm">For independent support, EPEW selects the eligible entrepreneur. This option does not assign payment to the business shown above.</p>
+          </div>
           <div className="mb-8">
             <label className="mb-2 block text-lg font-bold">
               Number of Units

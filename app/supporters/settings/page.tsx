@@ -1,4 +1,5 @@
 "use client";
+import DateOfBirthFields from "@/app/components/supporters/DateOfBirthFields";
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -15,12 +16,13 @@ const copy = {
 
 export default function SupporterSettingsPage() {
   const { language } = useEpewLanguage(); const t = copy[language];
+  const [birthDateValid, setBirthDateValid] = useState(true);
   const [loading,setLoading]=useState(true), [saving,setSaving]=useState(false), [supporter,setSupporter]=useState<any>(null);
   const [fullName,setFullName]=useState(""), [phone,setPhone]=useState(""), [countryOfCitizenship,setCountryOfCitizenship]=useState(""), [dateOfBirth,setDateOfBirth]=useState(""), [placeOfBirth,setPlaceOfBirth]=useState(""), [country,setCountry]=useState(""), [streetAddress,setStreetAddress]=useState(""), [city,setCity]=useState(""), [stateName,setStateName]=useState(""), [zipCode,setZipCode]=useState("");
 
   useEffect(()=>{ void loadSettings(); },[]);
   async function loadSettings(){ const {data:{user}}=await supabase.auth.getUser(); if(!user){window.location.href="/supporters/login";return;} const {data}=await supabase.from("supporters").select("*").eq("user_id",user.id).single(); if(!data){window.location.href="/supporters/login";return;} setSupporter(data); setFullName(data.full_name||""); setPhone(data.phone||""); setCountryOfCitizenship(data.country_of_citizenship||""); setDateOfBirth(data.date_of_birth||""); setPlaceOfBirth(data.place_of_birth||""); setCountry(data.country||""); setStreetAddress(data.street_address||""); setCity(data.city||""); setStateName(data.state||""); setZipCode(data.zip_code||""); setLoading(false); }
-  async function saveProfile(){ if(!supporter)return; setSaving(true); const {error}=await supabase.from("supporters").update({full_name:fullName,phone,country_of_citizenship:countryOfCitizenship,date_of_birth:dateOfBirth,place_of_birth:placeOfBirth,country,address_country:country,street_address:streetAddress,city,state:stateName,zip_code:zipCode}).eq("id",supporter.id); setSaving(false); if(error){alert(error.message);return;} window.location.reload(); }
+  async function saveProfile(){ if(!supporter || !birthDateValid)return; setSaving(true); const {error}=await supabase.from("supporters").update({full_name:fullName,phone,country_of_citizenship:countryOfCitizenship,date_of_birth:dateOfBirth || null,place_of_birth:placeOfBirth,country,address_country:country,street_address:streetAddress,city,state:stateName,zip_code:zipCode}).eq("id",supporter.id); setSaving(false); if(error){alert(error.message);return;} window.location.reload(); }
   async function handlePasswordReset(){ if(!supporter?.email)return; const {error}=await supabase.auth.resetPasswordForEmail(supporter.email,{redirectTo:`${window.location.origin}/supporters/update-password`}); if(error){alert(error.message);return;} alert(t.reset); }
   if(loading)return <main className="min-h-screen bg-[#f5f7fb] p-8 text-[#06245c]"><p className="text-2xl font-bold">{t.loading}</p></main>;
 
@@ -32,10 +34,10 @@ export default function SupporterSettingsPage() {
           <input value={fullName} onChange={e=>setFullName(e.target.value)} placeholder={t.fullName} className="border rounded-2xl p-4 text-lg"/><input value={supporter?.email||""} disabled className="border rounded-2xl p-4 text-lg bg-gray-100"/>
           <input value={phone} onChange={e=>setPhone(e.target.value)} placeholder={t.phone} className="border rounded-2xl p-4 text-lg"/>
           <select value={countryOfCitizenship} onChange={e=>setCountryOfCitizenship(e.target.value)} className="border rounded-2xl p-4 text-lg"><option value="">{t.citizenship}</option>{countries.map(item=><option key={item}>{item}</option>)}</select>
-          <input type="date" value={dateOfBirth} onChange={e=>setDateOfBirth(e.target.value)} className="border rounded-2xl p-4 text-lg"/><input value={placeOfBirth} onChange={e=>setPlaceOfBirth(e.target.value)} placeholder={t.birthPlace} className="border rounded-2xl p-4 text-lg"/>
+          <DateOfBirthFields value={dateOfBirth} onChange={setDateOfBirth} onValidityChange={setBirthDateValid} required={false} /><input value={placeOfBirth} onChange={e=>setPlaceOfBirth(e.target.value)} placeholder={t.birthPlace} className="border rounded-2xl p-4 text-lg"/>
           <select value={country} onChange={e=>setCountry(e.target.value)} className="border rounded-2xl p-4 text-lg"><option value="">{t.country}</option>{countries.map(item=><option key={item}>{item}</option>)}</select>
           <input value={streetAddress} onChange={e=>setStreetAddress(e.target.value)} placeholder={t.street} className="border rounded-2xl p-4 text-lg"/><input value={city} onChange={e=>setCity(e.target.value)} placeholder={t.city} className="border rounded-2xl p-4 text-lg"/><input value={stateName} onChange={e=>setStateName(e.target.value)} placeholder={t.state} className="border rounded-2xl p-4 text-lg"/><input value={zipCode} onChange={e=>setZipCode(e.target.value)} placeholder={t.zip} className="border rounded-2xl p-4 text-lg"/>
-        </div><button type="button" onClick={saveProfile} disabled={saving} className="mt-8 bg-green-700 text-white px-8 py-4 rounded-2xl text-xl font-bold hover:bg-[#06245c] transition">{saving?t.saving:t.save}</button>
+        </div><button type="button" onClick={saveProfile} disabled={saving || !birthDateValid} className="mt-8 bg-green-700 text-white px-8 py-4 rounded-2xl text-xl font-bold hover:bg-[#06245c] transition">{saving?t.saving:t.save}</button>
       </div>
       <div className="space-y-8">
         <div className="bg-white rounded-3xl shadow-xl p-10"><h2 className="text-3xl font-bold mb-6">{t.account}</h2><div className="space-y-4 text-lg"><p><strong>{t.supporterId}:</strong> {supporter?.supporter_id||t.notAssigned}</p><p><strong>{t.status}:</strong> {supporter?.status||t.active}</p><p><strong>{t.email}:</strong> {supporter?.email}</p><p><strong>{t.memberSince}:</strong> {supporter?.created_at?new Date(supporter.created_at).toLocaleDateString():t.notAvailable}</p></div></div>
