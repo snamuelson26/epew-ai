@@ -39,7 +39,7 @@ export async function GET() {
       payments.data=latest.data;
     }
     const ids = [...new Set([...(payments.data||[]).map(p=>p.entrepreneur_id),...(intents.data||[]).map(i=>i.supporter_selected_entrepreneur_id)].filter(Boolean))];
-    const businesses = ids.length ? await supabaseAdmin.from("entrepreneurs").select("id,business_name").in("id",ids) : {data:[],error:null};
+    const businesses = ids.length ? await supabaseAdmin.from("entrepreneurs").select("id,business_name,public_business_id").in("id",ids) : {data:[],error:null};
     if (businesses.error) throw businesses.error;
     const name = (id:string) => businesses.data?.find(b=>b.id===id)?.business_name || "EPEW-selected business";
     return NextResponse.json({
@@ -49,7 +49,7 @@ export async function GET() {
         const rate = Number(p.units) > 0
           ? (["weekly","monthly"].includes(p.frequency) ? 6 : Number(p.annual_benefit_rate || intent?.participation_benefit_rate || 8))
           : 0; // Independent additional funds have no confirmed unit-benefit terms here.
-        return {...p,certificateAvailable:certificateEligible(p),businessName:name(p.entrepreneur_id),paidDate,schedule:p.status==="paid" ? benefitSchedule(Number(p.amount),rate,paidDate) : null};
+        return {...p,certificateAvailable:certificateEligible(p),publicBusinessId:businesses.data?.find(b=>b.id===p.entrepreneur_id)?.public_business_id || null,businessName:name(p.entrepreneur_id),paidDate,schedule:p.status==="paid" ? benefitSchedule(Number(p.amount),rate,paidDate) : null};
       }),
       requests:(intents.data||[]).filter(i=>!i.paid_at && !(payments.data||[]).some(p=>p.support_intent_id===i.id && p.status==="paid")).map(i=>({...i,checkoutState:checkoutStates[i.id]||"unverified",businessName:name(i.supporter_selected_entrepreneur_id)}))
     },{headers:{"Cache-Control":"private, no-store"}});

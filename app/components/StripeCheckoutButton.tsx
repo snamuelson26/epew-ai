@@ -8,7 +8,7 @@ interface StripeCheckoutButtonProps {
   businessName: string;
   supporterId?: string;
   units: number;
-  frequency: "weekly" | "monthly" | "annual" | "one-time";
+  frequency: "weekly" | "monthly" | "annual";
 }
 
 export default function StripeCheckoutButton({

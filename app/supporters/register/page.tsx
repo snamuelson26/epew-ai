@@ -1,4 +1,5 @@
 "use client";
+import DateOfBirthFields from "@/app/components/supporters/DateOfBirthFields";
 
 import Navbar from "@/app/components/Navbar";
 
@@ -391,10 +392,7 @@ function SupporterRegisterContent() {
             <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full Name" className="rounded-xl border p-4" />
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email Address" className="rounded-xl border p-4" />
             <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone Number" className="rounded-xl border p-4" />
-            <div>
-              <label className="mb-2 block font-semibold">Date of Birth</label>
-              <input type="date" value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} className="w-full rounded-xl border p-4" />
-            </div>
+            <DateOfBirthFields value={dateOfBirth} onChange={setDateOfBirth} />
           </div>
         </div>
 
