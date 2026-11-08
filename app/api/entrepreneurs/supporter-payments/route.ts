@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { supportReportingReferences } from "@/lib/enterprise/supporters/reportingReferences";
 
 export const dynamic = "force-dynamic";
 const headers = { "Cache-Control": "private, no-store" };
@@ -29,7 +30,7 @@ export async function GET(request: Request) {
       .eq("source_application_id", application.id).maybeSingle();
     if (businessError) throw businessError;
     const page = Number(pageValue), pageSize = 50;
-    if (!business) return json({ accounts, applicationId: String(application.id), business: { name: application.business_name, code: null }, transactions: [], pendingRequests: [], pendingHasMore: false, count: 0, page, pageSize });
+    if (!business) return json({ accounts, applicationId: String(application.id), business: { name: application.business_name, code: null }, transactions: [], reportedReceipts: [], pendingRequests: [], pendingHasMore: false, count: 0, page, pageSize });
     const { data: payments, error: paymentError, count } = await supabaseAdmin
       .from("supporter_transactions")
       .select("id,supporter_id,amount,units,frequency,status,created_at", { count: "exact" })
@@ -54,7 +55,22 @@ export async function GET(request: Request) {
     if (confirmedError) throw confirmedError;
     const paidIntents = new Set((confirmed || []).map(row => row.support_intent_id));
     const pendingRequests = (pending || []).filter(row => !paidIntents.has(row.id)).slice(0, 50);
-    const ids = [...new Set([...(payments || []), ...pendingRequests].map(row => row.supporter_id).filter(Boolean))];
+    const reportedReceipts: { id: string; supporter_id: string | null; amount: number | string | null; units: number | null; frequency: string | null; status: string | null; created_at: string | null; sourceBusiness: string; reportedOn: string }[] = [];
+    for (const reference of supportReportingReferences.filter(item => item.reportingBusiness === business.public_business_id)) {
+      const { data: source, error: sourceError } = await supabaseAdmin.from("entrepreneurs")
+        .select("id").eq("public_business_id", reference.sourceBusiness)
+        .in("source_application_id", (applications || []).map(row => row.id)).maybeSingle();
+      if (sourceError) throw sourceError;
+      if (!source) continue;
+      const { data: receipt, error: receiptError } = await supabaseAdmin.from("supporter_transactions")
+        .select("id,supporter_id,amount,units,frequency,status,created_at")
+        .eq("id", reference.transactionId).eq("entrepreneur_id", source.id)
+        .eq("amount", reference.expectedAmount).eq("units", reference.expectedUnits)
+        .eq("status", "paid").maybeSingle();
+      if (receiptError) throw receiptError;
+      if (receipt) reportedReceipts.push({ ...receipt, sourceBusiness: reference.sourceBusiness, reportedOn: reference.reportedOn });
+    }
+    const ids = [...new Set([...(payments || []), ...pendingRequests, ...reportedReceipts].map(row => row.supporter_id).filter(Boolean))];
     const { data: supporters, error: supporterError } = ids.length
       ? await supabaseAdmin.from("supporters").select("id,full_name").in("id", ids)
       : { data: [], error: null };
@@ -63,6 +79,11 @@ export async function GET(request: Request) {
     return json({
       accounts, applicationId: String(application.id),
       business: { name: business.business_name || application.business_name, code: business.public_business_id },
+      reportedReceipts: reportedReceipts.map(row => ({
+        id: row.id, supporter: names.get(row.supporter_id) || "Supporter name unavailable",
+        amount: row.amount, units: row.units, frequency: row.frequency, status: row.status,
+        recordedAt: row.created_at, sourceBusiness: row.sourceBusiness, reportedOn: row.reportedOn,
+      })),
       pendingHasMore: (pending || []).length > 50,
       pendingRequests: pendingRequests.map(row => ({
         id: row.id, supporter: names.get(row.supporter_id) || "Supporter name unavailable",

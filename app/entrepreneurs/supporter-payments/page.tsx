@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 type Payment = { id: string; supporter: string; amount: number | string | null; units: number | null; frequency: string | null; status: string | null; recordedAt: string | null };
-type Ledger = { business: { name: string; code: string | null }; transactions: Payment[]; pendingRequests: Payment[]; pendingHasMore: boolean; count: number; page: number; pageSize: number };
+type Ledger = { business: { name: string; code: string | null }; transactions: Payment[]; reportedReceipts: (Payment & { sourceBusiness: string; reportedOn: string })[]; pendingRequests: Payment[]; pendingHasMore: boolean; count: number; page: number; pageSize: number };
 const money = (value: number | string | null) => value === null ? "Not recorded" : new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(value));
 function date(value: string | null) {
   if (!value) return "Not recorded";
@@ -69,6 +69,16 @@ export default function SupporterPayments() {
         <p className="mt-2 text-slate-600">Only businesses belonging to this login are listed.</p>
       </section>}
       {!loading && !data && !error && accounts.length === 0 && <p>No entrepreneur businesses are linked to this login. <Link className="underline" href="/entrepreneurs/dashboard">Return to your dashboard</Link>.</p>}
+      {!loading && data && data.reportedReceipts?.length > 0 && <section className="overflow-hidden rounded-2xl border border-blue-200 bg-white shadow">
+        <div className="p-5"><h2 className="text-2xl font-bold">Receipts reported from other locations</h2>
+          <p className="mt-2 text-slate-600">Reported here for reference. Each receipt remains allocated to its source location and is not a second payment or additional funding for this business.</p>
+        </div>
+        <div className="overflow-x-auto"><table className="w-full text-left">
+          <caption className="sr-only">Paid support reported from another owned location</caption>
+          <thead className="bg-blue-50"><tr>{["Supporter", "Amount (USD)", "Recorded date (New York)", "Payment status", "Source location", "Units"].map(label => <th key={label} scope="col" className="p-4">{label}</th>)}</tr></thead>
+          <tbody>{data.reportedReceipts.map(receipt => <tr key={receipt.id} className="border-t border-slate-200"><td className="p-4 font-semibold">{receipt.supporter}</td><td className="p-4">{money(receipt.amount)}</td><td className="p-4">{date(receipt.recordedAt)}</td><td className="p-4"><span className="rounded-full bg-green-100 px-3 py-1 text-sm font-bold text-green-900">Paid</span></td><td className="p-4">{receipt.sourceBusiness}</td><td className="p-4">{receipt.units ?? "Not recorded"}</td></tr>)}</tbody>
+        </table></div>
+      </section>}
       {!loading && data && <section className="overflow-hidden rounded-2xl border border-amber-200 bg-white shadow">
         <div className="p-5"><h2 className="text-2xl font-bold">In-progress support requests</h2>
           <p className="mt-2 text-slate-600">These requests are awaiting payment confirmation. They are not paid transactions, received funds, or funded units. Older unfinished checkout attempts may remain here even if their payment link has expired.</p>
