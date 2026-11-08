@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 type Payment = { id: string; supporter: string; amount: number | string | null; units: number | null; frequency: string | null; status: string | null; recordedAt: string | null };
-type Ledger = { business: { name: string; code: string | null }; transactions: Payment[]; count: number; page: number; pageSize: number };
+type Ledger = { business: { name: string; code: string | null }; transactions: Payment[]; pendingRequests: Payment[]; pendingHasMore: boolean; count: number; page: number; pageSize: number };
 const money = (value: number | string | null) => value === null ? "Not recorded" : new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(value));
 function date(value: string | null) {
   if (!value) return "Not recorded";
@@ -69,6 +69,17 @@ export default function SupporterPayments() {
         <p className="mt-2 text-slate-600">Only businesses belonging to this login are listed.</p>
       </section>}
       {!loading && !data && !error && accounts.length === 0 && <p>No entrepreneur businesses are linked to this login. <Link className="underline" href="/entrepreneurs/dashboard">Return to your dashboard</Link>.</p>}
+      {!loading && data && <section className="overflow-hidden rounded-2xl border border-amber-200 bg-white shadow">
+        <div className="p-5"><h2 className="text-2xl font-bold">In-progress support requests</h2>
+          <p className="mt-2 text-slate-600">These requests are awaiting payment confirmation. They are not paid transactions, received funds, or funded units. Older unfinished checkout attempts may remain here even if their payment link has expired.</p>
+          {data.pendingHasMore && <p className="mt-2 font-semibold">Showing recent requests. Older requests may also exist.</p>}
+        </div>
+        {!data.pendingRequests?.length ? <p className="p-5">No unconfirmed support requests found.</p> : <div className="overflow-x-auto"><table className="w-full text-left">
+          <caption className="sr-only">In-progress support requests awaiting payment confirmation</caption>
+          <thead className="bg-amber-50"><tr>{["Supporter", "Requested amount (USD)", "Request date (New York)", "Status", "Frequency", "Requested units"].map(label => <th key={label} scope="col" className="p-4">{label}</th>)}</tr></thead>
+          <tbody>{data.pendingRequests.map(request => <tr key={request.id} className="border-t border-slate-200"><td className="p-4 font-semibold">{request.supporter}</td><td className="p-4">{money(request.amount)}</td><td className="p-4">{date(request.recordedAt)}</td><td className="p-4"><span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-900">In progress — payment unconfirmed</span></td><td className="p-4">{request.frequency?.replaceAll("_", " ") || "Not recorded"}</td><td className="p-4">{request.units ?? "Not recorded"}</td></tr>)}</tbody>
+        </table></div>}
+      </section>}
       {!loading && data && <section className="overflow-hidden rounded-2xl bg-white shadow">
         <div className="p-5"><p className="font-bold">{data.count} recorded transactions</p><p className="mt-1 text-slate-600">This history lists payment records, not prospect contacts or future commitments. Refunds and unsuccessful payments retain their recorded status.</p></div>
         {!data.transactions.length ? <p className="p-5">No payment records found for this business{page > 1 ? " on this page" : ""}.</p> : <div className="overflow-x-auto"><table className="w-full text-left">
