@@ -13,20 +13,23 @@ export async function GET(request: Request) {
     const params = new URL(request.url).searchParams;
     const applicationId = params.get("applicationId");
     const pageValue = params.get("page") || "1";
-    if (!applicationId || !/^\d+$/.test(applicationId) || !/^[1-9]\d{0,5}$/.test(pageValue)) {
+    if ((applicationId && !/^[1-9]\d{0,14}$/.test(applicationId)) || !/^[1-9]\d{0,5}$/.test(pageValue)) {
       return json({ error: "Select a valid business from your dashboard." }, 400);
     }
-    const { data: application, error: applicationError } = await supabaseAdmin
+    const { data: applications, error: applicationError } = await supabaseAdmin
       .from("entrepreneur_applications").select("id,business_name")
-      .eq("id", applicationId).eq("user_id", user.id).maybeSingle();
+      .eq("user_id", user.id).order("created_at", { ascending: false }).limit(1000);
     if (applicationError) throw applicationError;
-    if (!application) return json({ error: "Business not found in your account." }, 404);
+    const accounts = (applications || []).map(row => ({ id: String(row.id), name: row.business_name || "My business" }));
+    if (!applicationId) return json({ selectionRequired: true, accounts });
+    const application = (applications || []).find(row => String(row.id) === applicationId);
+    if (!application) return json({ error: "This business link does not match your signed-in account. Choose one of your businesses below.", accounts }, 404);
     const { data: business, error: businessError } = await supabaseAdmin
       .from("entrepreneurs").select("id,business_name,public_business_id")
       .eq("source_application_id", application.id).maybeSingle();
     if (businessError) throw businessError;
     const page = Number(pageValue), pageSize = 50;
-    if (!business) return json({ business: { name: application.business_name, code: null }, transactions: [], count: 0, page, pageSize });
+    if (!business) return json({ accounts, applicationId: String(application.id), business: { name: application.business_name, code: null }, transactions: [], count: 0, page, pageSize });
     const { data: payments, error: paymentError, count } = await supabaseAdmin
       .from("supporter_transactions")
       .select("id,supporter_id,amount,units,frequency,status,created_at", { count: "exact" })
@@ -41,6 +44,7 @@ export async function GET(request: Request) {
     if (supporterError) throw supporterError;
     const names = new Map((supporters || []).map(row => [row.id, row.full_name]));
     return json({
+      accounts, applicationId: String(application.id),
       business: { name: business.business_name || application.business_name, code: business.public_business_id },
       transactions: (payments || []).map(row => ({
         id: row.id, supporter: names.get(row.supporter_id) || "Supporter name unavailable",
