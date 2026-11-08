@@ -18,6 +18,7 @@ import {
 } from "@/lib/whatsapp/config";
 import { whatsappInterviewTurn } from "@/lib/whatsapp/interviewTurn";
 import { transcribeWhatsApp, validatedMediaPath } from "@/lib/whatsapp/media";
+import { supportReply } from "@/lib/whatsapp/support";
 export const maxDuration = 60;
 export const runtime = "nodejs";
 function reply(body?: string) {
@@ -45,6 +46,8 @@ export async function POST(request: NextRequest) {
     if (error) return new NextResponse('Unavailable', {status:503});
     return reply('EPEW appointment messages stopped. / Rapèl randevou yo sispann.');
   }
+  const assistance = supportReply(String(params.Body ?? ""));
+  if (assistance) return reply(assistance);
   if (!whatsappReadiness().messaging)
     return reply(
       "EPEW WhatsApp interviews are awaiting activation. Please use your entrepreneur portal for assistance.",
@@ -82,7 +85,7 @@ export async function POST(request: NextRequest) {
   if (error) return new NextResponse("Unavailable", { status: 503 });
   if (!link)
     return reply(
-      "Please connect WhatsApp from your signed-in EPEW entrepreneur portal: https://www.epew.us/entrepreneurs/whatsapp-interview",
+      "EPEW Support: This number is not connected to an entrepreneur interview. For support options, reply HELP. To connect an interview, sign in at https://www.epew.us/entrepreneurs/whatsapp-interview. This automated reply does not create a support request.",
     );
   if (start) return reply(languageMenu);
   const { data: existing, error: existingError } = await supabaseAdmin
