@@ -136,6 +136,8 @@ export default function WhatsAppInterview() {
   const [url, setUrl] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [needsSignIn, setNeedsSignIn] = useState(false);
   function endpoint() {
     const id = new URLSearchParams(window.location.search).get("applicationId");
     return `/api/entrepreneurs/whatsapp-interview${id ? `?applicationId=${encodeURIComponent(id)}` : ""}`;
@@ -144,10 +146,13 @@ export default function WhatsAppInterview() {
     try {
       const r = await fetch(endpoint(), { cache: "no-store" });
       if (!r.ok) {
+        setNeedsSignIn(r.status === 401);
         setError(r.status === 401 ? t.signIn : t.error);
         return;
       }
       const data = await r.json();
+      setError("");
+      setNeedsSignIn(false);
       setStatus(data);
       setPhone(data.connection?.phone ?? "");
     } catch {
@@ -158,17 +163,25 @@ export default function WhatsAppInterview() {
     let active = true;
     fetch(endpoint(), { cache: "no-store" })
       .then(async (r) => {
-        if (!r.ok) throw new Error(r.status === 401 ? t.signIn : t.error);
+        if (!r.ok) {
+          if (active) setNeedsSignIn(r.status === 401);
+          throw new Error(r.status === 401 ? t.signIn : t.error);
+        }
         return r.json();
       })
       .then((data) => {
         if (active) {
+          setError("");
+          setNeedsSignIn(false);
           setStatus(data);
           setPhone(data.connection?.phone ?? "");
         }
       })
       .catch((error) => {
         if (active) setError(error.message);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
     return () => {
       active = false;
@@ -204,6 +217,12 @@ export default function WhatsAppInterview() {
       </div>
       <h1 className="mt-8 text-4xl md:text-5xl font-extrabold">{t.title}</h1>
       <p className="mt-4 text-xl">{t.intro}</p>
+      {loading && <p role="status" className="mt-5">{t.refresh}…</p>}
+      {needsSignIn && (
+        <Link href="/entrepreneurs/login" className="mt-5 inline-block rounded-xl bg-green-700 px-5 py-3 font-bold text-white">
+          {t.signIn}
+        </Link>
+      )}
       {status && (
         <p className="mt-3 font-bold">{status.application.business_name}</p>
       )}
@@ -217,7 +236,11 @@ export default function WhatsAppInterview() {
           {t.pending}
         </p>
       )}
-      {status && !complete && <p className="mt-5">{t.questionnaire}</p>}
+      {status && !complete && (
+        <p className="mt-5">
+          {t.questionnaire}
+        </p>
+      )}
       {ready && complete && (
         <form
           onSubmit={(e) => {
@@ -301,7 +324,7 @@ export default function WhatsAppInterview() {
         <section className="rounded-2xl bg-slate-50 p-6">
           <h2 className="text-2xl font-bold">{t.live}</h2>
           <p className="mt-3">
-            {status?.readiness.calling ? t.liveHelp : t.pending}
+            {status?.readiness.calling ? t.liveHelp : status ? t.pending : t.signIn}
           </p>
         </section>
       </div>
