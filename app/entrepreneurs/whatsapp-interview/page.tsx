@@ -9,7 +9,7 @@ const words = {
   en: {
     title: "Your WhatsApp Interview",
     intro:
-      "International entrepreneurs can use WhatsApp for a live interview or answer with text and short voice notes.",
+      "All entrepreneurs can use WhatsApp for a live interview or answer with text and short voice notes.",
     phone: "Your WhatsApp number, including country code",
     consent:
       "I want to use WhatsApp for my EPEW interview. My messages and voice-note transcriptions will be saved in my interview record.",
@@ -20,7 +20,7 @@ const words = {
       "Send the prepared message from this same WhatsApp number to verify it. The connection link expires in 30 minutes.",
     live: "Live WhatsApp call",
     liveHelp:
-      "After connecting your number, open the EPEW chat and tap the voice-call button. You start the call; EPEW does not place an international telephone call.",
+      "After connecting your number, open the EPEW chat and tap the voice-call button. You start the call; EPEW does not place a telephone call.",
     chat: "Text and voice-note interview",
     chatHelp:
       "Send one answer at a time. The coach replies in your selected language. Send LANGUAGE to change languages or REPEAT to repeat the question.",
@@ -37,7 +37,7 @@ const words = {
   ht: {
     title: "Entèvyou WhatsApp ou",
     intro:
-      "Antreprenè entènasyonal yo ka itilize WhatsApp pou yon entèvyou an dirèk oswa reponn ak tèks ak mesaj vokal kout.",
+      "Tout antreprenè ka itilize WhatsApp pou yon entèvyou an dirèk oswa reponn ak tèks ak mesaj vokal kout.",
     phone: "Nimewo WhatsApp ou ak kòd peyi a",
     consent:
       "Mwen vle itilize WhatsApp pou entèvyou EPEW mwen. N ap konsève mesaj mwen yo ak transkripsyon mesaj vokal mwen yo nan dosye entèvyou mwen.",
@@ -64,7 +64,7 @@ const words = {
   fr: {
     title: "Votre entretien WhatsApp",
     intro:
-      "Les entrepreneurs internationaux peuvent utiliser WhatsApp pour un entretien en direct ou répondre par texte et courts messages vocaux.",
+      "Tous les entrepreneurs peuvent utiliser WhatsApp pour un entretien en direct ou répondre par texte et courts messages vocaux.",
     phone: "Votre numéro WhatsApp avec l’indicatif du pays",
     consent:
       "Je souhaite utiliser WhatsApp pour mon entretien EPEW. Mes messages et leurs transcriptions seront conservés dans mon dossier d’entretien.",
@@ -92,7 +92,7 @@ const words = {
   es: {
     title: "Su entrevista por WhatsApp",
     intro:
-      "Los emprendedores internacionales pueden usar WhatsApp para una entrevista en vivo o responder con texto y notas de voz cortas.",
+      "Todos los emprendedores pueden usar WhatsApp para una entrevista en vivo o responder con texto y notas de voz cortas.",
     phone: "Su número de WhatsApp con código de país",
     consent:
       "Quiero usar WhatsApp para mi entrevista EPEW. Mis mensajes y transcripciones de voz se guardarán en mi expediente.",
