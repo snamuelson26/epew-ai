@@ -20,6 +20,7 @@ type AllocationPreference =
 
 interface AnnualSupportCheckoutRequest {
   supporterId?: string;
+  paymentMethod?: "us_bank_account" | "card";
   units?: number;
 
   selectionMethod?: SelectionMethod;
@@ -47,6 +48,12 @@ export async function POST(req: Request) {
   try {
     const body =
       (await req.json()) as AnnualSupportCheckoutRequest;
+
+    const paymentMethod = body.paymentMethod ?? "us_bank_account";
+    if (paymentMethod !== "us_bank_account" && paymentMethod !== "card") {
+      return NextResponse.json({ error: "Choose a supported payment method." }, { status: 400 });
+    }
+
 
     /*
      * SECURITY:
@@ -496,10 +503,12 @@ export async function POST(req: Request) {
       await stripe.checkout.sessions.create({
         mode: "payment",
 
-        payment_method_types: [
-          "us_bank_account",
-          "card",
-        ],
+        payment_method_types: [paymentMethod],
+        ...(paymentMethod === "us_bank_account" ? {
+          payment_method_options: {
+            us_bank_account: { verification_method: "automatic" as const },
+          },
+        } : {}),
 
         customer_email:
           supporter.email ||
