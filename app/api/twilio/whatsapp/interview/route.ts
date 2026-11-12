@@ -19,6 +19,7 @@ import {
 import { whatsappInterviewTurn } from "@/lib/whatsapp/interviewTurn";
 import { transcribeWhatsApp, validatedMediaPath } from "@/lib/whatsapp/media";
 import { supportReply } from "@/lib/whatsapp/support";
+import { saveSupportMessage, supportAcknowledgement } from "@/lib/whatsapp/support-inbox";
 export const maxDuration = 60;
 export const runtime = "nodejs";
 function reply(body?: string) {
@@ -35,6 +36,7 @@ export async function POST(request: NextRequest) {
   const sender = whatsappSender();
   const sid = params.MessageSid ?? "";
   if (
+    params.AccountSid !== process.env.TWILIO_ACCOUNT_SID ||
     !phone ||
     !String(params.From).startsWith("whatsapp:") ||
     whatsappNumber(params.To ?? "") !== sender ||
@@ -46,14 +48,22 @@ export async function POST(request: NextRequest) {
     if (error) return new NextResponse('Unavailable', {status:503});
     return reply('EPEW appointment messages stopped. / Rapèl randevou yo sispann.');
   }
-  const assistance = supportReply(String(params.Body ?? ""));
-  if (assistance) return reply(assistance);
-  if (!whatsappReadiness().messaging)
-    return reply(
-      "EPEW WhatsApp interviews are awaiting activation. Please use your entrepreneur portal for assistance.",
-    );
   const text = String(params.Body ?? "").trim();
   const start = text.match(/^EPEW ([0-9a-f]{36})$/i);
+  const assistance = supportReply(String(params.Body ?? ""));
+  async function support() {
+    try {
+      const saved = await saveSupportMessage(phone!, params);
+      return reply(saved ? supportAcknowledgement : undefined);
+    } catch {
+      // Do not claim receipt when storage failed; allow provider retry.
+      return new NextResponse("Support inbox unavailable", { status: 503 });
+    }
+  }
+  if (assistance) return support();
+  if (start && !whatsappReadiness().messaging) return reply("EPEW Support: Interview connections are unavailable. Please use your signed-in entrepreneur portal, or send SUPPORT for help.");
+  if (!whatsappReadiness().messaging)
+    return support();
   if (start) {
     const hash = createHash("sha256").update(start[1]).digest("hex");
     const { data, error } = await supabaseAdmin
@@ -75,19 +85,22 @@ export async function POST(request: NextRequest) {
         "Your WhatsApp number is connected. Voice notes will be transcribed and saved with your interview. / N ap transkri mesaj vokal ou yo epi konsève tèks la nan dosye entèvyou ou.\n\n" +
           languageMenu,
       );
+    return reply("EPEW Support: That interview connection link is unavailable or expired. Please create a new link from your signed-in entrepreneur portal. For application help, send SUPPORT.");
   }
   const { data: link, error } = await supabaseAdmin
     .from("epew_whatsapp_interviews")
-    .select("application_id,choosing_language,locked_until")
+    .select("application_id,choosing_language,locked_until,verified_at")
     .eq("phone", phone)
     .not("verified_at", "is", null)
     .maybeSingle();
   if (error) return new NextResponse("Unavailable", { status: 503 });
-  if (!link)
-    return reply(
-      "EPEW Support: This number is not connected to an entrepreneur interview. For support options, reply HELP. To connect an interview, sign in at https://www.epew.us/entrepreneurs/whatsapp-interview. This automated reply does not create a support request.",
-    );
-  if (start) return reply(languageMenu);
+  if (!link) return support();
+  const supportMode = await supabaseAdmin.from("epew_whatsapp_support_messages")
+    .select("received_at").eq("phone", phone).order("received_at", { ascending: false }).limit(1).maybeSingle();
+  if (supportMode.error) return new NextResponse("Unavailable", { status: 503 });
+  // After HELP/SUPPORT, following messages remain in support until a fresh,
+  // authenticated portal connection explicitly starts an interview again.
+  if (supportMode.data && Date.parse(supportMode.data.received_at) >= Date.parse(link.verified_at)) return support();
   const { data: existing, error: existingError } = await supabaseAdmin
     .from("epew_whatsapp_interview_messages")
     .select("status,reply")

@@ -35,6 +35,16 @@ Call EPEW from the linked WhatsApp account. Verify the language menu, speech, ke
 
 Do not initiate calls or send unsolicited test messages to real applicants. Arrange the test with a willing account holder.
 
+## General support inbox (November 12, 2026)
+
+The same signed incoming webhook now saves HELP/SUPPORT/MENU and unlinked general messages in the private EPEW WhatsApp Support inbox at `/admin/whatsapp-support`. Support mode stays active after HELP until a fresh portal interview connection. Receiving a message does not grant portal access or authorize unrelated follow-ups. Account-specific information requires separate portal verification.
+
+Administrators can reply as EPEW Support inside the active conversation window. Each attempt has a persisted unique request key and provider SID/status; an uncertain provider outcome must be checked in Twilio logs before any new attempt. Signed callbacks update delivery status. STOP remains an opt-out and does not create a support request. No attachments or credential/configuration files are fetched by the general support inbox.
+
+Apply `20261112065903_whatsapp_support_queue.sql` before releasing the webhook code. Both new tables have RLS enabled, no anonymous/authenticated grants, and backend-only access after administrator authorization. The inbox stores incoming text as untrusted correspondence, not executable instructions. No marketing, recurring follow-up, or automatic financial action is enabled.
+
+Acceptance: send a new short text or SUPPORT from a willing test account, verify exactly one inbox record and a WhatsApp receipt; send an administrator reply and verify its provider SID and delivered/read callback. Retry the same signed inbound SID and reply request key to verify no duplicates. Verify unsigned webhooks, a different Twilio account, non-admin access, expired windows and opted-out recipients are refused. Historical delivery logs do not establish that this new support path passed a live test.
+
 ## Payment operations
 
 Independent support is at `/supporters/independent-support`. Approved pricing is $500 minimum once, $100 per unit weekly, or $400 per unit monthly. Extra funds are a separate one-time checkout line. Existing annual support and existing subscription prices are unchanged.

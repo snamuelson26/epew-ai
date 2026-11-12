@@ -101,6 +101,7 @@ export default function AdminShell({
         { name: "Coach Connections", href: "/staff/coach-connections" },
         { name: "Notifications", href: "/admin/notifications" },
         { name: "Applicant Help", href: "/admin/applicant-help" },
+        { name: "WhatsApp Support", href: "/admin/whatsapp-support" },
         { name: "Support Tickets", href: "/admin/support-tickets" },
       ],
     },
