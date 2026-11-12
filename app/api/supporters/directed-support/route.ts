@@ -40,6 +40,8 @@ export async function POST(request: Request) {
     const metadata = { support_flow: 'independent', independent_plan_id: plan.id, supporter_id: supporter.id, public_business_id: 'FFR-002' };
     const origin = new URL(request.url).origin;
     const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['us_bank_account'],
+      payment_method_options: { us_bank_account: { verification_method: 'automatic' } },
       mode: recurring ? 'subscription' : 'payment', customer_email: supporter.email,
       client_reference_id: plan.id, metadata,
       line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: terms.baseCents,
