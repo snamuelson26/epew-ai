@@ -162,7 +162,8 @@ export async function POST(request: Request) {
     const session = await stripe.checkout.sessions.create(
       {
         mode: recurring ? "subscription" : "payment",
-        payment_method_types: ["card"],
+        payment_method_types: ["us_bank_account"],
+        payment_method_options: { us_bank_account: { verification_method: "automatic" } },
         customer_email: supporter.email,
         client_reference_id: plan.id,
         metadata,

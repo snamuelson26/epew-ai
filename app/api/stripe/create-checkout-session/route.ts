@@ -247,7 +247,8 @@ export async function POST(req: Request) {
       await stripe.checkout.sessions.create({
         mode: "subscription",
 
-        payment_method_types: ["card"],
+        payment_method_types: ["us_bank_account"],
+        payment_method_options: { us_bank_account: { verification_method: "automatic" } },
 
         customer_email:
           supporter.email || undefined,

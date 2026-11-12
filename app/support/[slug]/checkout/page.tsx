@@ -367,7 +367,7 @@ function AnnualSupportCheckoutPage({ initialUnits = 1 }: { initialUnits?: number
   const [business, setBusiness] = useState<any>(null);
   const [supporter, setSupporter] = useState<any>(null);
   const [units, setUnits] = useState(initialUnits);
-  const [paymentMethod, setPaymentMethod] = useState<"us_bank_account" | "card">("us_bank_account");
+  const paymentMethod = "us_bank_account" as const;
   const [referrerName, setReferrerName] = useState("");
   const [referrerBusinessName, setReferrerBusinessName] = useState("");
   const [entrepreneurAgreementAccepted, setEntrepreneurAgreementAccepted] =
@@ -888,14 +888,10 @@ function AnnualSupportCheckoutPage({ initialUnits = 1 }: { initialUnits?: number
             <fieldset className="my-6 space-y-3 rounded-2xl border border-blue-200 p-5">
               <legend className="px-2 text-xl font-bold">{locale === "ht" ? "Metòd peman" : locale === "fr" ? "Mode de paiement" : locale === "es" ? "Método de pago" : "Payment method"}</legend>
               <label className="flex cursor-pointer items-center gap-3 text-lg font-semibold">
-                <input type="radio" name="paymentMethod" value="us_bank_account" checked={paymentMethod === "us_bank_account"} onChange={() => setPaymentMethod("us_bank_account")} disabled={submitting} />
+                <input type="radio" name="paymentMethod" value="us_bank_account" checked readOnly disabled={submitting} />
                 {locale === "ht" ? "Kont labank — nimewo woutaj ak kont" : locale === "fr" ? "Compte bancaire — numéros d’acheminement et de compte" : locale === "es" ? "Cuenta bancaria — números de ruta y cuenta" : "Bank account — routing and account numbers"}
               </label>
               <p className="text-base leading-relaxed text-gray-600">{locale === "ht" ? "Antre enfòmasyon labank ou sou paj sekirize Stripe ki vini apre a. Stripe ka mande ou verifye yon ti depo anvan peman an ka fini." : locale === "fr" ? "Saisissez vos coordonnées bancaires sur la page sécurisée Stripe suivante. Stripe peut demander la vérification d’un microdépôt avant de finaliser le paiement." : locale === "es" ? "Introduzca sus datos bancarios en la siguiente página segura de Stripe. Stripe puede requerir verificar un microdepósito antes de completar el pago." : "On the next secure Stripe page, choose manual bank-account entry to use your routing and account numbers. Stripe may require microdeposit verification before payment can complete."}</p>
-              <label className="flex cursor-pointer items-center gap-3 text-lg font-semibold">
-                <input type="radio" name="paymentMethod" value="card" checked={paymentMethod === "card"} onChange={() => setPaymentMethod("card")} disabled={submitting} />
-                {locale === "ht" ? "Kat kredi oswa debi" : locale === "fr" ? "Carte de crédit ou de débit" : locale === "es" ? "Tarjeta de crédito o débito" : "Credit or debit card"}
-              </label>
             </fieldset>
 
             <button

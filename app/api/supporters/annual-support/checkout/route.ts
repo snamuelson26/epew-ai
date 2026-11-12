@@ -50,8 +50,8 @@ export async function POST(req: Request) {
       (await req.json()) as AnnualSupportCheckoutRequest;
 
     const paymentMethod = body.paymentMethod ?? "us_bank_account";
-    if (paymentMethod !== "us_bank_account" && paymentMethod !== "card") {
-      return NextResponse.json({ error: "Choose a supported payment method." }, { status: 400 });
+    if (paymentMethod !== "us_bank_account") {
+      return NextResponse.json({ error: "Only bank-account payments are available." }, { status: 400 });
     }
 
 
