@@ -13,8 +13,10 @@ const copy = {
 };
 export default function FlexibleSupport() {
  const { locale } = useLocale(); const t = copy[locale]; const search = useSearchParams();
- const [frequency, setFrequency] = useState<DirectedFrequency>(search.get('frequency') === 'one-time' ? 'one-time' : 'weekly');
- const [units, setUnits] = useState(1); const [amount, setAmount] = useState('500');
+ const requestedFrequency = search.get('frequency');
+ const [frequency, setFrequency] = useState<DirectedFrequency>(requestedFrequency === 'monthly' || requestedFrequency === 'annual' || requestedFrequency === 'one-time' ? requestedFrequency : 'weekly');
+ const requestedUnits = Number(search.get('units') || 1);
+ const [units, setUnits] = useState(Number.isInteger(requestedUnits) && requestedUnits >= 1 && requestedUnits <= 20 ? requestedUnits : 1); const [amount, setAmount] = useState('500');
  const [accepted, setAccepted] = useState(false); const [busy, setBusy] = useState(false);
  const [error, setError] = useState(''); const [payment, setPayment] = useState('');
  let cents = 0; let valid = false;
