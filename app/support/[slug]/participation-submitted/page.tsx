@@ -1,9 +1,10 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 
 export default function ParticipationSubmittedPage() {
   const searchParams = useSearchParams();
+  const params = useParams();
 
   const businessId = searchParams.get("business_id") || "";
   const units = Number(searchParams.get("units") || 1);
@@ -27,6 +28,22 @@ export default function ParticipationSubmittedPage() {
       : frequency === "monthly"
       ? monthlyTotal
       : weeklyTotal;
+
+  if (params?.slug === "FFR-002") {
+    const safeUnits = Number.isInteger(units) && units >= 1 && units <= 20 ? units : 1;
+    const safeFrequency = frequency === "monthly" || frequency === "annual" ? frequency : "weekly";
+    return (
+      <main className="min-h-screen bg-[#f5f7fb] p-8 text-[#06245c]">
+        <section className="mx-auto max-w-2xl rounded-3xl bg-white p-8 shadow-xl">
+          <h1 className="text-3xl font-bold">Payment setup is not complete</h1>
+          <p className="mt-5">This older participation page did not open Stripe or confirm a payment. Continue to the secure FFR-002 checkout to review your selection and set up payment.</p>
+          <p className="mt-4">If you already paid through Stripe separately, check your payment history before paying again.</p>
+          <a href={`/support/FFR-002/checkout?units=${safeUnits}&frequency=${safeFrequency}`} className="mt-6 inline-block rounded-xl bg-green-700 px-6 py-4 font-bold text-white">Continue to Secure Payment</a>
+          <a href="/supporters/independent-support" className="mt-5 block underline">My payments and recurring plans</a>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-[#f5f7fb] text-[#06245c]">

@@ -282,11 +282,13 @@ export default function ParticipationAgreementPage() {
             <button
               type="button"
               onClick={() => {
-                window.location.href = `/support/${businessId}/participation-submitted?units=${units}&frequency=${frequency}&business_id=${businessId}`;
+                window.location.href = businessId === "FFR-002"
+                  ? `/support/FFR-002/checkout?units=${units}&frequency=${frequency}`
+                  : `/support/${businessId}/participation-submitted?units=${units}&frequency=${frequency}&business_id=${businessId}`;
               }}
               className="w-full rounded-2xl bg-[#06245c] px-6 py-4 text-lg font-bold text-white transition hover:bg-green-600 sm:text-xl md:w-auto md:px-12 md:py-5 md:text-2xl"
             >
-              Submit Participation Request
+              {businessId === "FFR-002" ? "Continue to Secure Payment" : "Submit Participation Request"}
             </button>
           </div>
         </section>
