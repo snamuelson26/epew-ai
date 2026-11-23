@@ -40,11 +40,25 @@ dashboard confirmed Read Customers, Inventory, Merchant, Orders and Payments;
 no employee access and no Write permissions. Creating the token does not configure
 EPEW, install a webhook, deploy this branch or verify a live receipt.
 
+## Verified configuration update
+
+The user explicitly approved storing the Clover token and merchant configuration in
+Vercel project `epew-ai`, production. The hosting metadata confirms
+`FFR_CLOVER_READ_TOKEN` is sensitive; `FFR_CLOVER_MERCHANT_ID` and
+`FFR_CLOVER_ENVIRONMENT` are present for production. The token was transferred
+directly between the signed-in browser pages without displaying its value in chat.
+No production redeployment or live receipt verification is claimed.
+
+The live Clover inventory displayed only one cash-discount entry and no meal
+products. No menu eligibility mapping was created. The current repository's location
+implementation still describes final pricing as incomplete; a final approved
+opening-menu price table has not been established for import. Do not import draft
+prices or mark unverified items reward-eligible.
+
 ## Activation and remaining work
 
-1. Put the private token directly into the hosting provider's sensitive environment
-   setting without exposing it in source, chat or logs. Configure preview/sandbox
-   separately from production; never copy production transactions into test fixtures.
+1. Production credentials are saved as verified above. Configure sandbox credentials
+   separately; never copy production transactions into test fixtures.
 2. Verify actual Clover inventory item IDs and classifications. Empty mapping
    keeps the interface disabled; an unmapped receipt is rejected server-side.
 3. Deploy a preview and verify a synthetic sandbox customer, matching membership,
