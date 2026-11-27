@@ -51,7 +51,7 @@ export async function GET() {
           : 0; // Independent additional funds have no confirmed unit-benefit terms here.
         return {...p,certificateAvailable:certificateEligible(p),publicBusinessId:businesses.data?.find(b=>b.id===p.entrepreneur_id)?.public_business_id || null,businessName:name(p.entrepreneur_id),paidDate,schedule:p.status==="paid" ? benefitSchedule(Number(p.amount),rate,paidDate) : null};
       }),
-      requests:(intents.data||[]).filter(i=>!i.paid_at && !(payments.data||[]).some(p=>p.support_intent_id===i.id && p.status==="paid")).map(i=>({...i,checkoutState:checkoutStates[i.id]||"unverified",businessName:name(i.supporter_selected_entrepreneur_id)}))
+      requests:(intents.data||[]).filter(i=>!i.paid_at && !(payments.data||[]).some(p=>p.support_intent_id===i.id && p.status==="paid")).map(i=>({...i,checkoutState:checkoutStates[i.id]||"unverified",publicBusinessId:businesses.data?.find(b=>b.id===i.supporter_selected_entrepreneur_id)?.public_business_id || null,businessName:name(i.supporter_selected_entrepreneur_id)}))
     },{headers:{"Cache-Control":"private, no-store"}});
   } catch {return NextResponse.json({error:"Unable to load payment records. Please retry."},{status:500});}
 }
