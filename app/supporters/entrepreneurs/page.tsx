@@ -97,6 +97,7 @@ export default function AvailableEntrepreneursPage() {
   const filteredEntrepreneurs = useMemo(() => {
     return entrepreneurs.filter((item) => {
       const searchText = `
+        ${item.public_business_id || ""}
         ${item.business_name || ""}
         ${item.full_name || ""}
         ${item.business_category || ""}
@@ -199,6 +200,7 @@ export default function AvailableEntrepreneursPage() {
                       <h2 className="mb-2 text-3xl font-extrabold">
                         {item.business_name || "EPEW Business"}
                       </h2>
+                      <p className="mb-2 text-lg font-bold">Business account #: {item.public_business_id || "Not assigned"}</p>
                       {item.full_name && (
                         <p className="text-lg text-gray-600">{item.full_name}</p>
                       )}

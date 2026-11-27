@@ -6,7 +6,7 @@ import { repeatContribution } from "@/lib/enterprise/supporters/contributionNavi
 import type { benefitSchedule } from "@/lib/enterprise/supporters/paymentPresentation";
 
 type Payment = {id:string;publicBusinessId?:string|null;certificateAvailable?:boolean;businessName:string;amount:number;status:string;frequency:string;paidDate:string;schedule:ReturnType<typeof benefitSchedule>};
-type PaymentRequest = {id:string;businessName:string;total_amount:number;unit_count:number;status:string;created_at:string;checkoutState:string};
+type PaymentRequest = {id:string;publicBusinessId?:string|null;businessName:string;total_amount:number;unit_count:number;status:string;created_at:string;checkoutState:string};
 const money = (value:number) => new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(value);
 const date = (value:string) => new Date(value.endsWith("Z") || /[+-]\d\d:\d\d$/.test(value)?value:`${value}Z`).toLocaleDateString("en-US");
 export default function PaymentActivity({compact=false}:{compact?:boolean}) {
@@ -58,6 +58,7 @@ export default function PaymentActivity({compact=false}:{compact?:boolean}) {
     {data?.transactions.length===0&&<p className="my-4 font-semibold">No confirmed transaction is recorded yet.</p>}
     {(compact?data?.transactions.slice(0,3):data?.transactions)?.map(p=><article key={p.id} className="my-5 rounded-xl border p-4">
       <h3 className="text-xl font-bold">{p.businessName} — {money(Number(p.amount))}</h3>
+      <p className="mt-1 font-semibold">Business account #: {p.publicBusinessId || "Not assigned"}</p>
       <p>Status: {p.status} · Payment record date: {date(p.paidDate)} · {p.frequency}</p>
       <p className="break-all text-sm">Reference: {p.id}</p>
       {p.status === "paid" && repeatContribution(p.publicBusinessId) && <Link href={repeatContribution(p.publicBusinessId)!.href} className="mt-3 inline-block rounded-lg bg-green-700 px-4 py-3 font-bold text-white">{repeatContribution(p.publicBusinessId)!.foodFans ? actions.foodFans : actions.again}</Link>}
@@ -80,6 +81,7 @@ export default function PaymentActivity({compact=false}:{compact?:boolean}) {
     </article>)}
     {data?.requests.map(r=><article key={r.id} className="my-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
       <h3 className="font-bold">{r.businessName} — {money(Number(r.total_amount))}</h3>
+      <p className="mt-1 font-semibold">Business account #: {r.publicBusinessId || "Not assigned"}</p>
       <p>{date(r.created_at)} · {r.unit_count} unit(s) · One-time payment</p>
       <p className="my-2 font-semibold">{r.status==="cancelled"?"Cancelled unpaid checkout":r.checkoutState==="processing"?"Payment submitted — awaiting bank/payment confirmation. Do not pay again.":r.checkoutState==="paid"?"Payment confirmed by Stripe — portal record is synchronizing. Do not pay again.":r.checkoutState==="expired"?"Checkout expired — no payment confirmed for this request.":r.status==="payment_failed"?"Payment failed — check status before retrying":"Finish your transaction or cancel — check status first if you already submitted payment."}</p>
       {r.status!=="cancelled"&&<div className="flex flex-wrap gap-3">{[["check","Check payment status"],...(["processing","paid"].includes(r.checkoutState)?[]:[["finish","Finish transaction"],["cancel","Cancel unpaid checkout"]])].map(([action,label])=><button key={action} disabled={busy!==null} onClick={()=>void act(r.id,action)} className="rounded-lg border bg-white px-4 py-2 font-semibold disabled:opacity-50">{busy===r.id?"Checking…":label}</button>)}</div>}
